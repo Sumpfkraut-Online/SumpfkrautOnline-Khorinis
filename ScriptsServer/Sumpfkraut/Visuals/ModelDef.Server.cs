@@ -84,7 +84,19 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 this.height = value;
             }
         }
-        
+
+        float fistRange = 1;
+        public float FistRange
+        {
+            get { return this.fistRange; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new Exception("FistRange can't be changed when the object is created!");
+                this.fistRange = value;
+            }
+        }
+
         public bool IsNPCModel() { return this.Visual.EndsWith(".MDS"); }
 
         #endregion
@@ -119,7 +131,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         }
 
         #endregion
-        
+
         #region Animations
 
         Dictionary<string, ScriptAniJob> aniNames = new Dictionary<string, ScriptAniJob>(StringComparer.OrdinalIgnoreCase);
@@ -166,7 +178,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     catalog.RemoveJob(aniJob);
             }
         }
-        
+
         #endregion
 
         public void ForEachAniJob(Action<ScriptAniJob> action)

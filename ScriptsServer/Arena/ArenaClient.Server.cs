@@ -16,7 +16,7 @@ namespace GUC.Scripts.Arena
         {
             this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f());
         }
-        
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
@@ -42,6 +42,18 @@ namespace GUC.Scripts.Arena
             npc.CustomFatness = info.Fatness;
             npc.CustomScale = new Vec3f(info.BodyWidth, 1.0f, info.BodyWidth);
             npc.CustomName = info.Name;
+
+            var item = new ItemInst(ItemDef.Get("ItMw_1h_Bau_Mace"));
+            npc.Inventory.AddItem(item);
+            npc.EquipItem(item);
+
+            item = new ItemInst(ItemDef.Get("ITAR_Prisoner"));
+            npc.Inventory.AddItem(item);
+            npc.EquipItem(item);
+
+            //Sumpfkraut.Visuals.ScriptOverlay ov;
+            //if (npc.ModelDef.TryGetOverlay("1HST1", out ov))
+            //    npc.ModelInst.ApplyOverlay(ov);
 
             npc.Spawn(WorldInst.Current);
             this.SetControl(npc);

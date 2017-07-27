@@ -23,6 +23,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
     public enum FightMoves
     {
+        None,
+
         Fwd,
         Left,
         Right,
@@ -100,12 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public string CustomName;
 
         #endregion
-        
-        public void SetState(NPCMovement state)
-        {
-            //this.BaseInst.SetMovement(state);
-        }
-        
+                
         public void OnWriteTakeControl(PacketWriter stream)
         {
             // write everything the player needs to know about this npc

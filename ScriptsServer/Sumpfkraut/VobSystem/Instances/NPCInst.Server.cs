@@ -16,6 +16,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
+        static NPCInst()
+        {
+            WorldObjects.NPC.OnNPCChangePosDir += (npc, p, d, m) => ((NPCInst)npc.ScriptObject).ChangePosDir(p, d, m);
+        }
+
+        void ChangePosDir(Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement)
+        {
+            if (this.FightAnimation != null && this.CanCombo && this.Movement != NPCMovement.Stand)
+            { // so the npc can instantly stop the attack and run into a direction
+                this.ModelInst.StopAnimation(this.fightAni, false);
+                EndFightAni();
+            }
+        }
+
         #region Constructors
 
         public NPCInst(NPCDef def) : this()
@@ -30,6 +44,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         public NPCCatalog AniCatalog { get { return (NPCCatalog)this.ModelDef?.Catalog; } }
+
+        public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
 
         #region Jumps
 
@@ -180,8 +196,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Fight Moves
 
-        ScriptAni fightAni;
-        public ScriptAni FightAnimation { get { return this.fightAni; } }
+        Animations.ActiveAni fightAni;
+        public Animations.ActiveAni FightAnimation { get { return this.fightAni; } }
 
         int comboNum;
         public int ComboNum { get { return comboNum; } }
@@ -189,14 +205,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         bool canCombo = true;
         public bool CanCombo { get { return canCombo; } }
 
-        bool isInAttack = false;
-        public bool IsInAttack { get { return this.isInAttack; } }
-
-        bool isParrying = false;
-        public bool IsParrying { get { return this.isParrying; } }
-
-        bool isDodging = false;
-        public bool IsDodging { get { return this.isDodging; } }
+        FightMoves currentFightMove = FightMoves.None;
+        public FightMoves CurrentFightMove { get { return this.currentFightMove; } }
 
         public void DoFightMove(FightMoves move, int combo = 0)
         {
@@ -209,14 +219,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 switch (this.DrawnWeapon.ItemType)
                 {
+                    default:
                     case ItemTypes.Wep1H:
                         fightCatalog = AniCatalog.Fight1H;
                         break;
                     case ItemTypes.Wep2H:
                         fightCatalog = AniCatalog.Fight2H;
-                        break;
-                    default:
-                        fightCatalog = AniCatalog.FightFist;
                         break;
                 }
             }
@@ -224,16 +232,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             switch (move)
             {
                 case FightMoves.Fwd:
-                    DoAttack(fightCatalog.Fwd[combo], combo);
+                    DoAttack(fightCatalog.Fwd[combo], move, combo);
                     break;
                 case FightMoves.Run:
-                    DoAttack(fightCatalog.Run, 0);
+                    DoAttack(fightCatalog.Run, move);
                     break;
                 case FightMoves.Left:
-                    DoAttack(fightCatalog.Left, 0);
+                    DoAttack(fightCatalog.Left, move);
                     break;
                 case FightMoves.Right:
-                    DoAttack(fightCatalog.Right, 0);
+                    DoAttack(fightCatalog.Right, move);
                     break;
                 case FightMoves.Parry:
                     DoParry(fightCatalog.GetRandomParry());
@@ -244,7 +252,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        void DoAttack(ScriptAniJob job, int fwdCombo)
+        void DoAttack(ScriptAniJob job, FightMoves move, int fwdCombo = 0)
         {
             if (job == null)
                 return;
@@ -258,7 +266,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (!ani.TryGetSpecialFrame(SpecialFrame.Combo, out comboFrame))
                 comboFrame = ani.EndFrame;
 
-            var comboPair = new Animations.FrameActionPair(comboFrame, () => canCombo = true);
+            var comboPair = new Animations.FrameActionPair(comboFrame, () => OpenCombo());
 
             // hit frame
             float hitFrame;
@@ -271,22 +279,31 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var hitPair = new Animations.FrameActionPair(hitFrame, () => this.CalcHit());
 
             // end of animation
-            var endPair = Animations.FrameActionPair.OnEnd(() =>
-            {
-                this.isInAttack = false;
-                this.canCombo = true;
-                this.comboNum = 0;
-                this.fightAni = null;
-            });
+            var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
 
             // start it all
-            this.ModelInst.StartAniJob(job, comboPair, hitPair, endPair);
-            this.fightAni = ani;
+            this.currentFightMove = move;
             this.canCombo = false;
-            this.isInAttack = true;
-            this.isParrying = false;
-            this.isDodging = false;
             this.comboNum = fwdCombo;
+            this.fightAni = this.ModelInst.StartAniJob(job, comboPair, hitPair, endPair);
+        }
+
+        void OpenCombo()
+        {
+            canCombo = true;
+            if (this.Movement != NPCMovement.Stand && this.fightAni != null)
+            { // so the npc can instantly stop the attack and run into a direction
+                this.ModelInst.StopAnimation(this.fightAni, false);
+                EndFightAni();
+            }
+        }
+
+        void EndFightAni()
+        {
+            this.currentFightMove = FightMoves.None;
+            this.canCombo = true;
+            this.comboNum = 0;
+            this.fightAni = null;
         }
 
         void DoParry(ScriptAniJob job)
@@ -299,20 +316,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
 
             // end of animation
-            var endPair = Animations.FrameActionPair.OnEnd(() =>
-            {
-                this.isParrying = false;
-                this.canCombo = true;
-                this.fightAni = null;
-            });
+            var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
 
-            this.ModelInst.StartAniJob(job, endPair);
-            this.fightAni = ani;
+            this.currentFightMove = FightMoves.Parry;
             this.canCombo = false;
-            this.isInAttack = false;
-            this.isParrying = true;
-            this.isDodging = false;
             this.comboNum = 0;
+            this.fightAni = this.ModelInst.StartAniJob(job, endPair);
         }
 
         void DoDodge(ScriptAniJob job)
@@ -325,36 +334,45 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 return;
 
             // end of animation
-            var endPair = Animations.FrameActionPair.OnEnd(() =>
-            {
-                this.isDodging = false;
-                this.canCombo = true;
-                this.fightAni = null;
-            });
+            var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
 
-            this.ModelInst.StartAniJob(job, endPair);
-            this.fightAni = ani;
+            this.currentFightMove = FightMoves.Dodge;
             this.canCombo = false;
-            this.isInAttack = false;
-            this.isParrying = false;
-            this.isDodging = true;
             this.comboNum = 0;
+            this.fightAni = this.ModelInst.StartAniJob(job, endPair);
         }
 
         #endregion
 
         #region Weapon Drawing
 
-        public void DrawWeapon(byte itemID)
+        public void DoDrawWeapon(ItemInst item)
         {
-            // -> effectsystem
-            if (this.ModelInst.BaseInst.IsInAnimation())
-                return;
-
             NPCCatalog.DrawWeaponAnis catalog;
-            if (this.BaseInst.IsInFightMode)
+            switch (item.ItemType)
             {
-                if (this.DrawnWeapon != null)
+                default:
+                case ItemTypes.Wep1H:
+                    catalog = AniCatalog.Draw1H;
+                    break;
+                case ItemTypes.Wep2H:
+                    catalog = AniCatalog.Draw2H;
+                    break;
+                case ItemTypes.WepBow:
+                    catalog = AniCatalog.DrawBow;
+                    break;
+                case ItemTypes.WepXBow:
+                    catalog = AniCatalog.DrawXBow;
+                    break;
+                case ItemTypes.Rune:
+                case ItemTypes.Scroll:
+                    catalog = AniCatalog.DrawMagic;
+                    break;
+            }
+
+            if (this.IsInFightMode || this.DrawnWeapon != null)
+            {
+                /*if (this.DrawnWeapon != null)
                 {
                     ItemInst weapon = this.DrawnWeapon;
                     catalog = GetDrawWeaponCatalog(weapon.ItemType);
@@ -376,29 +394,98 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         });
                     }
                 }
-                this.SetFightMode(false);
+                this.SetFightMode(false);*/
             }
             else
             {
-                ItemInst item = Inventory.GetItem((int)itemID);
-                if (item == null)
-                    return;
-                this.UnequipItem(item); // take weapon from parking slot
-                this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
-                catalog = GetDrawWeaponCatalog(item.ItemType); // get animationset for the correct draw animation
-
-                if (this.Movement == NPCMovement.Forward || this.Movement == NPCMovement.Left || this.Movement == NPCMovement.Right)
+                ScriptAniJob job = this.Movement == NPCMovement.Stand ? catalog.Draw : catalog.DrawWhileRunning;
+                ScriptAni ani;
+                if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
                 {
-                    this.ModelInst.StartAniJob(catalog.DrawWhileRunning, 0.1f, () => this.SetFightMode(true));
+                    DrawWeapon(item);
                 }
                 else
                 {
-                    this.ModelInst.StartAniJob(catalog.Draw, 0.1f, () => this.SetFightMode(true));
+                    float drawFrame;
+                    if (!ani.TryGetSpecialFrame(SpecialFrame.Draw, out drawFrame))
+                        drawFrame = 0;
+
+                    this.ModelInst.StartAniJob(job, new Animations.FrameActionPair(drawFrame, () => DrawWeapon(item)));
                 }
             }
-
         }
 
+        /// <summary>
+        /// Instantly puts the item in the right hand and activates fight mode
+        /// </summary>
+        void DrawWeapon(ItemInst item)
+        {
+            this.UnequipItem(item); // take weapon from parking slot
+            this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
+            this.drawnWeapon = item;
+            this.SetFightMode(true); // look angry
+        }
+
+        public void DoUndrawWeapon(ItemInst item)
+        {
+            NPCCatalog.DrawWeaponAnis catalog;
+            switch (item.ItemType)
+            {
+                default:
+                case ItemTypes.Wep1H:
+                    catalog = AniCatalog.Draw1H;
+                    break;
+                case ItemTypes.Wep2H:
+                    catalog = AniCatalog.Draw2H;
+                    break;
+                case ItemTypes.WepBow:
+                    catalog = AniCatalog.DrawBow;
+                    break;
+                case ItemTypes.WepXBow:
+                    catalog = AniCatalog.DrawXBow;
+                    break;
+                case ItemTypes.Rune:
+                case ItemTypes.Scroll:
+                    catalog = AniCatalog.DrawMagic;
+                    break;
+            }
+
+            if (this.DrawnWeapon == null)
+            {
+            }
+            else
+            {
+                ScriptAniJob job = this.Movement == NPCMovement.Stand ? catalog.Undraw : catalog.UndrawWhileRunning;
+                ScriptAni ani;
+                if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
+                {
+                    UndrawWeapon(item);
+                }
+                else
+                {
+                    float drawFrame;
+                    if (!ani.TryGetSpecialFrame(SpecialFrame.Draw, out drawFrame))
+                        drawFrame = 0;
+
+                    this.ModelInst.StartAniJob(job, new Animations.FrameActionPair(drawFrame, () => UndrawWeapon(item)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Instantly puts the item back and deactivates fight mode
+        /// </summary>
+        void UndrawWeapon(ItemInst item)
+        {
+            this.UnequipItem(item); // take weapon from right hand
+            this.EquipItem(item); // put weapon into parking slot
+            this.drawnWeapon = null;
+            this.SetFightMode(false);
+        }
+
+        /// <summary>
+        /// Plays the draw animation and activates fight mode
+        /// </summary>
         public void DoDrawFists()
         {
             ScriptAniJob drawAniJob;
@@ -477,45 +564,22 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
         #endregion
 
-        public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
-
-        partial void pSetHealth(int hp, int hpmax)
-        {
-            if (hp <= 0)
-            {
-                // hitTimer.Stop(false);
-                // comboTimer.Stop(false);
-            }
-        }
-
         public void Hit(NPCInst attacker, int damage)
         {
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.HitMessage);
             strm.Write((ushort)this.ID);
             this.BaseInst.SendScriptVobStream(strm);
-            
-            if (damage > 0)
-            {
-                this.SetHealth(this.GetHealth() - damage);
 
-                if (sOnHit != null)
-                    sOnHit(attacker, this, damage);
-            }
-        }
+            if (this.Armor != null)
+                damage -= this.Armor.Protection;
+            if (damage < 0)
+                damage = 1;
 
-        void AbleCombo()
-        {
-            //comboTimer.Stop();
-            if (this.Movement != NPCMovement.Stand)
-            {
-                /*if (this.FightAnimation != null)
-                    this.ModelInst.StopAnimation(, true);*/
-            }
-            else
-            {
-                //canCombo = true;
-            }
+            this.SetHealth(this.GetHealth() - damage);
+
+            if (sOnHit != null)
+                sOnHit(attacker, this, damage);
         }
 
 
@@ -526,13 +590,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             try
             {
-                if (this.BaseInst.IsDead || this.FightAnimation == null)
+                if (this.IsDead || this.FightAnimation == null)
                     return;
 
                 Vec3f attPos = this.BaseInst.GetPosition();
                 Vec3f attDir = this.BaseInst.GetDirection();
-                float weaponRange = (this.DrawnWeapon == null ? 40 : this.DrawnWeapon.Definition.Range) + this.ModelDef.Radius;
-                this.BaseInst.World.ForEachNPCRough(attPos, 2 * weaponRange, npc =>
+                float weaponRange = this.ModelDef.Radius + (this.DrawnWeapon == null ? this.ModelDef.FistRange : this.DrawnWeapon.Definition.Range);
+                this.BaseInst.World.ForEachNPCRough(attPos, 2 * weaponRange, npc => // fixme: enemy model radius
                   {
                       NPCInst target = (NPCInst)npc.ScriptObject;
                       if (target == this || target.IsDead)
@@ -542,7 +606,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       Vec3f targetDir = npc.GetDirection();
 
                       float realRange = weaponRange + target.ModelDef.Radius;
-                      if (target.IsDodging) realRange /= 2;
+                      if (target.CurrentFightMove == FightMoves.Dodge) realRange /= 2.0f; // extra radius if target is backing up
 
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
@@ -565,7 +629,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       dir = (targetPos - attPos).Normalise();
                       dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
 
-                      if (target.IsParrying && dot <= -0.2f && target.DrawnWeapon != null) // PARRY
+                      if (target.CurrentFightMove == FightMoves.Parry && dot <= -0.2f && target.DrawnWeapon != null) // PARRY
                       {
                           var strm = this.BaseInst.GetScriptVobStream();
                           strm.Write((byte)ScriptVobMessageIDs.ParryMessage);
@@ -574,7 +638,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       }
                       else // HIT
                       {
-                          target.Hit(this, 5);
+                          int damage = (this.DrawnWeapon == null ? 10 : this.DrawnWeapon.Damage);
+
+                          target.Hit(this, damage);
                       }
                   });
             }

@@ -9,6 +9,12 @@ namespace GUC.WorldObjects.VobGuiding
 {
     public abstract partial class GuidedVob : BaseVob
     {
+        public delegate void ChangePosDirHandler(GuidedVob vob, Vec3f oldPos, Vec3f oldDir);
+        /// <summary>
+        /// Will not fire for NPCs! The NPC class has its own event.
+        /// </summary>
+        public static event ChangePosDirHandler OnChangePosDir;
+
         #region Network Messages
 
         new internal static class Messages
@@ -19,6 +25,9 @@ namespace GUC.WorldObjects.VobGuiding
                 GuidedVob vob;
                 if (world.TryGetVob(id, out vob) && vob.guide == client)
                 {
+                    var oldPos = vob.GetPosition();
+                    var oldDir = vob.GetDirection();
+
                     var pos = stream.ReadCompressedPosition();
                     var dir = stream.ReadCompressedDirection();
                     int bitfield = stream.ReadShort();
@@ -35,6 +44,9 @@ namespace GUC.WorldObjects.VobGuiding
                     {
                         client.UpdateVobList(world, pos);
                     }*/
+
+                    if (OnChangePosDir != null)
+                        OnChangePosDir(vob, oldPos, oldDir);
                 }
             }
 
@@ -92,7 +104,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         bool needsClientGuide = false;
         public bool NeedsClientGuide { get { return this.needsClientGuide; } }
-        
+
         partial void pSpawn(World world, Vec3f position, Vec3f direction)
         {
             if (this.needsClientGuide)
@@ -185,7 +197,7 @@ namespace GUC.WorldObjects.VobGuiding
             this.currentCmd = cmd;
         }
 
-        public void RemoveGuideCommand ()
+        public void RemoveGuideCommand()
         {
             SetGuideCommand(null);
         }

@@ -120,12 +120,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public void AddOverlay(ScriptOverlay overlay)
         {
             this.baseDef.AddOverlay(overlay.BaseOverlay);
+            pAddOverlay(overlay);
         }
 
         partial void pRemoveOverlay(ScriptOverlay overlay);
         public void RemoveOverlay(ScriptOverlay overlay)
         {
             this.baseDef.RemoveOverlay(overlay.BaseOverlay);
+            pRemoveOverlay(overlay);
         }
 
         #endregion

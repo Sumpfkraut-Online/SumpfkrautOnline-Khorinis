@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +8,7 @@ using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ScriptAni : ExtendedObject, Animation.IScriptAnimation
+    public partial class ScriptAni : ExtendedObject, Animation.IScriptAnimation, IEnumerable<SpecialFrame>
     {
         #region Constructors
 
@@ -16,12 +17,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             this.StartFrame = startFrame;
             this.EndFrame = endFrame;
         }
-
+        
         #endregion
 
         #region Properties
 
         #region Special Frames
+
+        public void Add(SpecialFrame index, float value)
+        {
+            SetSpecialFrame(index, value);
+        }
 
         Dictionary<SpecialFrame, float> specialFrames;
 
@@ -42,6 +48,16 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 return;
             }
             specialFrames.Add(index, value);
+        }
+
+        public IEnumerator<SpecialFrame> GetEnumerator()
+        {
+            throw new NotImplementedException();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

@@ -12,7 +12,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         protected override Dictionary<string, string> aniDict { get { return AniDict; } }
         static readonly Dictionary<string, string> AniDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
-            // Fist attacks
+            // Fists
+            { "drawfists_part0", "DrawFists.Draw" },
+            { "undrawfists_part0", "DrawFists.Undraw" },
+            { "drawfists_running", "DrawFists.DrawWhileRunning" },
+            { "undrawfists_running", "DrawFists.UndrawWhileRunning" },
+
             { "fistattack_fwd0", "FightFist.Fwd[0]" },
             { "fistattack_fwd1", "FightFist.Fwd[1]" },
 
@@ -20,16 +25,23 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "fist_parade", "FightFist.Parry[0]" },
             { "fist_jumpback", "FightFist.Dodge" },
 
+            // 1H
+            { "draw1h_part0", "Draw1H.Draw" },
+            { "undraw1h_part0", "Draw1H.Undraw" },
+            { "draw1h_running", "Draw1H.DrawWhileRunning" },
+            { "undraw1h_running", "Draw1H.UndrawWhileRunning" },
 
-            // 1H Handling
-            { "s_1HAttack", "Fight1H.Fwd" },
-            { "t_1HAttackL", "Fight1H.Left" },
-            { "t_1HAttackR", "Fight1H.Right" },
-            { "t_1HAttackMove", "Fight1H.Run" },
-            { "t_1HParade_0", "Fight1H.Parry[0]" },
-            { "t_1HParade_0_A2", "Fight1H.Parry[1]" },
-            { "t_1HParade_0_A3", "Fight1H.Parry[2]" },
-            { "t_1HParadeJumpB", "Fight1H.Dodge" },
+            { "1HAttack_fwd0", "Fight1H.Fwd[0]" },
+            { "1HAttack_fwd1", "Fight1H.Fwd[1]" },
+            { "1HAttack_fwd2", "Fight1H.Fwd[2]" },
+            { "1HAttack_fwd3", "Fight1H.Fwd[3]" },
+            { "1hAttack_left", "Fight1H.Left" },
+            { "1hAttack_right", "Fight1H.Right" },
+            { "1hattack_run", "Fight1H.Run" },
+            { "1h_parade0", "Fight1H.Parry[0]" },
+            { "1h_parade1", "Fight1H.Parry[1]" },
+            { "1h_parade2", "Fight1H.Parry[2]" },
+            { "1h_dodge", "Fight1H.Dodge" },
             
             // 2h attacks
             { "s_2HAttack", "Fight2H.Fwd" },
@@ -61,16 +73,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_JOINT_Stand_2_S0", "ItemHandling.SmokeAJoint" },
             { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
 
-            // Weapon Drawing
-            { "drawfists_part0", "DrawFists.Draw" },
-            { "undrawfists_part0", "DrawFists.Undraw" },
-            { "drawfists_running", "DrawFists.DrawWhileRunning" },
-            { "undrawfists_running", "DrawFists.UndrawWhileRunning" },
 
-            { "sok_draw1H", "Draw1H.Draw" },
-            { "sok_undraw1H", "Draw1H.Undraw" },
-            { "t_Move_2_1hMove", "Draw1H.DrawWhileRunning" },
-            { "t_1hMove_2_Move", "Draw1H.UndrawWhileRunning" },
 
             { "sok_draw2H", "Draw2H.Draw" },
             { "sok_undraw2H", "Draw2H.Undraw" },

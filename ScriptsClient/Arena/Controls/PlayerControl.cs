@@ -6,8 +6,6 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using WinApi.User.Enumeration;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Networking;
-using GUC.Scripts.Sumpfkraut.Menus;
-using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Scripts.Sumpfkraut.Controls;
 
 namespace GUC.Scripts.Arena.Controls
@@ -18,11 +16,49 @@ namespace GUC.Scripts.Arena.Controls
         {
             { KeyBind.Jump, d => { if (d) NPCInst.Requests.Jump(ScriptClient.Client.Character); } },
             { KeyBind.DrawFists, d => { if (d) NPCInst.Requests.DrawFists(ScriptClient.Client.Character); } },
-            { KeyBind.MoveForward, d => { if (d && KeyBind.Action.IsPressed()) NPCInst.Requests.Attack(ScriptClient.Client.Character, FightMoves.Fwd); } },
-            { KeyBind.MoveBack, d => { if (d && KeyBind.Action.IsPressed()) NPCInst.Requests.Attack(ScriptClient.Client.Character, FightMoves.Parry); } },
-            { KeyBind.Action, d => { if (d && KeyBind.MoveForward.IsPressed()) NPCInst.Requests.Attack(ScriptClient.Client.Character, FightMoves.Run); } },
+            { KeyBind.MoveForward, d => CheckFightMove(d, FightMoves.Fwd) },
+            { KeyBind.TurnLeft, d => CheckFightMove(d, FightMoves.Left) },
+            { KeyBind.TurnRight, d => CheckFightMove(d, FightMoves.Right) },
+            { KeyBind.MoveBack, d => CheckFightMove(d, FightMoves.Parry) },
+            { KeyBind.Action, PlayerActionButton },
+            { KeyBind.DrawWeapon, DrawWeapon },
         };
 
+        static void DrawWeapon(bool down)
+        {
+            if (!down) return;
+
+            var hero = ScriptClient.Client.Character;
+            if (hero.ModelInst.IsInAnimation())
+                return;
+
+            if (hero.MeleeWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
+            else if (hero.DrawnWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+            else
+                NPCInst.Requests.DrawFists(hero);
+        }
+
+        static void CheckFightMove(bool down, FightMoves move)
+        {
+            if (!down || !KeyBind.Action.IsPressed())
+                return;
+
+            var hero = ScriptClient.Client.Character;
+            if (hero.IsInFightMode)
+            {
+                NPCInst.Requests.Attack(hero, move);
+            }
+        }
+
+        static void PlayerActionButton(bool down)
+        {
+            if (KeyBind.MoveForward.IsPressed())
+                CheckFightMove(down, FightMoves.Run);
+        }
+
+        long nextDodgeTime = 0;
         void PlayerUpdate()
         {
             fwdTelHelper.Update(GameTime.Ticks);
@@ -53,7 +89,16 @@ namespace GUC.Scripts.Arena.Controls
                 }
                 else if (KeyBind.MoveBack.IsPressed()) // move backward
                 {
-                    hero.SetMovement(NPCMovement.Backward);
+                    if (hero.IsInFightMode)
+                    {
+                        if (nextDodgeTime < GameTime.Ticks) // don't spam
+                        {
+                            NPCInst.Requests.Attack(hero, FightMoves.Dodge);
+                            nextDodgeTime = GameTime.Ticks + 50 * TimeSpan.TicksPerMillisecond;
+                        }
+                    }
+                    else
+                        hero.SetMovement(NPCMovement.Backward);
                 }
                 else // not moving
                 {

@@ -32,7 +32,7 @@ namespace GUC.Hooks
             {
                 vob.Model.ForEachActiveAniPredicate(aa =>
                 {
-                    if (aa.AniJob.Name == aniName)
+                    if (string.Equals(aa.AniJob.Name,aniName, StringComparison.OrdinalIgnoreCase))
                     {
                         // guc ani
                         float startFrame = aa.Ani.StartFrame;
@@ -42,7 +42,6 @@ namespace GUC.Hooks
 
                         float actFrame = startFrame + (endFrame - startFrame) * percent;
                         gActiveAni.SetActFrame(actFrame);
-
                         return false;
                     }
                     return true;

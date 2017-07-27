@@ -60,7 +60,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
-           if (item.BaseInst.IsEquipped)
+            if (item.BaseInst.IsEquipped)
             {
                 pBeginUnequipItem(item);
             }
@@ -191,7 +191,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         int index = Randomizer.GetInt(hitSounds.Count);
                         SoundHandler.PlaySound3D(hitSounds[index], target);
 
-                        index = Randomizer.GetInt(6)-2;
+                        index = Randomizer.GetInt(6) - 2;
                         if (index > 0)
                         {
                             string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
@@ -228,59 +228,58 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             UpdateFightStance();
 
-            /*var fightAni = (ScriptAniJob)this.GetFightAni()?.Ani.AniJob.ScriptObject;
-            if (fightAni != null && fightAni.IsAttack)
-            {
+            if (this.IsInFightMode && this.ModelInst.GetActiveAniFromLayer(1) != null)
+            {  // show weapon trails, fixme ? might not be a fight ani
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
+            }
+
+            /*var activeJumpAni = GetJumpAni();
+            if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
+            {
+                var gVob = this.BaseInst.gVob;
+                var ai = gVob.HumanAI;
+                if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
+                {
+                    // LAND
+                    int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
+                    ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
+                }
             }*/
 
-        /*var activeJumpAni = GetJumpAni();
-        if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
-        {
-            var gVob = this.BaseInst.gVob;
-            var ai = gVob.HumanAI;
-            if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
+            /*if (this.drawnWeapon != null)
             {
-                // LAND
-                int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
-                ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
-            }
-        }*/
+                var gModel = this.BaseInst.gVob.GetModel();
 
-        /*if (this.drawnWeapon != null)
-        {
-            var gModel = this.BaseInst.gVob.GetModel();
+                int aniID;
+                if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
+                {
+                    aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
+                }
+                else if (this.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+                {
+                    aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
+                }
+                else
+                {
+                    return;
+                }
 
-            int aniID;
-            if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
-            {
-                aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
-            }
-            else if (this.DrawnWeapon.ItemType == ItemTypes.WepXBow)
-            {
-                aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
-            }
-            else
-            {
-                return;
-            }
+                var aa = gModel.GetActiveAni(aniID);
 
-            var aa = gModel.GetActiveAni(aniID);
+                if (this.isAiming)
+                {
+                    if (aa.Address == 0)
+                        gModel.StartAni(aniID, 0);
+                }
+                else
+                {
+                    if (aa.Address != 0)
+                        gModel.StopAni(aa);
+                }
+            }*/
+        }
 
-            if (this.isAiming)
-            {
-                if (aa.Address == 0)
-                    gModel.StartAni(aniID, 0);
-            }
-            else
-            {
-                if (aa.Address != 0)
-                    gModel.StopAni(aa);
-            }
-        }*/
-    }
-
-    public void StartAnimation(Animations.Animation ani, object[] netArgs)
+        public void StartAnimation(Animations.Animation ani, object[] netArgs)
         {
             /*ScriptAni a = (ScriptAni)ani.ScriptObject;
 
@@ -448,7 +447,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 gNpc.FMode = fmode;
                 ai.SetFightAnis(fmode);
                 ai.SetWalkMode(0);
-                
+
                 // override active animations from the old animation set
                 var gModel = gNpc.GetModel();
                 if (running)

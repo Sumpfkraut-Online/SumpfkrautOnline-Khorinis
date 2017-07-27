@@ -47,12 +47,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public void ApplyOverlay(ScriptOverlay overlay)
         {
-            
+            this.BaseInst.ApplyOverlay(overlay.BaseOverlay);
         }
 
         public void RemoveOverlay(ScriptOverlay overlay)
         {
-
+            this.BaseInst.RemoveOverlay(overlay.BaseOverlay);
         }
 
         #endregion

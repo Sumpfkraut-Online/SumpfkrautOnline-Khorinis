@@ -33,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 if (this.Host.DrawnWeapon != null)
                 {
-                    throw new NotImplementedException();
+                    return;
                     //this.UnequipItem(this.DrawnWeapon);
                 }
                 else
@@ -47,19 +47,43 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
+        public void TryDrawWeapon(ItemInst item)
+        {
+            if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
+                return;
+            
+            if (this.Host.IsInFightMode)
+            {
+                if (this.Host.DrawnWeapon != null)
+                {
+                    this.Host.DoUndrawWeapon(Host.DrawnWeapon);
+                }
+                else
+                {
+                    this.Host.DoUndrawFists();
+                }
+            }
+            else
+            {
+                this.Host.DoDrawWeapon(item);
+            }
+        }
+
         public void TryFightMove(FightMoves move)
         {
             if (Host.IsDead || Host.Environment.InAir)
                 return;
             
             var otherAni = Host.ModelInst.GetActiveAniFromLayer(1);
-            if (otherAni != null && otherAni.Ani.ScriptObject != Host.FightAnimation)
+            if (otherAni != null && otherAni != Host.FightAnimation)
                 return;
             
             if (Host.FightAnimation != null)
             {
                 if (Host.CanCombo)
-                    Host.DoFightMove(move, Host.ComboNum + 1);
+                {
+                    Host.DoFightMove(move, Host.CurrentFightMove == FightMoves.Fwd ? Host.ComboNum + 1 : 0);
+                }
             }
             else
             {

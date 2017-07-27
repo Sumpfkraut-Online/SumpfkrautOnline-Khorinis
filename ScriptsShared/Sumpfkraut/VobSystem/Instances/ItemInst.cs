@@ -51,6 +51,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public bool IsWepRanged { get { return this.Definition.IsWepRanged; } }
         public bool IsWepMelee { get { return this.Definition.IsWepMelee; } }
 
+
         public ItemContainers.ScriptInventory.IContainer Container
         {
             get
