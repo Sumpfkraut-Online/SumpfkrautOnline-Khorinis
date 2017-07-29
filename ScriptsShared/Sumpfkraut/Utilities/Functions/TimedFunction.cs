@@ -39,8 +39,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         // how many times the TimedFunction was invoked already
         protected long invocations;
         public long GetInvocations () { lock (_lock) { return invocations; } }
-        public void SetInvocations (long value) { lock (_lock) { invocations = value; } }
-        public void IterateInvocations (int it) { lock (_lock) { invocations += it; } }
+        protected void SetInvocations (long value) { lock (_lock) { invocations = value; } }
+        protected void IterateInvocations (int it) { lock (_lock) { invocations += it; } }
         public bool HasInvocationsLeft
         {
             get
@@ -70,9 +70,17 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         // max limit to invocations
         protected bool hasMaxInvocations;
-        public bool HasMaxInvocations { get { return hasMaxInvocations; } }
+        public bool HasMaxInvocations { get { lock (_lock) { return hasMaxInvocations; } } }
         protected long maxInvocations;
-        public long GetMaxInvocations () { return maxInvocations; }
+        public long GetMaxInvocations () { lock (_lock) { return maxInvocations; } }
+        public void SetMaxInvocations (long value)
+        {
+            lock (_lock)
+            {
+                maxInvocations = value;
+                hasMaxInvocations = true;
+            }
+        }
 
         // crisp DateTimes at which to call the function
         protected bool hasSpecifiedTimes;
@@ -177,12 +185,36 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         }
 
         protected DateTime lastIntervalTime;
-        public DateTime GetLastIntervalTime () { lock (_lock) { return lastIntervalTime; } }
-        public void SetLastIntervalTime (DateTime value) { lock (_lock) { lastIntervalTime = value; } }
+        public bool TryGetLastIntervalTime (out DateTime lastTime)
+        {
+            lastTime = lastIntervalTime;
+
+            lock (_lock)
+            {
+                return HasIntervals;
+            }
+        }
+        public bool TryGetNextIntervalTime (out DateTime nextTime)
+        {
+            bool success = false;
+            nextTime = DateTime.MaxValue;
+            TimeSpan lastInterval;
+            DateTime lastIntervalTime;
+
+            lock (_lock)
+            {
+                if (!TryGetLastInterval(out lastInterval)) { return false; }
+                if (!TryGetLastIntervalTime(out lastIntervalTime)) { return false; }
+                nextTime = lastIntervalTime + lastInterval;
+                success = true;
+            }
+
+            return success;
+        }
 
         protected int lastIntervalIndex;
         public int GetLastIntervalIndex () { lock (_lock) { return lastIntervalIndex; } }
-        public void SetLastIntervalIndex (int value)
+        protected void SetLastIntervalIndex (int value)
         {
             lock (_lock)
             {
@@ -191,7 +223,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 else { lastIntervalIndex = 0; }
             }
         }
-        public int IterateIntervalIndex (int it)
+        protected int IterateIntervalIndex (int it)
         {
             int index = -1;
             lock (_lock)
@@ -223,13 +255,34 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             return referenceTime > GetEnd();
         }
 
+        public bool TryGetNextInvocationTime (out DateTime nextTime)
+        {
+            bool success = false;
+            nextTime = DateTime.Now;
+            
+            lock (_lock)
+            {
+                switch (nextInvocationType)
+                {
+                    case InvocationType.Interval:
+                        success = TryGetNextIntervalTime(out nextTime);
+                        break;
+                    case InvocationType.SpecifiedTime:
+                        success = TryGetNextSpecifiedTime(out nextTime);
+                        break;
+                }
+            }
+
+            return success;
+        }
+
         protected InvocationType lastInvocationType;
         public InvocationType GetLastInvocationType () { lock (_lock) { return lastInvocationType; } }
-        public void SetLastInvocationType (InvocationType value) { lock (_lock) { lastInvocationType = value; } }
+        protected void SetLastInvocationType (InvocationType value) { lock (_lock) { lastInvocationType = value; } }
 
         protected InvocationType nextInvocationType;
         public InvocationType GetNextInvocationType () { lock (_lock) { return nextInvocationType; } }
-        public void SetNextInvocationType (InvocationType value) { lock (_lock) { nextInvocationType = value; } }
+        protected void SetNextInvocationType (InvocationType value) { lock (_lock) { nextInvocationType = value; } }
 
 
 
@@ -284,16 +337,55 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 hasStartEnd = true;
                 this.startEnd = startEnd;
             }
+
+            // give first values for last and next invocation
+            lastInvocationType = InvocationType.Undefined;
+            var nextType = InvocationType.Undefined;
+            var nextTime = DateTime.MinValue;
+            if (TryGetNextInvocation(DateTime.MinValue, out nextType, out nextTime))
+            {
+                SetNextInvocationType(nextType);
+            }
         }
 
 
 
-        public bool TryIterateNextInvocation (DateTime referenceTime)
+        public int InvokeFunction (int callAmount)
+        {
+            var invokes = 0;
+            var invokesLeft = 0L;
+
+            // return prematurely because no invocations are left
+            if (!TryGetInvocationsLeft(out invokesLeft)) { return 0; }
+
+            // correct callAmount down if not enough invocations left
+            callAmount = invokesLeft >= callAmount ? callAmount : (int) invokesLeft;
+
+            try
+            {
+                for (int i = 0; i < callAmount; i++)
+                {
+                    // call the function with parameters and iterate the number of calls
+                    // while updating the parameter set
+                    SetParameters( GetFunc()(GetParameters()) );
+                    invokes++;
+                }
+            }
+            catch (Exception ex)
+            {
+                MakeLogError(ex);
+            }
+
+            return invokes;
+        }
+
+        public bool TryGetNextInvocation (DateTime referenceTime, 
+            out InvocationType nextType, out DateTime nextTime)
         {
             var success = false;
-            var nextInvocationType = InvocationType.Undefined;
-            // set to max. DateTime first to ease comparisons later
-            var nextTime = DateTime.MaxValue;
+            nextType = InvocationType.Undefined;
+            // set to max. DateTime first to ease time comparisons later
+            nextTime = DateTime.MaxValue;
 
             lock (_lock)
             {
@@ -308,113 +400,75 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
                 // determine possible next specified time
                 success = TryGetNextSpecifiedTime(out nextTime);
-                if (success) { nextInvocationType = InvocationType.SpecifiedTime; }
+                if (success) { nextType = InvocationType.SpecifiedTime; }
 
                 // detect interval and compare with possible previous specified time
                 TimeSpan lastInterval;
                 if (TryGetLastInterval(out lastInterval))
                 {
-                    var lastIntervalTime = GetLastIntervalTime();
-                    var nextIntervalTime = lastIntervalTime + lastInterval;
-                    Print(lastIntervalTime);
+                    DateTime nextIntervalTime;
+                    if (!TryGetNextIntervalTime(out nextIntervalTime))
+                    {
+                        MakeLogError("TryGetLastInterval succeeded but TryGetNextIntervalTime failed in TimedFunction.TryIterateNextInvocation");
+                    }
+
                     // only take intervals into account which would have been invocated in the meantime
                     if (nextIntervalTime <= GetEnd())
                     {
                         if (nextIntervalTime < nextTime)
                         {
                             nextTime = nextIntervalTime;
-                            nextInvocationType = InvocationType.SpecifiedTime;
+                            nextType = InvocationType.Interval;
                             success = true;
                         }
                     }
-                }
-
-                if (nextInvocationType != InvocationType.Undefined)
-                {
-                    switch (nextInvocationType)
-                    {
-                        case InvocationType.SpecifiedTime:
-                            IterateSpecifiedTimeIndex(1);
-                            break;
-                        case InvocationType.Interval:
-                            IterateIntervalIndex(1);
-                            break;
-                        default:
-                            break;
-                    }
-                    SetLastInvocationType(GetNextInvocationType());
-                    SetNextInvocationType(nextInvocationType);
                 }
             }
 
             return success;
         }
 
+        public bool TryIterateNextInvocation ()
+        {
+            return TryIterateNextInvocation(DateTime.Now);
+        }
 
+        public bool TryIterateNextInvocation (DateTime referenceTime)
+        {
+            var success = false;
+            var nextType = InvocationType.Undefined;
+            // set to max. DateTime first to ease time comparisons later
+            var nextTime = DateTime.MaxValue;
 
-        //// find next possible invocation time and type and iterate necessary entries 
-        //// while NOT invoking the function itself
-        //public bool TryPrepareNextInvocation (DateTime referenceTime, out DateTime nextTime)
-        //{
-        //    var success = false;
-        //    var nextInvocationType = InvocationType.Undefined;
-        //    // set to max. DateTime first to ease comparisons later
-        //    nextTime = DateTime.MaxValue;
+            lock (_lock)
+            {
+                if (!TryGetNextInvocation(referenceTime, out nextType, out nextTime)) { return false; }
+                
+                if (nextType != InvocationType.Undefined)
+                {
+                    // take previous next type and set it as last
+                    SetLastInvocationType(GetNextInvocationType());
+                    // establish the new next type
+                    SetNextInvocationType(nextType);
 
-        //    lock (_lock)
-        //    {
-        //        // detect invocation limit
-        //        if (!HasInvocationsLeft) { return success; }
+                    switch (nextType)
+                    {
+                        case InvocationType.SpecifiedTime:
+                            IterateSpecifiedTimeIndex(1);
+                            success = true;
+                            break;
+                        case InvocationType.Interval:
+                            IterateIntervalIndex(1);
+                            success = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
 
-        //        // time limits
-        //        var hasExpired = HasExpired(referenceTime);
-        //        var preserveExpired = GetPreserveDueInvocations();
-        //        // if expiration date reached and no intent to preserve possible left out invocations
-        //        if (hasExpired && (!preserveExpired)) { return success; }
-
-        //        // determine possible next specified time
-        //        success = TryGetNextSpecifiedTime(out nextTime);
-        //        if (success) { nextInvocationType = InvocationType.SpecifiedTime; }
-
-        //        // detect interval and compare with possible previous specified time
-        //        TimeSpan lastInterval;
-        //        if (TryGetLastInterval(out lastInterval))
-        //        {
-        //            var lastIntervalTime = GetLastIntervalTime();
-        //            var nextIntervalTime = lastIntervalTime + lastInterval;
-        //            Print(lastIntervalTime);
-        //            // only take intervals into account which would have been invocated in the meantime
-        //            if (nextIntervalTime <= GetEnd())
-        //            {
-        //                if (nextIntervalTime < nextTime)
-        //                {
-        //                    nextTime = nextIntervalTime;
-        //                    nextInvocationType = InvocationType.SpecifiedTime;
-        //                    success = true;
-        //                }
-        //            }
-        //        }
-
-        //        if (nextInvocationType != InvocationType.Undefined)
-        //        {
-        //            switch (nextInvocationType)
-        //            {
-        //                case InvocationType.SpecifiedTime:
-        //                    IterateSpecifiedTimeIndex(1);
-        //                    break;
-        //                case InvocationType.Interval:
-        //                    IterateIntervalIndex(1);
-        //                    break;
-        //                default:
-        //                    break;
-        //            }
-        //            SetLastInvocationType(GetNextInvocationType());
-        //            SetNextInvocationType(nextInvocationType);
-        //        }
-        //    }
-
-        //    return success;
-        //}
+            return success;
+        }
 
     }
 

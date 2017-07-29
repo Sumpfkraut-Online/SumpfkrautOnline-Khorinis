@@ -309,27 +309,47 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            var startTime = DateTime.Now;
-
-            var timeSpans1 = new TimeSpan[]
-            {
-                new TimeSpan(0, 0, 0, 1, 0),
-                new TimeSpan(0, 0, 0, 5, 0),
-                new TimeSpan(0, 0, 0, 10, 0)
-            };
-
-            var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(60)));
-            tf1.SetFunc((object[] param) =>
-            {
-                //Logger.Print((startTime - DateTime.Now).Milliseconds);
-                //Logger.Print(DateTime.Now);
-                return param;
-            });
-
             var fm = new FunctionManager();
             fm.Start();
-            fm.Add(tf1, 1, true);
 
+
+            var startTime = DateTime.Now;
+
+            var specTimes = new DateTime[]
+            {
+                startTime.AddMilliseconds(500),
+                startTime.AddMilliseconds(1000),
+                startTime.AddMilliseconds(2000),
+            };
+
+            var intervals = new TimeSpan[]
+            {
+                new TimeSpan(0, 0, 0, 0, 500),
+                new TimeSpan(0, 0, 0, 2, 0),
+                new TimeSpan(0, 0, 0, 5, 0)
+            };
+
+            Func<object[], object[]> func1 = (object[] param) =>
+            {
+                Logger.Print("Interval... " + DateTime.Now);
+                return param;
+            };
+
+            Func<object[], object[]> func2 = (object[] param) =>
+            {
+                Logger.Print("SpecTime... " + DateTime.Now);
+                return param;
+            };
+
+            var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            tf1.SetFunc(func1);
+            //fm.Add(tf1, 1, true);
+
+            var tf2 = new TimedFunction(specTimes, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            tf2.SetFunc(func2);
+            tf2.SetMaxInvocations(5);
+            fm.Add(tf2, 1, true);
+            
             Program.OnTick += fm.Run;
 
 

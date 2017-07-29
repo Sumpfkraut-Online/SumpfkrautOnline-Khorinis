@@ -135,7 +135,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 // only add to storage and schedule if not already expired
                 DateTime nextTime;
-                if (TryFindNextInvocation(DateTime.Now, action.TF, out nextTime))
+                if (action.TF.TryGetNextInvocationTime(out nextTime))
                 {
                     storage.Add(action.TF, action.Amount);
                     AddToSchedule(nextTime, action.TF);
@@ -270,87 +270,14 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
         // only use in internally in Run-method
-        protected bool TryFindNextInvocation (DateTime referenceTime, TimedFunction tf, out DateTime nextTime)
-        {
-            var success = false;
-            // set to max. DateTime first to ease comparisons later
-            nextTime = DateTime.MaxValue;
-
-            // detect invocation limit
-            if (!tf.HasInvocationsLeft) { return success; }
-
-            // time limits
-            var hasExpired = tf.HasExpired(referenceTime);
-            var preserveExpired = tf.GetPreserveDueInvocations();
-            // if expiration date reached and no intent to preserve possible left out invocations
-            if (hasExpired && (!preserveExpired)) { return success; }
-
-            // determine possible next specified time
-            success = tf.TryGetNextSpecifiedTime(out nextTime);
-
-            // detect interval and compare with possible previous specified time
-            TimeSpan lastInterval;
-            if (tf.TryGetLastInterval(out lastInterval))
-            {
-                var lastIntervalTime = tf.GetLastIntervalTime();
-                var nextIntervalTime = lastIntervalTime + lastInterval;
-                Print(lastIntervalTime);
-                // only take intervals into account which would have been invocated in the meantime
-                if (nextIntervalTime <= tf.GetEnd())
-                {
-                    if (nextIntervalTime < nextTime)
-                    {
-                        nextTime = nextIntervalTime;
-                        success = true;
-                    }
-                }
-            }
-
-            return success;
-        }
-
-        // only use in internally in Run-method
         protected int InvokeFunction (TimedFunction tf)
         {
             int callAmount;
             if (storage.TryGetValue(tf, out callAmount))
             {
-                return InvokeFunction(tf, callAmount);
+                return tf.InvokeFunction(callAmount);
             }
             else { return 0; }
-        }
-
-        // only use in internally in Run-method
-        protected int InvokeFunction (TimedFunction tf, int callAmount)
-        {
-            var invokes = 0;
-            var invocationType = InvocationType.Undefined;
-
-            try
-            {
-                for (int i = 0; i < callAmount; i++)
-                {
-                    // actually call the function with parameters and iterate the number of calls
-                    tf.SetParameters( tf.GetFunc()(tf.GetParameters()) );
-                    tf.IterateInvocations(1);
-                    // iterate at the type / cause of the invocation (i.e. to progress to next specified time)
-                    invocationType = tf.GetNextInvocationType();
-                    tf.SetLastInvocationType(invocationType);
-                    switch (invocationType)
-                    {
-                        case InvocationType.Interval:
-                            tf.IterateIntervalIndex(1);xxx
-                            break;
-                    }
-                    invokes++;
-                }
-            }
-            catch (Exception ex)
-            {
-                MakeLogError(ex);
-            }
-
-            return invokes;
         }
 
 
@@ -378,7 +305,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     var now = DateTime.Now;
                     var lastTime = DateTime.MinValue;
                     if ((schedule.Count < 1) || (schedule.First().Key > now)) { return; }
-                    
+
                     do
                     {
                         // grab the first and thus next list of protocols in the chronologically series
@@ -396,14 +323,15 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                             InvokeFunction(tf);
 
                             // determine if to create a new schedule-entry in a later point in time
-                            if (TryFindNextInvocation(now, tf, out nextTime))
+                            if (tf.TryIterateNextInvocation(now) && tf.TryGetNextInvocationTime(out nextTime))
                             {
                                 AddToSchedule(nextTime, tf);
                             }
                             else
                             {
+                                Print("DELETED!");
                                 // if no further schedule entry possible, remove the expired TimedFunction entirely
-                                // (removal in schedule happened right before already)
+                                // (removal in schedule happened shortly before already)
                                 storage.Remove(tf);
                             }
                         }
