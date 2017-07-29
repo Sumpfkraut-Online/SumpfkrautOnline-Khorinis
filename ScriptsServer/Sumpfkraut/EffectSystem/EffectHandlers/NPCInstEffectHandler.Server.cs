@@ -82,7 +82,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 if (Host.CanCombo)
                 {
-                    Host.DoFightMove(move, Host.CurrentFightMove == FightMoves.Fwd ? Host.ComboNum + 1 : 0);
+                    var current = Host.CurrentFightMove;
+                    if (current == FightMoves.Right && move == FightMoves.Right)
+                        return;
+                    if (current == FightMoves.Left && move == FightMoves.Left)
+                        return;
+
+                    Host.DoFightMove(move, current == FightMoves.Fwd ? Host.ComboNum + 1 : 0);
                 }
             }
             else

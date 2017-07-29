@@ -65,46 +65,49 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 pBeginUnequipItem(item);
             }
 
+            Gothic.Types.zString node;
+            bool undraw = true;
             switch ((SlotNums)slot)
             {
                 case SlotNums.Sword:
-                    gNpc.PutInSlot(oCNpc.NPCNodes.Sword, gItem, true);
+                    node = oCNpc.NPCNodes.Sword;
                     break;
-
                 case SlotNums.Longsword:
-                    gNpc.PutInSlot(oCNpc.NPCNodes.Longsword, gItem, true);
+                    node = oCNpc.NPCNodes.Longsword;
                     break;
-
                 case SlotNums.Bow:
-                    gNpc.PutInSlot(oCNpc.NPCNodes.Bow, gItem, true);
+                    node = oCNpc.NPCNodes.Bow;
                     break;
-
                 case SlotNums.XBow:
-                    gNpc.PutInSlot(oCNpc.NPCNodes.Crossbow, gItem, true);
+                    node = oCNpc.NPCNodes.Crossbow;
                     break;
-
                 case SlotNums.Torso:
+                    node = oCNpc.NPCNodes.Torso;
                     gItem.VisualChange.Set(item.Definition.VisualChange);
-                    gNpc.PutInSlot(oCNpc.NPCNodes.Torso, gItem, true);
                     break;
-
                 case SlotNums.Righthand:
-                    gNpc.PutInSlot(oCNpc.NPCNodes.RightHand, gItem, true);
+                    node = oCNpc.NPCNodes.RightHand;
                     if (item.ItemType == ItemTypes.WepXBow && this.ammo != null)
                     {
                         gNpc.PutInSlot(oCNpc.NPCNodes.LeftHand, ammo.BaseInst.gVob, true);
                     }
+                    undraw = false;
                     break;
                 case SlotNums.Lefthand:
-                    gNpc.PutInSlot(oCNpc.NPCNodes.LeftHand, gItem, true);
+                    node = oCNpc.NPCNodes.LeftHand;
                     if (item.ItemType == ItemTypes.WepBow && this.ammo != null)
                     {
                         gNpc.PutInSlot(oCNpc.NPCNodes.RightHand, ammo.BaseInst.gVob, true);
                     }
+                    undraw = false;
                     break;
                 default:
-                    break;
+                    return;
             }
+            
+            gNpc.PutInSlot(node, gItem, true);
+            PlayDrawItemSound(item, undraw);
+            
             Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
@@ -345,6 +348,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         static SoundInstance sfx_UndrawMetal = new SoundInstance("Undrawsound_ME.wav");
         static SoundInstance sfx_UndrawWood = new SoundInstance("Undrawsound_WO.wav");
+
+        void PlayDrawItemSound(ItemInst item, bool undraw)
+        {
+            SoundInstance sound;
+            switch (item.Definition.Material)
+            {
+                case ItemMaterials.Metal:
+                    sound = undraw ? sfx_UndrawMetal : sfx_DrawMetal;
+                    break;
+                case ItemMaterials.Wood:
+                    sound = undraw ? sfx_UndrawWood : sfx_DrawWood;
+                    break;
+                default:
+                    sound = sfx_DrawGeneric;
+                    break;
+            }
+
+            SoundHandler.PlaySound3D(sound, this.BaseInst);
+        }
 
         GUCTimer drawTimer = new GUCTimer();
         public void StartAniDraw(ScriptAni ani, ItemInst item)

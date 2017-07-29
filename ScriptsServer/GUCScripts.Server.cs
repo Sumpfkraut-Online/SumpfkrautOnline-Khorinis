@@ -535,21 +535,35 @@ namespace GUC.Scripts
             ScriptAniJob job = new ScriptAniJob("1hattack_fwd0", "s_1hattack");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 23) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 15 } });
+            job.AddOverlayAni(new ScriptAni(0, 33) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 14 } }, ov1);
 
             // fwd combo 2
             job = new ScriptAniJob("1hattack_fwd1", "s_1hattack");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(26, 40) { { SpecialFrame.Hit, 7 } });
-            
+            job.AddOverlayAni(new ScriptAni(33, 68) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 15 } }, ov1);
+
+            // fwd combo 3
+            job = new ScriptAniJob("1hattack_fwd2", "s_1hattack");
+            model.AddAniJob(job);
+            job.AddOverlayAni(new ScriptAni(68, 103) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 17 } }, ov1);
+
+            // fwd combo 4
+            job = new ScriptAniJob("1hattack_fwd3", "s_1hattack");
+            model.AddAniJob(job);
+            job.AddOverlayAni(new ScriptAni(103, 120) { { SpecialFrame.Hit, 7 } }, ov1);
+
             // left attack
             job = new ScriptAniJob("1hattack_left", "t_1HAttackL");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 30) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 15 } });
+            job.AddOverlayAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 10 } }, ov1);
 
             // right attack
             job = new ScriptAniJob("1hattack_right", "t_1HAttackR");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 30) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 15 } });
+            job.AddOverlayAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 10 } }, ov1);
 
             // run attack
             job = new ScriptAniJob("1hattack_run", "t_1HAttackMove");

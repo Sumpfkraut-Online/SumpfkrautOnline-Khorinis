@@ -51,9 +51,9 @@ namespace GUC.Scripts.Arena
             npc.Inventory.AddItem(item);
             npc.EquipItem(item);
 
-            //Sumpfkraut.Visuals.ScriptOverlay ov;
-            //if (npc.ModelDef.TryGetOverlay("1HST1", out ov))
-            //    npc.ModelInst.ApplyOverlay(ov);
+            Sumpfkraut.Visuals.ScriptOverlay ov;
+            if (npc.ModelDef.TryGetOverlay("1HST1", out ov))
+                npc.ModelInst.ApplyOverlay(ov);
 
             npc.Spawn(WorldInst.Current);
             this.SetControl(npc);
