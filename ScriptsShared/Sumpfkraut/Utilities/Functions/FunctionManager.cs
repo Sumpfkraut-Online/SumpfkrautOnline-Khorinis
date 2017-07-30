@@ -328,6 +328,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
                             if (tf.TryIterateNextInvocation(now) && tf.TryGetNextInvocationTime(out nextTime))
                             {
+                                Print("GOTCHA " + nextTime);
                                 AddToSchedule(nextTime, tf);
                             }
                             else

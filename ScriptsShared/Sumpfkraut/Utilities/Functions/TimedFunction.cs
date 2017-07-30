@@ -157,14 +157,18 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         {
             lock (_lock)
             {
-                if (!HasIntervals)
+                if (HasIntervals)
                 {
-                    last = TimeSpan.MinValue;
+                    // if it's a normal index use it, else use a standin before the first run of the TimedFunction
+                    if (lastIntervalIndex > -1) { last =  intervals[lastIntervalIndex]; }
+                    else { last = TimeSpan.Zero; }
+                    return true;
+                }
+                else
+                {
+                    last = TimeSpan.Zero;
                     return false;
                 }
-
-                last =  intervals[lastIntervalIndex];
-                return true;
             }
         }
         public bool TryGetNextInterval(out TimeSpan next)
@@ -173,7 +177,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 if (!HasIntervals)
                 {
-                    next = TimeSpan.MinValue;
+                    next = TimeSpan.Zero;
                     return false;
                 }
 
@@ -188,10 +192,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected DateTime lastIntervalTime;
         public bool TryGetLastIntervalTime (out DateTime lastTime)
         {
-            lastTime = lastIntervalTime;
-
             lock (_lock)
             {
+                lastTime = lastIntervalTime;
                 return HasIntervals;
             }
         }
@@ -200,14 +203,17 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             bool success = false;
             nextTime = DateTime.MaxValue;
             TimeSpan lastInterval;
-            DateTime lastIntervalTime;
+            DateTime lastIntervalTime = DateTime.MinValue;
 
             lock (_lock)
             {
-                if (!TryGetLastInterval(out lastInterval)) { return false; }
-                if (!TryGetLastIntervalTime(out lastIntervalTime)) { return false; }
-                nextTime = lastIntervalTime + lastInterval;
-                success = true;
+                if ((TryGetLastInterval(out lastInterval)) 
+                    && (TryGetLastIntervalTime(out lastIntervalTime)))
+                {
+                    Print("==> " + lastIntervalTime + " --- " + lastInterval);
+                    nextTime = lastIntervalTime + lastInterval;
+                    success = true;
+                }
             }
 
             return success;
