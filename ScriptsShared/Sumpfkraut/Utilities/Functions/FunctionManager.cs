@@ -139,6 +139,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 {
                     storage.Add(action.TF, action.Amount);
                     AddToSchedule(nextTime, action.TF);
+                    Print("BUFFER_ADD: " + nextTime + " --- " + action.TF.lastSpecifiedTimeIndex);
                 }
             }
         }
@@ -301,20 +302,23 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     lock (_bufferLock) { IntegrateBuffer(); }
 
                     KeyValuePair<DateTime, List<TimedFunction>> first;
-
                     var now = DateTime.Now;
-                    var lastTime = DateTime.MinValue;
-                    if ((schedule.Count < 1) || (schedule.First().Key > now)) { return; }
 
-                    do
+                    // no schedule means no further processing is necessary
+                    if (schedule.Count < 1) { return; }
+                    // grab the first and thus next list of protocols in the chronologically series
+                    // (need it before the loop)
+                    first = schedule.First();
+
+                    var lastTime = DateTime.MinValue;
+                    // as long as there are schedule entries which are due in respect to their DateTime
+                    while ((schedule.Count > 0) && (first.Key <= now))
                     {
-                        // grab the first and thus next list of protocols in the chronologically series
-                        first = schedule.First();
                         lastTime = first.Key;
-                        // remove first schedule entry now that we have it's data
-                        schedule.Remove(lastTime);
                         // create a copy of the first point in time of the schedule
                         var timedFunctions = first.Value.ToArray();
+                        // remove first schedule entry now that we have it's data
+                        schedule.Remove(lastTime);
 
                         DateTime nextTime;
                         foreach (var tf in timedFunctions)
@@ -322,21 +326,20 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                             // call the function before any more delay occurs
                             InvokeFunction(tf);
 
-                            // determine if to create a new schedule-entry in a later point in time
                             if (tf.TryIterateNextInvocation(now) && tf.TryGetNextInvocationTime(out nextTime))
                             {
                                 AddToSchedule(nextTime, tf);
                             }
                             else
                             {
-                                Print("DELETED!");
-                                // if no further schedule entry possible, remove the expired TimedFunction entirely
-                                // (removal in schedule happened shortly before already)
+                                RemoveFromSchedule(tf);
                                 storage.Remove(tf);
                             }
                         }
+
+                        // get the new first entry of the schedule after removal and possible new addition
+                        first = schedule.Count > 0 ? schedule.First() : first;
                     }
-                    while ((schedule.Count > 0) && (lastTime <= now));
                 }
             }
         }

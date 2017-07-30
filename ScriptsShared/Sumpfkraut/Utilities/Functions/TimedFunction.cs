@@ -12,6 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
     public class TimedFunction : ExtendedObject
     {
 
+        #region attributes
         // used to lock changes on the TimedAction-object
         protected object _lock;
 
@@ -87,17 +88,14 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public bool HasSpecifiedTimes { get { return hasSpecifiedTimes; } }
         protected DateTime[] specifiedTimes;
         public DateTime[] GetSpecifiedTimes () { return specifiedTimes; }
-        public bool TryGetLastSpecifiedTime (out DateTime last)
+        public bool TryGetLastSpecifiedTime (out DateTime lastTime)
         {
+            lastTime = DateTime.MinValue;
+
             lock (_lock)
             {
-                if ((!HasSpecifiedTimes) || (!HasSpecifiedTimesLeft))
-                {
-                    last = DateTime.MinValue;
-                    return false;
-                }
-
-                last = specifiedTimes[lastSpecifiedTimeIndex];
+                if ((!HasSpecifiedTimes) || (!HasSpecifiedTimesLeft))  { return false; }
+                lastTime = specifiedTimes[lastSpecifiedTimeIndex];
                 return true;
             }
         }
@@ -120,15 +118,18 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         }
 
         // to remember which specified times have already been processed
-        protected int lastSpecifiedTimeIndex;
+        public int lastSpecifiedTimeIndex;
         public int GetLastSpecifiedTimeIndex () { lock (_lock) { return lastSpecifiedTimeIndex; } }
         public int SpecifiedTimesLeft ()
         {
             var amount = 0;
             lock (_lock)
             {
-                amount = (specifiedTimes.Length - 1) - lastSpecifiedTimeIndex;
-                amount = amount < 0 ? 0 : amount;
+                if (HasSpecifiedTimes)
+                {
+                    amount = (specifiedTimes.Length - 1) - lastSpecifiedTimeIndex;
+                    amount = amount < 0 ? 0 : amount;
+                }
             }
 
             return amount;
@@ -283,9 +284,11 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         protected InvocationType nextInvocationType;
         public InvocationType GetNextInvocationType () { lock (_lock) { return nextInvocationType; } }
         protected void SetNextInvocationType (InvocationType value) { lock (_lock) { nextInvocationType = value; } }
+        #endregion
 
 
 
+        #region constructors
         // run the action as soon as possible a single time
         public TimedFunction ()
             : this(null, null, null)
@@ -324,6 +327,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             {
                 hasSpecifiedTimes = true;
                 this.specifiedTimes = specifiedTimes;
+                lastSpecifiedTimeIndex = -1;
             }
             if (intervals != null)
             {
@@ -331,6 +335,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 this.intervals = intervals;
                 lastIntervalIndex = 0;
                 lastIntervalTime = DateTime.Now;
+                lastIntervalIndex = -1;
             }
             if (startEnd != null)
             {
@@ -347,6 +352,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 SetNextInvocationType(nextType);
             }
         }
+        #endregion
 
 
 
@@ -443,7 +449,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             lock (_lock)
             {
                 if (!TryGetNextInvocation(referenceTime, out nextType, out nextTime)) { return false; }
-                
+
                 if (nextType != InvocationType.Undefined)
                 {
                     // take previous next type and set it as last
@@ -454,6 +460,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     switch (nextType)
                     {
                         case InvocationType.SpecifiedTime:
+                            //Print("WOOHOOOOOO " + lastSpecifiedTimeIndex);
                             IterateSpecifiedTimeIndex(1);
                             success = true;
                             break;

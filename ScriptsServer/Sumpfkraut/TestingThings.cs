@@ -313,41 +313,45 @@ namespace GUC.Scripts.Sumpfkraut
             fm.Start();
 
 
-            var startTime = DateTime.Now;
+            var startTime = (DateTime.Now);
+            Logger.Print("STTTTAAAAAAARRRTT: " + startTime);
+            var sw = new Stopwatch();
+            sw.Start();
 
             var specTimes = new DateTime[]
             {
-                startTime.AddMilliseconds(500),
-                startTime.AddMilliseconds(1000),
-                startTime.AddMilliseconds(2000),
+                startTime.AddMilliseconds(1000),    // 0
+                startTime.AddMilliseconds(5000),    // 1
+                startTime.AddMilliseconds(10000),   // 2
             };
 
             var intervals = new TimeSpan[]
             {
-                new TimeSpan(0, 0, 0, 0, 500),
-                new TimeSpan(0, 0, 0, 2, 0),
-                new TimeSpan(0, 0, 0, 5, 0)
+                new TimeSpan(0, 0, 0, 1, 0),
+                new TimeSpan(0, 0, 0, 5, 0),
+                new TimeSpan(0, 0, 0, 10, 0)
             };
 
             Func<object[], object[]> func1 = (object[] param) =>
             {
-                Logger.Print("Interval... " + DateTime.Now);
+                Logger.Print("Interval... " + sw.ElapsedMilliseconds);
                 return param;
             };
 
             Func<object[], object[]> func2 = (object[] param) =>
             {
-                Logger.Print("SpecTime... " + DateTime.Now);
+                Logger.Print("SpecTime... " + sw.ElapsedMilliseconds);
                 return param;
             };
 
-            var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
-            tf1.SetFunc(func1);
+            //var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc(func1);
             //fm.Add(tf1, 1, true);
 
-            var tf2 = new TimedFunction(specTimes, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            var tf2 = new TimedFunction(specTimes, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(20)));
             tf2.SetFunc(func2);
             tf2.SetMaxInvocations(5);
+            tf2.SetPreserveDueInvocations(true);
             fm.Add(tf2, 1, true);
             
             Program.OnTick += fm.Run;
