@@ -144,7 +144,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                         {
                             storage.Add(action.TF, action.Amount);
                             AddToSchedule(nextTime, action.TF);
-                            //Print("BUFFER_ADD: " + nextTime);
                         }
                         break;
                     case InvocationType.SpecifiedTime:
@@ -152,7 +151,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                         {
                             storage.Add(action.TF, action.Amount);
                             AddToSchedule(nextTime, action.TF);
-                            //Print("BUFFER_ADD: " + nextTime);
                         }
                         break;
                 }
@@ -275,7 +273,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             if (schedule.TryGetValue(time, out timedFunctions))
             {
                 // possibly remove the schedule entry if it would'nt contain any TimedFunctions anyway
-                if (timedFunctions.Count < 2) { schedule.Remove(time); }
+                if (timedFunctions.Count < 2) { schedule.Remove(time); Print("GOTCHA"); }
                 else { timedFunctions.Remove(tf); }
                 return true;
             }
@@ -343,13 +341,15 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
                             if (tf.TryIterateNextInvocation(now) && tf.TryGetNextInvocationTime(out nextTime))
                             {
-                                //Print("GOTCHA " + nextTime);
                                 AddToSchedule(nextTime, tf);
+                                Print("NEW: " + tf.GetLastInvocationType() + " --- " + schedule.Count 
+                                    + " --- " + storage.Count);
                             }
                             else
                             {
-                                RemoveFromSchedule(tf);
                                 storage.Remove(tf);
+                                Print("TERMINATED: " + tf.GetLastInvocationType() + " --- " + schedule.Count 
+                                    + " --- " + storage.Count);
                             }
                         }
 

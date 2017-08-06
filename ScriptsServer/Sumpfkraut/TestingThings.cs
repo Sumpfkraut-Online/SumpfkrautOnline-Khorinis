@@ -344,7 +344,7 @@ namespace GUC.Scripts.Sumpfkraut
                 return param;
             };
 
-            var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.MaxValue));
+            var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(20)));
             tf1.SetFunc(func1);
             //tf1.SetMaxInvocations(5);
             tf1.SetPreserveDueInvocations(true);
@@ -354,7 +354,7 @@ namespace GUC.Scripts.Sumpfkraut
             tf2.SetFunc(func2);
             tf2.SetMaxInvocations(5);
             tf2.SetPreserveDueInvocations(true);
-            //fm.Add(tf2, 1, true);
+            fm.Add(tf2, 1, true);
 
             Program.OnTick += fm.Run;
 
