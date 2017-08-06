@@ -133,13 +133,28 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
             else
             {
-                // only add to storage and schedule if not already expired
                 DateTime nextTime;
-                if (action.TF.TryGetNextInvocationTime(out nextTime))
+                var nextType = action.TF.GetNextInvocationType();
+                switch (nextType)
                 {
-                    storage.Add(action.TF, action.Amount);
-                    AddToSchedule(nextTime, action.TF);
-                    Print("BUFFER_ADD: " + nextTime + " --- " + action.TF.lastSpecifiedTimeIndex);
+                    case InvocationType.Interval:
+                        // only add to storage and schedule if not already expired
+                        // iterate to next interval to use the time of the previous one
+                        if (action.TF.TryIterateNextInvocation(DateTime.Now) && action.TF.TryGetNextInvocationTime(out nextTime))
+                        {
+                            storage.Add(action.TF, action.Amount);
+                            AddToSchedule(nextTime, action.TF);
+                            //Print("BUFFER_ADD: " + nextTime);
+                        }
+                        break;
+                    case InvocationType.SpecifiedTime:
+                        if (action.TF.TryGetNextInvocationTime(out nextTime))
+                        {
+                            storage.Add(action.TF, action.Amount);
+                            AddToSchedule(nextTime, action.TF);
+                            //Print("BUFFER_ADD: " + nextTime);
+                        }
+                        break;
                 }
             }
         }
@@ -328,7 +343,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
                             if (tf.TryIterateNextInvocation(now) && tf.TryGetNextInvocationTime(out nextTime))
                             {
-                                Print("GOTCHA " + nextTime);
+                                //Print("GOTCHA " + nextTime);
                                 AddToSchedule(nextTime, tf);
                             }
                             else

@@ -118,7 +118,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         }
 
         // to remember which specified times have already been processed
-        public int lastSpecifiedTimeIndex;
+        protected int lastSpecifiedTimeIndex;
         public int GetLastSpecifiedTimeIndex () { lock (_lock) { return lastSpecifiedTimeIndex; } }
         public int SpecifiedTimesLeft ()
         {
@@ -155,20 +155,16 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
         public TimeSpan[] GetIntervals () { return intervals; }
         public bool TryGetLastInterval (out TimeSpan last)
         {
+            last = TimeSpan.Zero;
             lock (_lock)
             {
                 if (HasIntervals)
                 {
                     // if it's a normal index use it, else use a standin before the first run of the TimedFunction
                     if (lastIntervalIndex > -1) { last =  intervals[lastIntervalIndex]; }
-                    else { last = TimeSpan.Zero; }
                     return true;
                 }
-                else
-                {
-                    last = TimeSpan.Zero;
-                    return false;
-                }
+                else { return false; }
             }
         }
         public bool TryGetNextInterval(out TimeSpan next)
@@ -210,7 +206,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 if ((TryGetLastInterval(out lastInterval)) 
                     && (TryGetLastIntervalTime(out lastIntervalTime)))
                 {
-                    Print("==> " + lastIntervalTime + " --- " + lastInterval);
+                    //Print("==> " + lastIntervalTime + " --- " + lastInterval);
                     nextTime = lastIntervalTime + lastInterval;
                     success = true;
                 }
@@ -466,12 +462,12 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                     switch (nextType)
                     {
                         case InvocationType.SpecifiedTime:
-                            //Print("WOOHOOOOOO " + lastSpecifiedTimeIndex);
                             IterateSpecifiedTimeIndex(1);
                             success = true;
                             break;
                         case InvocationType.Interval:
                             IterateIntervalIndex(1);
+                            lastIntervalTime = referenceTime;
                             success = true;
                             break;
                         default:
