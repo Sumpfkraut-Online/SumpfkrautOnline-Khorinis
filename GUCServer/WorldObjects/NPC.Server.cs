@@ -15,6 +15,9 @@ namespace GUC.WorldObjects
     {
         #region Network Messages
 
+        public delegate void NPCChangePosDirHandler(NPC npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
+        public static event NPCChangePosDirHandler OnNPCChangePosDir;
+
         new internal static class Messages
         {
             #region Equipment
@@ -97,6 +100,10 @@ namespace GUC.WorldObjects
                 NPC npc;
                 if (world.TryGetVob(id, out npc) && (npc.guide == client || npc.client == client))
                 {
+                    var oldPos = npc.GetPosition();
+                    var oldDir = npc.GetDirection();
+                    var oldMovement = npc.Movement;
+
                     var pos = stream.ReadCompressedPosition();
                     var dir = stream.ReadCompressedDirection();
                     int bitfield = stream.ReadShort();
@@ -117,6 +124,9 @@ namespace GUC.WorldObjects
                     {
                         client.UpdateVobList(world, pos);
                     }
+
+                    if (OnNPCChangePosDir != null)
+                        OnNPCChangePosDir(npc, oldPos, oldDir, oldMovement);
                 }
             }
 

@@ -16,7 +16,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
             Action<List<List<List<object>>>> callback)
             : base(dataSource, sqlCommand)
         {
-            SetObjName("DBQuery");
             this.callback = callback;
         }
 
@@ -24,7 +23,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
             Action<List<List<List<object>>>> callback)
             : base(dataSource, sqlCommand, dbReaderMode)
         {
-            SetObjName("DBQuery");
             this.callback = callback;
         }
 

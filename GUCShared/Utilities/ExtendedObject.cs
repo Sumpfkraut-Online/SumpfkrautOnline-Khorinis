@@ -8,33 +8,27 @@ namespace GUC.Utilities
 
     public abstract partial class ExtendedObject
     { 
+        #region Properties
 
-        #region attributes
-
-        protected string _objName;
+        protected string _objName = null;
         public virtual string GetObjName ()
         {
-            return _objName;
+            return this._objName ?? this.GetType().Name;
         }
         public virtual void SetObjName (string objName)
         {
-            _objName = objName;
+            this._objName = objName;
         }
 
         #endregion
-
-
-
-        #region constructors
+        
+        #region Constructors
 
         public ExtendedObject ()
         {
-            SetObjName("ExtendedObject");
         }
 
         #endregion
-
-
 
         #region print- and log-methods
 
@@ -177,9 +171,7 @@ namespace GUC.Utilities
         }
 
         #endregion
-
-
-
+        
         // used to build the final output string
         public static string BuildMessage (object[] options, params object[] args)
         {
@@ -193,7 +185,6 @@ namespace GUC.Utilities
         // defines the way to reach the desired output controller where messages are printed to
         // must be completed where this class is needed
         static partial void ToOutputController (int msgType, string msg, params object[] args);
-
     }
 
 }

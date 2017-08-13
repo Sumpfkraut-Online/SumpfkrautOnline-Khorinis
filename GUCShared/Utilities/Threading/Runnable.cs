@@ -22,7 +22,6 @@ namespace GUC.Utilities.Threading
         public Runnable (bool startOnCreate, TimeSpan timeout, bool runOnce)
             : base(startOnCreate, timeout, runOnce)
         {
-            SetObjName("Runnable");
         }
 
 

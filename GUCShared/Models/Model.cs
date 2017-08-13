@@ -19,7 +19,7 @@ namespace GUC.Models
             void ApplyOverlay(Overlay overlay);
             void RemoveOverlay(Overlay overlay);
 
-            void StartAnimation(AniJob ani, float fpsMult);
+            ActiveAni StartAniJob(AniJob aniJob, float fpsMult);
             void StopAnimation(ActiveAni ani, bool fadeOut);
         }
 
@@ -243,17 +243,17 @@ namespace GUC.Models
         /// Starts the given AniJob and calls onStop at the end of the animation. 
         /// Returns a handle to the active animation or null if the animation can't be played (f.e. by not having the right overlays applied).
         /// </summary>
-        public ActiveAni StartAnimation(AniJob aniJob)
+        public ActiveAni StartAniJob(AniJob aniJob)
         {
-            return StartAnimation(aniJob, 1.0f, null);
+            return StartAniJob(aniJob, 1.0f, null);
         }
 
         partial void pStartAnimation(ActiveAni aa, float fpsMult);
         /// <summary> 
-        /// Starts the given AniJob with the given frame speed multiplier value and calls onStop at the end of the animation. 
-        /// Returns false if the AniJob can't be played (f.e not the right overlays applied). 
+        /// Starts the given Animation with the given frame speed multiplier value and calls onStop at the end of the animation. 
+        /// Returns false if the Animation can't be played (f.e not the right overlays applied). 
         /// </summary>
-        public ActiveAni StartAnimation(AniJob aniJob, float fpsMult, FrameActionPair[] pairs)
+        public ActiveAni StartAniJob(AniJob aniJob, float fpsMult, FrameActionPair[] pairs)
         {
             ActiveAni aa = PlayAni(aniJob, fpsMult, pairs);
             pStartAnimation(aa, fpsMult);
@@ -275,7 +275,7 @@ namespace GUC.Models
                 throw new ArgumentException("Frame speed multiplier has to be greater than zero!");
 
             Animation ani;
-            if (!TryGetAniFromJob(aniJob, out ani))
+            if (!this.TryGetAniFromJob(aniJob, out ani))
                 return null;
 
             // search a free ActiveAni

@@ -26,7 +26,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         public AIAgent (List<VobInst> aiClients, BaseAIPersonality aiPersonality = null)
         {
-            SetObjName("AIAgent");
             this.attributeLock = new object();
             this.aiClients = aiClients ?? new List<VobInst>();
             if (aiPersonality == null)

@@ -31,7 +31,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 
         public GuideCommandInfo (GuideCmd guideCommand, VobInst guidedVobInst, DateTime expirationDate)
         {
-            SetObjName("GuideCommandInfo");
             this.guideCommand = guideCommand;
             this.guidedVobInst = guidedVobInst;
             this.creationDate = DateTime.Now;

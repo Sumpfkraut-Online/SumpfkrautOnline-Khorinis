@@ -34,14 +34,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public NPCInstEffectHandler (string objName, List<Effect> effects, NPCInst host) 
             : base(objName, effects, host)
         { }
-
-
-
-        private static void OnHit (NPCInst attacker, NPCInst target, int damage)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 
 }

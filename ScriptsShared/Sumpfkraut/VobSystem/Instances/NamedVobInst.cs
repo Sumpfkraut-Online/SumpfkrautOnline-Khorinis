@@ -18,27 +18,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public NamedVobInst()
         {
-            SetObjName("NamedVobInst");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NamedVobInstEffectHandler(null, this);
             pConstruct();
         }
 
-        protected override BaseVob CreateVob()
+        protected override BaseEffectHandler CreateHandler()
         {
-            return new Vob(new ModelInst(this), this);
+            return new NamedVobInstEffectHandler(null, null, this);
         }
 
         #endregion
 
         #region Properties
-
-        new protected NamedVobInstEffectHandler effectHandler;
-        new public NamedVobInstEffectHandler GetEffectHandler () { return effectHandler; }
+        
+        new public NamedVobInstEffectHandler EffectHandler () { return (NamedVobInstEffectHandler)base.EffectHandler; }
 
         new public NamedVobDef Definition { get { return (NamedVobDef)base.Definition; } set { base.Definition = value; } }
 
         #endregion
-
     }
 
 }

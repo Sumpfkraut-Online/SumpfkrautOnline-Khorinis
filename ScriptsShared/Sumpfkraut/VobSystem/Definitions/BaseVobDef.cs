@@ -15,15 +15,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public abstract partial class BaseVobDef : ExtendedObject, BaseVobInstance.IScriptBaseVobInstance
     {
         #region Constructors
-
-        protected abstract BaseVobInstance CreateVobInstance();
+        
         partial void pConstruct();
         public BaseVobDef()
         {
-            SetObjName("BaseVobDef");
             this.baseDef = CreateVobInstance();
             if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");
+            
+            this.effectHandler = CreateHandler();
+            if (this.effectHandler == null)
+                throw new NullReferenceException("Effect Handler is null!");
+
             pConstruct();
         }
 
@@ -31,11 +34,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
-        protected BaseEffectHandler effectHandler;
-        public BaseEffectHandler GetEffectHandler () { return effectHandler; }
+        // Effect Handler
+        BaseEffectHandler effectHandler;
+        public BaseEffectHandler EffectHandler { get { return effectHandler; } }
+        protected abstract BaseEffectHandler CreateHandler();
 
+        // Definition
         BaseVobInstance baseDef;
         public BaseVobInstance BaseDef { get { return this.baseDef; } }
+        protected abstract BaseVobInstance CreateVobInstance();
 
         public int ID { get { return BaseDef.ID; } }
         public VobTypes VobType { get { return BaseDef.VobType; } }

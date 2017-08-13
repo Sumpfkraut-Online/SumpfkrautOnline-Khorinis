@@ -25,7 +25,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
         public FunctionManager ()
         {
-            SetObjName("FunctionManager");
             _runLock = new object();
             _bufferLock = new object();
             storage = new Dictionary<TimedFunction, int>();

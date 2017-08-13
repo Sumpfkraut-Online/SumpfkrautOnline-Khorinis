@@ -55,8 +55,22 @@ namespace GUC.Animations
             return endTime < 0 ? 0 : (float)(GameTime.Ticks - this.startTime) / (this.endTime - this.startTime);
         }
 
-        TimeActionPair[] actionPairs = new TimeActionPair[0];
-        int pairCount = 0;
+        List<TimeActionPair> actionPairs = new List<TimeActionPair>(1);
+
+        void AddPair(float frame, Action callback, long time)
+        {
+            TimeActionPair pair = new TimeActionPair();
+            pair.Frame = frame;
+            pair.Callback = callback;
+            pair.Time = time < 0 ? long.MaxValue : time;
+            for (int i = 0; i < actionPairs.Count; i++)
+                if (time > actionPairs[i].Time)
+                {
+                    actionPairs.Insert(i, pair);
+                    return;
+                }
+            actionPairs.Add(pair);
+        }
 
         internal void Start(Animation ani, float fpsMult, FrameActionPair[] pairs)
         {
@@ -70,24 +84,17 @@ namespace GUC.Animations
 
                 startTime = GameTime.Ticks;
                 endTime = startTime + (long)(numFrames * coeff);
-                if (pairs != null)
-                {
-                    if (pairs.Length > actionPairs.Length)
-                        actionPairs = new TimeActionPair[pairs.Length];
 
-                    pairCount = 0;
-                    for (int i = 0; i < pairs.Length; i++)
-                        if (pairs[i].Callback != null)
-                        {
-                            actionPairs[pairCount].Frame = pairs[i].Frame;
-                            actionPairs[pairCount].Callback = pairs[i].Callback;
-                            actionPairs[pairCount].Time = startTime + (long)(pairs[i].Frame * coeff);
-                            pairCount++;
-                        }
-                }
-                else
+                if (pairs != null && pairs.Length > 0)
                 {
-                    pairCount = 0;
+                    for (int i = pairs.Length - 1; i >= 0; i--)
+                    {
+                        FrameActionPair pair = pairs[i];
+                        if (pair.Callback != null)
+                        {
+                            AddPair(pair.Frame, pair.Callback, startTime + (long)(pair.Frame * coeff));
+                        }
+                    }
                 }
             }
             else // idle ani
@@ -98,6 +105,8 @@ namespace GUC.Animations
 
         internal void Stop()
         {
+            this.ani = null;
+            this.actionPairs.Clear();
         }
 
         internal void OnTick(long now)
@@ -106,12 +115,17 @@ namespace GUC.Animations
             {
                 if (now < endTime) // still playing
                 {
-                    for (int i = 0; i < pairCount; i++) // check for frame actions
-                        if (actionPairs[i].Callback != null && now >= actionPairs[i].Time)
-                        {
-                            actionPairs[i].Callback();
-                            actionPairs[i].Callback = null;
-                        }
+                    for (int i = actionPairs.Count - 1; i >= 0; i--)
+                    {
+                        if (now < actionPairs[i].Time)
+                            break;
+
+                        actionPairs[i].Callback();
+                        if (this.ani == null) // ani is stopped
+                            break;
+
+                        actionPairs.RemoveAt(i);
+                    }
                 }
                 else
                 {
@@ -127,12 +141,8 @@ namespace GUC.Animations
                     }
 
                     // fire all remaining actions
-                    for (int i = 0; i < pairCount; i++)
-                        if (actionPairs[i].Callback != null)
-                        {
-                            actionPairs[i].Callback();
-                            actionPairs[i].Callback = null;
-                        }
+                    actionPairs.ForEach(p => p.Callback());
+                    actionPairs.Clear();
 
                     // end this animation
                     model.EndAni(this.ani);
@@ -152,22 +162,13 @@ namespace GUC.Animations
                 this.endTime = this.startTime + (long)(numFrames * coeff);
 
                 float elapsedFrames = this.ani.GetFrameNum();
+                for (int i = 0; i < actionPairs.Count; i++)
+                {
+                    var pair = actionPairs[i];
 
-                int newPairCount = 0;
-                for (int i = 0; i < pairCount; i++)
-                    if (actionPairs[i].Callback != null)
-                    {
-                        float newFrame = actionPairs[i].Frame - elapsedFrames;
-                        actionPairs[newPairCount].Frame = newFrame;
-                        actionPairs[newPairCount].Time = endTime + (long)(newFrame * coeff);
-                        if (i != newPairCount)
-                        {
-                            actionPairs[newPairCount].Callback = actionPairs[i].Callback;
-                            actionPairs[i].Callback = null;
-                        }
-                        newPairCount++;
-                    }
-                pairCount = newPairCount;
+                    pair.Frame = pair.Frame - elapsedFrames; // new frame
+                    pair.Time = startTime + (long)(pair.Frame * coeff);
+                }
             }
             else
             {

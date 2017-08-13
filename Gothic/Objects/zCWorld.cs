@@ -22,15 +22,12 @@ namespace Gothic.Objects
 
         public abstract class FuncAddresses
         {
-            public const int RemoveVob = 0x007800C0,
+            public const int RemoveVob = 0x00624B70,
             GetProgressBar = 0x006269C0,
             SetSkyControlerOutdoor = 0x00620410,
             AddVob = 0x00624810,
-            InsertVobInWorld = 0x00780330,
             TraceRayNearestHit = 0x00621B80,
-            TraceRayFirstHit = 0x00621960,
-            DisableVob = 0x00780460;
-
+            TraceRayFirstHit = 0x00621960;
         }
 
         /*public enum HookSize
@@ -195,6 +192,18 @@ namespace Gothic.Objects
             set { Process.Write(Address + VarOffsets.m_bIsInventoryWorld, value); }
         }
 
+        public bool DrawVobBBox3D
+        {
+            get { return Process.ReadBool(Address + 0x224); }
+            set { Process.Write(Address + 0x224, value); }
+        }
+
+        public int BspTreeMode
+        {
+            get { return Process.ReadInt(Address + 0x204); }
+            set { Process.Write(Address + 0x204, value); }
+        }
+
         public int Raytrace_FoundHit
         {
             get { return Process.ReadInt(Address + VarOffsets.raytrace_foundHit); }
@@ -292,25 +301,24 @@ namespace Gothic.Objects
             }
         }
 
+        public void Render(zCCamera camera)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x621700, camera);
+        }
 
         public zCTree<zCVob> AddVob(zCVob vob)
         {
             return Process.THISCALL<zCTree<zCVob>>(Address, FuncAddresses.AddVob, vob);
         }
 
-        public void InsertVobInWorld(zCVob vob)
-        {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.InsertVobInWorld, vob);
-        }
-
-        public void RemoveVob(zCVob vob)
+        public virtual void RemoveVob(zCVob vob)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveVob, vob);
         }
 
-        public void DisableVob(zCVob vob)
+        public void RemoveVobSubTree(zCVob vob)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DisableVob, vob);
+            Process.THISCALL<NullReturnCall>(Address, 0x624D60, vob);
         }
 
         public zCViewProgressBar GetProgressBar()
@@ -331,6 +339,11 @@ namespace Gothic.Objects
         public int TraceRayFirstHit(zVec3 start, zVec3 end, zTraceRay rayType)
         {
             return Process.FASTCALL<IntArg>(Address, start.Address, FuncAddresses.TraceRayFirstHit, end, new IntArg(0), new IntArg((int)rayType));
+        }
+        
+        public int GetBspTree()
+        {
+            return Process.THISCALL<IntArg>(Address, 0x6D0020);
         }
 
         public const int ByteSize = 0x6258;

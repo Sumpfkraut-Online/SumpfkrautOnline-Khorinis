@@ -10,36 +10,37 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using GUC.WorldObjects.ItemContainers;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
+    public enum JumpMoves
+    {
+        Fwd,
+        Run,
+        Up
+    }
+
+    public enum FightMoves
+    {
+        None,
+
+        Fwd,
+        Left,
+        Right,
+        Run,
+
+        Dodge,
+        Parry
+    }
+
     public partial class NPCInst : VobInst, NPC.IScriptNPC, ScriptInventory.IContainer
     {
-        public enum JumpMoves
-        {
-            Fwd,
-            Run,
-            Up
-        }
-
-        public enum FightMoves
-        {
-            Fwd,
-            Left,
-            Right,
-            Run,
-
-            Dodge,
-            Parry
-        }
-
         #region Constructors
 
         partial void pConstruct();
         public NPCInst()
         {
-            SetObjName("NPCInst");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCInstEffectHandler(null, this);
             pConstruct();
         }
 
@@ -48,9 +49,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return new NPC(new ScriptInventory(this), new ModelInst(this), this);
         }
 
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new NPCInstEffectHandler(null, null, this);
+        }
+
         #endregion
 
         #region Properties
+        
+        new public NPCInstEffectHandler EffectHandler { get { return (NPCInstEffectHandler)base.EffectHandler; } }
 
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
         public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }
@@ -62,6 +70,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public BaseVob.Environment Environment { get { return this.BaseInst.GetEnvironment(); } }
 
         public bool IsDead { get { return this.BaseInst.IsDead; } }
+        public bool IsInFightMode { get { return this.BaseInst.IsInFightMode; } }
+
+        public bool IsWading
+        {
+            get
+            {
+                float waterLevel = Environment.WaterLevel;
+                return waterLevel > 0 && waterLevel < 0.4f;
+            }
+        }
+
+        public bool IsSwimming
+        {
+            get
+            {
+                float waterLevel = Environment.WaterLevel;
+                return waterLevel > 0 && waterLevel >= 0.4f;
+            }
+        }
 
         public int HP { get { return this.BaseInst.HP; } }
 
@@ -75,12 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public string CustomName;
 
         #endregion
-        
-        public void SetState(NPCMovement state)
-        {
-            //this.BaseInst.SetMovement(state);
-        }
-        
+                
         public void OnWriteTakeControl(PacketWriter stream)
         {
             // write everything the player needs to know about this npc

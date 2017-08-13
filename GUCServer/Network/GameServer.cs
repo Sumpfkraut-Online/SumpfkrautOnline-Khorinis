@@ -65,6 +65,9 @@ namespace GUC.Network
                 case ClientMessages.ScriptCommandHeroMessage:
                     GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, true);
                     break;
+                case ClientMessages.SpecatorPosMessage:
+                    GameClient.Messages.ReadSpectatorPosition(stream, client);
+                    break;
 
                 default:
                     Logger.LogWarning("Client sent unknown NetworkID '{0}'. Kicked: {1} IP:{2}", id, client.ID, client.SystemAddress);

@@ -7,12 +7,11 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-
     public partial class NPCDef : NamedVobDef, NPCInstance.IScriptNPCInstance
     {
-
-        new protected NPCDefEffectHandler effectHandler;
-        new public NPCDefEffectHandler GetEffectHandler () { return effectHandler; }
+        #region Properties
+        
+        new public NPCDefEffectHandler EffectHandler { get { return (NPCDefEffectHandler)base.EffectHandler; } }
 
         new public NPCInstance BaseDef { get { return (NPCInstance)base.BaseDef; } }
 
@@ -26,19 +25,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public string HeadMesh { get { return BaseDef.HeadMesh; } set { BaseDef.HeadMesh = value; } }
         public int HeadTex { get { return BaseDef.HeadTex; } set { BaseDef.HeadTex = value; } }
 
+        #endregion
+
         #region Constructors
 
         partial void pConstruct();
         public NPCDef()
         {
-            SetObjName("NPCDef");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.NPCDefEffectHandler(null, this);
             pConstruct();
         }
 
         protected override BaseVobInstance CreateVobInstance()
         {
             return new NPCInstance(this);
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new NPCDefEffectHandler(null, null, this);
         }
 
         #endregion

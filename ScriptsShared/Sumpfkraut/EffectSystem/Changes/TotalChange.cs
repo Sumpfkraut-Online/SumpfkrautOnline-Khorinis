@@ -75,7 +75,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         public TotalChange ()
         {
-            SetObjName("TotalChange");
             totalChangeLock = new object();
             components = new List<Change>();
             effectSubDates = new List<DateTime>();

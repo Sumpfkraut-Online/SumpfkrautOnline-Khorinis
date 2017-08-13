@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\Sqlite\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -46,6 +49,9 @@
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Arena\ArenaClient.cs" />
+    <Compile Include="Arena\CharCreationInfo.cs" />
+    <Compile Include="Arena\ScriptMessages.cs" />
     <Compile Include="GUCScripts.cs" />
     <Compile Include="Left4Gothic\CharacterInfo.cs" />
     <Compile Include="Left4Gothic\L4Client.cs" />

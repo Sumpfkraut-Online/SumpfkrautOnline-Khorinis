@@ -18,7 +18,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         static ChangeInit_World ()
         {
             representative = new ChangeInit_World();
-            representative.SetObjName("ChangeInit_World");
         }
 
 

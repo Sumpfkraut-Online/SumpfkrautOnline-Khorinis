@@ -55,7 +55,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
         protected Change (ChangeInitInfo changeInitInfo)
         {
-            SetObjName("Change");
             this.changeInitInfo = changeInitInfo;
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }

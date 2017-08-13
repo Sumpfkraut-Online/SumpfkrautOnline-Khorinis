@@ -125,9 +125,10 @@ namespace GUC
                 hWeather.AddHooks();
                 hView.AddHooks();
                 hNpc.AddHooks();
+                hModel.AddHooks();
 
                 #region Some more editing
-
+                
                 Process.Write(0x42687F, 0xE9, 0xA3, 0x00, 0x00, 0x00); // skip intro videos
 
                 Process.Write(0x00424EE2, 0xEB, 0x35); // don't init savegame manager
@@ -180,6 +181,8 @@ namespace GUC
                 Process.Write(0x76D1A0, 0x31, 0xC0, 0xC3); // oCNpc_States::DoAIState -> skip and return false
 
                 Process.Nop(0x4A059C, 7); // don't load dialogcams.zen
+
+                Process.Write(0x76D9E0, 0xC3); // remove oCNPCStates.CloseCutscenes(); // made problems with npcs as menu3dvisuals
 
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion

@@ -144,7 +144,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         public AIManager (bool useSingleThread, bool startOnCreate, TimeSpan timeout)
             : base(false, timeout, false)
         {
-            SetObjName("AIManager");
             runLock = new object();
             aiAgents = new List<AIAgent>();
             remainingRanges = new List<Types.Vec2i> { new Types.Vec2i(-1, -1) };

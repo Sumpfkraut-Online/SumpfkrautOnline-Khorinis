@@ -26,8 +26,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_NamedVob ()
         {
-            SetObjName("DestInit_NamedVob");
-
             AddOrChange(new DestInitInfo(ChangeDestination.NamedVob_Name, 
                 new List<ChangeType>() { ChangeType.NamedVob_Name_Set }, 
                 CTC_Name, ATC_Name));

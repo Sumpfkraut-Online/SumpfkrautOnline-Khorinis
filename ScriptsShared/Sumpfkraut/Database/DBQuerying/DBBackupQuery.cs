@@ -10,7 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.Database.DBQuerying
 
         public DBBackupQuery ()
         {
-            SetObjName("DBBackupQuery");
         }
 
 

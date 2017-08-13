@@ -28,6 +28,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public int Layer { get { return this.baseAniJob.Layer; } set { this.baseAniJob.Layer = value; } }
 
+        public ScriptAniJob NextAni { get { return (ScriptAniJob)this.baseAniJob.NextAni.ScriptObject; } set { this.baseAniJob.NextAni = value.BaseAniJob; } }
+
         #endregion
 
         public void SetDefaultAni(Animation ani)

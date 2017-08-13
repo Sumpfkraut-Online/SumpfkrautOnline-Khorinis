@@ -11,7 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines
 
         public SimpleAIRoutine ()
         {
-            SetObjName("SimpleAIRoutine");
         }
 
 

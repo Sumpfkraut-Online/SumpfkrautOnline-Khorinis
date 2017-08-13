@@ -52,9 +52,7 @@ namespace GUC.WorldObjects
 
             void EquipItem(int slot, Item item);
             void UnequipItem(Item item);
-
-            void SetState(NPCMovement state);
-
+            
             void SetHealth(int hp, int hpmax);
             
             void SetFightMode(bool fightMode);
@@ -317,7 +315,9 @@ namespace GUC.WorldObjects
                 }
                 else
                 {
+                    this.inventory.ScriptObject.RemoveItem(item); // fixme
                     item.ReadInventoryProperties(stream);
+                    this.inventory.ScriptObject.AddItem(item);
                 }
             }
             this.ScriptObject.OnReadTakeControl(stream);

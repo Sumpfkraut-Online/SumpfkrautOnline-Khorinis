@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations
         public EnemyAIObservation (AITarget aiTarget)
             : base(aiTarget)
         {
-            SetObjName("EnemyAIObservation");
         }
 
     }

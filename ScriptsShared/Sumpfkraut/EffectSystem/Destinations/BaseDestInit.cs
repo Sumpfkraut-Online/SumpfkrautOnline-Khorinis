@@ -26,7 +26,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             changeDestinationToInfo = new Dictionary<ChangeDestination, DestInitInfo>();
             // always create own representative
             representative = new BaseDestInit();
-            representative.SetObjName("BaseDestInit");
         }
 
         protected BaseDestInit ()

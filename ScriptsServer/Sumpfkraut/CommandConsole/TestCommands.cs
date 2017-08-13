@@ -14,7 +14,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
         public TestCommands ()
         {
-            SetObjName("TestCommands");
         }
 
 
