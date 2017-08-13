@@ -309,54 +309,59 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            var fm = new FunctionManager();
-            fm.Start();
+            //var fm = new FunctionManager();
+            //fm.Start();
 
 
-            var startTime = (DateTime.Now);
-            Logger.Print("STTTTAAAAAAARRRTT: " + startTime);
-            var sw = new Stopwatch();
-            sw.Start();
+            //var startTime = (DateTime.Now);
+            //Logger.Print("STTTTAAAAAAARRRTT: " + startTime);
+            //var sw = new Stopwatch();
+            //sw.Start();
 
-            var specTimes = new DateTime[]
-            {
-                startTime.AddMilliseconds(1000),    // 0
-                startTime.AddMilliseconds(5000),    // 1
-                startTime.AddMilliseconds(10000),   // 2
-            };
+            //var specTimes = new DateTime[]
+            //{
+            //    startTime.AddMilliseconds(1000),
+            //    startTime.AddMilliseconds(2000),
+            //    startTime.AddMilliseconds(3000),
+            //};
 
-            var intervals = new TimeSpan[]
-            {
-                new TimeSpan(0, 0, 0, 1, 0),
-                new TimeSpan(0, 0, 0, 3, 0),
-                new TimeSpan(0, 0, 0, 5, 0)
-            };
+            //var intervals = new TimeSpan[]
+            //{
+            //    new TimeSpan(0, 0, 0, 1, 0),
+            //    new TimeSpan(0, 0, 0, 3, 0),
+            //    new TimeSpan(0, 0, 0, 5, 0)
+            //};
 
-            Func<object[], object[]> func1 = (object[] param) =>
-            {
-                Logger.Print("Interval... " + sw.ElapsedMilliseconds);
-                return param;
-            };
+            //Func<object[], object[]> func1 = (object[] param) =>
+            //{
+            //    Logger.Print("Interval... " + sw.ElapsedMilliseconds);
+            //    return param;
+            //};
 
-            Func<object[], object[]> func2 = (object[] param) =>
-            {
-                Logger.Print("SpecTime... " + sw.ElapsedMilliseconds);
-                return param;
-            };
+            //Func<object[], object[]> func2 = (object[] param) =>
+            //{
+            //    Logger.Print("SpecTime... " + sw.ElapsedMilliseconds);
+            //    return param;
+            //};
 
-            var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(20)));
-            tf1.SetFunc(func1);
-            //tf1.SetMaxInvocations(5);
-            tf1.SetPreserveDueInvocations(true);
-            fm.Add(tf1, 1, true);
+            //var tf1 = new TimedFunction(intervals, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(20)));
+            //tf1.SetFunc(func1);
+            ////tf1.SetMaxInvocations(5);
+            //tf1.SetPreserveDueInvocations(false);
+            //fm.Add(tf1, 1, true);
 
-            var tf2 = new TimedFunction(specTimes, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(20)));
-            tf2.SetFunc(func2);
-            tf2.SetMaxInvocations(5);
-            tf2.SetPreserveDueInvocations(true);
-            fm.Add(tf2, 1, true);
+            //var tf2 = new TimedFunction(specTimes, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(20)));
+            //tf2.SetFunc(func2);
+            //tf2.SetMaxInvocations(5);
+            //tf2.SetPreserveDueInvocations(true);
+            ////fm.Add(tf2, 1, true);
 
-            Program.OnTick += fm.Run;
+            //Program.OnTick += fm.Run;
+
+
+
+
+            AniTest.Test();
 
 
 
@@ -386,7 +391,7 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-
+            
 
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -395,5 +400,16 @@ namespace GUC.Scripts.Sumpfkraut
     }
 
     
+    public static class AniTest
+    {
+
+        public static void Test ()
+        {
+            Visuals.ModelDef modelDef = new Visuals.ModelDef("HEINZ", "HUMAN.3DS");
+            modelDef.
+        }
+
+    }
+
 
 }

@@ -203,13 +203,22 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
             lock (_lock)
             {
-                if ((TryGetLastInterval(out lastInterval)) 
+                if (TryGetLastInterval(out lastInterval)
                     && (TryGetLastIntervalTime(out lastIntervalTime)))
                 {
-                    //Print("==> " + lastIntervalTime + " --- " + lastInterval);
                     nextTime = lastIntervalTime + lastInterval;
                     success = true;
                 }
+
+                //// intervals need to check for expiration and preservation here as nextTime is 
+                //// calculated from the last interval state, while the next one would be expired
+                //if ((GetPreserveDueInvocations() && (!HasExpired()))
+                //    && TryGetLastInterval(out lastInterval)
+                //    && (TryGetLastIntervalTime(out lastIntervalTime)))
+                //{
+                //    nextTime = lastIntervalTime + lastInterval;
+                //    success = true;
+                //}
             }
 
             return success;
@@ -401,10 +410,8 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
                 if (!HasInvocationsLeft) { return false; }
 
                 // time limits
-                var hasExpired = HasExpired(referenceTime);
-                var preserveExpired = GetPreserveDueInvocations();
                 // if expiration date reached and no intent to preserve possible left out invocations
-                if (hasExpired && (!preserveExpired)) { return false; }
+                if (HasExpired(referenceTime) && (!GetPreserveDueInvocations())) { return false; }
 
                 // determine possible next specified time
                 success = TryGetNextSpecifiedTime(out nextTime);
