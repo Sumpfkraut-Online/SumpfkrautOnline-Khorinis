@@ -38,6 +38,7 @@ local.properties
 
 # User-specific files
 *.suo
+*.ide
 *.user
 *.sln.docstates
 
@@ -49,6 +50,7 @@ x64/
 build/
 [Bb]in/
 [Oo]bj/
+.[Vv][Ss]
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -214,6 +216,3 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 *.opendb
-*.suo
-*.suo
-*.suo
