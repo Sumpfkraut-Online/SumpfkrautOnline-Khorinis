@@ -44,16 +44,15 @@ namespace GUC.Animations
 
         internal ActiveAni(Model model)
         {
-            if (model == null)
-                throw new ArgumentNullException("Model is null!");
-
-            this.model = model;
+            this.model = model ?? throw new ArgumentNullException("Model is null!");
         }
 
         public float GetProgress()
         {
             return endTime < 0 ? 0 : (float)(GameTime.Ticks - this.startTime) / (this.endTime - this.startTime);
         }
+
+        float totalFinishedFrames; // frames from previous animations
 
         List<TimeActionPair> actionPairs = new List<TimeActionPair>(1);
 
@@ -74,6 +73,7 @@ namespace GUC.Animations
 
         internal void Start(Animation ani, float fpsMult, FrameActionPair[] pairs)
         {
+            this.totalFinishedFrames = 0;
             this.ani = ani;
             this.fpsMult = fpsMult;
 
@@ -105,26 +105,53 @@ namespace GUC.Animations
 
         internal void Stop()
         {
+            if (this.actionPairs.Count > 0)
+            {
+                // fire all callbacks which should happen when or after the last nextAni ends
+                float lastFrame = this.totalFinishedFrames;
+                Animation nextAni;  AniJob nextAniJob = this.AniJob;
+                while (nextAniJob != null && this.model.TryGetAniFromJob(nextAniJob, out nextAni))
+                {
+                    lastFrame += nextAni.GetFrameNum();
+                    nextAniJob = nextAniJob.NextAni;
+                }
+
+                for (int i = 0; i < actionPairs.Count; i++)
+                {
+                    Log.Logger.Log(actionPairs[i].Frame);
+                    if (this.actionPairs[i].Frame >= lastFrame)
+                        this.actionPairs[i].Callback();
+                    else break;
+                }
+
+                this.actionPairs.Clear();
+            }
+            
             this.ani = null;
-            this.actionPairs.Clear();
         }
 
         internal void OnTick(long now)
         {
+            if (this.AniJob.Layer == 1 && this.Model.Vob.GetEnvironment().InAir)
+            {
+                this.Model.EndAni(this.ani);
+                this.Stop();
+            }
+
             if (!this.IsIdleAni)
             {
                 if (now < endTime) // still playing
                 {
                     for (int i = actionPairs.Count - 1; i >= 0; i--)
                     {
-                        if (now < actionPairs[i].Time)
-                            break;
-
-                        actionPairs[i].Callback();
-                        if (this.ani == null) // ani is stopped
+                        var current = actionPairs[i];
+                        if (now < current.Time)
                             break;
 
                         actionPairs.RemoveAt(i);
+                        current.Callback();
+                        if (this.ani == null) // ani is stopped
+                            break;
                     }
                 }
                 else
@@ -153,20 +180,20 @@ namespace GUC.Animations
 
         void Continue(Animation nextAni)
         {
-            float numFrames = nextAni.GetFrameNum();
-            if (numFrames > 0)
+            float oldFrameNum = this.ani.GetFrameNum();
+            float newFrameNum = nextAni.GetFrameNum();
+            if (newFrameNum > 0)
             {
                 float coeff = TimeSpan.TicksPerSecond / (nextAni.FPS * fpsMult);
 
                 this.startTime = this.endTime;
-                this.endTime = this.startTime + (long)(numFrames * coeff);
-
-                float elapsedFrames = this.ani.GetFrameNum();
+                this.endTime = this.startTime + (long)(newFrameNum * coeff);
+                
                 for (int i = 0; i < actionPairs.Count; i++)
                 {
                     var pair = actionPairs[i];
 
-                    pair.Frame = pair.Frame - elapsedFrames; // new frame
+                    pair.Frame = pair.Frame - oldFrameNum; // new frame
                     pair.Time = startTime + (long)(pair.Frame * coeff);
                 }
             }
@@ -175,6 +202,7 @@ namespace GUC.Animations
                 endTime = -1;
             }
 
+            this.totalFinishedFrames += oldFrameNum;
             this.ani = nextAni;
         }
     }

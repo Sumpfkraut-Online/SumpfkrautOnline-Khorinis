@@ -26,7 +26,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (this.FightAnimation != null && this.CanCombo && this.Movement != NPCMovement.Stand)
             { // so the npc can instantly stop the attack and run into a direction
                 this.ModelInst.StopAnimation(this.fightAni, false);
-                EndFightAni();
             }
         }
 
@@ -256,11 +255,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (job == null)
                 return;
-
+            
             ScriptAni ani;
             if (!ModelInst.TryGetAniFromJob(job, out ani))
                 return;
-
+            
             // combo window
             float comboFrame;
             if (!ani.TryGetSpecialFrame(SpecialFrame.Combo, out comboFrame))
@@ -280,21 +279,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             // end of animation
             var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
-
-            // start it all
+            
+            // start ani first, because the OnEnd-Callback from the former attack resets the fight stance
+            this.fightAni = this.ModelInst.StartAniJob(job, comboPair, hitPair, endPair);
             this.currentFightMove = move;
             this.canCombo = false;
             this.comboNum = fwdCombo;
-            this.fightAni = this.ModelInst.StartAniJob(job, comboPair, hitPair, endPair);
         }
 
         void OpenCombo()
         {
-            canCombo = true;
             if (this.Movement != NPCMovement.Stand && this.fightAni != null)
             { // so the npc can instantly stop the attack and run into a direction
                 this.ModelInst.StopAnimation(this.fightAni, false);
-                EndFightAni();
+            }
+            else
+            {
+                canCombo = true;
             }
         }
 
@@ -318,10 +319,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // end of animation
             var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
 
+            this.fightAni = this.ModelInst.StartAniJob(job, endPair);
             this.currentFightMove = FightMoves.Parry;
             this.canCombo = false;
             this.comboNum = 0;
-            this.fightAni = this.ModelInst.StartAniJob(job, endPair);
         }
 
         void DoDodge(ScriptAniJob job)
@@ -336,10 +337,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // end of animation
             var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
 
+            this.fightAni = this.ModelInst.StartAniJob(job, endPair);
             this.currentFightMove = FightMoves.Dodge;
             this.canCombo = false;
             this.comboNum = 0;
-            this.fightAni = this.ModelInst.StartAniJob(job, endPair);
         }
 
         #endregion

@@ -115,6 +115,7 @@ namespace GUC.Scripts
 
         partial void pConstruct()
         {
+
             Logger.Log("######## Initalise SumpfkrautOnline ServerScripts #########");
 
             //Sumpfkraut.EffectSystem.Changes.ChangeInitializer.Init();
@@ -153,6 +154,7 @@ namespace GUC.Scripts
 
             //Sumpfkraut.TestingThings.Init();
             //Sumpfkraut.AI.TestingAI.Test();
+
 
             Logger.Log("######################## Finished #########################");
         }
@@ -589,100 +591,6 @@ namespace GUC.Scripts
             job.SetDefaultAni(new ScriptAni(0, 14));
 
             #endregion
-            /*
-
-            // 1h COMBO 1
-            aniJob = new ScriptAniJob("attack1hfwd1");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd1;
-            aniJob.AniName = "s_1hAttack";
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(8400000, 2000000, 4400000));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13200000, 1200000, 4400000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11200000, 1200000, 3600000), ov2);
-            
-            // 1h COMBO 2
-            aniJob = new ScriptAniJob("attack1hfwd2");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd2;
-            aniJob.AniName = "s_1hAttack";
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(5200000, 3200000, 3200000, 26));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(12500000, 1400000, 5200000, 36), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 1800000, 5200000, 33), ov2);
-
-            // 1h COMBO 3
-            aniJob = new ScriptAniJob("attack1hfwd3");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd3;
-            aniJob.AniName = "s_1hAttack";
-            model.AddAniJob(aniJob);
-
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(12500000, 1800000, 5200000, 71), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10800000, 3000000, 6800000, 65), ov2);
-            
-            // 1h COMBO 4
-            aniJob = new ScriptAniJob("attack1hfwd4");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HFwd4;
-            aniJob.AniName = "s_1hAttack";
-            model.AddAniJob(aniJob);
-
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(6400000, 2200000, 2400000, 106), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(6400000, 4000000, 5600000, 97), ov2);
-
-            // 1h LEFT ATTACK
-            aniJob = new ScriptAniJob("attack1hleft");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HLeft;
-            aniJob.AniName = "t_1hAttackL";
-            aniJob.AttackBonus = -2;
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(11600000, 2000000, 6000000));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(9200000, 1600000, 4000000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7200000, 1200000, 3200000), ov2);
-
-            // 1h RIGHT ATTACK
-            aniJob = new ScriptAniJob("attack1hright");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRight;
-            aniJob.AniName = "t_1hAttackR";
-            aniJob.AttackBonus = -2;
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(11600000, 2000000, 6000000));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(9200000, 1600000, 4000000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7200000, 1200000, 3200000), ov2);
-
-            // 1h RUN ATTACK
-            aniJob = new ScriptAniJob("attack1hrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HRun;
-            aniJob.AniName = "t_1hAttackMove";
-            aniJob.AttackBonus = 5;
-            model.AddAniJob(aniJob);
-
-            ani = ScriptAni.NewAttackAni(11200000, 7000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
-            
-            // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry1", ScriptAni.NewFightAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry1;
-            aniJob.AniName = "T_1HPARADE_0";
-            model.AddAniJob(aniJob);
-            
-            // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry2", ScriptAni.NewFightAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry2;
-            aniJob.AniName = "T_1HPARADE_0_A2";
-            model.AddAniJob(aniJob);
-
-            // 1h Parry
-            aniJob = new ScriptAniJob("attack1hparry3", ScriptAni.NewFightAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HParry3;
-            aniJob.AniName = "T_1HPARADE_0_A3";
-            model.AddAniJob(aniJob);
-
-            // 1h Dodge
-            aniJob = new ScriptAniJob("attack1hdodge", ScriptAni.NewFightAni(5200000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack1HDodge;
-            aniJob.AniName = "T_1HPARADEJUMPB";
-            model.AddAniJob(aniJob);*/
         }
 
         #endregion

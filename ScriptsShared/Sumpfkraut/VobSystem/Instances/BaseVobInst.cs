@@ -60,7 +60,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             this.effectHandler = CreateHandler();
             if (this.effectHandler == null)
-                throw new NullReferenceException("Effect Handler is null!");
+               throw new NullReferenceException("Effect Handler is null!");
 
             pConstruct();
         }
