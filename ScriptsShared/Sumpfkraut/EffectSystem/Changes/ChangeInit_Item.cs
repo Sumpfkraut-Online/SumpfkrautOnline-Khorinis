@@ -11,8 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public partial class ChangeInit_Item : BaseChangeInit
     {
 
-        new public static readonly string _staticName = "ChangeInit_Item (s)";
-
         new public static ChangeInit_Item representative;
 
 
@@ -20,7 +18,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         static ChangeInit_Item ()
         {
             representative = new ChangeInit_Item();
-            representative.SetObjName("ChangeInit_Item");
         }
 
 

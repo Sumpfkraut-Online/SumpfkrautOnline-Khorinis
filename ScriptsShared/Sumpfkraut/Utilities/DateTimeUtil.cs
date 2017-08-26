@@ -10,8 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities
     public class DateTimeUtil : ExtendedObject
     { 
 
-        new public static readonly string _staticName = "DateTimeUtil (s)"; 
-
         protected static string dateFormat = "yyyy-MM-dd HH:mm:ss";
 
 

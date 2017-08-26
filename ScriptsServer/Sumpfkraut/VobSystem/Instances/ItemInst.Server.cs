@@ -3,11 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ItemInst
     {
+        public int Damage { get { return this.Definition.Damage; } }
+        public float Range { get { return this.Definition.Range; } }
+        public int Protection { get { return this.Definition.Protection; } }
+
         public ItemInst(ItemDef def) : this()
         {
             this.Definition = def;

@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Vob : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_Vob (s)";
         new public static DestInit_Vob representative;
 
         public static readonly bool Default_CDDyn = false;
@@ -28,8 +27,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_Vob ()
         {
-            SetObjName("DestInit_Vob");
-
             AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDDyn, 
                 new List<ChangeType>() { ChangeType.Vob_CDDyn_Set }, 
                 CTC_CDDyn, ATC_CDDyn));

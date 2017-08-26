@@ -8,20 +8,25 @@ using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public abstract partial class BaseVobDef : ScriptObject, BaseVobInstance.IScriptBaseVobInstance
+    public abstract partial class BaseVobDef : ExtendedObject, BaseVobInstance.IScriptBaseVobInstance
     {
         #region Constructors
-
-        protected abstract BaseVobInstance CreateVobInstance();
+        
         partial void pConstruct();
         public BaseVobDef()
         {
             this.baseDef = CreateVobInstance();
             if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");
+            
+            this.effectHandler = CreateHandler();
+            if (this.effectHandler == null)
+                throw new NullReferenceException("Effect Handler is null!");
+
             pConstruct();
         }
 
@@ -29,16 +34,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
+        // Effect Handler
+        BaseEffectHandler effectHandler;
+        public BaseEffectHandler EffectHandler { get { return effectHandler; } }
+        protected abstract BaseEffectHandler CreateHandler();
+
+        // Definition
         BaseVobInstance baseDef;
         public BaseVobInstance BaseDef { get { return this.baseDef; } }
+        protected abstract BaseVobInstance CreateVobInstance();
 
         public int ID { get { return BaseDef.ID; } }
         public VobTypes VobType { get { return BaseDef.VobType; } }
         public bool IsStatic { get { return BaseDef.IsStatic; } }
         public bool IsCreated { get { return baseDef.IsCreated; } }
-
-        protected VobEffectHandler effectHandler;
-        public VobEffectHandler GetEffectHandler () { return effectHandler; }
 
         #endregion
 

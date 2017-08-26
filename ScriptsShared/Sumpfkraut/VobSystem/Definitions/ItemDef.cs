@@ -5,6 +5,7 @@ using System.Text;
 
 using GUC.Network;
 using GUC.WorldObjects.Instances;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
@@ -45,9 +46,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Scroll,
     }
 
+
+
     public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
     {
         #region Properties
+        
+        new public ItemDefEffectHandler EffectHandler { get { return (ItemDefEffectHandler)base.EffectHandler; } }
 
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
 
@@ -79,17 +84,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Constructors
+        
+        partial void pConstruct();
+        public ItemDef()
+        {
+            pConstruct();
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new ItemDefEffectHandler(null, null, this);
+        }
 
         protected override BaseVobInstance CreateVobInstance()
         {
             return new ItemInstance(this);
-        }
-
-        partial void pConstruct();
-        public ItemDef()
-        {
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.ItemEffectHandler(null, this);
-            pConstruct();
         }
 
         #endregion

@@ -11,10 +11,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities
     public class ListUtil : ExtendedObject
     {
 
-        public static readonly string _staticName = "ListUtil (s)";
-
-
-
         protected ListUtil () { }
 
 

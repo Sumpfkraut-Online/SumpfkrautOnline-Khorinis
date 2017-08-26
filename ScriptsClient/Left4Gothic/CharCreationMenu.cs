@@ -26,7 +26,7 @@ namespace GUC.Scripts.Left4Gothic
             }
         }
 
-        public override void KeyDown(VirtualKeys key, long now)
+        protected override void KeyDown(VirtualKeys key)
         {
             if (key == VirtualKeys.Tab)
             {
@@ -43,7 +43,7 @@ namespace GUC.Scripts.Left4Gothic
             }
             else
             {
-                base.KeyDown(key, now);
+                base.KeyDown(key);
             }
         }
 

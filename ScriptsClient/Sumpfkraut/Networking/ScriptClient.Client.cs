@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
-    public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
+    public partial class ScriptClient : ExtendedObject, GameClient.IScriptClient
     {
         public static ScriptClient Client { get { return (ScriptClient)GameClient.Client.ScriptObject; } }
         

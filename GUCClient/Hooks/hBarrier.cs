@@ -124,11 +124,13 @@ namespace GUC.Hooks
 
                 if (barrierAlpha > 0)
                 {
-                    float farClipZ = Process.ReadFloat(zCCamera.GetCamAddr() + 2300);
+                    var activeCam = zCCamera.ActiveCamera;
+
+                    float farClipZ = activeCam.FarClipZ;
                     bool zBufferWriteEnabled = Process.ReadBool(zCRenderer.GetRendererAddress() + 1148);
 
                     zCRenderer.SetZBufferWriteEnabled(true);
-                    zCCamera.SetFarClipZ(2000000.0f);
+                    activeCam.SetFarClipZ(2000000.0f);
 
                     int context = GetResetRenderContext();
                     barrier.RenderLayer(context, 0, ptrArg);
@@ -136,7 +138,7 @@ namespace GUC.Hooks
 
                     zCRenderer.FlushPolys();
 
-                    zCCamera.SetFarClipZ(farClipZ);
+                    activeCam.SetFarClipZ(farClipZ);
                     zCRenderer.SetZBufferWriteEnabled(zBufferWriteEnabled);
 
                     if (PlaySound)
@@ -159,13 +161,13 @@ namespace GUC.Hooks
         static readonly int renderContext = Process.Alloc(0x28).ToInt32();
         static int GetResetRenderContext()
         {
-            int activeCam = zCCamera.GetCamAddr();
-            int something = Process.ReadInt(activeCam + 2336);
+            var activeCam = zCCamera.ActiveCamera;
+            int something = Process.ReadInt(activeCam.Address + 2336);
 
             Process.Write(renderContext , -1);
             Process.Write(renderContext + 4, 0/*something*/);
             Process.Write(renderContext + 8, Process.ReadInt(something + 184));
-            Process.Write(renderContext + 12, activeCam);
+            Process.Write(renderContext + 12, activeCam.Address);
             Process.Write(renderContext + 16, zeros);
 
             return renderContext;

@@ -14,7 +14,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class BaseDestInit : ExtendedObject
     {
 
-        new public static readonly string _staticName = "BaseDestInit (s)";
         protected static Dictionary<ChangeDestination, DestInitInfo> changeDestinationToInfo;
         // static representative of the class (do not change it in any way after instantiation!)
         public static BaseDestInit representative;
@@ -27,7 +26,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             changeDestinationToInfo = new Dictionary<ChangeDestination, DestInitInfo>();
             // always create own representative
             representative = new BaseDestInit();
-            representative.SetObjName("BaseDestInit");
         }
 
         protected BaseDestInit ()

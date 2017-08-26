@@ -13,7 +13,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_World : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_World (s)";
         new public static DestInit_World representative;
 
 
@@ -26,8 +25,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_World ()
         {
-            SetObjName("DestInit_World");
-
             AddOrChange(new DestInitInfo(ChangeDestination.World_Clock_IsRunning,
                 new List<ChangeType>() { ChangeType.World_Clock_IsRunning_Set },
                 CTC_Clock_IsRunning, ATC_Clock_IsRunning));

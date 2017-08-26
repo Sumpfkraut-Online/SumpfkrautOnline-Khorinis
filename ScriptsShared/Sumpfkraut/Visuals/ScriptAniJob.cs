@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Animations;
 using GUC.Network;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {  
-    public partial class ScriptAniJob : ScriptObject, AniJob.IScriptAniJob
+    public partial class ScriptAniJob : ExtendedObject, AniJob.IScriptAniJob
     {
         #region Properties
 
@@ -26,6 +27,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public int ID { get { return this.baseAniJob.ID; } set { this.baseAniJob.ID = value; } }
 
         public int Layer { get { return this.baseAniJob.Layer; } set { this.baseAniJob.Layer = value; } }
+
+        public ScriptAniJob NextAni { get { return (ScriptAniJob)this.baseAniJob.NextAni.ScriptObject; } set { this.baseAniJob.NextAni = value.BaseAniJob; } }
 
         #endregion
 

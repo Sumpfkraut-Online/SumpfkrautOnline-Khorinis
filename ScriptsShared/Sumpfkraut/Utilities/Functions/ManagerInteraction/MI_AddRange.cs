@@ -5,13 +5,15 @@
     {
 
         public TimedFunction[] TF;
+        public int Amount;
         public bool AllowDuplicate;
 
 
 
-        public MI_AddRange (TimedFunction[] tf, bool allowDuplicate)
+        public MI_AddRange (TimedFunction[] tf, int amount, bool allowDuplicate)
         {
             TF = tf;
+            Amount = amount >= 1 ? amount : 1;
             AllowDuplicate = allowDuplicate;
         }
 

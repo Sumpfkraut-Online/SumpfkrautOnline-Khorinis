@@ -18,8 +18,6 @@ namespace GUC.Scripts.Sumpfkraut.Web.WS
 
         #region attributes
 
-        new public static readonly String _staticName = "WSServer (s)";
-
         protected WebSocketServer wsServer;
 
         protected int port;

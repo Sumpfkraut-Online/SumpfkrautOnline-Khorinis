@@ -10,22 +10,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
     public partial class ChangeInitializer : ExtendedObject
     {
 
-        new public static readonly string _staticName = "ChangeInitializer";
-
         protected ChangeInitializer () { }
 
         public static void Init ()
         {
             Type t = typeof(ChangeInitializer);
 
-            MakeLogStatic(t, "Initializing... " + ChangeInit_Effect._staticName);
+            MakeLogStatic(t, "Initializing... " + typeof(ChangeInit_Effect).Name);
 
-            MakeLogStatic(t, "Initializing... " + ChangeInit_World._staticName);
+            MakeLogStatic(t, "Initializing... " + typeof(ChangeInit_World).Name);
 
-            MakeLogStatic(t, "Initializing... " + ChangeInit_Vob._staticName);
-            MakeLogStatic(t, "Initializing... " + ChangeInit_NamedVob._staticName);
-            MakeLogStatic(t, "Initializing... " + ChangeInit_Item._staticName);
-            MakeLogStatic(t, "Initializing... " + ChangeInit_NPC._staticName);
+            MakeLogStatic(t, "Initializing... " + typeof(ChangeInit_Vob).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(ChangeInit_NamedVob).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(ChangeInit_Item).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(ChangeInit_NPC).Name);
             // ...
         }
 

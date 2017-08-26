@@ -18,15 +18,31 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.Destinations;
 using System.Drawing;
 using GUC.Scripts.Sumpfkraut.Utilities;
 using System.Threading;
+using GUC.Scripts.Sumpfkraut.Utilities.Functions;
 
 namespace GUC.Scripts.Sumpfkraut
 {
     public class TestingThings : ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestingThings (s)";
+        public class O
+        {
+            
+        }
 
-        
+        public class A : O
+        {
+
+
+            public A () { }
+        }
+
+        public class B : O
+        {
+            public B () { }
+        }
+
+
 
         public static void Init ()
         {
@@ -154,7 +170,7 @@ namespace GUC.Scripts.Sumpfkraut
 
             //EffectSystem.EffectHandlers.VobEffectHandler eh =
             //    new EffectSystem.EffectHandlers.VobEffectHandler(null, new VobSystem.Instances.VobInst());
-            //Logger.Log("-------> " + eh.LinkedObjectType);
+            //Logger.Log("-------> " + eh.hostType);
 
             //EffectSystem.EffectDelegateReference delRef = 
             //    new EffectSystem.EffectDelegateReference(null, null);
@@ -165,29 +181,7 @@ namespace GUC.Scripts.Sumpfkraut
             //Change change2 = new Change(EffectSystem.Enumeration.ChangeType.Effect_Name_Set, new object[] { 1, 2, 3, 4, 5, 6 });
             //Logger.Log("### " + (change1 == change2));
 
-            //bool check;
-            //int[] lapsesSteps = new int[] { 1, 10, 100, 1000, 1000, 10000, 100000, 1000000 };
-            //int tempLapses = 0;
-            //List<long> elapsedTicks = new List<long>();
 
-            //Stopwatch sw = Stopwatch.StartNew();
-            //for (int s = 0; s < lapsesSteps.Length; s++)
-            //{
-            //    tempLapses = lapsesSteps[s];
-            //    for (int l = 0; l < tempLapses; l++)
-            //    {
-            //        check = change1 == change2;
-            //    }
-            //    sw.Stop();
-            //    elapsedTicks.Add(sw.ElapsedTicks);
-            //    sw.Restart();
-            //}
-
-            //sw.Stop();
-            //for (int i = 0; i < elapsedTicks.Count; i++)
-            //{
-            //    Logger.Log("### " + elapsedTicks[i] + " " + ((double) elapsedTicks[i] / TimeSpan.TicksPerMillisecond));
-            //}
 
 
 
@@ -238,30 +232,6 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            //List<int> l1 = new List<int>() { 1, 3, 6, 7, 8 };
-            //List<int> l2 = new List<int>() { 2, 3, 4, 5, 6, 7, 9, 10};
-            //List<int> l3 = l1.Union(l2).ToList();
-            //l3.Sort();
-            //foreach (int i in l3) { Logger.Log(i); }
-
-
-
-            ////SomeClass o = new SomeClass(new object[0]);
-            //SomeClass o = SomeClass.Create(new object[0]);
-            //Logger.Log("===> " + (o == null));
-            //Logger.Log("===> " + o);
-            ////Logger.Log("===> " + o.parameters);
-
-
-            //object o = "Banannanana";
-            //Logger.Log("===> " + o.GetType());
-
-            //SomeClass.ParameterTypeCheck(new object[] { "s", 'c', 1, false });
-
-
-            //FieldInfo info = typeof(SomeClass).GetField("someList");
-            //List<int> val = (List<int>) info.GetValue(null);
-            //foreach (int i in val) { Logger.Log(i); }
 
 
 
@@ -298,69 +268,71 @@ namespace GUC.Scripts.Sumpfkraut
             //}
 
 
-            //Point p1 = new Point(0, 0);
-            //List<Point> poly1 = new List<Point>()
+
+
+
+
+            //var timeSpans1 = new TimeSpan[]
             //{
-            //    new Point(1, 1),
-            //    new Point(-1, 1),
-            //    new Point(-1, -1),
-            //    new Point(1, -1),
-            //};
-            //for (int i = 0; i < poly1.Count; i++)
-            //{
-            //    poly1[i] = new Point(-poly1[i].X, poly1[i].Y);
-            //}
-
-            //foreach (var p in poly1) { Log.Logger.Log("[" + p.X + " | " + p.Y + "]"); }
-            //Log.Logger.Log(Utilities.Geometry.InGeometry.CalcWindingNumber2D(p1, poly1));
-
-
-            //var dt1 = DateTime.Now;
-            //var dt2 = DateTime.Now;
-            //Logger.Log(dt1.Ticks + " <-> " + dt2.Ticks);
-
-            //var arr1 = new int[2];
-            //var arr2 = ArrayUtil.Populate(arr1, 555, true);
-            //Logger.Log(arr1[0] + " " + arr2[0] + " " + (arr1 == arr2));
-
-            //var list1 = new List<int> { 0, 0 };
-            //var list2 = ListUtil.Populate(list1, 555, true);
-            //Logger.Log(list1[0] + " " + list2[0] + " " + (list1 == list2));
-
-            //var someList = new List<int> { };
-            //someList.Insert(0, 999);
-            //foreach (var e in someList) { Logger.Log(e); }
-
-            //var outer = 0;
-            //Action action = () => 
-            //{
-            //    var inner = 0;
-            //    while (inner < 10)
-            //    {
-            //        Logger.Log(++outer);
-            //        inner++;
-            //    }
+            //    new TimeSpan(0, 0, 0, 0, 500),
+            //    new TimeSpan(0, 0, 0, 1, 0),
+            //    new TimeSpan(0, 0, 0, 2, 0)
             //};
 
-            //var operation = new ThreadStart(action);
-            //var thread = new Thread(operation);
-            //thread.Start();
-
-            //Action<int> pAction = (int num) => 
+            //var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc((object[] param) =>
             //{
-            //    var inner = 0;
-            //    while (inner < num)
-            //    {
-            //        Logger.Log(++outer);
-            //        inner++;
-            //    }
-            //};
-            //var pOperation = new ParameterizedThreadStart(obj => pAction((int)obj));
-            //var pThread = new Thread(pOperation);
-            //pThread.Start(0);
+            //    return param;
+            //});
+            //var tf2 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(10)));
+            //tf1.SetFunc((object[] param) =>
+            //{
+            //    return param;
+            //});
+            //var tf3 = tf2;
+
+            //Logger.Print(tf1 == tf2);
+            //Logger.Print(tf2 == tf3);
+            //Logger.Print(tf1.HasEqualAttributes(tf3));
+
+            //var dict = new Dictionary<TimedFunction, int>();
 
 
-            
+            //var arr1 = new int[] { 1, 2, 3, 4, 5 };
+            //var arr2 = new int[] { 1, 2, 3, 4, 5 };
+
+            //Logger.Print(arr1 == arr2);
+            //Logger.Print(arr1.Equals(arr2));
+
+
+
+
+
+
+            var startTime = DateTime.Now;
+
+            var timeSpans1 = new TimeSpan[]
+            {
+                new TimeSpan(0, 0, 0, 1, 0),
+                new TimeSpan(0, 0, 0, 5, 0),
+                new TimeSpan(0, 0, 0, 10, 0)
+            };
+
+            var tf1 = new TimedFunction(timeSpans1, new Tuple<DateTime, DateTime>(DateTime.Now, DateTime.Now.AddSeconds(60)));
+            tf1.SetFunc((object[] param) =>
+            {
+                //Logger.Print((startTime - DateTime.Now).Milliseconds);
+                //Logger.Print(DateTime.Now);
+                return param;
+            });
+
+            var fm = new FunctionManager();
+            fm.Start();
+            fm.Add(tf1, 1, true);
+
+            Program.OnTick += fm.Run;
+
+
 
 
 
@@ -385,6 +357,11 @@ namespace GUC.Scripts.Sumpfkraut
             //        }
             //    }
             //});
+
+
+
+
+
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }

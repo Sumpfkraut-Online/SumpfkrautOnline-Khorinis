@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GUC.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,8 @@ using System.Threading;
 
 namespace GUC.Scripts.Sumpfkraut.Utilities.Threading
 {
-    public abstract class AbstractRunnable : ScriptObject, IRunnable
+    public abstract class AbstractRunnable : ExtendedObject, IRunnable
     {
-
-        new public static readonly string _staticName = "AbstractRunnable (s)"; 
 
         public bool printStateControls;
 

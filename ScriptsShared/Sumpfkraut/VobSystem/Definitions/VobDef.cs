@@ -4,21 +4,23 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects.Instances;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
     public partial class VobDef : BaseVobDef, VobInstance.IScriptVobInstance
     {
-        new public static readonly string _staticName = "VobDef (s)";
-
         #region Constructors
 
         partial void pConstruct();
         public VobDef()
         {
-            SetObjName("VobDef");
-            effectHandler = effectHandler ?? new EffectSystem.EffectHandlers.VobEffectHandler(null, this);
             pConstruct();
+        }
+
+        protected override BaseEffectHandler CreateHandler()
+        {
+            return new VobDefEffectHandler(null, null, this);
         }
 
         protected override BaseVobInstance CreateVobInstance()
@@ -29,7 +31,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Properties
-
+        
+        new public VobDefEffectHandler EffectHandler { get { return (VobDefEffectHandler)base.EffectHandler; } }
         new public VobInstance BaseDef { get { return (VobInstance)base.BaseDef; } }
         
         public ModelDef Model

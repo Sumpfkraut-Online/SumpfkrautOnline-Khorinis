@@ -10,20 +10,36 @@ namespace GUC.Scripts.Sumpfkraut.Menus
     {
         static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
         public static IEnumerable<GUCMenu> GetActiveMenus() { return activeMenus; }
+        public static bool IsMenuActive { get { return activeMenus.Count > 0; } }
 
-        public static void UpdateMenus(long now)
+        public static bool KeyDownUpdateMenus(VirtualKeys key)
         {
             if (activeMenus.Count > 0)
             {
-                GUCMenu activeMenu = activeMenus[0];
-                if (activeMenu != null)
-                    activeMenu.Update(now);
+                activeMenus[0].KeyDown(key);
+                return true;
             }
+            return false;
+        }
+
+        public static bool KeyUpUpdateMenus(VirtualKeys key)
+        {
+            if (activeMenus.Count > 0)
+            {
+                activeMenus[0].KeyUp(key);
+                return true;
+            }
+            return false;
+        }
+
+        public static void UpdateMenus(long now)
+        {
+            activeMenus.ForEach(m => m.Update(now));
         }
 
         public static void CloseActiveMenus()
         {
-            for (int i = activeMenus.Count-1; i >= 0; i--)
+            for (int i = activeMenus.Count - 1; i >= 0; i--)
                 activeMenus[i].Close();
         }
 
@@ -37,8 +53,8 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             activeMenus.Remove(this);
         }
 
-        public abstract void Update(long now);
-        public abstract void KeyDown(VirtualKeys key, long now);
-        public abstract void KeyUp(VirtualKeys key, long now);
+        protected virtual void KeyDown(VirtualKeys key) { }
+        protected virtual void KeyUp(VirtualKeys key) { }
+        protected virtual void Update(long now) { }
     }
 }

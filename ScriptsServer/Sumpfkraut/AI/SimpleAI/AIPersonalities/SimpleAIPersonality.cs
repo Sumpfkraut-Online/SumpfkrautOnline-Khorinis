@@ -16,10 +16,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
     public class SimpleAIPersonality : BaseAIPersonality
     {
 
-        new public static readonly string _staticName = "SimpleAIPersonality (s)";
-
-
-        
         // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
         // movement paths to a destination and guide the vob to it
         protected Dictionary<VobInst, GuideCommandInfo> guideCommandByVobInst;
@@ -42,7 +38,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
         {
-            SetObjName("SimpleAIPersonality");
             this.aggressionRadius = aggressionRadius;
             this.turnAroundVelocity = turnAroundVelocity;
         }
@@ -300,16 +295,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     //Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
 
                     // do not interrupt an ongoing fight ani
-                    if (aggressorNPC.GetFightAni() != null) { return; }
+                    if (aggressorNPC.FightAnimation != null) { return; }
 
                     Visuals.ScriptAniJob scriptAniJob;
                     NPCCatalog.FightAnis AniCatalog = new NPCCatalog.FightAnis();
                     //aggressorNPC.ModelDef.TryGetAniJob((int) Visuals.SetAnis.Attack1HFwd1, out scriptAniJob);
-                    scriptAniJob = AniCatalog.Fwd;
-                    if (scriptAniJob != null)
-                    {
-                        aggressorNPC.ModelInst.StartAnimation(scriptAniJob);
-                    }
+                    aggressorNPC.EffectHandler.TryFightMove(FightMoves.Fwd);
                 }
             }
             else

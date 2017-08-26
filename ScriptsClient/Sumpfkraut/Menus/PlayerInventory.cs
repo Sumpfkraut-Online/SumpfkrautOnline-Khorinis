@@ -84,12 +84,9 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             base.Close();
             inv.Hide();
         }
+        
 
-        public override void Update(long now)
-        {
-        }
-
-        public override void KeyDown(VirtualKeys key, long now)
+        protected override void KeyDown(VirtualKeys key)
         {
             switch (key)
             {
@@ -160,10 +157,6 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     inv.KeyPressed(key);
                     break;
             }
-        }
-
-        public override void KeyUp(VirtualKeys key, long now)
-        {
         }
     }
 }

@@ -34,12 +34,12 @@ namespace GUC.WorldObjects
         {
             base.OnTick(now);
 
-            if (!dropped && NPC.Hero != null)
+            if (!dropped && NPC.Hero != null) // FIXME
             {
                 dropped = true;
                 Vec3f pos = this.GetPosition();
                 Vec3f dir = this.GetDirection();
-
+                
                 NPC.Hero.gVob.DoDropVob(this.gVob);
 
                 this.SetPosition(pos);

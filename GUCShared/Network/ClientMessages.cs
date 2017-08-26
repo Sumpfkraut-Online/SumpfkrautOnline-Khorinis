@@ -24,5 +24,7 @@ namespace GUC.Network
 
         GuidedVobMessage,
         GuidedNPCMessage,
+
+        SpecatorPosMessage,
     }
 }

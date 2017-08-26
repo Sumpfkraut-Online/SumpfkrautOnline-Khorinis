@@ -18,8 +18,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
     public partial class EffectLoader : BaseObjectLoader
     {
 
-        new public static readonly string _staticName = "EffectLoader (s)";
-
         public static char[] defaultParamsSeperator = new char[] { ';' };
 
         public static readonly Dictionary<string, List<ColumnGetTypeInfo>> DBStructure =

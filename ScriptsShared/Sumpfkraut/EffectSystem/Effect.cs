@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
     public partial class Effect : ExtendedObject
     {
 
-        new public static readonly string _staticName = "Effect (s)";
         protected static object globalLock;
 
         protected static Dictionary<string, Effect> globalEffects = new Dictionary<string, Effect>();
@@ -103,7 +102,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         public Effect (List<Change> changes = null)
         {
-            SetObjName("Effect");
             changeLock = new object();
             this.changes = changes ?? new List<Change>();
             this.effectName = defaultEffectName;

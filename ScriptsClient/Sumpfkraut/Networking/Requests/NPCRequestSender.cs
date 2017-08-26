@@ -51,27 +51,27 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             NPC.SendScriptCommand(stream, PktPriority.Low);
         }
 
-        public void Attack(NPCInst npc, NPCInst.FightMoves move)
+        public void Attack(NPCInst npc, FightMoves move)
         {
             var stream = npc.BaseInst.GetScriptCommandStream();
             switch (move)
             {
-                case NPCInst.FightMoves.Fwd:
+                case FightMoves.Fwd:
                     stream.Write((byte)ScriptRequestMessageIDs.AttackForward);
                     break;
-                case NPCInst.FightMoves.Left:
+                case FightMoves.Left:
                     stream.Write((byte)ScriptRequestMessageIDs.AttackLeft);
                     break;
-                case NPCInst.FightMoves.Right:
+                case FightMoves.Right:
                     stream.Write((byte)ScriptRequestMessageIDs.AttackRight);
                     break;
-                case NPCInst.FightMoves.Run:
+                case FightMoves.Run:
                     stream.Write((byte)ScriptRequestMessageIDs.AttackRun);
                     break;
-                case NPCInst.FightMoves.Parry:
+                case FightMoves.Parry:
                     stream.Write((byte)ScriptRequestMessageIDs.Parry);
                     break;
-                case NPCInst.FightMoves.Dodge:
+                case FightMoves.Dodge:
                     stream.Write((byte)ScriptRequestMessageIDs.Dodge);
                     break;
                 default:
@@ -80,18 +80,19 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             NPC.SendScriptCommand(stream, PktPriority.Immediate);
         }
 
-        public void Jump(NPCInst npc, NPCInst.JumpMoves move)
+        public void Jump(NPCInst npc)
         {
+            JumpMoves move = JumpMoves.Fwd;
             var stream = npc.BaseInst.GetScriptCommandStream();
             switch (move)
             {
-                case NPCInst.JumpMoves.Fwd:
+                case JumpMoves.Fwd:
                     stream.Write((byte)ScriptRequestMessageIDs.JumpFwd);
                     break;
-                case NPCInst.JumpMoves.Run:
+                case JumpMoves.Run:
                     stream.Write((byte)ScriptRequestMessageIDs.JumpRun);
                     break;
-                case NPCInst.JumpMoves.Up:
+                case JumpMoves.Up:
                     stream.Write((byte)ScriptRequestMessageIDs.JumpUp);
                     break;
                 default:

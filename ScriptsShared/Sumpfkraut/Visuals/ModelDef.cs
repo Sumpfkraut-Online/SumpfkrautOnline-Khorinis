@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Models;
 using GUC.Animations;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelDef : ScriptObject, ModelInstance.IScriptModelInstance
+    public partial class ModelDef : ExtendedObject, ModelInstance.IScriptModelInstance
     {
         #region Properties
 
@@ -119,12 +120,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         public void AddOverlay(ScriptOverlay overlay)
         {
             this.baseDef.AddOverlay(overlay.BaseOverlay);
+            pAddOverlay(overlay);
         }
 
         partial void pRemoveOverlay(ScriptOverlay overlay);
         public void RemoveOverlay(ScriptOverlay overlay)
         {
             this.baseDef.RemoveOverlay(overlay.BaseOverlay);
+            pRemoveOverlay(overlay);
         }
 
         #endregion

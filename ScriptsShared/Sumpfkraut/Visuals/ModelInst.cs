@@ -7,10 +7,11 @@ using GUC.Animations;
 using GUC.Models;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelInst : ScriptObject, Model.IScriptModel
+    public partial class ModelInst : ExtendedObject, Model.IScriptModel
     {
         #region Constructors
 
@@ -46,47 +47,60 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public void ApplyOverlay(ScriptOverlay overlay)
         {
-            
+            this.BaseInst.ApplyOverlay(overlay.BaseOverlay);
         }
 
         public void RemoveOverlay(ScriptOverlay overlay)
         {
-
+            this.BaseInst.RemoveOverlay(overlay.BaseOverlay);
         }
 
         #endregion
 
         #region Animations
 
-        public void StartAnimation(AniJob ani, float fpsMult)
+        public ActiveAni GetActiveAniFromLayer(int layer)
         {
-            StartAnimation((ScriptAniJob)ani.ScriptObject, fpsMult);
+            return this.BaseInst.GetActiveAniFromLayerID(layer);
+        }
+
+        public bool TryGetAniFromJob(ScriptAniJob aniJob, out ScriptAni ani)
+        {
+            Animation baseAni;
+            if (this.BaseInst.TryGetAniFromJob(aniJob.BaseAniJob, out baseAni))
+            {
+                ani = (ScriptAni)baseAni.ScriptObject;
+                return true;
+            }
+            ani = null;
+            return false;
+        }
+
+        public ActiveAni StartAniJob(AniJob aniJob, float fpsMult)
+        {
+            return StartAniJob((ScriptAniJob)aniJob.ScriptObject, fpsMult);
         }
 
         public void StopAnimation(ActiveAni ani, bool fadeOut)
         {
+            this.BaseInst.StopAnimation(ani, fadeOut);
+        }
 
+        public bool IsInAnimation()
+        {
+            return this.BaseInst.IsInAnimation();
+        }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob) { return StartAniJob(aniJob, 1.0f); }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult) { return StartAniJob(aniJob, fpsMult, default(FrameActionPair[])); }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, Action onStop) { return StartAniJob(aniJob, 1.0f, FrameActionPair.OnEnd(onStop)); }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult, Action onStop) { return StartAniJob(aniJob, fpsMult, FrameActionPair.OnEnd(onStop)); }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, params FrameActionPair[] pairs) { return StartAniJob(aniJob, 1.0f, pairs); }
+
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult, params FrameActionPair[] pairs)
+        {
+            return this.BaseInst.StartAniJob(aniJob.BaseAniJob, fpsMult, pairs);
         }
         
-        public ActiveAni StartAnimation(ScriptAniJob aniJob, Action onStop)
-        {
-            return StartAnimation(aniJob, 1.0f, FrameActionPair.OnEnd(onStop));
-        }
-
-        public ActiveAni StartAnimation(ScriptAniJob aniJob, float fpsMult, Action onStop)
-        {
-            return this.StartAnimation(aniJob, fpsMult, FrameActionPair.OnEnd(onStop));
-        }
-
-        public ActiveAni StartAnimation(ScriptAniJob aniJob, params FrameActionPair[] pairs)
-        {
-            return StartAnimation(aniJob, 1.0f, pairs);
-        }
-
-        public ActiveAni StartAnimation(ScriptAniJob aniJob, float fpsMult, params FrameActionPair[] pairs)
-        {
-            return this.BaseInst.StartAnimation(aniJob.BaseAniJob, fpsMult, pairs);
-        }
 
         #endregion
 

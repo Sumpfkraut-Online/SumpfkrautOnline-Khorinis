@@ -9,7 +9,8 @@ namespace Gothic.Objects.Sky
     {
         public abstract class VarOffsets
         {
-            public const int WeatherType = 0x30;
+            public const int WeatherType = 0x30,
+                FillBackground = 0x38;
         }
 
         public const int activeSkyController = 0x0099AC8C;
@@ -39,6 +40,12 @@ namespace Gothic.Objects.Sky
         {
             get { return Process.ReadInt(Address + VarOffsets.WeatherType); }
             set { Process.Write(Address + VarOffsets.WeatherType, value); }
+        }
+
+        public bool FillBackground
+        {
+            get { return Process.ReadBool(Address + VarOffsets.FillBackground); }
+            set { Process.Write(Address + VarOffsets.FillBackground, value); }
         }
     }
 }

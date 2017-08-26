@@ -9,10 +9,6 @@ namespace GUC.Scripts.Sumpfkraut.Utilities
     public class StringUtil : ExtendedObject
     {
 
-        new public static readonly string _staticName = "StringUtil (s)";
-
-
-
         protected StringUtil () { }
              
 

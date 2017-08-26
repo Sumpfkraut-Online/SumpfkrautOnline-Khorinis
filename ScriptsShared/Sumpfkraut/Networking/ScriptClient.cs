@@ -8,10 +8,11 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
-    public partial class ScriptClient : ScriptObject, GameClient.IScriptClient
+    public partial class ScriptClient : ExtendedObject, GameClient.IScriptClient
     {
         #region Constructors
 
@@ -30,6 +31,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         public GameClient BaseClient { get { return this.baseClient; } }
 
         public NPCInst Character { get { return (NPCInst)this.baseClient.Character?.ScriptObject; } }
+
+        /// <summary> Spawned or specating in a world. </summary>
+        public bool IsIngame { get { return this.baseClient.IsIngame; } }
+        public bool IsSpecating { get { return this.baseClient.IsSpectating; } }
+        public bool IsCharacter { get { return this.baseClient.Character != null; } }
 
         #endregion
 

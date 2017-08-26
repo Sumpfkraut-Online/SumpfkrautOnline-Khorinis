@@ -44,10 +44,7 @@ namespace GUC.Animations
 
         internal ActiveAni(Model model)
         {
-            if (model == null)
-                throw new ArgumentNullException("Model is null!");
-
-            this.model = model;
+            this.model = model ?? throw new ArgumentNullException("Model is null!");
         }
 
         public float GetProgress()
@@ -55,11 +52,28 @@ namespace GUC.Animations
             return endTime < 0 ? 0 : (float)(GameTime.Ticks - this.startTime) / (this.endTime - this.startTime);
         }
 
-        TimeActionPair[] actionPairs = new TimeActionPair[0];
-        int pairCount = 0;
+        float totalFinishedFrames; // frames from previous animations
+
+        List<TimeActionPair> actionPairs = new List<TimeActionPair>(1);
+
+        void AddPair(float frame, Action callback, long time)
+        {
+            TimeActionPair pair = new TimeActionPair();
+            pair.Frame = frame;
+            pair.Callback = callback;
+            pair.Time = time < 0 ? long.MaxValue : time;
+            for (int i = 0; i < actionPairs.Count; i++)
+                if (time > actionPairs[i].Time)
+                {
+                    actionPairs.Insert(i, pair);
+                    return;
+                }
+            actionPairs.Add(pair);
+        }
 
         internal void Start(Animation ani, float fpsMult, FrameActionPair[] pairs)
         {
+            this.totalFinishedFrames = 0;
             this.ani = ani;
             this.fpsMult = fpsMult;
 
@@ -70,24 +84,17 @@ namespace GUC.Animations
 
                 startTime = GameTime.Ticks;
                 endTime = startTime + (long)(numFrames * coeff);
-                if (pairs != null)
-                {
-                    if (pairs.Length > actionPairs.Length)
-                        actionPairs = new TimeActionPair[pairs.Length];
 
-                    pairCount = 0;
-                    for (int i = 0; i < pairs.Length; i++)
-                        if (pairs[i].Callback != null)
-                        {
-                            actionPairs[pairCount].Frame = pairs[i].Frame;
-                            actionPairs[pairCount].Callback = pairs[i].Callback;
-                            actionPairs[pairCount].Time = startTime + (long)(pairs[i].Frame * coeff);
-                            pairCount++;
-                        }
-                }
-                else
+                if (pairs != null && pairs.Length > 0)
                 {
-                    pairCount = 0;
+                    for (int i = pairs.Length - 1; i >= 0; i--)
+                    {
+                        FrameActionPair pair = pairs[i];
+                        if (pair.Callback != null)
+                        {
+                            AddPair(pair.Frame, pair.Callback, startTime + (long)(pair.Frame * coeff));
+                        }
+                    }
                 }
             }
             else // idle ani
@@ -98,20 +105,54 @@ namespace GUC.Animations
 
         internal void Stop()
         {
+            if (this.actionPairs.Count > 0)
+            {
+                // fire all callbacks which should happen when or after the last nextAni ends
+                float lastFrame = this.totalFinishedFrames;
+                Animation nextAni;  AniJob nextAniJob = this.AniJob;
+                while (nextAniJob != null && this.model.TryGetAniFromJob(nextAniJob, out nextAni))
+                {
+                    lastFrame += nextAni.GetFrameNum();
+                    nextAniJob = nextAniJob.NextAni;
+                }
+
+                for (int i = 0; i < actionPairs.Count; i++)
+                {
+                    Log.Logger.Log(actionPairs[i].Frame);
+                    if (this.actionPairs[i].Frame >= lastFrame)
+                        this.actionPairs[i].Callback();
+                    else break;
+                }
+
+                this.actionPairs.Clear();
+            }
+            
+            this.ani = null;
         }
 
         internal void OnTick(long now)
         {
+            if (this.AniJob.Layer == 1 && this.Model.Vob.GetEnvironment().InAir)
+            {
+                this.Model.EndAni(this.ani);
+                this.Stop();
+            }
+
             if (!this.IsIdleAni)
             {
                 if (now < endTime) // still playing
                 {
-                    for (int i = 0; i < pairCount; i++) // check for frame actions
-                        if (actionPairs[i].Callback != null && now >= actionPairs[i].Time)
-                        {
-                            actionPairs[i].Callback();
-                            actionPairs[i].Callback = null;
-                        }
+                    for (int i = actionPairs.Count - 1; i >= 0; i--)
+                    {
+                        var current = actionPairs[i];
+                        if (now < current.Time)
+                            break;
+
+                        actionPairs.RemoveAt(i);
+                        current.Callback();
+                        if (this.ani == null) // ani is stopped
+                            break;
+                    }
                 }
                 else
                 {
@@ -127,12 +168,8 @@ namespace GUC.Animations
                     }
 
                     // fire all remaining actions
-                    for (int i = 0; i < pairCount; i++)
-                        if (actionPairs[i].Callback != null)
-                        {
-                            actionPairs[i].Callback();
-                            actionPairs[i].Callback = null;
-                        }
+                    actionPairs.ForEach(p => p.Callback());
+                    actionPairs.Clear();
 
                     // end this animation
                     model.EndAni(this.ani);
@@ -143,37 +180,29 @@ namespace GUC.Animations
 
         void Continue(Animation nextAni)
         {
-            float numFrames = nextAni.GetFrameNum();
-            if (numFrames > 0)
+            float oldFrameNum = this.ani.GetFrameNum();
+            float newFrameNum = nextAni.GetFrameNum();
+            if (newFrameNum > 0)
             {
                 float coeff = TimeSpan.TicksPerSecond / (nextAni.FPS * fpsMult);
 
                 this.startTime = this.endTime;
-                this.endTime = this.startTime + (long)(numFrames * coeff);
+                this.endTime = this.startTime + (long)(newFrameNum * coeff);
+                
+                for (int i = 0; i < actionPairs.Count; i++)
+                {
+                    var pair = actionPairs[i];
 
-                float elapsedFrames = this.ani.GetFrameNum();
-
-                int newPairCount = 0;
-                for (int i = 0; i < pairCount; i++)
-                    if (actionPairs[i].Callback != null)
-                    {
-                        float newFrame = actionPairs[i].Frame - elapsedFrames;
-                        actionPairs[newPairCount].Frame = newFrame;
-                        actionPairs[newPairCount].Time = endTime + (long)(newFrame * coeff);
-                        if (i != newPairCount)
-                        {
-                            actionPairs[newPairCount].Callback = actionPairs[i].Callback;
-                            actionPairs[i].Callback = null;
-                        }
-                        newPairCount++;
-                    }
-                pairCount = newPairCount;
+                    pair.Frame = pair.Frame - oldFrameNum; // new frame
+                    pair.Time = startTime + (long)(pair.Frame * coeff);
+                }
             }
             else
             {
                 endTime = -1;
             }
 
+            this.totalFinishedFrames += oldFrameNum;
             this.ani = nextAni;
         }
     }

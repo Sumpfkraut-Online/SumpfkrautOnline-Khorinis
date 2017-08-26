@@ -12,13 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
     public class TestCommands : GUC.Utilities.ExtendedObject
     {
 
-        new public static readonly string _staticName = "TestCommands (s)";
-
-
-
         public TestCommands ()
         {
-            SetObjName("TestCommands");
         }
 
 

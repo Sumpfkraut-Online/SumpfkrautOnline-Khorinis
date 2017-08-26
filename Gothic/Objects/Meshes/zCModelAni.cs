@@ -85,6 +85,12 @@ namespace Gothic.Objects.Meshes
             get { return (Process.ReadByte(Address + 0xDC) & (1 << 6)) != 0; }
         }
 
+        public zCModelAni NextAni
+        {
+            get { return new zCModelAni(Process.ReadInt(Address + VarOffsets.nextAni)); }
+            set { Process.Write(Address + VarOffsets.nextAni, value.Address); }
+        }
+
         #endregion
 
         public static zCModelAni Create()

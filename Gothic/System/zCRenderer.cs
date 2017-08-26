@@ -10,6 +10,12 @@ namespace Gothic.System
     public static class zCRenderer
     {
         public const int zrenderer = 0x982F08;
+        
+        public static int PlayerLightInt
+        {
+            get { return Process.ReadInt(0x89EBB4); }
+            set { Process.Write(0x89EBB4, value); }
+        }
 
         public static int GetRendererAddress()
         {
@@ -50,5 +56,23 @@ namespace Gothic.System
         {
             Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x6524E0, (BoolArg)enabled);
         }
+        
+        public enum AlphaBlendFuncs
+        {
+            Default,
+            None,
+            Blend,
+            Add,
+            Sub,
+            Mul,
+            Mul2
+        };
+
+        public static void SetAlphaBlendFunc(AlphaBlendFuncs blend)
+        {
+            Process.Write(zCRenderer.GetRendererAddress() + 0x464, (int)blend);
+            //Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x652610, (POINTER!!!)(IntArg)(int)blend);
+        }
     }
+
 }

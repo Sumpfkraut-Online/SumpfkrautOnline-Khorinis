@@ -28,6 +28,12 @@ namespace Gothic.Objects.EventManager
             DoFrameActivity = 0x785F70,
             GetActiveMsg = 0x787810;
         }
+        
+        public static bool DisableEventManagers
+        {
+            get { return Process.ReadBool(0xAB39C8); }
+            set { Process.Write(0xAB39C8, value); }
+        }
 
         public int OwnerAddress
         {

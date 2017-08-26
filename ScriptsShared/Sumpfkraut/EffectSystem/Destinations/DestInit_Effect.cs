@@ -12,7 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Effect : BaseDestInit
     {
 
-        new public static readonly string _staticName = "DestInit_Effect (s)";
         new public static DestInit_Effect representative;
 
 
@@ -25,8 +24,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
         protected DestInit_Effect ()
         {
-            SetObjName("DestInit_Effect");
-
             AddOrChange(new DestInitInfo(ChangeDestination.Effect_GlobalID, 
                 new List<ChangeType>() { ChangeType.Effect_GlobalID_Set }, 
                 CTC_GlobalID, ATC_GlobalID));
