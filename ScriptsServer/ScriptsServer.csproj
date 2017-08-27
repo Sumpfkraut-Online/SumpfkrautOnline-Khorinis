@@ -94,6 +94,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Database\BaseObjectLoader.cs">
       <Link>Sumpfkraut\Database\BaseObjectLoader.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\BaseTable.cs">
+      <Link>Sumpfkraut\Database\BaseTable.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Database\DBAgent.cs">
       <Link>Sumpfkraut\Database\DBAgent.cs</Link>
     </Compile>
@@ -123,6 +126,15 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Database\Enumeration.cs">
       <Link>Sumpfkraut\Database\Enumeration.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\Enumeration\SortOrder.cs">
+      <Link>Sumpfkraut\Database\Enumeration\SortOrder.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\ITable.cs">
+      <Link>Sumpfkraut\Database\ITable.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Database\TestTable.cs">
+      <Link>Sumpfkraut\Database\TestTable.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs">
       <Link>Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs</Link>
@@ -473,6 +485,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Sumpfkraut\Visuals\VisualsLoading\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>

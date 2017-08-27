@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="Sumpfkraut\Visuals\VisualLoading\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
@@ -70,6 +71,12 @@
     <Compile Include="Sumpfkraut\Database\DBSecurity.cs" />
     <Compile Include="Sumpfkraut\Database\DBTables.cs" />
     <Compile Include="Sumpfkraut\Database\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\Database\Enumeration\SortOrder.cs" />
+    <Compile Include="Sumpfkraut\Database\ITable.cs" />
+    <Compile Include="Sumpfkraut\Database\Loader.cs" />
+    <Compile Include="Sumpfkraut\Database\LoaderProtocol.cs" />
+    <Compile Include="Sumpfkraut\Database\BaseTable.cs" />
+    <Compile Include="Sumpfkraut\Database\TestTable.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\BaseChangeInit.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\Change.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Changes\ChangeInitializer.cs" />

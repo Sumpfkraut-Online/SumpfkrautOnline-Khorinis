@@ -129,6 +129,9 @@ CREATE TABLE IF NOT EXISTS ModelDef
     ModelDefName TEXT NOT NULL, -- descriptive name
     IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     Visual TEXT NOT NULL, -- Gothic visual name
+    Radius REAL DEFAULT 0, -- radius for collision detection
+    Height REAL DEFAULT 0, -- height for collision detection
+    FistRange REAL DEFAULT 0, -- fist range for hit detection without weapon
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
@@ -162,47 +165,6 @@ BEGIN
     UPDATE ScriptOverlay SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptOverlayID = OLD.ScriptOverlayID;
 END;
 
--- list of ScriptAni --
-DROP TABLE IF EXISTS ScriptAni;
-CREATE TABLE IF NOT EXISTS ScriptAni 
-(
-    ScriptAniID INTEGER NOT NULL, -- unique primary key id
-    ScriptOverlayID INTEGER NOT NULL,
-    ScriptAniJobID INTEGER NOT NULL,
-    Layer INTEGER NOT NULL,
-    Duration INTEGER NOT NULL,
-    StartFrame INTEGER NOT NULL,
-    EndFrame INTEGER NOT NULL,
-    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
-    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
-);
-
-CREATE TRIGGER Update_ScriptAni
-    AFTER UPDATE
-    ON ScriptAni
-BEGIN
-    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
-END;
-
--- ActionFrameList --
-DROP TABLE IF EXISTS ActionFrameList;
-CREATE TABLE IF NOT EXISTS ActionFrameList 
-(
-    ScriptAniID INTEGER NOT NULL, -- unique primary key id
-    FrameList TEXT NOT NULL,
-    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
-    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
-);
-
-CREATE TRIGGER Update_ActionFrameList
-    AFTER UPDATE
-    ON ScriptAni
-BEGIN
-    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
-END;
-
 -- list of ScriptAniJob--
 DROP TABLE IF EXISTS ScriptAniJob;
 CREATE TABLE IF NOT EXISTS ScriptAniJob 
@@ -225,6 +187,30 @@ CREATE TRIGGER Update_ScriptAniJob
     ON ScriptAniJob
 BEGIN
     UPDATE ScriptAniJob SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniJobID = OLD.ScriptAniJobID;
+END;
+
+-- list of ScriptAni --
+DROP TABLE IF EXISTS ScriptAni;
+CREATE TABLE IF NOT EXISTS ScriptAni 
+(
+    ScriptAniID INTEGER NOT NULL, -- unique primary key id
+    ScriptOverlayID INTEGER NOT NULL,
+    ScriptAniJobID INTEGER NOT NULL,
+    Layer INTEGER NOT NULL,
+    Duration INTEGER NOT NULL,
+    StartFrame INTEGER NOT NULL,
+    EndFrame INTEGER NOT NULL,
+    SpecialFrames TEXT NOT NULL,
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
+);
+
+CREATE TRIGGER Update_ScriptAni
+    AFTER UPDATE
+    ON ScriptAni
+BEGIN
+    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
 END;
 
 -- >> static and dynamic content management << --

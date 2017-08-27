@@ -25,25 +25,6 @@ namespace GUC.Scripts.Sumpfkraut
     public class TestingThings : ExtendedObject
     {
 
-        public class O
-        {
-            
-        }
-
-        public class A : O
-        {
-
-
-            public A () { }
-        }
-
-        public class B : O
-        {
-            public B () { }
-        }
-
-
-
         public static void Init ()
         {
             Logger.Log("****** TestingThings *************************************");
@@ -360,8 +341,7 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-
-            AniTest.Test();
+            Logger.Print(TestTable.Instance.GetTableName());
 
 
 
@@ -390,26 +370,12 @@ namespace GUC.Scripts.Sumpfkraut
             //});
 
 
-
-            
-
-
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
 
     }
 
-    
-    public static class AniTest
-    {
-
-        public static void Test ()
-        {
-            Visuals.ModelDef modelDef = new Visuals.ModelDef("HEINZ", "HUMAN.3DS");
-            modelDef.
-        }
-
-    }
+ 
 
 
 }
