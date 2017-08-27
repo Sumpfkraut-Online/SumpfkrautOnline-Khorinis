@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
@@ -68,5 +69,30 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             pDelete();
         }
 
+        /// <summary> Gets a vob by ID from this world. </summary>
+        public bool TryGetVob(int id, out BaseVobInst vob)
+        {
+            WorldObjects.BaseVob baseVob;
+            if (this.baseWorld.TryGetVob(id, out baseVob))
+            {
+                vob = (BaseVobInst)baseVob.ScriptObject;
+                return true;
+            }
+            vob = null;
+            return false;
+        }
+
+        /// <summary> Gets a vob of the specific type by ID from this world. </summary>
+        public bool TryGetVob<T>(int id, out T vob) where T : BaseVobInst
+        {
+            BaseVobInst baseVob;
+            if (this.TryGetVob(id, out baseVob) && baseVob is T)
+            {
+                vob = (T)baseVob;
+                return true;
+            }
+            vob = null;
+            return false;
+        }
     }
 }

@@ -147,11 +147,17 @@
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\LockTimer.cs">
+      <Link>Utilities\LockTimer.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\Randomizer.cs">
       <Link>Utilities\Randomizer.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\StringExtensions.cs">
       <Link>Utilities\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\StructList.cs">
+      <Link>Utilities\StructList.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\Threading\AbstractRunnable.cs">
       <Link>Utilities\Threading\AbstractRunnable.cs</Link>

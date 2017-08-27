@@ -416,6 +416,10 @@ namespace GUC.Network
                     Vob.Messages.ReadThrow(stream);
                     break;
 
+                case ServerMessages.ScriptMessage:
+                    Client.ScriptObject.ReadScriptMessage(stream);
+                    break;
+
                 // ScriptVobMessages
                 case ServerMessages.ScriptVobMessage:
                     ushort vobID = stream.ReadUShort();
@@ -642,7 +646,6 @@ namespace GUC.Network
         }
 
         #endregion
-        
         
         internal static PacketWriter SetupStream(ClientMessages id)
         {

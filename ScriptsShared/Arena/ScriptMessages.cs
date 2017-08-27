@@ -8,6 +8,8 @@ namespace GUC.Scripts.Arena
 {
     enum ScriptMessages
     {
+        ScreenMessage,
         CharCreation,
+        DuelRequest,
     }
 }

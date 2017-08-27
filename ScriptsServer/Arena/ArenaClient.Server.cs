@@ -17,6 +17,21 @@ namespace GUC.Scripts.Arena
             this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f());
         }
 
+
+        public void SendScreenMessage(string message)
+        {
+            SendScreenMessage(message, ColorRGBA.White);
+        }
+    
+        public void SendScreenMessage(string message, ColorRGBA color)
+        {
+            var stream = GameClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.ScreenMessage);
+            stream.Write(message);
+            stream.Write(color);
+            this.BaseClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+        }
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
@@ -24,6 +39,11 @@ namespace GUC.Scripts.Arena
             {
                 case ScriptMessages.CharCreation:
                     ReadCharCreation(stream);
+                    break;
+                case ScriptMessages.DuelRequest:
+                    NPCInst target;
+                    if (this.Character.World.TryGetVob(stream.ReadUShort(), out target))
+                        GameMode.DuelRequest(this.Character, target);
                     break;
             }
         }

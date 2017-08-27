@@ -138,12 +138,9 @@ namespace GUC.Scripts
             NPCInst.Requests.OnDrawFists += npc => npc.EffectHandler.TryDrawFists();
             NPCInst.Requests.OnDrawWeapon += (npc, item) => npc.EffectHandler.TryDrawWeapon(item);
             NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
-
-
-            CreateTestWorld();
+            
             AddSomeDefs();
-
-
+            
             // -- Websocket-Server --
             Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
             wsServer.Init();
@@ -155,6 +152,7 @@ namespace GUC.Scripts
             //Sumpfkraut.TestingThings.Init();
             //Sumpfkraut.AI.TestingAI.Test();
 
+            CreateTestWorld();
 
             Logger.Log("######################## Finished #########################");
         }
@@ -167,6 +165,12 @@ namespace GUC.Scripts
             WorldInst.Current.Create();
             WorldInst.Current.Clock.SetTime(new WorldTime(0, 8), 10.0f);
             WorldInst.Current.Clock.Start();
+
+            var def = NPCDef.Get("maleplayer");
+            var inst = new NPCInst(def);
+            inst.CustomName = "Testcharakter";
+            inst.BaseInst.SetNeedsClientGuide(true);
+            inst.Spawn(WorldInst.Current, new Vec3f(0, 1000, 0), new Vec3f(0, 0, 1));
 
             /* for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
              {

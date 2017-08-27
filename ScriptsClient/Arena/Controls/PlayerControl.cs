@@ -54,8 +54,20 @@ namespace GUC.Scripts.Arena.Controls
 
         static void PlayerActionButton(bool down)
         {
+            if (!down)
+                return;
+
+            var hero = ScriptClient.Client.Character;
             if (KeyBind.MoveForward.IsPressed())
                 CheckFightMove(down, FightMoves.Run);
+            else if (!hero.IsDead && hero.IsInFightMode)
+            {
+                var focusVob = hero.GetFocusVob();
+                if (focusVob != null && focusVob is NPCInst)
+                    ArenaClient.SendDuelRequest((NPCInst)focusVob);
+            }
+
+            
         }
 
         long nextDodgeTime = 0;

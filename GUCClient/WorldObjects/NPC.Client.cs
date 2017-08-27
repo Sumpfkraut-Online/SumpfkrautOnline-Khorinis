@@ -473,5 +473,12 @@ namespace GUC.WorldObjects
             var aiVel = new zVec3(this.gVob.HumanAI.Address + 0x90);
             base.Throw((Vec3f)aiVel + velocity);
         }
+
+        public BaseVob GetFocusVob()
+        {
+            BaseVob baseVob;
+            this.World.TryGetVobByAddress(this.gVob.FocusVob.Address, out baseVob);
+            return baseVob;
+        }
     }
 }

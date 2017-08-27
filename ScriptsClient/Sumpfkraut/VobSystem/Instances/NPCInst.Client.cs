@@ -367,8 +367,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             SoundHandler.PlaySound3D(sound, this.BaseInst);
         }
-
-        GUCTimer drawTimer = new GUCTimer();
+        
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
             /*this.StartAnimation(ani);
@@ -491,9 +490,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        partial void pDespawn()
+        public BaseVobInst GetFocusVob()
         {
-            drawTimer.Stop();
+            var vob = this.BaseInst.GetFocusVob();
+            return vob != null ? (BaseVobInst)vob.ScriptObject : null;
         }
     }
 }
