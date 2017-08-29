@@ -370,7 +370,6 @@
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
     <Compile Include="Arena\ArenaClient.Server.cs" />
-    <Compile Include="Arena\DuelMode.cs" />
     <Compile Include="Left4Gothic\L4Client.Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />

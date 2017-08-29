@@ -11,5 +11,8 @@ namespace GUC.Scripts.Arena
         ScreenMessage,
         CharCreation,
         DuelRequest,
+        DuelStart,
+        DuelWin,
+        DuelEnd,
     }
 }

@@ -46,5 +46,15 @@ namespace GUC.Scripts.Sumpfkraut.Networking
                     NPCInst.Requests.ReadRequest(id, stream, ((NPCInst)vob.ScriptObject));
             }
         }
+
+        public static PacketWriter GetScriptMessageStream()
+        {
+            return GameClient.GetScriptMessageStream();
+        }
+
+        public void SendScriptMessage(PacketWriter stream, PktPriority priority, PktReliability reliability)
+        {
+            this.BaseClient.SendScriptMessage(stream, priority, reliability);
+        }
     }
 }
