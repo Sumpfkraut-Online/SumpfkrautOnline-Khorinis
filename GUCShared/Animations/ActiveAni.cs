@@ -118,7 +118,6 @@ namespace GUC.Animations
 
                 for (int i = 0; i < actionPairs.Count; i++)
                 {
-                    Log.Logger.Log(actionPairs[i].Frame);
                     if (this.actionPairs[i].Frame >= lastFrame)
                         this.actionPairs[i].Callback();
                     else break;

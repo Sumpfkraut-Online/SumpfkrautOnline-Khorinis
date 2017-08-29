@@ -29,7 +29,7 @@ namespace GUC.Scripts.Arena
                 var stream = GetScriptMessageStream();
                 stream.Write((byte)ScriptMessages.DuelRequest);
                 stream.Write((ushort)target.ID);
-                SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+                SendScriptMessage(stream, PktPriority.Low, PktReliability.Unreliable);
             }
         }
 
@@ -42,6 +42,7 @@ namespace GUC.Scripts.Arena
                     string msg = stream.ReadString();
                     var color = stream.ReadColorRGBA();
                     Log.Logger.Log(msg);
+
                     break;
             }
         }

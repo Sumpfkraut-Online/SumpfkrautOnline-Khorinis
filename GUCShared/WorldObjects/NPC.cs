@@ -113,7 +113,7 @@ namespace GUC.WorldObjects
         public int HPMax { get { return hpmax; } }
         int hp = 100;
         public int HP { get { return hp; } }
-
+        
         public bool IsDead { get { return this.hp <= 0; } }
 
         public void SetHealth(int hp)
@@ -163,7 +163,7 @@ namespace GUC.WorldObjects
         {
             if (item == null)
                 throw new ArgumentNullException("Item is null!");
-
+            
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
             
@@ -213,7 +213,7 @@ namespace GUC.WorldObjects
         {
             if (item == null)
                 throw new ArgumentNullException("Item is null!");
-
+            
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
 
@@ -315,7 +315,7 @@ namespace GUC.WorldObjects
                 }
                 else
                 {
-                    this.inventory.ScriptObject.RemoveItem(item); // fixme
+                    this.inventory.ScriptObject.RemoveItem(item); // kinda shitty, fixme
                     item.ReadInventoryProperties(stream);
                     this.inventory.ScriptObject.AddItem(item);
                 }

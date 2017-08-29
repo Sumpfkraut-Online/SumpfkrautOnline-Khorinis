@@ -16,9 +16,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
+        public delegate void NPCInstMoveHandler(NPCInst npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
+        public static event NPCInstMoveHandler sOnNPCInstMove;
         static NPCInst()
         {
-            WorldObjects.NPC.OnNPCChangePosDir += (npc, p, d, m) => ((NPCInst)npc.ScriptObject).ChangePosDir(p, d, m);
+            WorldObjects.NPC.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
+            sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
         }
 
         void ChangePosDir(Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement)
@@ -45,6 +48,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public NPCCatalog AniCatalog { get { return (NPCCatalog)this.ModelDef?.Catalog; } }
 
         public bool IsPlayer { get { return this.BaseInst.IsPlayer; } }
+
+        public ScriptClient Client { get { return (ScriptClient)this.BaseInst.Client?.ScriptObject; } }
 
         #region Jumps
 
@@ -587,6 +592,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
 
+        public delegate bool OnHitCheckHandler(NPCInst attacker, NPCInst target);
+        public static event OnHitCheckHandler sOnHitCheck;
+
         void CalcHit()
         {
             try
@@ -601,6 +609,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                   {
                       NPCInst target = (NPCInst)npc.ScriptObject;
                       if (target == this || target.IsDead)
+                          return;
+
+                      if (sOnHitCheck != null && !sOnHitCheck(this, target))
                           return;
 
                       Vec3f targetPos = npc.GetPosition();

@@ -15,8 +15,8 @@ namespace GUC.WorldObjects
     {
         #region Network Messages
 
-        public delegate void NPCChangePosDirHandler(NPC npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
-        public static event NPCChangePosDirHandler OnNPCChangePosDir;
+        public delegate void NPCMoveHandler(NPC npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
+        public static event NPCMoveHandler OnNPCMove;
 
         new internal static class Messages
         {
@@ -28,25 +28,7 @@ namespace GUC.WorldObjects
                 stream.Write((ushort)npc.ID);
                 stream.Write((byte)item.slot);
                 item.WriteEquipProperties(stream);
-
-                if (npc.IsPlayer)
-                {
-                    npc.ForEachVisibleClient(client =>
-                    {
-                        if (client != npc.client)
-                            client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
-                    });
-
-                    // just send the id to this player
-                    stream = GameServer.SetupStream(ServerMessages.PlayerNPCEquipAddMessage);
-                    stream.Write((byte)item.ID);
-                    stream.Write((byte)item.slot);
-                    npc.client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
-                }
-                else
-                {
-                    npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
-                }
+                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
             }
 
             public static void WriteEquipSwitch(NPC npc, Item item)
@@ -113,7 +95,7 @@ namespace GUC.WorldObjects
                     float waterDepth = ((bitfield >> 6) & 0x3F) / (float)0x3F;
                     float waterLevel = (bitfield & 0x3F) / (float)0x3F;
                     Environment env = new Environment(inAir, waterLevel, waterDepth);
-                    
+
                     npc.movement = movement;
                     npc.environment = env;
 
@@ -125,8 +107,8 @@ namespace GUC.WorldObjects
                         client.UpdateVobList(world, pos);
                     }
 
-                    if (OnNPCChangePosDir != null)
-                        OnNPCChangePosDir(npc, oldPos, oldDir, oldMovement);
+                    if (OnNPCMove != null)
+                        OnNPCMove(npc, oldPos, oldDir, oldMovement);
                 }
             }
 

@@ -7,95 +7,33 @@ using GUC.GameObjects.Collections;
 
 namespace GUC.Scripting
 {
-    public class GUCTimer
+    public abstract class GUCAbstractTimer
     {
         #region Static Loop
-
-        static GUCTimer[] activeTimers = new GUCTimer[100];
-        static int lastActiveTimer = -1; // index of the last add active timer
-
+        // Sorted timers (Latest ... Next)
+        static List<GUCAbstractTimer> activeTimers = new List<GUCAbstractTimer>(100);
         internal static void Update(long now)
         {
-            int i = 0;
-            while (i <= lastActiveTimer)
+            int index;
+            while ((index = activeTimers.Count-1) >= 0)
             {
-                GUCTimer current = activeTimers[i];
-                if (current.nextCallTime <= now)
-                {
-                    current.callback();
-                    if (current.started)
-                    {
-                        current.SetNextCallTime(now);
-                    }
-                    else
-                    {
-                        continue; // timer has stopped and was replaced by the lastActiveTimer
-                    }
-                }
-                i++;
-            }
-        }
+                var current = activeTimers[index];
+                if (current.NextCallTime > now)
+                    break;
 
-        #endregion
-
-        #region Start & Stop
-
-        public void Start()
-        {
-            if (!started)
-            {
-                if (this.callback == null)
-                    throw new NullReferenceException("Callback is null!");
-
-                this.started = true;
-                this.index = ++lastActiveTimer;
-
-                if (index >= activeTimers.Length)
-                {
-                    GUCTimer[] newArr = new GUCTimer[2 * activeTimers.Length];
-                    Array.Copy(activeTimers, newArr, activeTimers.Length);
-                    activeTimers = newArr;
-                }
-
-                activeTimers[this.index] = this;
-                this.SetNextCallTime(GameTime.Ticks);
-            }
-        }
-
-        public void Stop(bool fire = false)
-        {
-            if (started)
-            {
-                started = false;
-
-                activeTimers[this.index] = this.index != lastActiveTimer ? activeTimers[lastActiveTimer] : null;
-                lastActiveTimer--;
+                activeTimers.RemoveAt(index);
+                current.Fire();
+                if (current.Started)
+                    current.SetNextCallTime(now);
                 
-                if (fire)
-                {
-                    callback();
-                }
-            }
-        }
-
-        public void Restart(bool fire = false)
-        {
-            if (started)
-            {
-                if (fire) callback();
-                SetNextCallTime(GameTime.Ticks);
-            }
-            else
-            {
-                this.Start();
             }
         }
 
         #endregion
 
-        #region Properties
+        protected abstract void Fire();
         
-        int index;
+        #region Properties
 
         long interval;
         /// <summary>
@@ -124,36 +62,96 @@ namespace GUC.Scripting
         /// Returns whether the timer is running.
         /// </summary>
         public bool Started { get { return started; } }
-        
-        Action callback;
+
+        object callback;
+        protected object Callback
+        {
+            get { return this.callback; }
+            set
+            {
+                if (value == null)
+                    throw new ArgumentNullException("Callback is null!");
+                this.callback = value;
+            }
+        }
+
+        #endregion
+
+        #region Start & Stop
+
+        public void Start()
+        {
+            if (!started)
+            {
+                if (this.callback == null)
+                    throw new NullReferenceException("Callback is null!");
+
+                this.SetNextCallTime(GameTime.Ticks);
+                this.started = true;
+            }
+        }
+
+        public void Stop(bool fire = false)
+        {
+            if (started)
+            {
+                activeTimers.Remove(this);
+                started = false;
+
+                if (fire)
+                    this.Fire();
+            }
+        }
+
+        public void Restart(bool fire = false)
+        {
+            Stop(fire); Start();
+        }
 
         #endregion
 
         #region Set Methods
-
+        
         public void SetInterval(long interval)
         {
-            if (interval < 0)
-                throw new ArgumentOutOfRangeException("Interval is < 0!");
+            if (interval <= 0)
+                throw new ArgumentOutOfRangeException("Interval is <= 0!");
 
-            this.interval = interval;
-        }
+            if (this.interval == interval)
+                return;
 
-        public void SetCallback(Action callback)
-        {
-            if (callback == null)
-                throw new ArgumentNullException("Callback is null!");
-
-            this.callback = callback;
+            // update
+            if (this.started)
+            {
+                this.interval = interval;
+                activeTimers.Remove(this);
+                SetNextCallTime(this.startTime);
+            }
         }
 
         void SetNextCallTime(long now)
         {
-            startTime = now;
-            nextCallTime = now + interval;
+            this.startTime = now;
+            this.nextCallTime = now + this.interval;
+            for (int i = 0; i < activeTimers.Count; i++)
+                if (activeTimers[i].nextCallTime <= this.nextCallTime)
+                    activeTimers.Insert(i, this);
         }
 
         #endregion
+    }
+
+    public class GUCTimer : GUCAbstractTimer
+    {
+        protected override void Fire()
+        {
+            ((Action)this.Callback).Invoke();
+        }
+
+        public void SetCallback(Action callback)
+        {
+            this.Callback = callback;
+        }
 
         #region Constructors
 
@@ -175,6 +173,88 @@ namespace GUC.Scripting
         public GUCTimer(Action callback)
         {
             SetCallback(callback);
+        }
+
+        #endregion
+    }
+
+    public class GUCTimer<T> : GUCAbstractTimer
+    {
+        T arg;
+
+        protected override void Fire()
+        {
+            ((Action<T>)this.Callback).Invoke(arg);
+        }
+
+        public void SetCallback(Action<T> callback, T argument)
+        {
+            this.Callback = callback;
+            this.arg = argument;
+        }
+
+        #region Constructors
+
+        public GUCTimer()
+        {
+        }
+
+        public GUCTimer(long interval, Action<T> callback, T argument)
+        {
+            SetInterval(interval);
+            SetCallback(callback, argument);
+        }
+
+        public GUCTimer(long interval)
+        {
+            SetInterval(interval);
+        }
+
+        public GUCTimer(Action<T> callback, T argument)
+        {
+            SetCallback(callback, argument);
+        }
+
+        #endregion
+    }
+
+    public class GUCTimer<T1, T2> : GUCAbstractTimer
+    {
+        T1 arg1;
+        T2 arg2;
+
+        protected override void Fire()
+        {
+            ((Action<T1,T2>)this.Callback).Invoke(arg1, arg2);
+        }
+
+        public void SetCallback(Action<T1, T2> callback, T1 argument1, T2 argument2)
+        {
+            this.Callback = callback;
+            this.arg1 = argument1;
+            this.arg2 = argument2;
+        }
+
+        #region Constructors
+
+        public GUCTimer()
+        {
+        }
+
+        public GUCTimer(long interval, Action<T1, T2> callback, T1 argument1, T2 argument2)
+        {
+            SetInterval(interval);
+            SetCallback(callback, argument1, argument2);
+        }
+
+        public GUCTimer(long interval)
+        {
+            SetInterval(interval);
+        }
+
+        public GUCTimer(Action<T1,T2> callback, T1 argument1, T2 argument2)
+        {
+            SetCallback(callback, argument1, argument2);
         }
 
         #endregion

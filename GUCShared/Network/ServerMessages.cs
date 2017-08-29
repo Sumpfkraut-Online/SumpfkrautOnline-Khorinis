@@ -90,7 +90,6 @@ namespace GUC.Network
         NPCEquipRemoveMessage,
 
         // player messages
-        PlayerNPCEquipAddMessage, 
         PlayerInvAddItemMessage, // add item to player inventory
         PlayerInvRemoveItemMessage, // remove item from player inventory
         PlayerItemAmountChangedMessage,

@@ -27,34 +27,40 @@ namespace GUC.WorldObjects
                 {
                     int slot = stream.ReadByte();
 
-                    Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
-                    item.ReadEquipProperties(stream);
+                    Item item;
+                    if (npc != Hero)
+                    {
+                        item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                        item.ReadEquipProperties(stream);
+                        npc.Inventory.ScriptObject.AddItem(item);
+                    }
+                    else if (!npc.Inventory.TryGetItem(stream.ReadByte(), out item)) // fixme
+                        return;
+
                     npc.ScriptObject.EquipItem(slot, item);
                 }
             }
 
             public static void ReadEquipSwitchMessage(PacketReader stream)
             {
-                NPC npc;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+                NPC npc; Item item;
+                if (World.Current.TryGetVob(stream.ReadUShort(), out npc)
+                    && npc.Inventory.TryGetItem(stream.ReadByte(), out item))
                 {
-                    Item item;
-                    if (npc.Inventory.TryGetItem(stream.ReadByte(), out item))
-                    {
-                        npc.ScriptObject.EquipItem(stream.ReadByte(), item);
-                    }
+                    npc.ScriptObject.EquipItem(stream.ReadByte(), item);
                 }
             }
 
             public static void ReadUnequipMessage(PacketReader stream)
             {
-                NPC npc;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+                NPC npc; Item item;
+                if (World.Current.TryGetVob(stream.ReadUShort(), out npc)
+                    && npc.Inventory.TryGetItem(stream.ReadByte(), out item))
                 {
-                    Item item;
-                    if (npc.Inventory.TryGetItem(stream.ReadByte(), out item))
+                    npc.ScriptObject.UnequipItem(item);
+                    if (npc != Hero)
                     {
-                        npc.ScriptObject.UnequipItem(item);
+                        npc.Inventory.ScriptObject.RemoveItem(item);
                     }
                 }
             }
@@ -181,7 +187,7 @@ namespace GUC.WorldObjects
             var hero = Hero;
             if (hero == null)
                 return;
-            
+
             hero.UpdateGuidedNPCPosition(now, 800000, 10, 0.02f); // update our hero better
         }
 
@@ -401,9 +407,6 @@ namespace GUC.WorldObjects
 
         public void SetMovement(NPCMovement state)
         {
-            if (this != Hero && this.guide == null) // we're not guiding this npc
-                return;
-
             if (this.movement == state)
                 return;
 
@@ -423,12 +426,12 @@ namespace GUC.WorldObjects
         }
 
         #endregion
-        
+
         partial void pOnTick(long now)
         {
             if (gVob == null || gVob.HumanAI.Address == 0)
                 return;
-            
+
             this.ScriptObject.OnTick(now);
 
             if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null)

@@ -329,5 +329,16 @@ namespace Gothic.View
             int textViewAddr = Process.THISCALL<IntArg>(Process.ReadInt(oCGame.ogame), 0x6C2C70);
             Process.THISCALL<NullReturnCall>(textViewAddr, 0x7AA8D0, text);
         }
+
+        public static void Print(string text)
+        {
+            using (var z = zString.Create(text))
+                Print(z);
+        }
+
+        public static void Print(zString text)
+        {
+            Process.CDECLCALL<NullReturnCall>(0x7A5F00, text);
+        }
     }
 }

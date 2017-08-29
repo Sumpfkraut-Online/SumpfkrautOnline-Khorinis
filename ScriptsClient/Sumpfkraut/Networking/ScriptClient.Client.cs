@@ -28,7 +28,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public virtual void ReadScriptVobMessage(PacketReader stream, WorldObjects.BaseVob vob)
         {
-            NPCInst.Hero.OnReadScriptVobMsg(stream);
+            ((BaseVobInst)vob.ScriptObject).OnReadScriptVobMsg(stream);
         }
     }
 }

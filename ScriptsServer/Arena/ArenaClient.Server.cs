@@ -12,11 +12,18 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
+        DuelMode.ClientInfo duelClient;
+        public DuelMode.ClientInfo GetDuelInfo()
+        {
+            if (this.duelClient == null)
+                this.duelClient = new DuelMode.ClientInfo(this);
+            return duelClient;
+        }
+
         partial void pOnConnect()
         {
             this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f());
         }
-
 
         public void SendScreenMessage(string message)
         {
@@ -43,7 +50,7 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.DuelRequest:
                     NPCInst target;
                     if (this.Character.World.TryGetVob(stream.ReadUShort(), out target))
-                        GameMode.DuelRequest(this.Character, target);
+                        this.GetDuelInfo().DuelRequest(target);
                     break;
             }
         }

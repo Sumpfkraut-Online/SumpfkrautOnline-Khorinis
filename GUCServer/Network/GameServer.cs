@@ -40,6 +40,7 @@ namespace GUC.Network
                     string pwStr = Convert.ToBase64String(ServerOptions.Password.ToArray());
                     ServerInterface.SetIncomingPassword(pwStr, pwStr.Length);
                 }
+                
             }
         }
 

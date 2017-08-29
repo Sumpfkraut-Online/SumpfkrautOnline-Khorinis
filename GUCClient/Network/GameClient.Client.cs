@@ -422,10 +422,7 @@ namespace GUC.Network
 
                 // ScriptVobMessages
                 case ServerMessages.ScriptVobMessage:
-                    ushort vobID = stream.ReadUShort();
-                    BaseVob vob;
-                    World.Current.TryGetVob((int)vobID, out vob);
-                    Client.ScriptObject.ReadScriptVobMessage(stream, vob);
+                    Messages.ReadScriptVob(stream);
                     break;
 
                 // NPC Messages
@@ -449,9 +446,6 @@ namespace GUC.Network
                     break;
 
                 // Player Messages
-                case ServerMessages.PlayerNPCEquipAddMessage:
-                    NPC.Messages.ReadPlayerEquipMessage(stream);
-                    break;
                 case ServerMessages.PlayerInvAddItemMessage:
                     WorldObjects.ItemContainers.NPCInventory.Messages.ReadAddItem(stream);
                     break;
