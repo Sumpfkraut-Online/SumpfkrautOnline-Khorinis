@@ -6,7 +6,6 @@ using WinApi.User.Enumeration;
 using GUC.Types;
 using GUC.GUI;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.WorldObjects.Collections;
 
 namespace GUC.Scripts.Sumpfkraut.GUI
 {

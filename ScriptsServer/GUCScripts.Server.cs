@@ -138,9 +138,9 @@ namespace GUC.Scripts
             NPCInst.Requests.OnDrawFists += npc => npc.EffectHandler.TryDrawFists();
             NPCInst.Requests.OnDrawWeapon += (npc, item) => npc.EffectHandler.TryDrawWeapon(item);
             NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
-            
+
             AddSomeDefs();
-            
+
             // -- Websocket-Server --
             Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
             wsServer.Init();
@@ -197,6 +197,7 @@ namespace GUC.Scripts
             m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
             AddFistAnis(m);
             Add1HAnis(m);
+            AddJumpAnis(m);
 
             m.Radius = 80;
             m.Height = 180;
@@ -394,6 +395,17 @@ namespace GUC.Scripts
             itemDef.Damage = 10;
             itemDef.Range = 40;
             itemDef.Create();
+        }
+
+        #endregion
+
+        #region Jump Anis
+
+        void AddJumpAnis(ModelDef model)
+        {
+            model.AddAniJob(new ScriptAniJob("jump_fwd", "t_Stand_2_Jump"));
+            model.AddAniJob(new ScriptAniJob("jump_run", "t_RunL_2_Jump"));
+            model.AddAniJob(new ScriptAniJob("jump_up", "t_Stand_2_JumpUp"));
         }
 
         #endregion
@@ -599,6 +611,7 @@ namespace GUC.Scripts
 
         #endregion
 
+        #region 2H Anis
 
         void Add2hAttacks(ModelDef model)
         {
@@ -730,6 +743,7 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);*/
         }
 
+        #endregion
 
         void AddBowAnis(ModelDef model)
         {

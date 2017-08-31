@@ -36,6 +36,14 @@ namespace GUC.Models
 
             #region Animations
 
+            public static void WriteAniStartUncontrolled(Model model, AniJob job)
+            {
+                PacketWriter stream = stream = GameServer.SetupStream(ServerMessages.ModelAniUncontrolledMessage);
+                stream.Write((ushort)model.vob.ID);
+                stream.Write((ushort)job.ID);
+                model.vob.ForEachVisibleClient(c => c.Send(stream, PktPriority.High, PktReliability.ReliableOrdered, 'W'));
+            }
+
             public static void WriteAniStart(Model model, AniJob job, float fpsMult)
             {
                 PacketWriter stream;
@@ -83,6 +91,12 @@ namespace GUC.Models
         #endregion
 
         #region Animations
+
+        partial void pStartUncontrolledAni(AniJob aniJob)
+        {
+            if (this.vob.IsSpawned)
+                Messages.WriteAniStartUncontrolled(this, aniJob);
+        }
 
         partial void pStartAnimation(ActiveAni aa, float fpsMult)
         {

@@ -457,6 +457,9 @@ namespace GUC.Network
                     break;
 
                 // Model Messages
+                case ServerMessages.ModelAniUncontrolledMessage:
+                    Model.Messages.ReadAniStartUncontrolled(stream);
+                    break;
                 case ServerMessages.ModelAniStartMessage:
                     Model.Messages.ReadAniStart(stream);
                     break;

@@ -70,6 +70,7 @@ namespace GUC.Network
         VobThrowMessage,
 
         // models
+        ModelAniUncontrolledMessage,
         ModelAniStartMessage,
         ModelAniStartFPSMessage,
         ModelAniStopMessage,

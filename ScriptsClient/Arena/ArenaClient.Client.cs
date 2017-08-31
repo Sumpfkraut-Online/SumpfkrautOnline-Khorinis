@@ -7,6 +7,7 @@ using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.GUI;
 
 namespace GUC.Scripts.Arena
 {
@@ -58,7 +59,7 @@ namespace GUC.Scripts.Arena
                     NPCInst enemy;
                     if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out enemy))
                     {
-                        this.Enemy = enemy;
+                        SetEnemy(enemy);
                         DuelMessage("Duell gegen " + enemy.CustomName + " + gestartet");
                     }
                     break;
@@ -70,12 +71,12 @@ namespace GUC.Scripts.Arena
                             DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " gewonnen.");
                         else
                             DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " verloren.");
-                        this.Enemy = null;
+                        SetEnemy(null);
                     }
                     break;
                 case ScriptMessages.DuelEnd:
                     DuelMessage("Duell beendet.");
-                    this.Enemy = null;
+                    SetEnemy(null);
                     break;
 
             }
@@ -84,6 +85,16 @@ namespace GUC.Scripts.Arena
         void DuelMessage(string text)
         {
             Log.Logger.Log(text);
+        }
+
+        GUCWorldSprite enemySprite = new GUCWorldSprite(100, 100, false);
+        void SetEnemy(NPCInst enemy)
+        {
+            enemySprite.SetBackTexture("Letters.tga");
+            this.Enemy = enemy;
+            enemySprite.SetTarget(enemy);
+            if (enemy == null) enemySprite.Hide();
+            else enemySprite.Show();
         }
     }
 }

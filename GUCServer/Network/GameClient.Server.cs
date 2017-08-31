@@ -15,6 +15,9 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.Network
 {
+    /* FIXME:
+     * Give every vob its own ID as RakNet channel char => (char)ID.
+     */
     public partial class GameClient
     {
         #region Network Messages

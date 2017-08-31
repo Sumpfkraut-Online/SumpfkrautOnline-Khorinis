@@ -21,6 +21,7 @@ namespace GUC.Models
 
             ActiveAni StartAniJob(AniJob aniJob, float fpsMult);
             void StopAnimation(ActiveAni ani, bool fadeOut);
+            void StartAniJobUncontrolled(AniJob job);
         }
 
         public new IScriptModel ScriptObject { get { return (IScriptModel)base.ScriptObject; } }
@@ -238,6 +239,25 @@ namespace GUC.Models
         #endregion
 
         #region Start & Stop Animation
+
+        partial void pStartUncontrolledAni(AniJob aniJob);
+        /// <summary>
+        /// Starts the AniJob without controlling the process. I.e. it can be interrupted by Gothic (f.e. falling).
+        /// </summary>
+        public void StartUncontrolledAni(AniJob aniJob)
+        {
+            if (!this.vob.IsSpawned)
+                throw new Exception("Vob is not spawned!");
+
+            if (aniJob == null)
+                throw new ArgumentNullException("AniJob is null!");
+
+            if (aniJob.ModelInstance != this.Instance)
+                throw new ArgumentException("AniJob is not for this Model!");
+
+            pStartUncontrolledAni(aniJob);            
+        }
+
 
         /// <summary> 
         /// Starts the given AniJob and calls onStop at the end of the animation. 

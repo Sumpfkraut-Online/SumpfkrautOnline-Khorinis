@@ -76,6 +76,16 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return false;
         }
 
+        public void StartAniJobUncontrolled(AniJob aniJob)
+        {
+            StartAniJobUncontrolled((ScriptAniJob)aniJob.ScriptObject);
+        }
+        
+        public void StartAniJobUncontrolled(ScriptAniJob aniJob)
+        {
+            this.BaseInst.StartUncontrolledAni(aniJob.BaseAniJob);
+        }
+
         public ActiveAni StartAniJob(AniJob aniJob, float fpsMult)
         {
             return StartAniJob((ScriptAniJob)aniJob.ScriptObject, fpsMult);

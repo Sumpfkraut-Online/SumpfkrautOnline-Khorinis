@@ -36,10 +36,13 @@ namespace GUC.Scripts
             return asm;
         }
 
+        public static event Action<long> OnUpdate;
         public void Update(long ticks)
         {
             GUCMenu.UpdateMenus(ticks);
             InputControl.UpdateControls(ticks);
+            if (OnUpdate != null)
+                OnUpdate(ticks);
             //CheckMusic();
         }
 

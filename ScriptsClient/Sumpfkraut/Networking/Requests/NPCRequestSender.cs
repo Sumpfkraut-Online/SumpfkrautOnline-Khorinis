@@ -82,7 +82,17 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 
         public void Jump(NPCInst npc)
         {
-            JumpMoves move = JumpMoves.Fwd;
+            JumpMoves move;
+            if (npc.Movement == Types.NPCMovement.Forward)
+            {
+                move = JumpMoves.Run;
+            }
+            else
+            {
+                move = JumpMoves.Fwd;
+            }
+
+
             var stream = npc.BaseInst.GetScriptCommandStream();
             switch (move)
             {

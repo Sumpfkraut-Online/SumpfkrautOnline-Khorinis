@@ -54,9 +54,9 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_2HParadeJumpB", "Fight2H.Dodge" },
 
             // jumps
-            { "t_Stand_2_Jump", "Jumps.Fwd" },
-            { "t_RunL_2_Jump", "Jumps.Run" },
-            { "t_Stand_2_JumpUp", "Jumps.Up" },
+            { "jump_fwd", "Jumps.Fwd" },
+            { "jump_run", "Jumps.Run" },
+            { "jump_up", "Jumps.Up" },
 
             // item handling
             { "t_IGet_2_Stand", "ItemHandling.TakeItem" },

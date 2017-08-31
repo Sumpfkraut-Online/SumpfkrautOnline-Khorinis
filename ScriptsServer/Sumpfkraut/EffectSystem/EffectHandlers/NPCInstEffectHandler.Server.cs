@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
@@ -13,15 +14,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             throw new NotImplementedException();
         }
 
+        LockTimer jumpLockTimer = new LockTimer(500);
         public void TryJump(JumpMoves move)
         {
+
             if (Host.IsDead || Host.Environment.InAir)
                 return;
 
             if (Host.ModelInst.IsInAnimation())
                 return;
 
-            Host.DoJump(move, Host.GetDirection() * 100f + new Types.Vec3f(0, 500, 0));
+            if (!jumpLockTimer.IsReady) // don't spam
+                return;
+
+            Host.DoJump(move, Host.GetDirection() * 200f + new Types.Vec3f(0, 1000, 0));
         }
 
         public void TryDrawFists()

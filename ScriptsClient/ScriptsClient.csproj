@@ -365,6 +365,7 @@
     <Compile Include="Sumpfkraut\Controls\KeyDictionary.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyHoldHelper.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCWorldSprite.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharSlot.cs" />

@@ -53,23 +53,16 @@ namespace GUC.Models
 
             public static void ReadAniStart(PacketReader stream, float fpsMult = 1.0f)
             {
-                try
+                Vob vob;
+                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
                 {
-                    Vob vob;
-                    if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                    Model model = vob.Model;
+
+                    AniJob job;
+                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
                     {
-                        Model model = vob.Model;
-                        
-                        AniJob job;
-                        if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
-                        {
-                            model.ScriptObject.StartAniJob(job, fpsMult);
-                        }
+                        model.ScriptObject.StartAniJob(job, fpsMult);
                     }
-                }
-                catch (Exception e)
-                {
-                    Log.Logger.LogWarning(e);
                 }
             }
 
@@ -88,6 +81,21 @@ namespace GUC.Models
                         {
                             model.ScriptObject.StopAnimation(aa, fadeOut);
                         }
+                    }
+                }
+            }
+
+            public static void ReadAniStartUncontrolled(PacketReader stream)
+            {
+                Vob vob;
+                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                {
+                    Model model = vob.Model;
+
+                    AniJob job;
+                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
+                    {
+                        model.ScriptObject.StartAniJobUncontrolled(job);
                     }
                 }
             }
@@ -131,7 +139,19 @@ namespace GUC.Models
         #endregion
 
         #region Animations
-        
+
+        partial void pStartUncontrolledAni(AniJob aniJob)
+        {
+            if (this.vob is NPC)
+            {
+                var gVob = ((NPC)vob).gVob;
+                if (gVob != null)
+                {
+                    gVob.GetModel().StartAni(aniJob.Name, 0); 
+                }
+            }
+        }
+
         partial void pStartAnimation(ActiveAni aa, float fpsMult)
         {
             if (this.vob is NPC)
@@ -256,7 +276,7 @@ namespace GUC.Models
                     continue;
 
                 int gAniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
-                
+
                 if (gModel.GetActiveAni(gAniID).Address == 0)
                     gModel.StartAni(gAniID, 0);
 

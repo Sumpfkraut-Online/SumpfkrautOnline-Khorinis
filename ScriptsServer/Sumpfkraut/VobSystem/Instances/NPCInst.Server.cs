@@ -53,11 +53,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Jumps
 
-        bool isJumping = false;
-        public bool IsJumping { get { return this.isJumping; } }
-
         /// <summary>
-        /// Starts a jump animation, throws the npc with velocity and sets IsJumping to true for the time of the animation.
+        /// Starts an uncontrolled jump animation, throws the npc with velocity.
         /// </summary>
         /// <param name="move"></param>
         /// <param name="velocity"></param>
@@ -82,10 +79,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (job == null)
                 return;
-
-            this.isJumping = true;
-            // fixme: stop as soon as npc hits ground?
-            this.ModelInst.StartAniJob(job, () => this.isJumping = false);
+            
+            this.ModelInst.StartAniJobUncontrolled(job);
             this.Throw(velocity);
         }
 
