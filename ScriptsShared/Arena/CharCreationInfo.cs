@@ -9,17 +9,17 @@ using GUC.Network;
 
 namespace GUC.Scripts.Arena
 {
-    struct CharCreationInfo
+    class CharCreationInfo
     {
-        public string Name;
-        public HumBodyMeshs BodyMesh;
-        public HumBodyTexs BodyTex;
-        public HumHeadMeshs HeadMesh;
-        public HumHeadTexs HeadTex;
-        public HumVoices Voice;
-        
-        public float BodyWidth;
-        public float Fatness;
+        public string Name = "Spieler";
+        public HumBodyMeshs BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0;
+        public HumBodyTexs BodyTex = HumBodyTexs.G1Hero;
+        public HumHeadMeshs HeadMesh = HumHeadMeshs.HUM_HEAD_PONY;
+        public HumHeadTexs HeadTex = HumHeadTexs.Face_N_Player;
+        public HumVoices Voice = HumVoices.Hero;
+
+        public float BodyWidth = 1.0f;
+        public float Fatness = 0.0f;
 
         public void Write(PacketWriter stream)
         {

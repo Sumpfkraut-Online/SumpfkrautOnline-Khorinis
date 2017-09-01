@@ -10,7 +10,6 @@ namespace GUC.Log
 {
     public static partial class Logger
     {
-
         const string LoggerPath = "Log";
         const string LoggerFile = "ServerLog.html";
 
@@ -26,7 +25,31 @@ namespace GUC.Log
             }
 
             writer = new StreamWriter(LoggerPath + "\\" + LoggerFile, true);
+
+            DisableQuickEditMode();
         }
+
+        #region Disable Quick Edit Mode
+
+        // Quick Edit Mode halts the process if one marks something in the console window until a key is pressed again
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        static extern IntPtr GetStdHandle(int nStdHandle);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+
+        [System.Runtime.InteropServices.DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+
+        static void DisableQuickEditMode()
+        {
+            var handle = GetStdHandle(-10); // Get standard input device
+            uint mode;
+            if (GetConsoleMode(handle, out mode))
+                SetConsoleMode(handle, mode & ~(uint)0x40); // disable quick edit mode
+        }
+        #endregion
 
         static partial void LogMessage(LogLevels level, object message, params object[] args)
         {
@@ -111,7 +134,7 @@ namespace GUC.Log
             {
                 text += currentText;
             }
-            
+
             Console.SetCursorPosition(0, cursorPos[1]);
             Console.Write(text);
             cursorPos[1] = Console.CursorTop - text.Length / Console.BufferWidth;

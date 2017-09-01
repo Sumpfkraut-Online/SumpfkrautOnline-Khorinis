@@ -434,7 +434,7 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
-            if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null)
+            if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null && !this.environment.InAir)
             {
                 switch (Movement)
                 {
@@ -451,15 +451,19 @@ namespace GUC.WorldObjects
                         gVob.AniCtrl._Backward();
                         break;
                     case NPCMovement.Right:
-                        if (!gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafer)))
+                        gModel = this.gVob.GetModel();
+                        var strafeAni = gVob.AniCtrl._t_strafer;
+                        if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
                         {
-                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafer, 0);
+                            gModel.StartAni(strafeAni, 0);
                         }
                         break;
                     case NPCMovement.Left:
-                        if (!gVob.GetModel().IsAniActive(gVob.GetModel().GetAniFromAniID(gVob.AniCtrl._t_strafel)))
+                        gModel = this.gVob.GetModel();
+                        strafeAni = gVob.AniCtrl._t_strafel;
+                        if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
                         {
-                            gVob.GetModel().StartAni(gVob.AniCtrl._t_strafel, 0);
+                            gModel.StartAni(strafeAni, 0);
                         }
                         break;
                     case NPCMovement.Stand:

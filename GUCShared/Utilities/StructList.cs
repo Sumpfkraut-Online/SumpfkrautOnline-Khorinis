@@ -18,6 +18,7 @@ namespace GUC.Utilities
     }
     public class List<T1, T2> : List<ValueTuple<T1, T2>>
     {
+        public List() : base() { }
         public List(int capacity) : base(capacity) { }
         public List(IEnumerable<ValueTuple<T1,T2>> collection) : base(collection) { }
 
@@ -42,6 +43,7 @@ namespace GUC.Utilities
     }
     public class List<T1, T2, T3> : List<ValueTuple<T1, T2, T3>>
     {
+        public List() : base() { }
         public List(int capacity) : base(capacity) { }
         public List(IEnumerable<ValueTuple<T1, T2, T3>> collection) : base(collection) { }
 
@@ -68,6 +70,7 @@ namespace GUC.Utilities
     }
     public class List<T1, T2, T3, T4> : List<ValueTuple<T1, T2, T3, T4>>
     {
+        public List() : base() { }
         public List(int capacity) : base(capacity) { }
         public List(IEnumerable<ValueTuple<T1, T2, T3, T4>> collection) : base(collection) { }
 

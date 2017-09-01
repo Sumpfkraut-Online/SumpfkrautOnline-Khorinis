@@ -47,12 +47,11 @@ namespace GUC.Scripts
         }
 
         public void StartOutgame()
-        {
-            //WinApi.Process.Write(new byte[] { 0xE9, 0x99, 0x04, 0x00, 0x00 }, 0x0067836C); // always do T_GOTHIT instead of T_STUMBLE/B when getting hit
-
-            //Left4Gothic.CharCreationMenu.Menu.Open();
-            
-
+        { 
+            // not needed anymore, we do the hit feedback ourselves
+            // always do T_GOTHIT instead of T_STUMBLE/B when getting hit, so animation don't interrupt too much
+            // WinApi.Process.Write(0x0067836C, 0xE9, 0x99, 0x04, 0x00, 0x00);
+                  
             Logger.Log("Outgame started.");
         }
 

@@ -9,10 +9,17 @@ namespace GUC.Scripts.Arena
     enum ScriptMessages
     {
         ScreenMessage,
-        CharCreation,
+        JoinGame,
+        Spectate,
+        CharEdit,
+
         DuelRequest,
         DuelStart,
         DuelWin,
         DuelEnd,
+
+        TOStart,
+        TOFinish,
+        TOEnd,
     }
 }

@@ -55,6 +55,9 @@
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective.cs">
+      <Link>Arena\TeamObjective.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
     </Compile>

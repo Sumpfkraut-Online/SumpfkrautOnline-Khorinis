@@ -15,10 +15,24 @@ namespace GUC.Scripts.Arena
     {
         new public static ArenaClient Client { get { return (ArenaClient)ScriptClient.Client; } }
 
-        public static void SendCharCreationMessage(CharCreationInfo info)
+        public static void SendJoinGameMessage()
         {
             var stream = GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.CharCreation);
+            stream.Write((byte)ScriptMessages.JoinGame);
+            SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+        }
+
+        public static void SendSpectateMessage()
+        {
+            var stream = GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.Spectate);
+            SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+        }
+
+        public static void SendCharEditMessage(CharCreationInfo info)
+        {
+            var stream = GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.CharEdit);
             info.Write(stream);
             SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
         }

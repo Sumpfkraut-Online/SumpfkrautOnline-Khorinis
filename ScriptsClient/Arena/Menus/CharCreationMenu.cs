@@ -51,7 +51,7 @@ namespace GUC.Scripts.Arena
         MainMenuChoice bodywidth;
         MainMenuChoice voice;
 
-        CharCreationInfo info;
+        CharCreationInfo info = new CharCreationInfo();
 
         protected override void OnCreate()
         {
@@ -63,7 +63,7 @@ namespace GUC.Scripts.Arena
             Character = AddCharacter("", -60, 50, 533, 400);
             Character.SetVisual("HUMANS.MDS");
             Character.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_BABE0.ToString(), (int)HumBodyTexs.G1Hero, HumHeadMeshs.HUM_HEAD_BABE.ToString(), (int)HumHeadTexs.FaceBabe_B_RedLocks);
-            AddButton("Start", "Mit dem Charakter in die Welt starten.", 160, 425, CreateNewCharacter);
+            AddButton("Akzeptieren", "Charakteränderungen speichern.", 160, 425, CreateNewCharacter);
 
             const int offsetX = 415;
             const int offsetY = 27;
@@ -94,7 +94,7 @@ namespace GUC.Scripts.Arena
 
             info.Voice = (HumVoices)voice.Choice;
 
-            ArenaClient.SendCharCreationMessage(info);
+            ArenaClient.SendCharEditMessage(info);
             this.Close();
         }
 

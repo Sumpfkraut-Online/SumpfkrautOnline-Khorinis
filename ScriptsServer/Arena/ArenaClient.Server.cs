@@ -10,6 +10,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Log;
 using GUC.Utilities;
 using GUC.Scripting;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Arena
 {
@@ -19,11 +20,11 @@ namespace GUC.Scripts.Arena
 
         const long DuelRequestDuration = 20 * 1000 * 10000; // 20 secs
         const float DuelMaxDistance = 1500.0f; // distance between players for the duel to automatically end
-        
+
         static ArenaClient()
         {
             Logger.Log("Duel mode initialised.");
-            NPCInst.sOnHitCheck += (a, t) => 
+            NPCInst.sOnHitCheck += (a, t) =>
             {
                 if (a.Client != null)
                 {
@@ -48,13 +49,14 @@ namespace GUC.Scripts.Arena
                 {
                     var client = (ArenaClient)npc.Client;
                     var enemy = client.EnemyClient;
-                    if (enemy != null && enemy.Character != null 
+                    if (enemy != null && enemy.Character != null
                     && npc.GetPosition().GetDistance(enemy.Character.GetPosition()) > DuelMaxDistance)
                         client.DuelEnd();
                 }
             };
         }
 
+        public int DuelWins { get; private set; }
         public ArenaClient EnemyClient { get { return (ArenaClient)this.Enemy?.Client; } }
         List<ArenaClient, GUCTimer> duelRequests = new List<ArenaClient, GUCTimer>(3);
 
@@ -126,6 +128,8 @@ namespace GUC.Scripts.Arena
 
             this.EnemyClient.Enemy = null;
             this.Enemy = null;
+
+            this.DuelWins++;
         }
 
         void DuelEnd()
@@ -146,7 +150,10 @@ namespace GUC.Scripts.Arena
 
         partial void pOnConnect()
         {
-            this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f());
+            Spectate();
+
+            if (ArenaClient.GetCount() >= 1)
+                TeamMode.StartNextTO();
         }
 
         public void SendScreenMessage(string message)
@@ -168,8 +175,14 @@ namespace GUC.Scripts.Arena
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
             switch (id)
             {
-                case ScriptMessages.CharCreation:
-                    ReadCharCreation(stream);
+                case ScriptMessages.JoinGame:
+                    JoinGame();
+                    break;
+                case ScriptMessages.Spectate:
+                    Spectate();
+                    break;
+                case ScriptMessages.CharEdit:
+                    charInfo.Read(stream);
                     break;
                 case ScriptMessages.DuelRequest:
                     NPCInst target;
@@ -179,20 +192,23 @@ namespace GUC.Scripts.Arena
             }
         }
 
-        void ReadCharCreation(PacketReader stream)
-        {
-            CharCreationInfo info = new CharCreationInfo();
-            info.Read(stream);
+        CharCreationInfo charInfo = new CharCreationInfo();
 
-            NPCInst npc = new NPCInst(NPCDef.Get(info.BodyMesh == Sumpfkraut.Visuals.HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"));
+        void JoinGame()
+        {
+            if (this.IsCharacter)
+                return;
+
+            NPCDef def = NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer");
+            NPCInst npc = new NPCInst(def);
             npc.UseCustoms = true;
-            npc.CustomBodyTex = info.BodyTex;
-            npc.CustomHeadMesh = info.HeadMesh;
-            npc.CustomHeadTex = info.HeadTex;
-            npc.CustomVoice = info.Voice;
-            npc.CustomFatness = info.Fatness;
-            npc.CustomScale = new Vec3f(info.BodyWidth, 1.0f, info.BodyWidth);
-            npc.CustomName = info.Name;
+            npc.CustomBodyTex = charInfo.BodyTex;
+            npc.CustomHeadMesh = charInfo.HeadMesh;
+            npc.CustomHeadTex = charInfo.HeadTex;
+            npc.CustomVoice = charInfo.Voice;
+            npc.CustomFatness = charInfo.Fatness;
+            npc.CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth);
+            npc.CustomName = charInfo.Name;
 
             var item = new ItemInst(ItemDef.Get("ItMw_1h_Bau_Mace"));
             npc.Inventory.AddItem(item);
@@ -202,12 +218,29 @@ namespace GUC.Scripts.Arena
             npc.Inventory.AddItem(item);
             npc.EquipItem(item);
 
-            Sumpfkraut.Visuals.ScriptOverlay ov;
+            ScriptOverlay ov;
             if (npc.ModelDef.TryGetOverlay("1HST1", out ov))
                 npc.ModelInst.ApplyOverlay(ov);
 
             npc.Spawn(WorldInst.Current);
             this.SetControl(npc);
+        }
+
+        void Spectate()
+        {
+            if (this.IsSpecating)
+                return;
+
+            if (this.IsCharacter)
+            {
+                var npc = this.Character;
+                this.SetToSpectator(npc.World, npc.GetPosition(), npc.GetDirection());
+                npc.Despawn();
+            }
+            else
+            {
+                this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f());
+            }
         }
     }
 }

@@ -10,23 +10,24 @@ namespace GUC.Scripting
     public abstract class GUCAbstractTimer
     {
         #region Static Loop
-        // Sorted timers (Latest ... Next)
+        // Sorted timers (0 [Last] ... Count-1 [Next])
         static List<GUCAbstractTimer> activeTimers = new List<GUCAbstractTimer>(100);
+        static GUCAbstractTimer currentTimer;
         internal static void Update(long now)
         {
             int index;
             while ((index = activeTimers.Count-1) >= 0)
             {
-                var current = activeTimers[index];
-                if (current.NextCallTime > now)
+                currentTimer = activeTimers[index];
+                if (currentTimer.NextCallTime > now)
                     break;
 
                 activeTimers.RemoveAt(index);
-                current.Fire();
-                if (current.Started)
-                    current.SetNextCallTime(now);
-                
+                currentTimer.Fire();
+                if (currentTimer.Started)
+                    currentTimer.SetNextCallTime(now);
             }
+            currentTimer = null;
         }
 
         #endregion
@@ -121,7 +122,7 @@ namespace GUC.Scripting
                 return;
 
             // update
-            if (this.started)
+            if (this.started && currentTimer != this) // don't double the calculation
             {
                 this.interval = interval;
                 activeTimers.Remove(this);
