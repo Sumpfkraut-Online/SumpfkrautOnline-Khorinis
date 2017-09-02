@@ -163,6 +163,15 @@ namespace GUC.Scripts.Arena
             this.BaseClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
         }
 
+        public void SendChatMessage(byte chatMode, string message)
+        {
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.ChatMessage);
+            stream.Write(chatMode);
+            stream.Write(message);
+            this.BaseClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+        }
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
@@ -175,6 +184,9 @@ namespace GUC.Scripts.Arena
                     NPCInst target;
                     if (!this.IsSpecating && this.Character.World.TryGetVob(stream.ReadUShort(), out target))
                         this.DuelRequest(target);
+                    break;
+                case ScriptMessages.ChatMessage:
+                    SendChatMessage(stream.ReadByte(), stream.ReadString());
                     break;
             }
         }

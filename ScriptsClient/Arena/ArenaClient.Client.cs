@@ -34,6 +34,15 @@ namespace GUC.Scripts.Arena
             }
         }
 
+        public static void SendChatMessage(Chat.ChatMode chatMode, string message)
+        {
+            var stream = GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.ChatMessage);
+            stream.Write((byte)chatMode);
+            stream.Write(message);
+            SendScriptMessage(stream, PktPriority.Low, PktReliability.Unreliable);
+        }
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
@@ -77,7 +86,11 @@ namespace GUC.Scripts.Arena
                     DuelMessage("Duell beendet.");
                     this.Enemy = null;
                     break;
-
+                case ScriptMessages.ChatMessage:
+                    byte chatMode = stream.ReadByte();
+                    string message = stream.ReadString();
+                    Chat.ChatMenu.ReceiveServerMessage((Chat.ChatMode)chatMode, message);
+                    break;
             }
         }
 

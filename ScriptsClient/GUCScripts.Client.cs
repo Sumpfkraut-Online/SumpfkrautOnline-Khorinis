@@ -61,6 +61,7 @@ namespace GUC.Scripts
             Logger.Log("Ingame started.");
 
             Arena.Menus.MainMenu.Menu.Open();
+            Arena.Chat.ChatMenu = new Arena.Chat();
         }
 
         /*const long FightMusicTime = 50 * TimeSpan.TicksPerSecond;

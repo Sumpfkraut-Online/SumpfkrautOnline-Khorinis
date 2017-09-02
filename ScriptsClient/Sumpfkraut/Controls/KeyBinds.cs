@@ -38,9 +38,11 @@ namespace GUC.Scripts.Sumpfkraut.Controls
         public readonly static KeyBind TurnRight = new KeyBind("TurnRight", VirtualKeys.E, VirtualKeys.Right);
         public readonly static KeyBind DrawWeapon = new KeyBind("DrawWeapon", VirtualKeys.Space);
         public readonly static KeyBind DrawFists = new KeyBind("DrawFists", VirtualKeys.OEM5);
+        public readonly static KeyBind OpenAllChat = new KeyBind("OpenAllChat", VirtualKeys.C);
+        public readonly static KeyBind OpenTeamChat = new KeyBind("OpenTeamChat", VirtualKeys.T);
 
         #endregion
-        
+
         #region Properties
 
         string name;

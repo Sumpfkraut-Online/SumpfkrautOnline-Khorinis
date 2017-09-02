@@ -22,6 +22,8 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.MoveBack, d => CheckFightMove(d, FightMoves.Parry) },
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
+            { KeyBind.OpenAllChat, d => { Arena.Chat.ChatMenu.OpenAllChat(); } },
+            { KeyBind.OpenTeamChat, d => { Arena.Chat.ChatMenu.OpenTeamChat(); } },
         };
 
         static void DrawWeapon(bool down)

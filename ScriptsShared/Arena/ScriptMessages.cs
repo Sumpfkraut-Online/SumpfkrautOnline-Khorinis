@@ -14,5 +14,6 @@ namespace GUC.Scripts.Arena
         DuelStart,
         DuelWin,
         DuelEnd,
+        ChatMessage,
     }
 }
