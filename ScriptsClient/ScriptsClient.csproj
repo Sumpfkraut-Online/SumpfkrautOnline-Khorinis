@@ -55,8 +55,14 @@
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective.cs">
-      <Link>Arena\TeamObjective.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOClassDef.cs">
+      <Link>Arena\TeamObjective\TOClassDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TODef.cs">
+      <Link>Arena\TeamObjective\TODef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOTeamDef.cs">
+      <Link>Arena\TeamObjective\TOTeamDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
@@ -357,6 +363,9 @@
     <Compile Include="Arena\Menus\CharCreationMenu.cs" />
     <Compile Include="Arena\Menus\ExitMenu.cs" />
     <Compile Include="Arena\Menus\MainMenu.cs" />
+    <Compile Include="Arena\Menus\DuelScoreBoard.cs" />
+    <Compile Include="Arena\Menus\TOInfoScreen.cs" />
+    <Compile Include="Arena\Menus\TOTeamsMenu.cs" />
     <Compile Include="Left4Gothic\CharCreationMenu.cs" />
     <Compile Include="Left4Gothic\CCExitMenu.cs" />
     <Compile Include="Left4Gothic\L4Client.Client.cs" />

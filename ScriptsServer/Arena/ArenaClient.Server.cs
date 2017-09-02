@@ -91,8 +91,8 @@ namespace GUC.Scripts.Arena
                 stream.Write((byte)ScriptMessages.DuelRequest);
                 stream.Write((ushort)this.Character.ID);
                 stream.Write((ushort)target.ID);
-                this.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
-                targetClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
+                this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+                targetClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
             }
         }
 
@@ -107,12 +107,12 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.DuelStart);
             stream.Write((ushort)character.ID);
-            enemyClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
+            enemyClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
 
             stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.DuelStart);
             stream.Write((ushort)enemyChar.ID);
-            this.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
+            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
         }
 
         void DuelWin()
@@ -123,8 +123,8 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.DuelWin);
             stream.Write((ushort)this.Character.ID);
-            this.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
-            this.EnemyClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
+            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+            this.EnemyClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
 
             this.EnemyClient.Enemy = null;
             this.Enemy = null;
@@ -139,8 +139,8 @@ namespace GUC.Scripts.Arena
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.DuelEnd);
-            this.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
-            this.EnemyClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.ReliableOrdered);
+            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+            this.EnemyClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
 
             this.EnemyClient.Enemy = null;
             this.Enemy = null;
@@ -148,26 +148,18 @@ namespace GUC.Scripts.Arena
 
         #endregion
 
+        #region TeamObjective
+
+        public TOTeamInst Team;
+        public TOClassDef ClassDef;
+
+        #endregion
+
         partial void pOnConnect()
         {
             Spectate();
 
-            if (ArenaClient.GetCount() >= 1)
-                TeamMode.StartNextTO();
-        }
-
-        public void SendScreenMessage(string message)
-        {
-            SendScreenMessage(message, ColorRGBA.White);
-        }
-
-        public void SendScreenMessage(string message, ColorRGBA color)
-        {
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.ScreenMessage);
-            stream.Write(message);
-            stream.Write(color);
-            this.BaseClient.SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+            TeamMode.CheckStartTO();
         }
 
         public override void ReadScriptMessage(PacketReader stream)
@@ -188,6 +180,14 @@ namespace GUC.Scripts.Arena
                     NPCInst target;
                     if (!this.IsSpecating && this.Character.World.TryGetVob(stream.ReadUShort(), out target))
                         this.DuelRequest(target);
+                    break;
+                case ScriptMessages.TOJoinTeam:
+                    if (TeamMode.IsRunning)
+                    {
+                        int index = stream.ReadByte();
+                        var team = TeamMode.Teams.ElementAtOrDefault(index);
+                        TeamMode.JoinTeam(this, team);
+                    }
                     break;
             }
         }

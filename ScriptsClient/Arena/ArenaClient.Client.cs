@@ -19,14 +19,14 @@ namespace GUC.Scripts.Arena
         {
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.JoinGame);
-            SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+            SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
         public static void SendSpectateMessage()
         {
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.Spectate);
-            SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+            SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
         public static void SendCharEditMessage(CharCreationInfo info)
@@ -34,7 +34,7 @@ namespace GUC.Scripts.Arena
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.CharEdit);
             info.Write(stream);
-            SendScriptMessage(stream, PktPriority.Low, PktReliability.Reliable);
+            SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
         static LockTimer requestTime = new LockTimer(500);
@@ -45,7 +45,7 @@ namespace GUC.Scripts.Arena
                 var stream = GetScriptMessageStream();
                 stream.Write((byte)ScriptMessages.DuelRequest);
                 stream.Write((ushort)target.ID);
-                SendScriptMessage(stream, PktPriority.Low, PktReliability.Unreliable);
+                SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
             }
         }
 
@@ -54,11 +54,6 @@ namespace GUC.Scripts.Arena
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
             switch (id)
             {
-                case ScriptMessages.ScreenMessage:
-                    string msg = stream.ReadString();
-                    var color = stream.ReadColorRGBA();
-                    Log.Logger.LogWarning(msg);
-                    break;
                 case ScriptMessages.DuelRequest:
                     NPCInst requester, target;
                     if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out requester) && WorldInst.Current.TryGetVob(stream.ReadUShort(), out target))
@@ -92,9 +87,34 @@ namespace GUC.Scripts.Arena
                     DuelMessage("Duell beendet.");
                     SetEnemy(null);
                     break;
+                case ScriptMessages.TOWarmup:
+                    string name = stream.ReadString();
+                    if ((activeTODef = TODef.TryGet(name)) == null)
+                        throw new Exception("TODef not found: " + name);
+                    Log.Logger.Log("TO Warmup: " + name);
+                    Menus.TOInfoScreen.Show(activeTODef);
+                    break;
+                case ScriptMessages.TOStart:
+                    Log.Logger.Log("TO Start: " + activeTODef.Name);
+                    break;
+                case ScriptMessages.TOFinish:
+                    Log.Logger.Log("TO Finish: " + activeTODef.Name);
+                    break;
+                case ScriptMessages.TOEnd:
+                    Log.Logger.Log("TO End");
+                    Menus.TOInfoScreen.Hide();
+                    break;
 
             }
         }
+
+        #region TeamObjective
+        TODef activeTODef;
+        public TODef ActiveTODef { get { return activeTODef; } }
+
+        #endregion
+
+        #region Duel
 
         void DuelMessage(string text)
         {
@@ -110,5 +130,7 @@ namespace GUC.Scripts.Arena
             if (enemy == null) enemySprite.Hide();
             else enemySprite.Show();
         }
+
+        #endregion
     }
 }

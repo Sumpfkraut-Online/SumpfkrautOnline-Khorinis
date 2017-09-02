@@ -47,7 +47,7 @@ namespace GUC.WorldObjects
                 }
 
                 PacketWriter confirmation = GameClient.SetupStream(ClientMessages.WorldLoadedMessage);
-                GameClient.Send(confirmation, PktPriority.Immediate, PktReliability.Reliable);
+                GameClient.Send(confirmation, NetPriority.Immediate, NetReliability.Reliable);
             }
 
             public static void ReadJoinWorld(PacketReader stream)

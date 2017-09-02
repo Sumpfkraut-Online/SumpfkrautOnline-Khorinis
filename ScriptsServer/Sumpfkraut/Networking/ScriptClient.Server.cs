@@ -22,6 +22,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f(0, 0, 1));
         }
 
+        public static void ForEach(Action<ScriptClient> action)
+        {
+            GameClient.ForEach(client => action((ScriptClient)client.ScriptObject));
+        }
+
         public static int GetCount()
         {
             return GameClient.Count;
@@ -52,7 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             return GameClient.GetScriptMessageStream();
         }
 
-        public void SendScriptMessage(PacketWriter stream, PktPriority priority, PktReliability reliability)
+        public void SendScriptMessage(PacketWriter stream, NetPriority priority, NetReliability reliability)
         {
             this.BaseClient.SendScriptMessage(stream, priority, reliability);
         }

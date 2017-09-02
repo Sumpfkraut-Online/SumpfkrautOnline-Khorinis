@@ -30,7 +30,7 @@ namespace GUC.WorldObjects.VobGuiding
                 bitfield |= (int)(env.WaterLevel * 0xFF);
                 stream.Write((short)bitfield);
 
-                GameClient.Send(stream, PktPriority.Low, PktReliability.Unreliable);
+                GameClient.Send(stream, NetPriority.Low, NetReliability.Unreliable);
             }
 
             #endregion

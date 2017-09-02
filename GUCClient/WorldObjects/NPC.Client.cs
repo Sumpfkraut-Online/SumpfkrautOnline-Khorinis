@@ -144,7 +144,7 @@ namespace GUC.WorldObjects
                 bitfield |= (int)(env.WaterLevel * 0x3F);
                 stream.Write((short)bitfield);
 
-                GameClient.Send(stream, PktPriority.Low, PktReliability.Unreliable);
+                GameClient.Send(stream, NetPriority.Low, NetReliability.Unreliable);
             }
 
             #endregion
@@ -172,9 +172,9 @@ namespace GUC.WorldObjects
             }
         }
 
-        public static void SendScriptCommand(PacketWriter stream, PktPriority priority)
+        public static void SendScriptCommand(PacketWriter stream, NetPriority priority)
         {
-            GameClient.Send(stream, priority, PktReliability.Unreliable, 'C');
+            GameClient.Send(stream, priority, NetReliability.Unreliable, 'C');
         }
 
         #endregion

@@ -73,7 +73,7 @@ namespace GUC.GUI
             }
         }
 
-        protected string text;
+        protected string text = "";
         public string Text
         {
             get { return text; }

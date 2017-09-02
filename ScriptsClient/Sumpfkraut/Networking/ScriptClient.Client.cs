@@ -17,7 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             return GameClient.GetScriptMessageStream();
         }
 
-        public static void SendScriptMessage(PacketWriter stream, PktPriority priority, PktReliability reliability)
+        public static void SendScriptMessage(PacketWriter stream, NetPriority priority, NetReliability reliability)
         {
             GameClient.SendScriptMessage(stream, priority, reliability);
         }

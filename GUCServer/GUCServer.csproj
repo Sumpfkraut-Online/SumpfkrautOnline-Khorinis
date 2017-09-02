@@ -117,6 +117,9 @@
     <Compile Include="..\GUCShared\Network\GameClient.cs">
       <Link>Network\GameClient.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Network\PacketEnums.cs">
+      <Link>Network\PacketEnums.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Network\PacketReader.cs">
       <Link>Network\PacketReader.cs</Link>
     </Compile>
@@ -311,7 +314,6 @@
     <Compile Include="Models\ModelInstance.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
-    <Compile Include="Network\PacketEnums.cs" />
     <Compile Include="Options\ServerOptions.cs" />
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
     <Compile Include="TCPListener.cs" />

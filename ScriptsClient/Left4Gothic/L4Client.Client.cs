@@ -16,7 +16,7 @@ namespace GUC.Scripts.Left4Gothic
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessageIDs.CharCreation);
             info.Write(stream);
-            SendScriptMessage(stream, PktPriority.High, PktReliability.Reliable);
+            SendScriptMessage(stream, NetPriority.High, NetReliability.Reliable);
         }
     }
 }

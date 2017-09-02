@@ -17,19 +17,19 @@ namespace GUC.WorldObjects.WorldGlobals
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldTimeMessage);
                 stream.Write(clock.time.GetTotalSeconds());
                 stream.Write(clock.rate);
-                clock.World.ForEachClient(client => client.Send(stream, PktPriority.Low, PktReliability.Reliable, 'W'));
+                clock.World.ForEachClient(client => client.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
 
             public static void WriteTimeStartMessage(WorldClock clock)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldTimeStartMessage);
-                clock.World.ForEachClient(client => client.Send(stream, PktPriority.Low, PktReliability.Reliable, 'W'));
+                clock.World.ForEachClient(client => client.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
 
             public static void WriteTimeStopMessage(WorldClock clock)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldTimeStopMessage);
-                clock.World.ForEachClient(client => client.Send(stream, PktPriority.Low, PktReliability.Reliable, 'W'));
+                clock.World.ForEachClient(client => client.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
         }
 

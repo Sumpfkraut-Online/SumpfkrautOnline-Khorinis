@@ -16,6 +16,7 @@ namespace GUC.Utilities
             this.Item2 = item2;
         }
     }
+    public interface IEnumerable<T1, T2> : IEnumerable<ValueTuple<T1, T2>> { }
     public class List<T1, T2> : List<ValueTuple<T1, T2>>
     {
         public List() : base() { }
@@ -25,6 +26,11 @@ namespace GUC.Utilities
         public void Add(T1 item1, T2 item2)
         {
             this.Add(new ValueTuple<T1, T2>(item1, item2));
+        }
+
+        public IEnumerable<T1, T2> AsEnumerable()
+        {
+            return (IEnumerable<T1, T2>)this;
         }
     }
 
@@ -41,6 +47,7 @@ namespace GUC.Utilities
             this.Item3 = item3;
         }
     }
+    public interface IEnumerable<T1, T2, T3> : IEnumerable<ValueTuple<T1, T2, T3>> { }
     public class List<T1, T2, T3> : List<ValueTuple<T1, T2, T3>>
     {
         public List() : base() { }
@@ -50,6 +57,11 @@ namespace GUC.Utilities
         public void Add(T1 item1, T2 item2, T3 item3)
         {
             this.Add(new ValueTuple<T1, T2, T3>(item1, item2, item3));
+        }
+
+        public IEnumerable<T1, T2, T3> AsEnumerable()
+        {
+            return (IEnumerable<T1, T2, T3>)this;
         }
     }
 
@@ -68,6 +80,7 @@ namespace GUC.Utilities
             this.Item4 = item4;
         }
     }
+    public interface IEnumerable<T1, T2, T3, T4> : IEnumerable<ValueTuple<T1, T2, T3, T4>> { }
     public class List<T1, T2, T3, T4> : List<ValueTuple<T1, T2, T3, T4>>
     {
         public List() : base() { }
@@ -77,6 +90,11 @@ namespace GUC.Utilities
         public void Add(T1 item1, T2 item2, T3 item3, T4 item4)
         {
             this.Add(new ValueTuple<T1, T2, T3, T4>(item1, item2, item3, item4));
+        }
+
+        public IEnumerable<T1, T2, T3, T4> AsEnumerable()
+        {
+            return (IEnumerable<T1, T2, T3, T4>)this;
         }
     }
 }

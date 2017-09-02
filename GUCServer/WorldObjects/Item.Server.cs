@@ -17,7 +17,7 @@ namespace GUC.WorldObjects
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerItemAmountChangedMessage);
                 stream.Write((byte)item.ID);
                 stream.Write((ushort)item.amount);
-                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+                client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
             }
         }
 

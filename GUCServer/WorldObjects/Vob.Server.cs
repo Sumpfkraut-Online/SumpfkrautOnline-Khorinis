@@ -18,7 +18,7 @@ namespace GUC.WorldObjects
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.VobThrowMessage);
                 stream.Write((ushort)vob.ID);
                 stream.Write(velocity);
-                vob.ForEachVisibleClient(client => client.Send(stream, PktPriority.Medium, PktReliability.ReliableOrdered, 'W'));
+                vob.ForEachVisibleClient(client => client.Send(stream, NetPriority.Medium, NetReliability.ReliableOrdered, 'W'));
             }
         }
 

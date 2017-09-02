@@ -22,13 +22,13 @@ namespace GUC.WorldObjects
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.LoadWorldMessage);
                 world.WriteStream(stream);
                 stream.Write(world.Clock.IsRunning);
-                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, '\0');
+                client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, '\0');
             }
 
             public static void WriteLeaveWorld(GameClient client)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldLeaveMessage);
-                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
             }
 
             #endregion

@@ -82,7 +82,7 @@ namespace GUC.Network
                         strm.Write(false);
                     }
 
-                    client.Send(strm, PktPriority.Low, PktReliability.Reliable, '\0');
+                    client.Send(strm, NetPriority.Low, NetReliability.Reliable, '\0');
                 }
             }
 
@@ -101,7 +101,7 @@ namespace GUC.Network
                 var stream = GameServer.SetupStream(ServerMessages.SpectatorMessage);
                 stream.Write(pos);
                 stream.Write(dir);
-                client.Send(stream, PktPriority.Low, PktReliability.Reliable, '\0');
+                client.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0');
             }
 
             #endregion
@@ -113,7 +113,7 @@ namespace GUC.Network
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerControlMessage);
                 stream.Write((ushort)npc.ID);
                 npc.WriteTakeControl(stream);
-                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, '\0');
+                client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, '\0');
             }
 
             #endregion
@@ -431,7 +431,7 @@ namespace GUC.Network
                 return;
             }
 
-            this.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+            this.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
         }
 
         void JoinWorld(World world, Vec3f pos)
@@ -464,7 +464,7 @@ namespace GUC.Network
                 stream.CurrentByte = currentByte;
 
 
-                this.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                this.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
             }
         }
 
@@ -679,7 +679,7 @@ namespace GUC.Network
 
         #region Networking
 
-        internal void Send(PacketWriter stream, PktPriority pp, PktReliability pr, char orderingChannel)
+        internal void Send(PacketWriter stream, NetPriority pp, NetReliability pr, char orderingChannel)
         {
             GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), (PacketPriority)pp, (PacketReliability)pr, '\0'/*orderingChannel*/, this.guid, false);
         }
@@ -711,7 +711,7 @@ namespace GUC.Network
             return GameServer.SetupStream(ServerMessages.ScriptMessage);
         }
 
-        public void SendScriptMessage(PacketWriter stream, PktPriority pr, PktReliability rl)
+        public void SendScriptMessage(PacketWriter stream, NetPriority pr, NetReliability rl)
         {
             this.Send(stream, pr, rl, 'M');
         }

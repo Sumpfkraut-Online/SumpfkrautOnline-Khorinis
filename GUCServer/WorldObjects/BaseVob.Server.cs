@@ -42,7 +42,7 @@ namespace GUC.WorldObjects
 
                     for (int i = 0; i < visibleClients.Count; i++)
                     {
-                        visibleClients[i].Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                        visibleClients[i].Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                     }
                 }*/
 
@@ -63,7 +63,7 @@ namespace GUC.WorldObjects
 
                     for (int i = 0; i < visibleClients.Count; i++)
                     {
-                        visibleClients[i].Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                        visibleClients[i].Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                     }
                 }*/
             }
@@ -122,19 +122,19 @@ namespace GUC.WorldObjects
 
             if (exclude == null)
             {
-                this.visibleClients.ForEach(client => client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W'));
+                this.visibleClients.ForEach(client => client.Send(stream, NetPriority.Low, NetReliability.Unreliable, 'W'));
             }
             else
             {
                 this.visibleClients.ForEach(client =>
                 {
                     if (client != exclude)
-                        client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                        client.Send(stream, NetPriority.Low, NetReliability.Unreliable, 'W');
                 });
             }
 
             for (int i = 0; i < this.targetOf.Count; i++)
-                this.targetOf[i].Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                this.targetOf[i].Send(stream, NetPriority.Low, NetReliability.Unreliable, 'W');
         }
 
         #endregion
@@ -175,7 +175,7 @@ namespace GUC.WorldObjects
                 stream.Write((ushort)this.ID);
                 visibleClients.ForEach(client =>
                 {
-                    client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                    client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                     client.RemoveVisibleVob(this);
                 });
                 visibleClients.Clear();
@@ -215,7 +215,7 @@ namespace GUC.WorldObjects
                 {
                     if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) > World.SpawnRemoveRange)
                     {
-                        client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                        client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                         client.RemoveVisibleVob(this);
                         RemoveVisibleClient(client);
                     }
@@ -244,7 +244,7 @@ namespace GUC.WorldObjects
                                 stream.Write((byte)this.VobType);
                                 this.WriteStream(stream);
                             }
-                            client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                            client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                         }
                     }
                 });
@@ -264,7 +264,7 @@ namespace GUC.WorldObjects
                             stream.Write((byte)this.VobType);
                             this.WriteStream(stream);
                         }
-                        client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                        client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                     }
                 });
             }
@@ -293,7 +293,7 @@ namespace GUC.WorldObjects
             if (!this.IsSpawned)
                 throw new Exception("Vob is not ingame!");
 
-            ForEachVisibleClient(c => c.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+            ForEachVisibleClient(c => c.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
         }
 
         #endregion

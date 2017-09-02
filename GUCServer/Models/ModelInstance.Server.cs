@@ -17,7 +17,7 @@ namespace GUC.Models
 
                 this.WriteStream(stream);
 
-                GameClient.ForEach(c => c.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, '\0'));
+                GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, '\0'));
             }
         }
 
@@ -27,7 +27,7 @@ namespace GUC.Models
             {
                 var stream = GameServer.SetupStream(ServerMessages.ModelInstanceDeleteMessage);
                 stream.Write((ushort)this.ID);
-                GameClient.ForEach(c => c.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, '\0'));
+                GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, '\0'));
             }
         }
     }

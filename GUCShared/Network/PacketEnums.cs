@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace GUC.Network
+namespace GUC
 {
-    public enum PktPriority
+    public enum NetPriority
     {
         Immediate,
         High,
@@ -13,7 +13,7 @@ namespace GUC.Network
         Low
     }
 
-    public enum PktReliability
+    public enum NetReliability
     {
         Unreliable,
         UnreliableSequenced,

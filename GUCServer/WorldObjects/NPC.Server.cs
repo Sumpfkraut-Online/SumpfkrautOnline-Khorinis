@@ -28,7 +28,7 @@ namespace GUC.WorldObjects
                 stream.Write((ushort)npc.ID);
                 stream.Write((byte)item.slot);
                 item.WriteEquipProperties(stream);
-                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+                npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
             }
 
             public static void WriteEquipSwitch(NPC npc, Item item)
@@ -37,7 +37,7 @@ namespace GUC.WorldObjects
                 stream.Write((ushort)npc.ID);
                 stream.Write((byte)item.ID);
                 stream.Write((byte)item.slot);
-                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+                npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
             }
 
             public static void WriteEquipRemove(NPC npc, Item item)
@@ -45,7 +45,7 @@ namespace GUC.WorldObjects
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipRemoveMessage);
                 stream.Write((ushort)npc.ID);
                 stream.Write((byte)item.ID);
-                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'W'));
+                npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
             }
 
             #endregion
@@ -58,7 +58,7 @@ namespace GUC.WorldObjects
                 stream.Write((ushort)npc.ID);
                 stream.Write((ushort)npc.HPMax);
                 stream.Write((ushort)npc.HP);
-                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.High, PktReliability.ReliableOrdered, 'W'));
+                npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.High, NetReliability.ReliableOrdered, 'W'));
             }
 
             #endregion
@@ -69,7 +69,7 @@ namespace GUC.WorldObjects
             {
                 PacketWriter stream = GameServer.SetupStream(fightMode ? ServerMessages.NPCFightModeSetMessage : ServerMessages.NPCFightModeUnsetMessage);
                 stream.Write((ushort)npc.ID);
-                npc.ForEachVisibleClient(client => client.Send(stream, PktPriority.High, PktReliability.ReliableOrdered, 'W'));
+                npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.High, NetReliability.ReliableOrdered, 'W'));
             }
 
             #endregion
@@ -171,19 +171,19 @@ namespace GUC.WorldObjects
 
             if (exclude == null)
             {
-                this.visibleClients.ForEach(client => client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W'));
+                this.visibleClients.ForEach(client => client.Send(stream, NetPriority.Low, NetReliability.Unreliable, 'W'));
             }
             else
             {
                 this.visibleClients.ForEach(client =>
                 {
                     if (client != exclude)
-                        client.Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                        client.Send(stream, NetPriority.Low, NetReliability.Unreliable, 'W');
                 });
             }
 
             for (int i = 0; i < this.targetOf.Count; i++)
-                this.targetOf[i].Send(stream, PktPriority.Low, PktReliability.Unreliable, 'W');
+                this.targetOf[i].Send(stream, NetPriority.Low, NetReliability.Unreliable, 'W');
         }
 
         #endregion

@@ -66,7 +66,7 @@ namespace GUC.Network
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.ConnectionMessage);
                 stream.Write(signature.GetMD5Hash(), 0, 16);
                 stream.Write(signature.GetMD5Hash(), 0, 16);
-                GameClient.Send(stream, PktPriority.Immediate, PktReliability.Reliable);
+                GameClient.Send(stream, NetPriority.Immediate, NetReliability.Reliable);
             }
             
             public static void ReadScriptVob(PacketReader stream)
@@ -262,7 +262,7 @@ namespace GUC.Network
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
-
+                /*
                 if (World.Current != null)
                 {
                     devIndex++;
@@ -287,7 +287,7 @@ namespace GUC.Network
                         devInfo.Texts[devIndex++].Text = Client.character.Movement.ToString();
                         devInfo.Texts[devIndex++].Text = Client.character.gVob.FocusVob.Address.ToString("X4");
                     }
-                }
+                }*/
             }
             devInfo.Show();
 
@@ -588,7 +588,7 @@ namespace GUC.Network
 
             PacketWriter stream = SetupStream(ClientMessages.SpecatorPosMessage);
             stream.WriteCompressedPosition(pos);
-            Send(stream, PktPriority.Low, PktReliability.Unreliable);
+            Send(stream, NetPriority.Low, NetReliability.Unreliable);
 
             specNextUpdate = now + SpecPosUpdateInterval;
         }
@@ -637,7 +637,7 @@ namespace GUC.Network
             return SetupStream(ClientMessages.ScriptMessage);
         }
 
-        public static void SendScriptMessage(PacketWriter stream, PktPriority priority, PktReliability reliability)
+        public static void SendScriptMessage(PacketWriter stream, NetPriority priority, NetReliability reliability)
         {
             Send(stream, priority, reliability, 'M');
         }
@@ -651,7 +651,7 @@ namespace GUC.Network
             return packetWriter;
         }
 
-        internal static void Send(PacketWriter stream, PktPriority pp, PktReliability pr, char orderingChannel = '\0')
+        internal static void Send(PacketWriter stream, NetPriority pp, NetReliability pr, char orderingChannel = '\0')
         {
             clientInterface.Send(stream.GetData(), stream.GetLength(), (PacketPriority)pp, (PacketReliability)pr, orderingChannel, clientInterface.GetSystemAddressFromIndex(0), false);
             sentBytes += stream.GetLength();

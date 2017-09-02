@@ -17,14 +17,14 @@ namespace GUC.WorldObjects.Instances
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceCreateMessage);
                 stream.Write((byte)instance.VobType);
                 instance.WriteStream(stream);
-                GameClient.ForEach(c => c.Send(stream, PktPriority.Low, PktReliability.Reliable, '\0'));
+                GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0'));
             }
 
             public static void WriteDelete(BaseVobInstance instance)
             {
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceDeleteMessage);
                 stream.Write((ushort)instance.ID);
-                GameClient.ForEach(c => c.Send(stream, PktPriority.Low, PktReliability.Reliable, '\0'));
+                GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0'));
             }
         }
 

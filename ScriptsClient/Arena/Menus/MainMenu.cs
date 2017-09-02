@@ -16,16 +16,15 @@ namespace GUC.Scripts.Arena.Menus
         {
             AddButton("Beitreten", "Dem Spiel beitreten.", 140, () => { ArenaClient.SendJoinGameMessage(); Close(); });
             AddButton("Zuschauen", "Dem Spiel zuschauen.", 180, () => { ArenaClient.SendSpectateMessage(); Close(); });
-            teamButton = AddButton("Team beitreten", "Team beitreten.", 220, null);
+            teamButton = AddButton("Team beitreten", "Team beitreten.", 220, TOTeamsMenu.Menu.Open);
             AddButton("Charakter editieren", "Deinen Spielcharakter editieren.", 260, CharCreationMenu.Menu.Open);
             AddButton("Spiel verlassen", "Das Spiel schließen.", 340, ExitMenu.Menu.Open);
-
-            teamButton.Enabled = false;
         }
 
         public override void Open()
         {
             base.Open();
+            teamButton.Enabled = ArenaClient.Client.ActiveTODef != null;
         }
     }
 }

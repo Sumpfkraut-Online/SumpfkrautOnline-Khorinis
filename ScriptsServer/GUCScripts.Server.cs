@@ -10,8 +10,6 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Utilities;
-using GUC.Animations;
-using GUC.Network;
 using GUC.Types;
 using GUC.WorldObjects;
 

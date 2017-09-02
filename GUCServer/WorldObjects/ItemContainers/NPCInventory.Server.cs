@@ -17,14 +17,14 @@ namespace GUC.WorldObjects.ItemContainers
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerInvAddItemMessage);
                 stream.Write((byte)item.ID);
                 item.WriteInventoryProperties(stream);
-                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+                client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
             }
 
             public static void WritePlayerRemoveItem(GameClient client, Item item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerInvRemoveItemMessage);
                 stream.Write((byte)item.ID);
-                client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+                client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
             }
         }
 

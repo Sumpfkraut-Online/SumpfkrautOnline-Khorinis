@@ -59,7 +59,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
             this.OnActivate = OnActivate;
             this.OnChange = OnChange;
 
-            titleVis = GUCVisualText.Create(title, x + (width - StringPixelWidth(title)) / 2, y - 15);
+            titleVis = GUCVisualText.Create(title, x + (width - (int)StringPixelWidth(title)) / 2, y - 15);
 
             vis = new GUCVisual(x, y, width, height);
             vis.SetBackTexture("Menu_Choice_Back.tga");

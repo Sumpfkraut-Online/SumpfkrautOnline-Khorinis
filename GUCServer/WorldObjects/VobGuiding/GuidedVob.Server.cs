@@ -67,7 +67,7 @@ namespace GUC.WorldObjects.VobGuiding
                 }
 
                 guideWriter.Write((ushort)vob.ID);
-                client.Send(guideWriter, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                client.Send(guideWriter, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                 guideWriter.Reset();
             }
 
@@ -85,7 +85,7 @@ namespace GUC.WorldObjects.VobGuiding
                 }
 
                 guideWriter.Write((ushort)vob.ID);
-                client.Send(guideWriter, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                client.Send(guideWriter, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                 guideWriter.Reset();
             }
 
@@ -93,7 +93,7 @@ namespace GUC.WorldObjects.VobGuiding
             {
                 guideWriter.Write((byte)ServerMessages.GuideRemoveMessage);
                 guideWriter.Write((ushort)vob.ID);
-                client.Send(guideWriter, PktPriority.Low, PktReliability.ReliableOrdered, 'W');
+                client.Send(guideWriter, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                 guideWriter.Reset();
             }
 

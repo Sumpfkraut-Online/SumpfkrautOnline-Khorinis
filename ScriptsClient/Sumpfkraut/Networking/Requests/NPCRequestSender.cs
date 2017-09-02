@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Network;
 using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.Networking.Requests
@@ -16,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             stream.Write((byte)ScriptRequestMessageIDs.DropItem);
             stream.Write((byte)item.ID);
             stream.Write((ushort)amount);
-            NPC.SendScriptCommand(stream, PktPriority.Low);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
         }
 
         public void TakeItem(NPCInst npc, ItemInst item)
@@ -24,7 +23,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.TakeItem);
             stream.Write((ushort)item.ID);
-            NPC.SendScriptCommand(stream, PktPriority.Low);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
         }
 
         public void EquipItem(NPCInst npc, ItemInst item)
@@ -32,7 +31,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.EquipItem);
             stream.Write((ushort)item.ID);
-            NPC.SendScriptCommand(stream, PktPriority.Low);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
         }
 
         public void UnequipItem(NPCInst npc, ItemInst item)
@@ -40,7 +39,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.UnequipItem);
             stream.Write((ushort)item.ID);
-            NPC.SendScriptCommand(stream, PktPriority.Low);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
         }
 
         public void UseItem(NPCInst npc, ItemInst item)
@@ -48,7 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.UseItem);
             stream.Write((ushort)item.ID);
-            NPC.SendScriptCommand(stream, PktPriority.Low);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
         }
 
         public void Attack(NPCInst npc, FightMoves move)
@@ -77,7 +76,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                 default:
                     return;
             }
-            NPC.SendScriptCommand(stream, PktPriority.Immediate);
+            NPC.SendScriptCommand(stream, NetPriority.Immediate);
         }
 
         public void Jump(NPCInst npc)
@@ -108,7 +107,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                 default:
                     return;
             }
-            NPC.SendScriptCommand(stream, PktPriority.High);
+            NPC.SendScriptCommand(stream, NetPriority.High);
         }
 
         public void DrawWeapon(NPCInst npc, ItemInst item)
@@ -116,14 +115,14 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.DrawWeapon);
             stream.Write((byte)item.ID);
-            NPC.SendScriptCommand(stream, PktPriority.Medium);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
         }
 
         public void DrawFists(NPCInst npc)
         {
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.DrawFists);
-            NPC.SendScriptCommand(stream, PktPriority.Medium);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
         }
     }
 }

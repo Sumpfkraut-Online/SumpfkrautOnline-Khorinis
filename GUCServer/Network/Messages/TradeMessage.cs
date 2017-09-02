@@ -69,7 +69,7 @@ namespace GUC.Network
             stream.Write(item.Amount);
             stream.Write(item.Condition);
             stream.Write(item.SpecialLine);
-            from.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            from.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
 
             stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             if (add) stream.Write((byte)TradeStatus.OtherOfferItem);
@@ -79,7 +79,7 @@ namespace GUC.Network
             stream.Write(item.Amount);
             stream.Write(item.Condition);
             stream.Write(item.SpecialLine);
-            to.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            to.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
 
         public static void SendAccept(NPC pl1, NPC pl2)
@@ -87,12 +87,12 @@ namespace GUC.Network
             PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Accept);
             stream.Write(pl2.ID);
-            pl1.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            pl1.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
 
             stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Accept);
             stream.Write(pl1.ID);
-            pl2.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            pl2.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
 
         public static void SendRequest(NPC from, NPC to)
@@ -100,15 +100,15 @@ namespace GUC.Network
             PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Request);
             stream.Write(from.ID);
-            to.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            to.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
 
         public static void SendTradeDone(NPC pl1, NPC pl2)
         {
             PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.TradeDone);
-            pl1.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
-            pl2.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            pl1.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
+            pl2.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
 
         public static void SendBreak(NPC pl)
@@ -116,21 +116,21 @@ namespace GUC.Network
             PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.Break);
             stream.Write(pl.ID);
-            pl.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            pl.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
 
         public static void SendOfferConfirmed(NPC pl)
         {
             PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.ConfirmOffer);
-            pl.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            pl.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
 
         public static void SendOfferDeclined(NPC pl)
         {
             PacketWriter stream = Network.Server.SetupStream(NetworkID.TradeMessage);
             stream.Write((byte)TradeStatus.DeclineOffer);
-            pl.Client.Send(stream, PktPriority.Low, PktReliability.ReliableOrdered, 'I');
+            pl.Client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
         }
         
     }*/

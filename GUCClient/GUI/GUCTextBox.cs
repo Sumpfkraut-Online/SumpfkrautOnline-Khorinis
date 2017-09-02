@@ -154,20 +154,19 @@ namespace GUC.GUI
                     return;
 
                 char c = str[0];
-                if (!GUCView.GothicChars.ContainsKey(c)) //check if typed char is supported by gothic's font
+                if (!GUCView.GothicContainsChar(c)) //check if typed char is supported by gothic's font
                     return;
 
-                if (OnlyNumbers && Char.GetNumericValue(c) < 0)
+                if (OnlyNumbers && !char.IsNumber(c))
                     return;
 
-                if (!AllowSpaces && c == ' ')
+                if (!AllowSpaces && char.IsWhiteSpace(c))
                     return; //we don't want spaces
 
-                if (!AllowSymbols && GUCView.GothicChars.Keys.ToList().IndexOf(c) > 52)
+                if (!AllowSymbols && char.IsSymbol(c))
                     return;
 
-
-                if (fixedBorders && StringPixelWidth(Input) + GUCView.GothicChars[c] > width) //check if fixed borders are reached
+                if (fixedBorders && StringPixelWidth(Input) + GUCView.GetCharWidth(c) > width) //check if fixed borders are reached
                     return;
 
                 input.Insert(cursorPos, c);
@@ -187,8 +186,8 @@ namespace GUC.GUI
 
             string substractedText = Input.Substring(sub);
             inputText.Text = substractedText;
-            int cursorLen = StringPixelWidth(substractedText.Substring(0,cursorPos - sub));
-            int inputLen = StringPixelWidth(substractedText);
+            int cursorLen = (int)StringPixelWidth(substractedText.Substring(0,cursorPos - sub));
+            int inputLen = (int)StringPixelWidth(substractedText);
 
             if (fixedBorders)
             {

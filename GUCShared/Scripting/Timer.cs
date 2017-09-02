@@ -122,9 +122,9 @@ namespace GUC.Scripting
                 return;
 
             // update
+            this.interval = interval;
             if (this.started && currentTimer != this) // don't double the calculation
             {
-                this.interval = interval;
                 activeTimers.Remove(this);
                 SetNextCallTime(this.startTime);
             }
@@ -136,7 +136,12 @@ namespace GUC.Scripting
             this.nextCallTime = now + this.interval;
             for (int i = 0; i < activeTimers.Count; i++)
                 if (activeTimers[i].nextCallTime <= this.nextCallTime)
+                {
                     activeTimers.Insert(i, this);
+                    return;
+                }
+
+            activeTimers.Add(this);
         }
 
         #endregion

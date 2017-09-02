@@ -16,14 +16,14 @@ namespace GUC.WorldObjects.WorldGlobals
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldWeatherMessage);
                 weatherController.WriteNextWeight(stream);
-                weatherController.World.ForEachClient(client => client.Send(stream, PktPriority.Low, PktReliability.Reliable, 'W'));
+                weatherController.World.ForEachClient(client => client.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
 
             public static void WriteSetType(WeatherController weatherController)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldWeatherTypeMessage);
                 weatherController.WriteSetWeatherType(stream);
-                weatherController.World.ForEachClient(client => client.Send(stream, PktPriority.Low, PktReliability.Reliable, 'W'));
+                weatherController.World.ForEachClient(client => client.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
         }
 

@@ -8,7 +8,6 @@ namespace GUC.Scripts.Arena
 {
     enum ScriptMessages
     {
-        ScreenMessage,
         JoinGame,
         Spectate,
         CharEdit,
@@ -18,8 +17,12 @@ namespace GUC.Scripts.Arena
         DuelWin,
         DuelEnd,
 
+        TOWarmup,
         TOStart,
         TOFinish,
         TOEnd,
+
+        TOJoinTeam,
+        TOChooseClass,
     }
 }

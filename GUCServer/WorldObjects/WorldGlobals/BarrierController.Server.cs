@@ -16,7 +16,7 @@ namespace GUC.WorldObjects.WorldGlobals
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldBarrierMessage);
                 barrierController.WriteNextWeight(stream);
-                barrierController.World.ForEachClient(client => client.Send(stream, PktPriority.Low, PktReliability.Reliable, 'W'));
+                barrierController.World.ForEachClient(client => client.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
         }
 

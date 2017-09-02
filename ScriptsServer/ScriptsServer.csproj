@@ -69,8 +69,14 @@
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective.cs">
-      <Link>Arena\TeamObjective.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOClassDef.cs">
+      <Link>Arena\TeamObjective\TOClassDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TODef.cs">
+      <Link>Arena\TeamObjective\TODef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOTeamDef.cs">
+      <Link>Arena\TeamObjective\TOTeamDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
@@ -373,7 +379,8 @@
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
     <Compile Include="Arena\ArenaClient.Server.cs" />
-    <Compile Include="Arena\TeamMode.cs" />
+    <Compile Include="Arena\TeamObjective\TeamMode.cs" />
+    <Compile Include="Arena\TeamObjective\TOTeamInst.cs" />
     <Compile Include="Left4Gothic\L4Client.Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
