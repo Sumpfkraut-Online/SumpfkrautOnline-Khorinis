@@ -9,12 +9,10 @@ using GUC.Scripts.Sumpfkraut.Menus;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.Networking;
 
-
 /*
- * Todo: 
- * Nachrichten im Display sortieren
- * Keine leeren nachrichten abschicken
- * eine löschen taste um den gesammten chat zu löschen
+ *  TODO
+ *  bug fixen beim nachrichten splitten
+ *  nachrichten nur für teams anzeigen
  */
 namespace GUC.Scripts.Arena
 {
@@ -32,13 +30,13 @@ namespace GUC.Scripts.Arena
         public GUCVisual prefix;
         private ChatMode chatMode;
         int[] screenSize;
+        Scripting.GUCTimer chatInactivityTimer;
 
         public Chat()
         {
             screenSize = GUCView.GetScreenSize();
             chatBackground = new GUCVisual(0, 0, screenSize[0], screenSize[1] / 5 + 5);
             chatBackground.SetBackTexture("Menu_Ingame.tga");
-            chatBackground.Show();
 
             int space = 20;
             int lines = (screenSize[1] / 5) / space;
@@ -48,10 +46,13 @@ namespace GUC.Scripts.Arena
                 chatBackground.Texts[i].Text = "";
             }
 
-            textBox = new GUCTextBox(70, screenSize[1] / 5 + 5, screenSize[0] - 70, false);
+            textBox = new GUCTextBox(70, screenSize[1] / 5 + 5, screenSize[0] - 90, false);
             prefix = new GUCVisual(15, screenSize[1] / 5 + 5, screenSize[0], 20);
             prefix.CreateText("", 0, 0);
-            
+
+            chatInactivityTimer = new Scripting.GUCTimer();
+            chatInactivityTimer.SetCallback(() => { if(!textBox.Enabled) chatBackground.Hide(); chatInactivityTimer.Stop(); });
+            chatInactivityTimer.SetInterval(5 * TimeSpan.TicksPerSecond);
         }
 
         public void ToggleBackground()
@@ -71,6 +72,8 @@ namespace GUC.Scripts.Arena
             textBox.Enabled = true;
             textBox.Show();
             prefix.Show();
+            if (!chatBackground.Shown)
+                chatBackground.Show();
             base.Open();
         }
 
@@ -79,6 +82,7 @@ namespace GUC.Scripts.Arena
             textBox.Enabled = false;
             textBox.Hide();
             prefix.Hide();
+            StartInactivityTimer();
             base.Close();
         }
 
@@ -103,8 +107,15 @@ namespace GUC.Scripts.Arena
                 case VirtualKeys.Escape:
                     Close();
                     break;
+                case VirtualKeys.Delete:
+                    if (InputHandler.IsPressed(VirtualKeys.Control))
+                        ClearChat();
+                    else
+                        textBox.Input = "";
+                    break;
                 case VirtualKeys.Return:
-                    SendInput();
+                    if (!(textBox.Input.Length == 0))
+                        SendInput();
                     if (!InputHandler.IsPressed(VirtualKeys.Shift))
                         Close();
                     break;
@@ -129,16 +140,32 @@ namespace GUC.Scripts.Arena
                 message = "(Team) " + message;
             }
             AddMessage(message);
+            StartInactivityTimer();
         }
 
+        public void StartInactivityTimer()
+        {
+            if (chatInactivityTimer.Started)
+                chatInactivityTimer.Restart();
+            else
+                chatInactivityTimer.Start();
+        }
+
+        /// <summary>
+        /// Shifts chat rows to create space for the new message and controls message length
+        /// </summary>
+        /// <param name="message"></param>
         public void AddMessage(string message)
         {
+            // resort chat rows if necessary
             int maxScreenSize = screenSize[0] - 100;
-            for (int i = 0; i < chatBackground.Texts.Count - 1; i++)
-            {
-                chatBackground.Texts[i].Text = chatBackground.Texts[i + 1].Text;
-            }
-            // for multiple lines
+            if(chatBackground.Texts[chatBackground.Texts.Count - 1].Text.Length > 0)
+                for (int i = 0; i < chatBackground.Texts.Count - 1; i++)
+                {
+                    chatBackground.Texts[i].Text = chatBackground.Texts[i + 1].Text;
+                }
+
+            // split messages to multiple rows
             if(GUCView.StringPixelWidth(message) > maxScreenSize)
             {
                 int charCounter = 0;
@@ -149,13 +176,42 @@ namespace GUC.Scripts.Arena
                     charCounter++;
                     if(! (GUCView.StringPixelWidth(newMessage)<maxScreenSize) )
                     {
-                        chatBackground.Texts[chatBackground.Texts.Count - 1].Text = newMessage;
+                        InsertMessage(newMessage);
                         AddMessage(message.Substring(charCounter + 1));
                         return;
                     }
                 }
             }
+
+            // set message in the correct place
+            InsertMessage(message);
+        }
+
+        /// <summary>
+        /// Makes sure messages is added to the correct row in the chat.
+        /// </summary>
+        /// <param name="message"></param>
+        private void InsertMessage(string message)
+        {
+            int index = 0;
+            while (index < chatBackground.Texts.Count - 1)
+            {
+                if (chatBackground.Texts[index].Text.Length == 0)
+                {
+                    chatBackground.Texts[index].Text = message;
+                    return;
+                }
+                index++;
+            }
             chatBackground.Texts[chatBackground.Texts.Count - 1].Text = message;
+        }
+
+        public void ClearChat()
+        {
+            for (int i = 0; i < chatBackground.Texts.Count; i++)
+            {
+                chatBackground.Texts[i].Text = "";
+            }
         }
     }
 }
