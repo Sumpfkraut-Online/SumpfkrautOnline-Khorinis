@@ -129,7 +129,7 @@ namespace GUC.Types
 
         public override int GetHashCode()
         {
-            return (new byte[4] { this.R, this.G, this.B, this.A }).GetHashCode();
+            return (R << 24) | (G << 16) | (B << 8) | A;
         }
 
         public override string ToString()

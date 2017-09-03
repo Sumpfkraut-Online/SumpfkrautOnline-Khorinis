@@ -171,6 +171,9 @@
     <Compile Include="..\GUCShared\Utilities\LockTimer.cs">
       <Link>Utilities\LockTimer.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\ReadOnlyList.cs">
+      <Link>Utilities\ReadOnlyList.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\StringExtensions.cs">
       <Link>Utilities\StringExtensions.cs</Link>
     </Compile>
