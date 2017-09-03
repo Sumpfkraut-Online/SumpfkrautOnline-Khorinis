@@ -23,6 +23,8 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
             { KeyBind.Inventory, d => { if (d) Menus.DuelScoreBoard.Show(); else Menus.DuelScoreBoard.Hide(); } },
+            { KeyBind.OpenAllChat, d => { Arena.Chat.ChatMenu.OpenAllChat(); } },
+            { KeyBind.OpenTeamChat, d => { Arena.Chat.ChatMenu.OpenTeamChat(); } },
         };
 
 static void DrawWeapon(bool down)

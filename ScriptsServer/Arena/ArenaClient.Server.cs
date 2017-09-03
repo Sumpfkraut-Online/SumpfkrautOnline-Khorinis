@@ -162,6 +162,15 @@ namespace GUC.Scripts.Arena
             TeamMode.CheckStartTO();
         }
 
+        public void SendChatMessage(byte chatMode, string message)
+        {
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.ChatMessage);
+            stream.Write(chatMode);
+            stream.Write(message);
+            this.BaseClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+        }
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
@@ -188,6 +197,9 @@ namespace GUC.Scripts.Arena
                         var team = TeamMode.Teams.ElementAtOrDefault(index);
                         TeamMode.JoinTeam(this, team);
                     }
+                    break;
+                case ScriptMessages.ChatMessage:
+                    SendChatMessage(stream.ReadByte(), stream.ReadString());
                     break;
             }
         }

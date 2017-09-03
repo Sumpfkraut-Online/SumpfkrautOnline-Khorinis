@@ -359,6 +359,7 @@
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
     <Compile Include="Arena\ArenaClient.Client.cs" />
+    <Compile Include="Arena\Chat.cs" />
     <Compile Include="Arena\Controls\ArenaControl.cs" />
     <Compile Include="Arena\Menus\CharCreationMenu.cs" />
     <Compile Include="Arena\Menus\ExitMenu.cs" />
