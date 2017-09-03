@@ -280,9 +280,23 @@ namespace GUC.Network
             CurrentByte += length;
         }
 
-        const int MaxStringLength = short.MaxValue;
-        char[] charArr = new char[MaxStringLength];
-        byte[] byteArr = new byte[2 * MaxStringLength];
+        // Taken from http://referencesource.microsoft.com/#mscorlib/system/io/binarywriter.cs,2daa1d14ff1877bd
+        void Write7BitEncodedInt(int value)
+        {
+            // Write out an int 7 bits at a time.  The high bit of the byte,
+            // when on, tells reader to continue reading more bytes.
+            uint v = (uint)value;   // support negative numbers
+            while (v >= 0x80)
+            {
+                Write((byte)(v | 0x80));
+                v >>= 7;
+            }
+            Write((byte)v);
+        }
+
+        //const int bufLen = 4096;
+        //char[] charArr = new char[bufLen];
+        //byte[] byteArr = new byte[2 * bufLen];
         public void Write(string val)
         {
             if (val == null)
@@ -290,25 +304,10 @@ namespace GUC.Network
                 throw new ArgumentNullException("String is null!");
             }
 
-            int charLen = val.Length > MaxStringLength ? MaxStringLength : val.Length; // cut off everything > short.maxValue
-            
-            val.CopyTo(0, charArr, 0, charLen);
-            int byteLen = enc.GetBytes(charArr, 0, charLen, byteArr, 0, true);
-
-
-            if (byteLen > MaxStringLength)
-                byteLen = MaxStringLength;
-            
-            if (byteLen > 127)
-            {
-                Write((short)-byteLen);
-            }
-            else
-            {
-                Write((sbyte)byteLen);
-            }
-
-            Write(byteArr, 0, byteLen);
+            // FIXME
+            var bytes = Encoding.UTF8.GetBytes(val);
+            Write7BitEncodedInt(bytes.Length);
+            Write(bytes, 0, bytes.Length);
         }
 
         public void Write(Vec3f vec)
