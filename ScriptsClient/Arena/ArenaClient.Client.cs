@@ -55,7 +55,7 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.ChatMessage);
             stream.Write((byte)chatMode);
             stream.Write(message);
-            SendScriptMessage(stream, PktPriority.Low, PktReliability.Unreliable);
+            SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
         }
 
         public override void ReadScriptMessage(PacketReader stream)
