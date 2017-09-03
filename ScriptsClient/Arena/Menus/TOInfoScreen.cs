@@ -16,7 +16,7 @@ namespace GUC.Scripts.Arena.Menus
         {
             vis = new GUCVisual();
             vis.Font = GUCView.Fonts.Menu;
-            
+
             const int yOffset = 60;
             vis.CreateText("Team Objective läuft!", GUCView.GetScreenSize()[0], yOffset).Format = GUCVisualText.TextFormat.Right;
             toName = vis.CreateText("TO_NAME", GUCView.GetScreenSize()[0], yOffset + GUCView.FontsizeMenu);
@@ -27,8 +27,10 @@ namespace GUC.Scripts.Arena.Menus
 
         public static void Show(TODef def)
         {
-            toName.Text = def.Name;
+            if (def == null)
+                return;
 
+            toName.Text = def.Name;
             vis.Show();
         }
 

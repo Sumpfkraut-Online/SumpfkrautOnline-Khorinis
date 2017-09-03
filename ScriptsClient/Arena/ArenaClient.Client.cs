@@ -104,10 +104,12 @@ namespace GUC.Scripts.Arena
                     Menus.TOInfoScreen.Show(activeTODef);
                     break;
                 case ScriptMessages.TOStart:
-                    Log.Logger.Log("TO Start: " + activeTODef.Name);
+                    if (activeTODef != null)
+                        Log.Logger.Log("TO Start: " + activeTODef.Name);
                     break;
                 case ScriptMessages.TOFinish:
-                    Log.Logger.Log("TO Finish: " + activeTODef.Name);
+                    if (activeTODef != null)
+                        Log.Logger.Log("TO Finish: " + activeTODef.Name);
                     break;
                 case ScriptMessages.TOEnd:
                     Log.Logger.Log("TO End");
