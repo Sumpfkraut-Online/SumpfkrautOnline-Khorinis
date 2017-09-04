@@ -24,7 +24,8 @@ namespace GUC.Scripts.Arena.Menus
             int y, i = 0;
             while ((y = offset + i * distance) < backButtonOffset - distance)
             {
-                AddButton("TEAM", "", y, () => SelectTeam(i));
+                int index = i;
+                AddButton("TEAM", "", y, () => SelectTeam(index));
                 i++;
             }
             AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, MainMenu.Menu.Open);
@@ -73,10 +74,10 @@ namespace GUC.Scripts.Arena.Menus
             
             if (def.Teams.ElementAtOrDefault(index) == null)
                 return;
-
+            
             if (!lockTimer.IsReady)
                 return;
-            
+
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((byte)index);

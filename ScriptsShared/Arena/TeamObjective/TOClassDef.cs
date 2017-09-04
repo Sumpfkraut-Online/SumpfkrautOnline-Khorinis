@@ -16,7 +16,7 @@ namespace GUC.Scripts.Arena
         public string NPCDef { get { return this.npcDef; } }
 
         List<string, int> itemDefs;
-        public IEnumerable<string, int> ItemDefs { get { return itemDefs.AsEnumerable(); } }
+        public IEnumerable<string, int> ItemDefs { get { return itemDefs; } }
 
         List<string> overlays;
         public IEnumerable<string> Overlays { get { return overlays; } }

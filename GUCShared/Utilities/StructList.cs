@@ -17,7 +17,7 @@ namespace GUC.Utilities
         }
     }
     public interface IEnumerable<T1, T2> : IEnumerable<ValueTuple<T1, T2>> { }
-    public class List<T1, T2> : List<ValueTuple<T1, T2>>
+    public class List<T1, T2> : List<ValueTuple<T1, T2>>, IEnumerable<T1, T2>
     {
         public List() : base() { }
         public List(int capacity) : base(capacity) { }
@@ -26,11 +26,6 @@ namespace GUC.Utilities
         public void Add(T1 item1, T2 item2)
         {
             this.Add(new ValueTuple<T1, T2>(item1, item2));
-        }
-
-        public IEnumerable<T1, T2> AsEnumerable()
-        {
-            return (IEnumerable<T1, T2>)this;
         }
     }
 
@@ -48,7 +43,7 @@ namespace GUC.Utilities
         }
     }
     public interface IEnumerable<T1, T2, T3> : IEnumerable<ValueTuple<T1, T2, T3>> { }
-    public class List<T1, T2, T3> : List<ValueTuple<T1, T2, T3>>
+    public class List<T1, T2, T3> : List<ValueTuple<T1, T2, T3>>, IEnumerable<T1, T2, T3>
     {
         public List() : base() { }
         public List(int capacity) : base(capacity) { }
@@ -57,11 +52,6 @@ namespace GUC.Utilities
         public void Add(T1 item1, T2 item2, T3 item3)
         {
             this.Add(new ValueTuple<T1, T2, T3>(item1, item2, item3));
-        }
-
-        public IEnumerable<T1, T2, T3> AsEnumerable()
-        {
-            return (IEnumerable<T1, T2, T3>)this;
         }
     }
 
@@ -81,7 +71,7 @@ namespace GUC.Utilities
         }
     }
     public interface IEnumerable<T1, T2, T3, T4> : IEnumerable<ValueTuple<T1, T2, T3, T4>> { }
-    public class List<T1, T2, T3, T4> : List<ValueTuple<T1, T2, T3, T4>>
+    public class List<T1, T2, T3, T4> : List<ValueTuple<T1, T2, T3, T4>>, IEnumerable<T1, T2, T3, T4>
     {
         public List() : base() { }
         public List(int capacity) : base(capacity) { }
@@ -94,7 +84,7 @@ namespace GUC.Utilities
 
         public IEnumerable<T1, T2, T3, T4> AsEnumerable()
         {
-            return (IEnumerable<T1, T2, T3, T4>)this;
+            return (IEnumerable<T1, T2, T3, T4>)this.AsEnumerable<ValueTuple<T1, T2, T3, T4>>(); ;
         }
     }
 }

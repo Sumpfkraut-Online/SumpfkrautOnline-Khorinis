@@ -26,7 +26,8 @@ namespace GUC.Scripts.Arena.Menus
             int y, i = 0;
             while ((y = offset + i * distance) < backButtonOffset - distance)
             {
-                AddButton("CLASS", "", y, () => SelectClass(i));
+                int index = i;
+                AddButton("CLASS", "", y, () => SelectClass(index));
                 i++;
             }
             AddButton("Zurück", "Zurück ins Teammenü.", backButtonOffset, TOTeamsMenu.Menu.Open);

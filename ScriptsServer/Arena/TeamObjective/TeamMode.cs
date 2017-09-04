@@ -43,7 +43,7 @@ namespace GUC.Scripts.Arena
         {
             if (player.Team == null || player.ClassDef == null)
                 return;
-            
+
             var classDef = player.ClassDef;
             NPCInst npc;
             if (classDef.NPCDef == null)
@@ -64,7 +64,7 @@ namespace GUC.Scripts.Arena
                 npc = new NPCInst(NPCDef.Get(classDef.NPCDef));
             }
 
-            foreach(var eqPair in classDef.ItemDefs)
+            foreach (var eqPair in classDef.ItemDefs)
             {
                 var item = new ItemInst(ItemDef.Get(eqPair.Item1));
                 item.SetAmount(eqPair.Item2);
@@ -72,7 +72,7 @@ namespace GUC.Scripts.Arena
                 npc.EquipItem(item);
             }
 
-            foreach(var overlay in classDef.Overlays)
+            foreach (var overlay in classDef.Overlays)
             {
                 ScriptOverlay ov;
                 if (npc.ModelDef.TryGetOverlay(overlay, out ov))
@@ -120,6 +120,9 @@ namespace GUC.Scripts.Arena
                 return;
 
             activeTODef = def;
+            foreach (var teamDef in activeTODef.Teams)
+                teams.Add(new TOTeamInst(teamDef));
+
             PhaseWarmup();
         }
 
@@ -135,6 +138,8 @@ namespace GUC.Scripts.Arena
             phaseTimer.SetInterval(WarmUpDuration);
             phaseTimer.SetCallback(PhaseStart);
             phaseTimer.Start();
+
+            respawnTimer.Start();
         }
 
         static void PhaseStart()
@@ -159,13 +164,17 @@ namespace GUC.Scripts.Arena
 
             phaseTimer.SetInterval(FinishDuration);
             phaseTimer.SetCallback(EndTO);
+            
+            respawnTimer.Stop();
         }
 
         static void EndTO()
         {
             phase = TOPhases.None;
 
-            teams.ForEach(team => team.Reset());
+            teams.ForEach(team => team.Players.ForEach(p => p.Team = null));
+            teams.Clear();
+
             activeTODef = null;
             if (!CheckStartTO())
             {
@@ -197,7 +206,7 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((byte)index);
-            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
+            client.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
     }
 }
