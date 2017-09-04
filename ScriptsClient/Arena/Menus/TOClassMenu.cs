@@ -6,16 +6,18 @@ using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 using GUC.Log;
 using GUC.Utilities;
+using GUC.GUI;
 
 namespace GUC.Scripts.Arena.Menus
 {
-    class TOTeamsMenu : GUCMainMenu
+    class TOClassMenu : GUCMainMenu
     {
-        public readonly static TOTeamsMenu Menu = new TOTeamsMenu();
+        public readonly static TOClassMenu Menu = new TOClassMenu();
 
+        GUCVisualText title;
         protected override void OnCreate()
         {
-            Back.CreateTextCenterX("Team auswählen", 50);
+            title = Back.CreateTextCenterX("", 50);
 
             const int offset = 100;
             const int distance = 50;
@@ -24,33 +26,35 @@ namespace GUC.Scripts.Arena.Menus
             int y, i = 0;
             while ((y = offset + i * distance) < backButtonOffset - distance)
             {
-                AddButton("TEAM", "", y, () => SelectTeam(i));
+                AddButton("CLASS", "", y, () => SelectClass(i));
                 i++;
             }
-            AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, MainMenu.Menu.Open);
-            OnEscape = MainMenu.Menu.Open;
+            AddButton("Zurück", "Zurück ins Teammenü.", backButtonOffset, TOTeamsMenu.Menu.Open);
+            OnEscape = TOTeamsMenu.Menu.Open;
         }
 
         public override void Open()
         {
-            var def = ArenaClient.Client.ActiveTODef;
+            var def = ArenaClient.Client.TOTeamDef;
             if (def == null)
                 return;
 
             base.Open();
 
+            title.Text = string.Format("Klasse für '{0}' auswählen.", def.Name);
+
             int index = 0;
-            foreach (var team in def.Teams)
+            foreach (var team in def.ClassDefs)
             {
                 if (index >= items.Count - 1)
                 {
-                    Logger.LogWarning("Too many teams to show in the menu!");
+                    Logger.LogWarning("Too many classes to show in the menu!");
                     break;
                 }
 
                 var button = (MainMenuButton)items[index];
                 button.Text = team.Name;
-                button.HelpText = team.Name + " als Team wählen.";
+                button.HelpText = team.Name + " als Klasse wählen.";
                 items[index].Enabled = true;
                 button.Show();
 
@@ -65,22 +69,24 @@ namespace GUC.Scripts.Arena.Menus
         }
 
         LockTimer lockTimer = new LockTimer(500);
-        void SelectTeam(int index)
+        void SelectClass(int index)
         {
-            var def = ArenaClient.Client.ActiveTODef;
+            var def = ArenaClient.Client.TOTeamDef;
             if (def == null)
                 Close();
-            
-            if (def.Teams.ElementAtOrDefault(index) == null)
+
+            if (def.ClassDefs.ElementAtOrDefault(index) == null)
                 return;
 
             if (!lockTimer.IsReady)
                 return;
-            
+
             var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.TOJoinTeam);
+            stream.Write((byte)ScriptMessages.TOSelectClass);
             stream.Write((byte)index);
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+
+            Close();
         }
     }
 }

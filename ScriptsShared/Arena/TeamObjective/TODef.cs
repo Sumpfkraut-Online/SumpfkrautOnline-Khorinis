@@ -9,6 +9,14 @@ using GUC.Log;
 
 namespace GUC.Scripts.Arena
 {
+    enum TOPhases
+    {
+        None,
+        Warmup,
+        Battle,
+        Finish
+    }
+
     class TODef
     {
         string name;

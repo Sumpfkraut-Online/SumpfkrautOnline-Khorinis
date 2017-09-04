@@ -12,6 +12,9 @@ namespace GUC.Scripts.Arena
     {
         public NPCInst Enemy { get; private set; }
 
+        TOClassDef classDef;
+        public TOClassDef ClassDef { get { return classDef; } }
+
         partial void pOnConnect();
         public override void OnConnection()
         {

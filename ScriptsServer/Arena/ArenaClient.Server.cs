@@ -28,19 +28,32 @@ namespace GUC.Scripts.Arena
             {
                 if (a.Client != null)
                 {
-                    var client = (ArenaClient)a.Client;
-                    if (client.EnemyClient != null && client.EnemyClient == t.Client)
-                        return true;
+                    var attacker = (ArenaClient)a.Client;
+                    var target = (ArenaClient)t.Client;
+                    if (target != null)
+                    {
+                        if (attacker.Team != null && target.Team != null)
+                            return true;
+                        else if (attacker.EnemyClient == target)
+                            return true;
+                    }
                 }
                 return false;
             };
             NPCInst.sOnHit += (a, t, d) =>
             {
-                if (a.Client != null)
+                if (t.GetHealth() <= 0)
                 {
-                    var client = (ArenaClient)a.Client;
-                    if (client.EnemyClient != null && t.GetHealth() <= 0 && client.EnemyClient == t.Client)
-                        client.DuelWin();
+                    var attacker = (ArenaClient)a.Client;
+                    var target = (ArenaClient)t.Client;
+                    if (attacker != null && target != null)
+                    {
+                        if (attacker.Team != null && target.Team != null)
+                            attacker.Team.Score++;
+                        else if (attacker.EnemyClient == target)
+                            attacker.DuelWin();
+
+                    }
                 }
             };
             NPCInst.sOnNPCInstMove += (npc, p, d, m) =>
@@ -151,7 +164,6 @@ namespace GUC.Scripts.Arena
         #region TeamObjective
 
         public TOTeamInst Team;
-        public TOClassDef ClassDef;
 
         #endregion
 
@@ -198,6 +210,15 @@ namespace GUC.Scripts.Arena
                         TeamMode.JoinTeam(this, team);
                     }
                     break;
+                case ScriptMessages.TOSelectClass:
+                    if (TeamMode.IsRunning && this.Team != null)
+                    {
+                        int index = stream.ReadByte();
+                        var classDef = this.Team.Def.ClassDefs.ElementAtOrDefault(index);
+                        if (classDef != null)
+                            this.classDef = classDef;
+                    }
+                    break;
                 case ScriptMessages.ChatMessage:
                     SendChatMessage(stream.ReadByte(), stream.ReadString());
                     break;
@@ -205,6 +226,7 @@ namespace GUC.Scripts.Arena
         }
 
         CharCreationInfo charInfo = new CharCreationInfo();
+        public CharCreationInfo CharInfo { get { return charInfo; } }
 
         void JoinGame()
         {
