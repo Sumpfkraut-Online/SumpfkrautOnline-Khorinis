@@ -96,6 +96,12 @@ namespace GUC.Scripts.Arena
 
         public void OpenTeamChat()
         {
+            if(ArenaClient.Client.TOTeamDef == null)
+            {
+                AddMessage(ChatMode.All, "Du musst erst einem Team beitreten bevor du den Teamchat verwenden kannst!");
+                OpenAllChat();
+                return;
+            }
             chatMode = ChatMode.Team;
             prefix.Texts[0].Text = "Team: ";
             Open();
@@ -159,6 +165,7 @@ namespace GUC.Scripts.Arena
                 for (int i = 0; i < chatBackground.Texts.Count - 1; i++)
                 {
                     chatBackground.Texts[i].Text = chatBackground.Texts[i + 1].Text;
+                    chatBackground.Texts[i].SetColor(chatBackground.Texts[i + 1].GetColor());
                 }
 
             // split messages to multiple rows
@@ -201,12 +208,13 @@ namespace GUC.Scripts.Arena
                 }
                 index++;
             }
-            if (chatMode == ChatMode.Team)
-                chatBackground.Texts[index].SetColor(red);
+
+            if (chatMode == ChatMode.Team && ArenaClient.Client.TOTeamDef != null)
+                chatBackground.Texts[index].SetColor(ArenaClient.Client.TOTeamDef.Color);
             else
                 chatBackground.Texts[index].SetColor(white);
+
             chatBackground.Texts[index].Text = message;
-            //chatBackground.Texts[chatBackground.Texts.Count - 1].Text = message;
         }
 
         public void ClearChat()

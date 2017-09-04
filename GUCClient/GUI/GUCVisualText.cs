@@ -149,6 +149,11 @@ namespace GUC.GUI
             viewText.Color.B = color.B;
             viewText.Color.A = color.A;
         }
+
+        public ColorRGBA GetColor()
+        {
+            return new ColorRGBA(viewText.Color.R, viewText.Color.G, viewText.Color.B);
+        }
         #endregion
 
         #region Position & Size
