@@ -49,7 +49,7 @@ namespace GUC.Scripts.Arena
             }
         }
 
-        public static void SendChatMessage(Chat.ChatMode chatMode, string message)
+        public static void SendChatMessage(ChatMode chatMode, string message)
         {
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.ChatMessage);
@@ -118,7 +118,7 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ChatMessage:
                     byte chatMode = stream.ReadByte();
                     string message = stream.ReadString();
-                    Chat.ChatMenu.ReceiveServerMessage((Chat.ChatMode)chatMode, message);
+                    Chat.ChatMenu.ReceiveServerMessage((ChatMode)chatMode, message);
                     break;
             }
         }

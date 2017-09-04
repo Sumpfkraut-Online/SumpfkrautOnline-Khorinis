@@ -66,6 +66,9 @@
     <Compile Include="..\ScriptsShared\Arena\CharCreationInfo.cs">
       <Link>Arena\CharCreationInfo.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Arena\ChatMode.cs">
+      <Link>Arena\ChatMode.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
