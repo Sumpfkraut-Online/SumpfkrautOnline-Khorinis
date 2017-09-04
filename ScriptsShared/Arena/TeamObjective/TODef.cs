@@ -22,7 +22,7 @@ namespace GUC.Scripts.Arena
         public int ScoreToWin { get { return scoreToWin; } }
 
         List<TOTeamDef> teams = new List<TOTeamDef>();
-        public IEnumerable<TOTeamDef> Teams { get { return teams; } }
+        public ReadOnlyList<TOTeamDef> Teams { get { return teams; } }
 
         void AddTeam(string name, List<Vec3f, Vec3f> spawnPoints, List<TOClassDef> classDefs)
         {

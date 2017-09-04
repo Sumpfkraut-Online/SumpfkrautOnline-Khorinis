@@ -114,11 +114,21 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.TOEnd:
                     Log.Logger.Log("TO End");
                     Menus.TOInfoScreen.Hide();
+                    activeTODef = null;
+                    teamDef = null;
                     break;
                 case ScriptMessages.ChatMessage:
                     byte chatMode = stream.ReadByte();
                     string message = stream.ReadString();
                     Chat.ChatMenu.ReceiveServerMessage((ChatMode)chatMode, message);
+                    break;
+                case ScriptMessages.TOJoinTeam:
+                    if (activeTODef != null)
+                    {
+                        int index = stream.ReadByte();
+                        if (index < activeTODef.Teams.Count)
+                            teamDef = activeTODef.Teams[index];
+                    }
                     break;
             }
         }
@@ -126,6 +136,9 @@ namespace GUC.Scripts.Arena
         #region TeamObjective
         TODef activeTODef;
         public TODef ActiveTODef { get { return activeTODef; } }
+
+        TOTeamDef teamDef;
+        public TOTeamDef TOTeamDef { get { return this.teamDef; } }
 
         #endregion
 

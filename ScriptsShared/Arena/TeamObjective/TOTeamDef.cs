@@ -19,7 +19,15 @@ namespace GUC.Scripts.Arena
         List<TOClassDef> classDefs;
         public IEnumerable<TOClassDef> ClassDefs { get { return classDefs; } }
 
-        public TOTeamDef(string name, List<Vec3f, Vec3f> spawnPoints, List<TOClassDef> classDefs)
+        ColorRGBA color;
+        public ColorRGBA Color { get { return color; } }
+
+        public TOTeamDef(string name, List<Vec3f, Vec3f> spawnPoints, List<TOClassDef> classDefs) 
+            : this(name, spawnPoints, classDefs, ColorRGBA.White)
+        {
+        }
+        
+        public TOTeamDef(string name, List<Vec3f, Vec3f> spawnPoints, List<TOClassDef> classDefs, ColorRGBA teamColor)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException("name");
@@ -31,6 +39,7 @@ namespace GUC.Scripts.Arena
             this.name = name;
             this.spawnPoints = spawnPoints;
             this.classDefs = classDefs;
+            this.color = teamColor;
         }
     }
 }

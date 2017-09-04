@@ -153,6 +153,9 @@
     <Compile Include="..\GUCShared\Utilities\Randomizer.cs">
       <Link>Utilities\Randomizer.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\ReadOnlyList.cs">
+      <Link>Utilities\ReadOnlyList.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\StringExtensions.cs">
       <Link>Utilities\StringExtensions.cs</Link>
     </Compile>

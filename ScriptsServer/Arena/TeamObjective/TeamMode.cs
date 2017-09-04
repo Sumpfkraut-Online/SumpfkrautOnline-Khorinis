@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripting;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Arena
 {
@@ -13,7 +14,7 @@ namespace GUC.Scripts.Arena
         const long FinishDuration = 30 * TimeSpan.TicksPerSecond;
 
         static List<TOTeamInst> teams = new List<TOTeamInst>(3);
-        public static IEnumerable<TOTeamInst> Teams { get { return teams; } }
+        public static ReadOnlyList<TOTeamInst> Teams { get { return teams; } }
 
         static GUCTimer timer = new GUCTimer();
 
@@ -105,12 +106,24 @@ namespace GUC.Scripts.Arena
             if (team == null || activeTODef == null || client.Team == team)
                 return;
 
+            int index = teams.IndexOf(team);
+            if (index < 0) 
+                return; // team is not from this TO
+
             // don't join a team which has already more players than the others
             if (!teams.TrueForAll(t => team.Players.Count <= t.Players.Count - (t == client.Team ? 1 : 0)))
                 return;
 
+            if (client.Team != null)
+                client.Team.Players.Remove(client);
+
             client.Team = team;
             team.Players.Add(client);
+
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.TOJoinTeam);
+            stream.Write((byte)index);
+            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
         }
 
         public static void ChooseClass(ArenaClient client, TOClassDef classDef)
