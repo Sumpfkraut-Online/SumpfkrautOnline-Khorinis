@@ -127,8 +127,16 @@ namespace GUC.Scripts.Arena
                     {
                         int index = stream.ReadByte();
                         if (index < activeTODef.Teams.Count)
+                        {
+                            var oldTeam = teamDef;
                             teamDef = activeTODef.Teams[index];
-                    }
+                            Log.Logger.Log("Joined Team " + teamDef.Name);
+
+                            if (oldTeam != teamDef)
+                                Menus.TOClassMenu.Menu.Open();
+
+                        }
+                        }
                     break;
             }
         }

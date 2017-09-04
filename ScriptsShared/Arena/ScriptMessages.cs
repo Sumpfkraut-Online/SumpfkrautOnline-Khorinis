@@ -23,7 +23,7 @@ namespace GUC.Scripts.Arena
         TOEnd,
 
         TOJoinTeam,
-        TOChooseClass,
+        TOSelectClass,
 
         ChatMessage,
 
