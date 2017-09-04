@@ -220,7 +220,21 @@ namespace GUC.Scripts.Arena
                     }
                     break;
                 case ScriptMessages.ChatMessage:
-                    SendChatMessage(stream.ReadByte(), stream.ReadString());
+                    ChatMode chatMode = (ChatMode)stream.ReadByte();
+                    string message = this.charInfo.Name;
+                    if (!this.IsSpecating)
+                    {
+                        if (chatMode == ChatMode.Team)
+                            message += "(Team): ";
+                        else
+                            message += ": ";
+                    }
+                    else
+                    {
+                        message += "(Zuschauer): ";
+                    }
+                    message += stream.ReadString();
+                    SendChatMessage((byte)chatMode, message);
                     break;
             }
         }
