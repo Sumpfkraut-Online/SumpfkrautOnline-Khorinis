@@ -10,10 +10,7 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient : ScriptClient
     {
-        public NPCInst Enemy { get; private set; }
-
-        TOClassDef classDef;
-        public TOClassDef ClassDef { get { return classDef; } }
+        public TOClassDef ClassDef;
 
         partial void pOnConnect();
         public override void OnConnection()

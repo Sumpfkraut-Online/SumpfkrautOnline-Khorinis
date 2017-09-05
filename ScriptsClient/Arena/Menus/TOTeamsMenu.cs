@@ -34,14 +34,13 @@ namespace GUC.Scripts.Arena.Menus
 
         public override void Open()
         {
-            var def = ArenaClient.Client.ActiveTODef;
-            if (def == null)
+            if (!TeamMode.IsRunning)
                 return;
 
             base.Open();
 
             int index = 0;
-            foreach (var team in def.Teams)
+            foreach (var team in TeamMode.ActiveTODef.Teams)
             {
                 if (index >= items.Count - 1)
                 {
@@ -68,11 +67,10 @@ namespace GUC.Scripts.Arena.Menus
         LockTimer lockTimer = new LockTimer(500);
         void SelectTeam(int index)
         {
-            var def = ArenaClient.Client.ActiveTODef;
-            if (def == null)
+            if (!TeamMode.IsRunning)
                 Close();
             
-            if (def.Teams.ElementAtOrDefault(index) == null)
+            if (TeamMode.ActiveTODef.Teams.ElementAtOrDefault(index) == null)
                 return;
             
             if (!lockTimer.IsReady)

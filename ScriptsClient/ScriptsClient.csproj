@@ -52,11 +52,20 @@
     <Compile Include="..\ScriptsShared\Arena\CharCreationInfo.cs">
       <Link>Arena\CharCreationInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\ChatMode.cs">
-      <Link>Arena\ChatMode.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\Chat\Chat.cs">
+      <Link>Arena\Chat\Chat.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Chat\ChatMode.cs">
+      <Link>Arena\Chat\ChatMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
+      <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TeamMode.cs">
+      <Link>Arena\TeamObjective\TeamMode.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOClassDef.cs">
       <Link>Arena\TeamObjective\TOClassDef.cs</Link>
@@ -362,15 +371,18 @@
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
     <Compile Include="Arena\ArenaClient.Client.cs" />
-    <Compile Include="Arena\Chat.cs" />
+    <Compile Include="Arena\Chat\Chat.Client.cs" />
     <Compile Include="Arena\Controls\ArenaControl.cs" />
+    <Compile Include="Arena\Duel\DuelMode.Client.cs" />
     <Compile Include="Arena\Menus\CharCreationMenu.cs" />
+    <Compile Include="Arena\Chat\ChatMenu.cs" />
     <Compile Include="Arena\Menus\ExitMenu.cs" />
     <Compile Include="Arena\Menus\MainMenu.cs" />
     <Compile Include="Arena\Menus\DuelScoreBoard.cs" />
     <Compile Include="Arena\Menus\TOClassMenu.cs" />
     <Compile Include="Arena\Menus\TOInfoScreen.cs" />
     <Compile Include="Arena\Menus\TOTeamsMenu.cs" />
+    <Compile Include="Arena\TeamObjective\TeamMode.Client.cs" />
     <Compile Include="Left4Gothic\CharCreationMenu.cs" />
     <Compile Include="Left4Gothic\CCExitMenu.cs" />
     <Compile Include="Left4Gothic\L4Client.Client.cs" />

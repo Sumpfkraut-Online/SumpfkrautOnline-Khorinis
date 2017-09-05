@@ -681,6 +681,9 @@ namespace GUC.Network
 
         internal void Send(PacketWriter stream, NetPriority pp, NetReliability pr, char orderingChannel)
         {
+            if (!this.isCreated)
+                throw new Exception("Client has disconnected.");
+
             GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), (PacketPriority)pp, (PacketReliability)pr, '\0'/*orderingChannel*/, this.guid, false);
         }
 

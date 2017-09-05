@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 
 namespace GUC.Scripts.Arena
 {
-    enum ChatMode
+    static partial class DuelMode
     {
-        All,
-        Team
     }
 }

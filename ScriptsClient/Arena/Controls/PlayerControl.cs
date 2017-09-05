@@ -23,8 +23,8 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
             { KeyBind.Inventory, d => { if (d) Menus.DuelScoreBoard.Show(); else Menus.DuelScoreBoard.Hide(); } },
-            { KeyBind.OpenAllChat, d => { Arena.Chat.ChatMenu.OpenAllChat(); } },
-            { KeyBind.OpenTeamChat, d => { Arena.Chat.ChatMenu.OpenTeamChat(); } },
+            { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
+            { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
         };
 
 static void DrawWeapon(bool down)
@@ -67,7 +67,7 @@ static void PlayerActionButton(bool down)
     {
         var focusVob = hero.GetFocusVob();
         if (focusVob != null && focusVob is NPCInst)
-            ArenaClient.SendDuelRequest((NPCInst)focusVob);
+            DuelMode.SendRequest((NPCInst)focusVob);
     }
 
 

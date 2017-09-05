@@ -36,16 +36,15 @@ namespace GUC.Scripts.Arena.Menus
 
         public override void Open()
         {
-            var def = ArenaClient.Client.TOTeamDef;
-            if (def == null)
+            if (!TeamMode.IsRunning)
                 return;
 
             base.Open();
 
-            title.Text = string.Format("Klasse für '{0}' auswählen.", def.Name);
+            title.Text = string.Format("Klasse für '{0}' auswählen.", TeamMode.TeamDef.Name);
 
             int index = 0;
-            foreach (var team in def.ClassDefs)
+            foreach (var team in TeamMode.TeamDef.ClassDefs)
             {
                 if (index >= items.Count - 1)
                 {
@@ -72,11 +71,10 @@ namespace GUC.Scripts.Arena.Menus
         LockTimer lockTimer = new LockTimer(500);
         void SelectClass(int index)
         {
-            var def = ArenaClient.Client.TOTeamDef;
-            if (def == null)
+            if (TeamMode.TeamDef == null)
                 Close();
 
-            if (def.ClassDefs.ElementAtOrDefault(index) == null)
+            if (TeamMode.TeamDef.ClassDefs.ElementAtOrDefault(index) == null)
                 return;
 
             if (!lockTimer.IsReady)

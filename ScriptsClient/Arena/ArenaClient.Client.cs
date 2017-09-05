@@ -37,136 +37,45 @@ namespace GUC.Scripts.Arena
             SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
-        static LockTimer requestTime = new LockTimer(500);
-        public static void SendDuelRequest(NPCInst target)
-        {
-            if (requestTime.IsReady)
-            {
-                var stream = GetScriptMessageStream();
-                stream.Write((byte)ScriptMessages.DuelRequest);
-                stream.Write((ushort)target.ID);
-                SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
-            }
-        }
-
-        public static void SendChatMessage(ChatMode chatMode, string message)
-        {
-            var stream = GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.ChatMessage);
-            stream.Write((byte)chatMode);
-            stream.Write(message);
-            SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
-        }
-
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
             switch (id)
             {
                 case ScriptMessages.DuelRequest:
-                    NPCInst requester, target;
-                    if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out requester) && WorldInst.Current.TryGetVob(stream.ReadUShort(), out target))
-                    {
-                        if (requester == this.Character)
-                            DuelMessage("Du hast " + target.CustomName + " zum Duell herausgefordert.");
-                        else
-                            DuelMessage("Du wurdest von " + requester.CustomName + " zum Duell herausgefordert.");
-                    }
+                    DuelMode.ReadRequest(stream);
                     break;
                 case ScriptMessages.DuelStart:
-                    NPCInst enemy;
-                    if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out enemy))
-                    {
-                        SetEnemy(enemy);
-                        DuelMessage("Duell gegen " + enemy.CustomName + " + gestartet");
-                    }
+                    DuelMode.ReadStart(stream);
                     break;
                 case ScriptMessages.DuelWin:
-                    NPCInst winner;
-                    if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out winner))
-                    {
-                        if (winner == this.Character)
-                            DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " gewonnen.");
-                        else
-                            DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " verloren.");
-                        SetEnemy(null);
-                    }
+                    DuelMode.ReadWin(stream);
                     break;
                 case ScriptMessages.DuelEnd:
-                    DuelMessage("Duell beendet.");
-                    SetEnemy(null);
+                    DuelMode.ReadEnd(stream);
                     break;
                 case ScriptMessages.TOWarmup:
-                    string name = stream.ReadString();
-                    if ((activeTODef = TODef.TryGet(name)) == null)
-                        throw new Exception("TODef not found: " + name);
-                    Log.Logger.Log("TO Warmup: " + name);
-                    Menus.TOInfoScreen.Show(activeTODef);
+                    TeamMode.ReadWarmup(stream);
                     break;
                 case ScriptMessages.TOStart:
-                    if (activeTODef != null)
-                        Log.Logger.Log("TO Start: " + activeTODef.Name);
+                    TeamMode.ReadStart(stream);
                     break;
                 case ScriptMessages.TOFinish:
-                    if (activeTODef != null)
-                        Log.Logger.Log("TO Finish: " + activeTODef.Name);
+                    TeamMode.ReadFinish(stream);
                     break;
                 case ScriptMessages.TOEnd:
-                    Log.Logger.Log("TO End");
-                    Menus.TOInfoScreen.Hide();
-                    activeTODef = null;
-                    teamDef = null;
+                    TeamMode.ReadEnd(stream);
                     break;
                 case ScriptMessages.ChatMessage:
-                    byte chatMode = stream.ReadByte();
-                    string message = stream.ReadString();
-                    Chat.ChatMenu.ReceiveServerMessage((ChatMode)chatMode, message);
+                    Chat.ReadMessage(stream);
+                    break;
+                case ScriptMessages.ChatTeamMessage:
+                    Chat.ReadTeamMessage(stream);
                     break;
                 case ScriptMessages.TOJoinTeam:
-                    if (activeTODef != null)
-                    {
-                        int index = stream.ReadByte();
-                        if (index < activeTODef.Teams.Count)
-                        {
-                            var oldTeam = teamDef;
-                            teamDef = activeTODef.Teams[index];
-                            Log.Logger.Log("Joined Team " + teamDef.Name);
-
-                            if (oldTeam != teamDef)
-                                Menus.TOClassMenu.Menu.Open();
-
-                        }
-                        }
+                    TeamMode.ReadJoinTeam(stream);
                     break;
             }
         }
-
-        #region TeamObjective
-        TODef activeTODef;
-        public TODef ActiveTODef { get { return activeTODef; } }
-
-        TOTeamDef teamDef;
-        public TOTeamDef TOTeamDef { get { return this.teamDef; } }
-
-        #endregion
-
-        #region Duel
-
-        void DuelMessage(string text)
-        {
-            Log.Logger.Log(text);
-        }
-
-        GUCWorldSprite enemySprite = new GUCWorldSprite(100, 100, false);
-        void SetEnemy(NPCInst enemy)
-        {
-            enemySprite.SetBackTexture("Letters.tga");
-            this.Enemy = enemy;
-            enemySprite.SetTarget(enemy);
-            if (enemy == null) enemySprite.Hide();
-            else enemySprite.Show();
-        }
-
-        #endregion
     }
 }

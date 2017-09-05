@@ -24,7 +24,7 @@ namespace GUC.Scripts.Arena.Menus
         public override void Open()
         {
             base.Open();
-            teamButton.Enabled = ArenaClient.Client.ActiveTODef != null;
+            teamButton.Enabled = TeamMode.IsRunning;
         }
     }
 }

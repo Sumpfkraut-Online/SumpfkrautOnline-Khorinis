@@ -26,6 +26,7 @@ namespace GUC.Scripts.Arena
         TOSelectClass,
 
         ChatMessage,
-
+        ChatTeamMessage,
+        ChatPrivateMessage,
     }
 }

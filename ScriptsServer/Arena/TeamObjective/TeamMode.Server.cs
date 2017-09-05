@@ -9,23 +9,33 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Network;
 
 namespace GUC.Scripts.Arena
 {
-    static class TeamMode
+    static partial class TeamMode
     {
         public const int MinClientsToStart = 1;
-        const long WarmUpDuration = 30 * TimeSpan.TicksPerSecond;
-        const long FinishDuration = 30 * TimeSpan.TicksPerSecond;
         const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
 
         static List<TOTeamInst> teams = new List<TOTeamInst>(3);
         public static ReadOnlyList<TOTeamInst> Teams { get { return teams; } }
 
-        static TOPhases phase;
-        public static TOPhases Phase { get { return phase; } }
         static GUCTimer phaseTimer = new GUCTimer();
         static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
+
+        public static void AddScore(ArenaClient client)
+        {
+            if (client == null || client.Team == null)
+                return;
+
+            var team = client.Team;
+            team.Score++;
+            if (team.Score >= activeTODef.ScoreToWin)
+            {
+                PhaseFinish();
+            }
+        }
 
         static void RespawnPlayers()
         {
@@ -112,8 +122,6 @@ namespace GUC.Scripts.Arena
             StartTO(TODef.TryGet(name));
         }
 
-        static TODef activeTODef;
-        public static bool IsRunning { get { return activeTODef != null; } }
         public static void StartTO(TODef def)
         {
             if (def == null)
@@ -158,13 +166,30 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.Finish;
 
+            // first, check which teams beat the score limit
+            List<int> winIndices = new List<int>(teams.Count);
+            for (int i = 0; i < teams.Count; i++)
+                if (teams[i].Score >= activeTODef.ScoreToWin)
+                    winIndices.Add(i);
+
+            // no teams beat the score limit? Select highest scores.
+            if (winIndices.Count == 0)
+            {
+                int max = teams.Max(t => t.Score);
+                for (int i = 0; i < teams.Count; i++)
+                    if (teams[i].Score >= max)
+                        winIndices.Add(i);
+            }
+
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOFinish);
+            stream.Write((byte)winIndices.Count); // write the winners
+            winIndices.ForEach(i => stream.Write((byte)i));
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
 
             phaseTimer.SetInterval(FinishDuration);
             phaseTimer.SetCallback(EndTO);
-            
+
             respawnTimer.Stop();
         }
 
@@ -182,6 +207,26 @@ namespace GUC.Scripts.Arena
                 stream.Write((byte)ScriptMessages.TOEnd);
                 ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
             }
+        }
+        public static void ReadSelectClass(ArenaClient client, PacketReader stream)
+        {
+            if (!IsRunning || client.Team == null)
+                return;
+
+            int index = stream.ReadByte();
+            var classDef = client.Team.Def.ClassDefs.ElementAtOrDefault(index);
+            if (classDef != null)
+                client.ClassDef = classDef;
+        }
+
+        public static void ReadJoinTeam(ArenaClient client, PacketReader stream)
+        {
+            if (!IsRunning)
+                return;
+
+            int index = stream.ReadByte();
+            var team = Teams.ElementAtOrDefault(index);
+            JoinTeam(client, team);
         }
 
         public static void JoinTeam(ArenaClient client, TOTeamInst team)

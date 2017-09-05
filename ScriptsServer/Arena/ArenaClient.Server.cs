@@ -18,146 +18,10 @@ namespace GUC.Scripts.Arena
     {
         #region DuelMode
 
-        const long DuelRequestDuration = 20 * 1000 * 10000; // 20 secs
-        const float DuelMaxDistance = 1500.0f; // distance between players for the duel to automatically end
-
-        static ArenaClient()
-        {
-            Logger.Log("Duel mode initialised.");
-            NPCInst.sOnHitCheck += (a, t) =>
-            {
-                if (a.Client != null)
-                {
-                    var attacker = (ArenaClient)a.Client;
-                    var target = (ArenaClient)t.Client;
-                    if (target != null)
-                    {
-                        if (attacker.Team != null && target.Team != null)
-                            return true;
-                        else if (attacker.EnemyClient == target)
-                            return true;
-                    }
-                }
-                return false;
-            };
-            NPCInst.sOnHit += (a, t, d) =>
-            {
-                if (t.GetHealth() <= 0)
-                {
-                    var attacker = (ArenaClient)a.Client;
-                    var target = (ArenaClient)t.Client;
-                    if (attacker != null && target != null)
-                    {
-                        if (attacker.Team != null && target.Team != null)
-                            attacker.Team.Score++;
-                        else if (attacker.EnemyClient == target)
-                            attacker.DuelWin();
-
-                    }
-                }
-            };
-            NPCInst.sOnNPCInstMove += (npc, p, d, m) =>
-            {
-                if (npc.Client != null)
-                {
-                    var client = (ArenaClient)npc.Client;
-                    var enemy = client.EnemyClient;
-                    if (enemy != null && enemy.Character != null
-                    && npc.GetPosition().GetDistance(enemy.Character.GetPosition()) > DuelMaxDistance)
-                        client.DuelEnd();
-                }
-            };
-        }
-
-        public int DuelWins { get; private set; }
-        public ArenaClient EnemyClient { get { return (ArenaClient)this.Enemy?.Client; } }
-        List<ArenaClient, GUCTimer> duelRequests = new List<ArenaClient, GUCTimer>(3);
-
-        public void DuelRequest(NPCInst target)
-        {
-            if (this.IsSpecating || this.EnemyClient != null || target.Client == null
-                || this.Character.IsDead || target.IsDead || target.Client.IsSpecating)
-                return;
-
-            var targetClient = (ArenaClient)target.Client;
-            if (targetClient.EnemyClient != null)
-                return;
-
-            int index;
-            if ((index = targetClient.duelRequests.FindIndex(r => r.Item1 == this)) >= 0) // other player has already sent a request
-            {
-                targetClient.duelRequests[index].Item2.Stop();
-                targetClient.duelRequests.RemoveAt(index);
-                this.DuelStart(targetClient);
-            }
-            else if ((index = duelRequests.FindIndex(r => r.Item1 == targetClient)) >= 0) // already sent a request
-            {
-                duelRequests[index].Item2.Restart();
-            }
-            else // add new request
-            {
-                var timer = new GUCTimer(DuelRequestDuration, () => this.duelRequests.RemoveAll(r => r.Item1 == targetClient));
-                timer.Start();
-                duelRequests.Add(targetClient, timer);
-
-                var stream = ArenaClient.GetScriptMessageStream();
-                stream.Write((byte)ScriptMessages.DuelRequest);
-                stream.Write((ushort)this.Character.ID);
-                stream.Write((ushort)target.ID);
-                this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-                targetClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-            }
-        }
-
-        void DuelStart(ArenaClient enemyClient)
-        {
-            this.Enemy = enemyClient.Character;
-            enemyClient.Enemy = this.Character;
-
-            var character = this.Character;
-            var enemyChar = enemyClient.Character;
-
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.DuelStart);
-            stream.Write((ushort)character.ID);
-            enemyClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-
-            stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.DuelStart);
-            stream.Write((ushort)enemyChar.ID);
-            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-        }
-
-        void DuelWin()
-        {
-            if (this.EnemyClient == null)
-                return;
-
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.DuelWin);
-            stream.Write((ushort)this.Character.ID);
-            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-            this.EnemyClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-
-            this.EnemyClient.Enemy = null;
-            this.Enemy = null;
-
-            this.DuelWins++;
-        }
-
-        void DuelEnd()
-        {
-            if (this.EnemyClient == null)
-                return;
-
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.DuelEnd);
-            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-            this.EnemyClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-
-            this.EnemyClient.Enemy = null;
-            this.Enemy = null;
-        }
+        public List<ArenaClient, GUCTimer> DuelRequests = new List<ArenaClient, GUCTimer>(3);
+        public ArenaClient DuelEnemy;
+        public bool IsDueling { get { return this.DuelEnemy != null; } }
+        public int DuelWins;
 
         #endregion
 
@@ -172,15 +36,6 @@ namespace GUC.Scripts.Arena
             Spectate();
 
             TeamMode.CheckStartTO();
-        }
-
-        public void SendChatMessage(byte chatMode, string message)
-        {
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.ChatMessage);
-            stream.Write(chatMode);
-            stream.Write(message);
-            this.BaseClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
         public override void ReadScriptMessage(PacketReader stream)
@@ -198,43 +53,19 @@ namespace GUC.Scripts.Arena
                     charInfo.Read(stream);
                     break;
                 case ScriptMessages.DuelRequest:
-                    NPCInst target;
-                    if (!this.IsSpecating && this.Character.World.TryGetVob(stream.ReadUShort(), out target))
-                        this.DuelRequest(target);
+                    DuelMode.ReadRequest(this, stream);
                     break;
                 case ScriptMessages.TOJoinTeam:
-                    if (TeamMode.IsRunning)
-                    {
-                        int index = stream.ReadByte();
-                        var team = TeamMode.Teams.ElementAtOrDefault(index);
-                        TeamMode.JoinTeam(this, team);
-                    }
+                    TeamMode.ReadJoinTeam(this, stream);
                     break;
                 case ScriptMessages.TOSelectClass:
-                    if (TeamMode.IsRunning && this.Team != null)
-                    {
-                        int index = stream.ReadByte();
-                        var classDef = this.Team.Def.ClassDefs.ElementAtOrDefault(index);
-                        if (classDef != null)
-                            this.classDef = classDef;
-                    }
+                    TeamMode.ReadSelectClass(this, stream);
                     break;
                 case ScriptMessages.ChatMessage:
-                    ChatMode chatMode = (ChatMode)stream.ReadByte();
-                    string message = this.charInfo.Name;
-                    if (!this.IsSpecating)
-                    {
-                        if (chatMode == ChatMode.Team)
-                            message += "(Team): ";
-                        else
-                            message += ": ";
-                    }
-                    else
-                    {
-                        message += "(Zuschauer): ";
-                    }
-                    message += stream.ReadString();
-                    SendChatMessage((byte)chatMode, message);
+                    Chat.ReadMessage(this, stream);
+                    break;
+                case ScriptMessages.ChatTeamMessage:
+                    Chat.ReadTeamMessage(this, stream);
                     break;
             }
         }

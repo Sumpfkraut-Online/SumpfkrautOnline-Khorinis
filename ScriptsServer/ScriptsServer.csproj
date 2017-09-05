@@ -66,11 +66,20 @@
     <Compile Include="..\ScriptsShared\Arena\CharCreationInfo.cs">
       <Link>Arena\CharCreationInfo.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\ChatMode.cs">
-      <Link>Arena\ChatMode.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\Chat\Chat.cs">
+      <Link>Arena\Chat\Chat.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Chat\ChatMode.cs">
+      <Link>Arena\Chat\ChatMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
+      <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TeamMode.cs">
+      <Link>Arena\TeamObjective\TeamMode.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOClassDef.cs">
       <Link>Arena\TeamObjective\TOClassDef.cs</Link>
@@ -382,7 +391,9 @@
       <Link>Sumpfkraut\WorldSystem\WorldLoader.cs</Link>
     </Compile>
     <Compile Include="Arena\ArenaClient.Server.cs" />
-    <Compile Include="Arena\TeamObjective\TeamMode.cs" />
+    <Compile Include="Arena\Chat\Chat.Server.cs" />
+    <Compile Include="Arena\Duel\DuelMode.Server.cs" />
+    <Compile Include="Arena\TeamObjective\TeamMode.Server.cs" />
     <Compile Include="Arena\TeamObjective\TOTeamInst.cs" />
     <Compile Include="Left4Gothic\L4Client.Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
