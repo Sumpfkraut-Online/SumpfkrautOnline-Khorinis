@@ -7,28 +7,21 @@ using GUC.GUI;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Menus;
 using WinApi.User.Enumeration;
-using GUC.Scripts.Sumpfkraut.Networking;
 
-/*
- *  TODO
- *  bug fixen beim nachrichten splitten
- *  nachrichten nur für teams anzeigen
- */
 namespace GUC.Scripts.Arena
 {
     class Chat : GUCMenu
     {
         public static readonly Chat ChatMenu = new Chat();
-        public GUCVisual chatBackground;
-        public GUCTextBox textBox;
-        public GUCVisual prefix;
-        private ChatMode chatMode;
+        GUCVisual chatBackground;
+        GUCTextBox textBox;
+        GUCVisual prefix;
+        ChatMode chatMode;
         int[] screenSize;
         int chatHeigth, chatWidth;
         Scripting.GUCTimer chatInactivityTimer;
 
         static ColorRGBA white = new ColorRGBA(255, 255, 255);
-        static ColorRGBA red = new ColorRGBA(255, 0, 0);
 
         public Chat()
         {
