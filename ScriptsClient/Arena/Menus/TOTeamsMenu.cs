@@ -24,7 +24,8 @@ namespace GUC.Scripts.Arena.Menus
             int y, i = 0;
             while ((y = offset + i * distance) < backButtonOffset - distance)
             {
-                AddButton("TEAM", "", y, () => SelectTeam(i));
+                int index = i;
+                AddButton("TEAM", "", y, () => SelectTeam(index));
                 i++;
             }
             AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, MainMenu.Menu.Open);
@@ -33,14 +34,13 @@ namespace GUC.Scripts.Arena.Menus
 
         public override void Open()
         {
-            var def = ArenaClient.Client.ActiveTODef;
-            if (def == null)
+            if (!TeamMode.IsRunning)
                 return;
 
             base.Open();
 
             int index = 0;
-            foreach (var team in def.Teams)
+            foreach (var team in TeamMode.ActiveTODef.Teams)
             {
                 if (index >= items.Count - 1)
                 {
@@ -67,16 +67,15 @@ namespace GUC.Scripts.Arena.Menus
         LockTimer lockTimer = new LockTimer(500);
         void SelectTeam(int index)
         {
-            var def = ArenaClient.Client.ActiveTODef;
-            if (def == null)
+            if (!TeamMode.IsRunning)
                 Close();
             
-            if (def.Teams.ElementAtOrDefault(index) == null)
-                return;
-
-            if (!lockTimer.IsReady)
+            if (TeamMode.ActiveTODef.Teams.ElementAtOrDefault(index) == null)
                 return;
             
+            if (!lockTimer.IsReady)
+                return;
+
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((byte)index);

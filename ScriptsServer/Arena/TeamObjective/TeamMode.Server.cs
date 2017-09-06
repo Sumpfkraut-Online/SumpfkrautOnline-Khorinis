@@ -9,23 +9,33 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Network;
 
 namespace GUC.Scripts.Arena
 {
-    static class TeamMode
+    static partial class TeamMode
     {
         public const int MinClientsToStart = 1;
-        const long WarmUpDuration = 30 * TimeSpan.TicksPerSecond;
-        const long FinishDuration = 30 * TimeSpan.TicksPerSecond;
         const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
 
         static List<TOTeamInst> teams = new List<TOTeamInst>(3);
         public static ReadOnlyList<TOTeamInst> Teams { get { return teams; } }
 
-        static TOPhases phase;
-        public static TOPhases Phase { get { return phase; } }
         static GUCTimer phaseTimer = new GUCTimer();
         static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
+
+        public static void AddScore(ArenaClient client)
+        {
+            if (client == null || client.Team == null)
+                return;
+
+            var team = client.Team;
+            team.Score++;
+            if (team.Score >= activeTODef.ScoreToWin)
+            {
+                PhaseFinish();
+            }
+        }
 
         static void RespawnPlayers()
         {
@@ -43,7 +53,7 @@ namespace GUC.Scripts.Arena
         {
             if (player.Team == null || player.ClassDef == null)
                 return;
-            
+
             var classDef = player.ClassDef;
             NPCInst npc;
             if (classDef.NPCDef == null)
@@ -64,7 +74,7 @@ namespace GUC.Scripts.Arena
                 npc = new NPCInst(NPCDef.Get(classDef.NPCDef));
             }
 
-            foreach(var eqPair in classDef.ItemDefs)
+            foreach (var eqPair in classDef.ItemDefs)
             {
                 var item = new ItemInst(ItemDef.Get(eqPair.Item1));
                 item.SetAmount(eqPair.Item2);
@@ -72,7 +82,7 @@ namespace GUC.Scripts.Arena
                 npc.EquipItem(item);
             }
 
-            foreach(var overlay in classDef.Overlays)
+            foreach (var overlay in classDef.Overlays)
             {
                 ScriptOverlay ov;
                 if (npc.ModelDef.TryGetOverlay(overlay, out ov))
@@ -112,14 +122,15 @@ namespace GUC.Scripts.Arena
             StartTO(TODef.TryGet(name));
         }
 
-        static TODef activeTODef;
-        public static bool IsRunning { get { return activeTODef != null; } }
         public static void StartTO(TODef def)
         {
             if (def == null)
                 return;
 
             activeTODef = def;
+            foreach (var teamDef in activeTODef.Teams)
+                teams.Add(new TOTeamInst(teamDef));
+
             PhaseWarmup();
         }
 
@@ -135,6 +146,8 @@ namespace GUC.Scripts.Arena
             phaseTimer.SetInterval(WarmUpDuration);
             phaseTimer.SetCallback(PhaseStart);
             phaseTimer.Start();
+
+            respawnTimer.Start();
         }
 
         static void PhaseStart()
@@ -153,19 +166,40 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.Finish;
 
+            // first, check which teams beat the score limit
+            List<int> winIndices = new List<int>(teams.Count);
+            for (int i = 0; i < teams.Count; i++)
+                if (teams[i].Score >= activeTODef.ScoreToWin)
+                    winIndices.Add(i);
+
+            // no teams beat the score limit? Select highest scores.
+            if (winIndices.Count == 0)
+            {
+                int max = teams.Max(t => t.Score);
+                for (int i = 0; i < teams.Count; i++)
+                    if (teams[i].Score >= max)
+                        winIndices.Add(i);
+            }
+
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOFinish);
+            stream.Write((byte)winIndices.Count); // write the winners
+            winIndices.ForEach(i => stream.Write((byte)i));
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
 
             phaseTimer.SetInterval(FinishDuration);
             phaseTimer.SetCallback(EndTO);
+
+            respawnTimer.Stop();
         }
 
         static void EndTO()
         {
             phase = TOPhases.None;
 
-            teams.ForEach(team => team.Reset());
+            teams.ForEach(team => team.Players.ForEach(p => p.Team = null));
+            teams.Clear();
+
             activeTODef = null;
             if (!CheckStartTO())
             {
@@ -173,6 +207,26 @@ namespace GUC.Scripts.Arena
                 stream.Write((byte)ScriptMessages.TOEnd);
                 ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
             }
+        }
+        public static void ReadSelectClass(ArenaClient client, PacketReader stream)
+        {
+            if (!IsRunning || client.Team == null)
+                return;
+
+            int index = stream.ReadByte();
+            var classDef = client.Team.Def.ClassDefs.ElementAtOrDefault(index);
+            if (classDef != null)
+                client.ClassDef = classDef;
+        }
+
+        public static void ReadJoinTeam(ArenaClient client, PacketReader stream)
+        {
+            if (!IsRunning)
+                return;
+
+            int index = stream.ReadByte();
+            var team = Teams.ElementAtOrDefault(index);
+            JoinTeam(client, team);
         }
 
         public static void JoinTeam(ArenaClient client, TOTeamInst team)
@@ -197,7 +251,7 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((byte)index);
-            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
+            client.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
     }
 }

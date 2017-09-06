@@ -32,10 +32,19 @@ namespace GUC.Scripts.Arena
         List<TOTeamDef> teams = new List<TOTeamDef>();
         public ReadOnlyList<TOTeamDef> Teams { get { return teams; } }
 
+        #region AddTeams
+
         void AddTeam(string name, List<Vec3f, Vec3f> spawnPoints, List<TOClassDef> classDefs)
         {
-            teams.Add(new TOTeamDef(name, spawnPoints, classDefs));
+            this.AddTeam(name, spawnPoints, classDefs, ColorRGBA.White);
         }
+
+        void AddTeam(string name, List<Vec3f, Vec3f> spawnPoints, List<TOClassDef> classDefs, ColorRGBA teamColor)
+        {
+            teams.Add(new TOTeamDef(name, spawnPoints, classDefs, teamColor));
+        }
+
+        #endregion
 
         #region Static Collection
         static Dictionary<string, TODef> objectives = new Dictionary<string, TODef>(StringComparer.OrdinalIgnoreCase);
@@ -77,7 +86,7 @@ namespace GUC.Scripts.Arena
                     {
                     }),
                 };
-                to.AddTeam("Team Gomez", spawnPoints, npcDefs);
+                to.AddTeam("Team Gomez", spawnPoints, npcDefs, ColorRGBA.Red);
 
                 // TEAM NEUES LAGER
                 spawnPoints = new List<Vec3f, Vec3f>()
@@ -93,7 +102,7 @@ namespace GUC.Scripts.Arena
                     {
                     }),
                 };
-                to.AddTeam("Tetriandoch", spawnPoints, npcDefs);
+                to.AddTeam("Tetriandoch", spawnPoints, npcDefs, ColorRGBA.Blue);
 
                 objectives.Add(to.name, to);
                 #endregion

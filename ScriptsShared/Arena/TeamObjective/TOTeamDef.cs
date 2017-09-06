@@ -14,7 +14,7 @@ namespace GUC.Scripts.Arena
         public string Name { get { return name; } }
 
         List<Vec3f, Vec3f> spawnPoints;
-        public IEnumerable<Vec3f, Vec3f> SpawnPoints { get { return spawnPoints.AsEnumerable(); } }
+        public IEnumerable<Vec3f, Vec3f> SpawnPoints { get { return spawnPoints; } }
 
         List<TOClassDef> classDefs;
         public IEnumerable<TOClassDef> ClassDefs { get { return classDefs; } }

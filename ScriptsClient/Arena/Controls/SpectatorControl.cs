@@ -17,8 +17,8 @@ namespace GUC.Scripts.Arena.Controls
         KeyDictionary spectatorControls = new KeyDictionary()
         {
             { VirtualKeys.Shift, down => speedMultiplier = !down ? defaultSpeed : fastSpeed },
-            { KeyBind.OpenAllChat, d => { Arena.Chat.ChatMenu.OpenAllChat(); } },
-            { KeyBind.OpenTeamChat, d => { Arena.Chat.ChatMenu.OpenTeamChat(); } },
+            { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
+            { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
         };
 
         long lastUpdate = 0;

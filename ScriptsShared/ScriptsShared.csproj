@@ -51,8 +51,11 @@
   <ItemGroup>
     <Compile Include="Arena\ArenaClient.cs" />
     <Compile Include="Arena\CharCreationInfo.cs" />
-    <Compile Include="Arena\ChatMode.cs" />
+    <Compile Include="Arena\Chat\Chat.cs" />
+    <Compile Include="Arena\Chat\ChatMode.cs" />
+    <Compile Include="Arena\Duel\DuelMode.cs" />
     <Compile Include="Arena\ScriptMessages.cs" />
+    <Compile Include="Arena\TeamObjective\TeamMode.cs" />
     <Compile Include="Arena\TeamObjective\TOClassDef.cs" />
     <Compile Include="Arena\TeamObjective\TODef.cs" />
     <Compile Include="Arena\TeamObjective\TOTeamDef.cs" />
