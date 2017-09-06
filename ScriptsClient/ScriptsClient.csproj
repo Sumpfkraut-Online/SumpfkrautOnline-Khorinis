@@ -371,6 +371,7 @@
     <Compile Include="Arena\Menus\TOClassMenu.cs" />
     <Compile Include="Arena\Menus\TOInfoScreen.cs" />
     <Compile Include="Arena\Menus\TOTeamsMenu.cs" />
+    <Compile Include="Arena\Menus\VotingMenu.cs" />
     <Compile Include="Left4Gothic\CharCreationMenu.cs" />
     <Compile Include="Left4Gothic\CCExitMenu.cs" />
     <Compile Include="Left4Gothic\L4Client.Client.cs" />
