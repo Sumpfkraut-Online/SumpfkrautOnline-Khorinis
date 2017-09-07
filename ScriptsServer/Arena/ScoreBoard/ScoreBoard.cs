@@ -48,7 +48,7 @@ namespace GUC.Scripts.Arena
 
         void SendUpdate(ArenaClient client)
         {
-            client.SendScriptMessage(packet, NetPriority.Low, NetReliability.Unreliable);
+            client.SendScriptMessage(packet, packet.Length, NetPriority.Low, NetReliability.Unreliable);
         }
 
         void WriteUpdate()
