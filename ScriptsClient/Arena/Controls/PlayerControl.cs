@@ -22,7 +22,7 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.MoveBack, d => CheckFightMove(d, FightMoves.Parry) },
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
-            { KeyBind.Inventory, d => { if (d) Menus.DuelScoreBoard.Show(); else Menus.DuelScoreBoard.Hide(); } },
+            { KeyBind.Inventory, d => { if (d) DuelMode.ScoreBoard.Open(); else DuelMode.ScoreBoard.Close(); } },
             { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
         };

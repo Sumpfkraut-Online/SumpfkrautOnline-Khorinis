@@ -67,6 +67,9 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ChatTeamMessage:
                     Chat.ReadTeamMessage(this, stream);
                     break;
+                case ScriptMessages.ScoreDuelMessage:
+                    DuelMode.ReadScoreMessage(this, stream);
+                    break;
             }
         }
 

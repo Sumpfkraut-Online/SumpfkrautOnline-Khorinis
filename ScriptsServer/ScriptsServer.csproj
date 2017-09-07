@@ -75,6 +75,9 @@
     <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
       <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Scoreboard\ScoreBoardItem.cs">
+      <Link>Arena\ScoreBoard\ScoreBoardItem.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
@@ -393,6 +396,8 @@
     <Compile Include="Arena\ArenaClient.Server.cs" />
     <Compile Include="Arena\Chat\Chat.Server.cs" />
     <Compile Include="Arena\Duel\DuelMode.Server.cs" />
+    <Compile Include="Arena\ScoreBoard\ScoreBoardItem.Server.cs" />
+    <Compile Include="Arena\ScoreBoard\ScoreBoard.cs" />
     <Compile Include="Arena\TeamObjective\TeamMode.Server.cs" />
     <Compile Include="Arena\TeamObjective\TOTeamInst.cs" />
     <Compile Include="Left4Gothic\L4Client.Server.cs" />

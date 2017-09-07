@@ -75,6 +75,9 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.TOJoinTeam:
                     TeamMode.ReadJoinTeam(stream);
                     break;
+                case ScriptMessages.ScoreDuelMessage:
+                    DuelMode.ScoreBoard.ReadMessage(stream);
+                    break;
             }
         }
     }

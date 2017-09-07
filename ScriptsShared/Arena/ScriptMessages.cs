@@ -28,5 +28,8 @@ namespace GUC.Scripts.Arena
         ChatMessage,
         ChatTeamMessage,
         ChatPrivateMessage,
+
+        ScoreDuelMessage,
+        ScoreTOMessage,
     }
 }

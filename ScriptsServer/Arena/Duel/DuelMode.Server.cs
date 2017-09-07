@@ -11,6 +11,8 @@ namespace GUC.Scripts.Arena
 {
     static partial class DuelMode
     {
+        public static readonly ScoreBoard ScoreBoard = new ScoreBoard(ScriptMessages.ScoreDuelMessage, c => c.Team == null);
+
         const long DuelRequestDuration = 20 * 1000 * 10000; // 20 secs
         const float DuelMaxDistance = 1500.0f; // distance between players for the duel to automatically end
 
@@ -154,6 +156,11 @@ namespace GUC.Scripts.Arena
 
             client.DuelEnemy.DuelEnemy = null;
             client.DuelEnemy = null;
+        }
+
+        public static void ReadScoreMessage(ArenaClient client, PacketReader stream)
+        {
+            ScoreBoard.Toggle(client);
         }
     }
 }

@@ -12,6 +12,8 @@ namespace GUC.Scripts.Arena
 {
     static partial class DuelMode
     {
+        public static readonly ScoreBoardScreen ScoreBoard = new ScoreBoardScreen(ScriptMessages.ScoreDuelMessage);
+
         static NPCInst enemy;
         public static NPCInst Enemy { get { return enemy; } }
 

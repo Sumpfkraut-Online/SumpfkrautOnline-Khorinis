@@ -61,5 +61,11 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         {
             this.BaseClient.SendScriptMessage(stream, priority, reliability);
         }
+
+        /// <summary> Only use if you know what you're doing. </summary>
+        public void SendScriptMessage(byte[] data, NetPriority priority, NetReliability reliability)
+        {
+            this.BaseClient.SendScriptMessage(data, priority, reliability);
+        }
     }
 }
