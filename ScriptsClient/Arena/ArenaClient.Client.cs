@@ -37,11 +37,24 @@ namespace GUC.Scripts.Arena
             SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
+        void ReadGameInfo(PacketReader stream)
+        {
+            PlayerInfo.ReadHeroInfo(stream);
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+                PlayerInfo.ReadPlayerInfoMessage(stream);
+
+            TeamMode.ReadGameInfo(stream);
+        }
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
             switch (id)
             {
+                case ScriptMessages.GameInfo:
+                    ReadGameInfo(stream);
+                    break;
                 case ScriptMessages.DuelRequest:
                     DuelMode.ReadRequest(stream);
                     break;
@@ -78,6 +91,12 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ScoreDuelMessage:
                     DuelMode.ScoreBoard.ReadMessage(stream);
                     break;
+                case ScriptMessages.PlayerInfoMessage:
+                    PlayerInfo.ReadPlayerInfoMessage(stream);
+                    break;
+                case ScriptMessages.PlayerQuitMessage:
+                    PlayerInfo.ReadPlayerQuitMessage(stream);
+                    break;                
             }
         }
     }

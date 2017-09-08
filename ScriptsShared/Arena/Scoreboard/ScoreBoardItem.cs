@@ -9,7 +9,7 @@ namespace GUC.Scripts.Arena
 {
     partial struct ScoreBoardItem
     {
-        public string Name;
+        public byte ID;
         public short Ping;
         public ushort Score;
         public ushort Kills;
@@ -17,7 +17,7 @@ namespace GUC.Scripts.Arena
 
         public void Write(PacketWriter stream)
         {
-            stream.Write(Name);
+            stream.Write(ID);
             stream.Write(Ping);
             stream.Write(Score);
             stream.Write(Kills);
@@ -26,7 +26,7 @@ namespace GUC.Scripts.Arena
 
         public void Read(PacketReader stream)
         {
-            Name = stream.ReadString();
+            ID = stream.ReadByte();
             Ping = stream.ReadShort();
             Score = stream.ReadUShort();
             Kills = stream.ReadUShort();

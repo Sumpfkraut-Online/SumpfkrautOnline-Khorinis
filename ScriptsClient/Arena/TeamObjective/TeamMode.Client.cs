@@ -8,6 +8,9 @@ namespace GUC.Scripts.Arena
 {
     static partial class TeamMode
     {
+        static long phaseEndTime = 0;
+        public static long PhaseEndTime { get { return phaseEndTime; } }
+
         static TOTeamDef teamDef;
         public static TOTeamDef TeamDef { get { return teamDef; } }
 
@@ -18,9 +21,10 @@ namespace GUC.Scripts.Arena
                 throw new Exception("TODef not found: " + name);
 
             phase = TOPhases.Warmup;
+            phaseEndTime = GameTime.Ticks + WarmUpDuration;
 
             Log.Logger.Log("TO Warmup: " + name);
-            Menus.TOInfoScreen.Show(activeTODef);
+            Menus.TOInfoScreen.Show();
         }
 
         public static void ReadStart(PacketReader stream)
@@ -29,6 +33,7 @@ namespace GUC.Scripts.Arena
                 return;
 
             phase = TOPhases.Battle;
+            phaseEndTime = GameTime.Ticks + activeTODef.Duration * TimeSpan.TicksPerMinute;
             Log.Logger.Log("TO Start: " + activeTODef.Name);
         }
 
@@ -38,6 +43,7 @@ namespace GUC.Scripts.Arena
                 return;
 
             phase = TOPhases.Finish;
+            phaseEndTime = GameTime.Ticks + FinishDuration;
 
             Log.Logger.Log("TO Finish: " + activeTODef.Name);
 
@@ -53,8 +59,7 @@ namespace GUC.Scripts.Arena
                 }
             }
         }
-
-
+        
         public static void ReadJoinTeam(PacketReader stream)
         {
             if (!IsRunning)
@@ -81,6 +86,21 @@ namespace GUC.Scripts.Arena
             Menus.TOInfoScreen.Hide();
             activeTODef = null;
             teamDef = null;
+        }
+
+        public static void ReadGameInfo(PacketReader stream)
+        {
+            phase = (TOPhases)stream.ReadByte();
+            Log.Logger.Log(phase);
+            if (phase != TOPhases.None)
+            {
+                string name = stream.ReadString();
+                if ((activeTODef = TODef.TryGet(name)) == null)
+                    throw new Exception("TODef not found: " + name);
+
+                phaseEndTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
+                Menus.TOInfoScreen.Show();
+            }
         }
     }
 }

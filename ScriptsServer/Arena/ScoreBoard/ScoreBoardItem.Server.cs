@@ -9,7 +9,7 @@ namespace GUC.Scripts.Arena
     {
         public void Fill(ArenaClient client)
         {
-            this.Name = client.CharInfo.Name;
+            this.ID = (byte)client.ID;
 
             int ping = client.BaseClient.GetLastPing();
             if (ping < 0)

@@ -12,6 +12,28 @@ namespace GUC.GUI
         void KeyPressed(VirtualKeys key);
     }
 
+    public struct ViewPoint
+    {
+        public int X, Y;
+
+        public ViewPoint(int x, int y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+    }
+
+    public struct ViewSize
+    {
+        public int Width, Height;
+
+        public ViewSize(int width, int height)
+        {
+            this.Width = width;
+            this.Height = height;
+        }
+    }
+
     public abstract class GUCView
     {
         #region Chars
@@ -101,25 +123,25 @@ namespace GUC.GUI
         #region pixel virtual conversion
 
         static bool iniRes = false;
-        public static int[] GetScreenSize()
+        public static ViewSize GetScreenSize()
         {
             var screen = Gothic.View.zCView.GetScreen();
 
-            var ret = new int[2] { screen.pSizeX, screen.pSizeY };
+            var ret = new ViewSize(screen.pSizeX, screen.pSizeY);
 
-            if (ret[0] > 0 && ret[1] > 0)
+            if (ret.Width > 0 && ret.Height > 0)
             {
                 iniRes = false;
             }
             else
             {
                 var sec = Gothic.zCOption.GetSectionByName("VIDEO");
-                ret[0] = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenX").VarValue.ToString());
-                ret[1] = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenY").VarValue.ToString());
+                ret.Width = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenX").VarValue.ToString());
+                ret.Height = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenY").VarValue.ToString());
 
                 if (!iniRes)
                 {
-                    Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret[0] + "x" + ret[1]);
+                    Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret.Width + "x" + ret.Height);
                 }
                 iniRes = true;
             }
@@ -131,19 +153,19 @@ namespace GUC.GUI
             var res = GetScreenSize();
             return new int[]
             {
-                x * 0x2000 / res[0],
-                y * 0x2000 / res[1]
+                x * 0x2000 / res.Width,
+                y * 0x2000 / res.Height
             };
         }
 
         public static int PixelToVirtualX(int x)
         {
-            return x * 0x2000 / GetScreenSize()[0];
+            return x * 0x2000 / GetScreenSize().Width;
         }
 
         public static int PixelToVirtualY(int y)
         {
-            return y * 0x2000 / GetScreenSize()[1];
+            return y * 0x2000 / GetScreenSize().Height;
         }
 
         #endregion

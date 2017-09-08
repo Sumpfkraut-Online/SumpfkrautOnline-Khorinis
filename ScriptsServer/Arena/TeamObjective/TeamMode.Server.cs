@@ -24,6 +24,8 @@ namespace GUC.Scripts.Arena
         static GUCTimer phaseTimer = new GUCTimer();
         static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
 
+        public static uint RemainingPhaseMsec { get { return (uint)(phaseTimer.GetRemainingTicks() / TimeSpan.TicksPerMillisecond); } }
+
         public static void AddScore(ArenaClient client)
         {
             if (client == null || client.Team == null)
@@ -141,13 +143,15 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOWarmup);
             stream.Write(activeTODef.Name);
-            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
+            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
 
             phaseTimer.SetInterval(WarmUpDuration);
             phaseTimer.SetCallback(PhaseStart);
             phaseTimer.Start();
 
             respawnTimer.Start();
+
+            Log.Logger.Log(phase.ToString());
         }
 
         static void PhaseStart()
@@ -156,10 +160,11 @@ namespace GUC.Scripts.Arena
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOStart);
-            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
+            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
 
             phaseTimer.SetInterval(activeTODef.Duration * TimeSpan.TicksPerMinute);
             phaseTimer.SetCallback(PhaseFinish);
+            Log.Logger.Log(phase.ToString());
         }
 
         static void PhaseFinish()
@@ -185,12 +190,13 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.TOFinish);
             stream.Write((byte)winIndices.Count); // write the winners
             winIndices.ForEach(i => stream.Write((byte)i));
-            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
+            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
 
             phaseTimer.SetInterval(FinishDuration);
             phaseTimer.SetCallback(EndTO);
 
             respawnTimer.Stop();
+            Log.Logger.Log(phase.ToString());
         }
 
         static void EndTO()
@@ -205,7 +211,7 @@ namespace GUC.Scripts.Arena
             {
                 var stream = ArenaClient.GetScriptMessageStream();
                 stream.Write((byte)ScriptMessages.TOEnd);
-                ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
+                ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             }
         }
         public static void ReadSelectClass(ArenaClient client, PacketReader stream)
@@ -252,6 +258,16 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((byte)index);
             client.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+        }
+
+        public static void WriteGameInfo(PacketWriter stream)
+        {
+            stream.Write((byte)TOPhases.None);
+            if (TeamMode.Phase != TOPhases.None)
+            {
+                stream.Write(TeamMode.ActiveTODef.Name);
+                stream.Write(TeamMode.RemainingPhaseMsec);
+            }
         }
     }
 }

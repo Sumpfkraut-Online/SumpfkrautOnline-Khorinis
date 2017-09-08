@@ -24,7 +24,7 @@ namespace GUC.Scripts.Arena
             clients = new Dictionary<ArenaClient, GUCTimer>(20);
             packetTimer = new GUCTimer(UpdateInterval, WriteUpdate);
             packetTimer.Start();
-            
+
             WriteUpdate();
         }
 
@@ -40,6 +40,15 @@ namespace GUC.Scripts.Arena
                 timer.Start();
             }
             else
+            {
+                timer.Stop();
+                clients.Remove(client);
+            }
+        }
+
+        public void Remove(ArenaClient client)
+        {
+            if (clients.TryGetValue(client, out GUCTimer timer))
             {
                 timer.Stop();
                 clients.Remove(client);

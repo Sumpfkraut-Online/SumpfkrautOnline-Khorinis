@@ -12,7 +12,7 @@ namespace GUC.Scripts.Arena
 {
     static partial class DuelMode
     {
-        public static readonly ScoreBoardScreen ScoreBoard = new ScoreBoardScreen(ScriptMessages.ScoreDuelMessage);
+        public static readonly ScoreBoardScreen ScoreBoard = new ScoreBoardScreen(ScriptMessages.ScoreDuelMessage, "Duell-Punktestand");
 
         static NPCInst enemy;
         public static NPCInst Enemy { get { return enemy; } }

@@ -22,12 +22,12 @@ namespace GUC.Scripts.Sumpfkraut.Menus
         {
             // Create the player inventory relative to the screen size
             int x, y, cols, rows;
-            int[] screenSize = GUCView.GetScreenSize();
+            var screenSize = GUCView.GetScreenSize();
 
             cols = 5;
-            x = screenSize[0] - (GUCInventory.SlotSize * cols + screenSize[0] / 25);
-            y = screenSize[1] / 7 + 15;
-            rows = (screenSize[1] - GUCInventory.DescriptionBoxHeight - y) / GUCInventory.SlotSize;
+            x = screenSize.Width - (GUCInventory.SlotSize * cols + screenSize.Width / 25);
+            y = screenSize.Height / 7 + 15;
+            rows = (screenSize.Height - GUCInventory.DescriptionBoxHeight - y) / GUCInventory.SlotSize;
 
             inv = new GUCInventory(x, y, cols, rows);
             player = ScriptClient.Client.Character;

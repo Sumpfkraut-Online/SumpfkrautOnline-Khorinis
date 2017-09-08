@@ -31,11 +31,49 @@ namespace GUC.Scripts.Arena
 
         #endregion
 
+        static void SendGameInfo(ArenaClient client)
+        {
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.GameInfo);
+            stream.Write((byte)client.ID);
+
+            stream.Write((byte)ArenaClient.GetCount());
+            ArenaClient.ForEach(c => ((ArenaClient)c).WritePlayerInfo(stream));
+
+            TeamMode.WriteGameInfo(stream);
+
+            client.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+        }
+
+        void WritePlayerInfo(PacketWriter stream)
+        {
+            stream.Write((byte)this.ID);
+            stream.Write(this.CharInfo.Name);
+        }
+
+        void SendPlayerInfoMessage()
+        {
+            var stream = GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.PlayerInfoMessage);
+            WritePlayerInfo(stream);
+            ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
+        }
+
         partial void pOnConnect()
         {
+            SendGameInfo(this);
+            SendPlayerInfoMessage();
             Spectate();
 
             TeamMode.CheckStartTO();
+        }
+
+        partial void pOnDisconnect()
+        {
+            var stream = GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.PlayerQuitMessage);
+            ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
+            DuelMode.ScoreBoard.Remove(this);
         }
 
         public override void ReadScriptMessage(PacketReader stream)
@@ -50,7 +88,10 @@ namespace GUC.Scripts.Arena
                     Spectate();
                     break;
                 case ScriptMessages.CharEdit:
+                    string oldName = charInfo.Name;
                     charInfo.Read(stream);
+                    if (oldName != charInfo.Name)
+                        SendPlayerInfoMessage();
                     break;
                 case ScriptMessages.DuelRequest:
                     DuelMode.ReadRequest(this, stream);

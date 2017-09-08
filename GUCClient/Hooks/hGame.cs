@@ -55,8 +55,8 @@ namespace GUC.Hooks
                     connectionVis.SetBackTexture("MENU_CHOICE_BACK.TGA");
                     var text = connectionVis.CreateText("");
                 }
-                int[] screenSize = GUCView.GetScreenSize();
-                connectionVis.SetPosX(screenSize[0] / 2 - 200);
+                var screenSize = GUCView.GetScreenSize();
+                connectionVis.SetPosX(screenSize.Width / 2 - 200);
                 connectionVis.SetPosY(200);
                 connectionVis.SetSizeY(40);
                 connectionVis.SetSizeX(400);

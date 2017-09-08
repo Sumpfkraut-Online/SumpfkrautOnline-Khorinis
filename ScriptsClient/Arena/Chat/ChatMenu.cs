@@ -23,15 +23,15 @@ namespace GUC.Scripts.Arena
         public GUCTextBox textBox;
         public GUCVisual prefix;
         private ChatMode chatMode;
-        int[] screenSize;
+        ViewSize screenSize;
         int chatHeigth, chatWidth;
         GUCTimer chatInactivityTimer;
         
         public ChatMenu()
         {
             screenSize = GUCView.GetScreenSize();
-            chatHeigth = screenSize[1] / 5;
-            chatWidth = screenSize[0] - 350;
+            chatHeigth = screenSize.Width / 5;
+            chatWidth = screenSize.Height - 350;
 
             chatBackground = new GUCVisual(0, 0, chatWidth, chatHeigth + 5);
             chatBackground.SetBackTexture("Dlg_Conversation.tga");
