@@ -21,13 +21,20 @@ namespace GUC.Scripts.Arena
         public List<ArenaClient, GUCTimer> DuelRequests = new List<ArenaClient, GUCTimer>(3);
         public ArenaClient DuelEnemy;
         public bool IsDueling { get { return this.DuelEnemy != null; } }
-        public int DuelWins;
+
+        public int DuelScore;
+        public int DuelKills;
+        public int DuelDeaths;
 
         #endregion
 
         #region TeamObjective
 
         public TOTeamInst Team;
+
+        public int TOScore;
+        public int TOKills;
+        public int TODeaths;
 
         #endregion
 
@@ -73,7 +80,12 @@ namespace GUC.Scripts.Arena
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.PlayerQuitMessage);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
-            DuelMode.ScoreBoard.Remove(this);
+            DuelBoard.Instance.Remove(this);
+            TOBoard.Instance.Remove(this);
+
+            if (this.Team != null)
+                this.Team.Players.Remove(this);
+            this.Team = null;
         }
 
         public override void ReadScriptMessage(PacketReader stream)
@@ -109,7 +121,10 @@ namespace GUC.Scripts.Arena
                     Chat.ReadTeamMessage(this, stream);
                     break;
                 case ScriptMessages.ScoreDuelMessage:
-                    DuelMode.ReadScoreMessage(this, stream);
+                    DuelBoard.Instance.Toggle(this);
+                    break;
+                case ScriptMessages.ScoreTOMessage:
+                    TOBoard.Instance.Toggle(this);
                     break;
             }
         }

@@ -147,6 +147,9 @@
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\Extensions.cs">
+      <Link>Utilities\Extensions.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\LockTimer.cs">
       <Link>Utilities\LockTimer.cs</Link>
     </Compile>

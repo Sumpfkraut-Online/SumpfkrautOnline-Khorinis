@@ -159,6 +159,9 @@
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\Extensions.cs">
+      <Link>Utilities\Extensions.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\FileSystem\Enumeration.cs">
       <Link>Utilities\FileSystem\Enumeration.cs</Link>
     </Compile>

@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripting;
+using GUC.Network;
 
 namespace GUC.Scripts.Arena
 {
-    class ScoreBoard
+    abstract class ScoreBoard
     {
         const long UpdateInterval = 1000 * TimeSpan.TicksPerMillisecond;
-
-        ScriptMessages msgID;
+        
         Dictionary<ArenaClient, GUCTimer> clients;
         GUCTimer packetTimer;
         byte[] packet;
 
-        Func<ArenaClient, bool> selector;
+        ScriptMessages msgID;
 
-        public ScoreBoard(ScriptMessages messageID, Func<ArenaClient, bool> selector = null)
+        public ScoreBoard(ScriptMessages messageID)
         {
             msgID = messageID;
-            this.selector = selector ?? new Func<ArenaClient, bool>(c => true);
             clients = new Dictionary<ArenaClient, GUCTimer>(20);
             packetTimer = new GUCTimer(UpdateInterval, WriteUpdate);
             packetTimer.Start();
@@ -30,8 +29,7 @@ namespace GUC.Scripts.Arena
 
         public void Toggle(ArenaClient client)
         {
-            GUCTimer timer;
-            if (!clients.TryGetValue(client, out timer))
+            if (!clients.TryGetValue(client, out GUCTimer timer))
             {
                 SendUpdate(client);
 
@@ -64,19 +62,10 @@ namespace GUC.Scripts.Arena
         {
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)msgID);
-            stream.Write((byte)ArenaClient.GetCount());
-            ScoreBoardItem info = new ScoreBoardItem();
-            ArenaClient.ForEach(c =>
-            {
-                var client = (ArenaClient)c;
-                if (selector(client))
-                {
-                    info.Fill(client);
-                    info.Write(stream);
-                }
-            });
-
+            WriteBoard(stream);
             this.packet = stream.CopyData();
         }
+
+        protected abstract void WriteBoard(PacketWriter stream);
     }
 }

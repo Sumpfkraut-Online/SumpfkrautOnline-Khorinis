@@ -269,5 +269,13 @@ namespace GUC.Scripts.Arena
                 stream.Write(TeamMode.RemainingPhaseMsec);
             }
         }
+
+        public static void Kill(ArenaClient attacker, ArenaClient target)
+        {
+            attacker.TOScore++;
+            attacker.TOKills++;
+            target.TODeaths++;
+            attacker.Team.Score++;
+        }
     }
 }

@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Network;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Utilities;
-using GUC.Scripts.Sumpfkraut.GUI;
 
 namespace GUC.Scripts.Arena
 {
@@ -89,7 +85,10 @@ namespace GUC.Scripts.Arena
                     TeamMode.ReadJoinTeam(stream);
                     break;
                 case ScriptMessages.ScoreDuelMessage:
-                    DuelMode.ScoreBoard.ReadMessage(stream);
+                    DuelBoardScreen.Instance.ReadMessage(stream);
+                    break;
+                case ScriptMessages.ScoreTOMessage:
+                    TOBoardScreen.Instance.ReadMessage(stream);
                     break;
                 case ScriptMessages.PlayerInfoMessage:
                     PlayerInfo.ReadPlayerInfoMessage(stream);

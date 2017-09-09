@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Arena\Scoreboard\" />
     <Folder Include="Properties\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
@@ -54,7 +55,6 @@
     <Compile Include="Arena\Chat\Chat.cs" />
     <Compile Include="Arena\Chat\ChatMode.cs" />
     <Compile Include="Arena\Duel\DuelMode.cs" />
-    <Compile Include="Arena\Scoreboard\ScoreBoardItem.cs" />
     <Compile Include="Arena\ScriptMessages.cs" />
     <Compile Include="Arena\TeamObjective\TeamMode.cs" />
     <Compile Include="Arena\TeamObjective\TOClassDef.cs" />
