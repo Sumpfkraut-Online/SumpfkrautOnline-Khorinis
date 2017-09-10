@@ -67,6 +67,7 @@ namespace GUC.Scripts.Arena
 
         static void DuelMessage(string text)
         {
+            ChatMenu.Menu.AddMessage(ChatMode.Private, text);
             Log.Logger.Log(text);
         }
 

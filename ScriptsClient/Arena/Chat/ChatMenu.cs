@@ -12,8 +12,8 @@ namespace GUC.Scripts.Arena
 {
     /*
      *  TODO
-     *  bug fixen beim nachrichten splitten
-     *  nachrichten nur für teams anzeigen
+     *  - Chatbox automatisch anzeigen wenn neue Nachrichten kommen
+     *  - bug fixen beim nachrichten splitten
      */
     class ChatMenu : GUCMenu
     {
@@ -30,8 +30,8 @@ namespace GUC.Scripts.Arena
         public ChatMenu()
         {
             screenSize = GUCView.GetScreenSize();
-            chatHeigth = screenSize.Width / 5;
-            chatWidth = screenSize.Height - 350;
+            chatHeigth = screenSize.Height / 5;
+            chatWidth = screenSize.Width - 350;
 
             chatBackground = new GUCVisual(0, 0, chatWidth, chatHeigth + 5);
             chatBackground.SetBackTexture("Dlg_Conversation.tga");
@@ -95,8 +95,8 @@ namespace GUC.Scripts.Arena
         {
             if (TeamMode.TeamDef == null)
             {
-                AddMessage(ChatMode.All, "Du musst erst einem Team beitreten bevor du den Teamchat verwenden kannst!");
-                OpenAllChat();
+                //AddMessage(ChatMode.All, "Du musst erst einem Team beitreten bevor du den Teamchat verwenden kannst!");
+               // OpenAllChat();
                 return;
             }
             chatMode = ChatMode.Team;
@@ -133,6 +133,8 @@ namespace GUC.Scripts.Arena
         public void SendInput()
         {
             string message = textBox.Input.Trim();
+            if (message.Length == 0)
+                return;
             switch (chatMode)
             {
                 case ChatMode.Team:
@@ -216,9 +218,17 @@ namespace GUC.Scripts.Arena
             }
 
             if (chatMode == ChatMode.Team && TeamMode.TeamDef != null)
+            {
                 chatBackground.Texts[index].SetColor(TeamMode.TeamDef.Color);
+            }
+            else if (chatMode == ChatMode.Private)
+            {
+                chatBackground.Texts[index].SetColor(ColorRGBA.Pink);
+            }
             else
+            {
                 chatBackground.Texts[index].SetColor(ColorRGBA.White);
+            }
 
             chatBackground.Texts[index].Text = message;
         }

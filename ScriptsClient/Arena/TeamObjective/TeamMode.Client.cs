@@ -23,7 +23,7 @@ namespace GUC.Scripts.Arena
             phase = TOPhases.Warmup;
             phaseEndTime = GameTime.Ticks + WarmUpDuration;
 
-            Log.Logger.Log("TO Warmup: " + name);
+            TOMessage(string.Format("Team Objective '{0}' startet in wenigen Sekunden!", name));
             Menus.TOInfoScreen.Show();
         }
 
@@ -34,7 +34,7 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Battle;
             phaseEndTime = GameTime.Ticks + activeTODef.Duration * TimeSpan.TicksPerMinute;
-            Log.Logger.Log("TO Start: " + activeTODef.Name);
+            TOMessage("Der Kampf beginnt!");
         }
 
         public static void ReadFinish(PacketReader stream)
@@ -44,18 +44,15 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Finish;
             phaseEndTime = GameTime.Ticks + FinishDuration;
-
-            Log.Logger.Log("TO Finish: " + activeTODef.Name);
+            TOMessage("Zeit ist vorüber!");
 
             int count = stream.ReadByte();
-            List<TOTeamDef> winners = new List<TOTeamDef>(count);
             for (int i = 0; i < count; i++)
             {
                 int index = stream.ReadByte();
                 if (index < activeTODef.Teams.Count)
                 {
-                    winners.Add(activeTODef.Teams[index]);
-                    Log.Logger.Log(activeTODef.Teams[index].Name + " is a winner.");
+                    TOMessage(activeTODef.Teams[index].Name + (count > 1 ? " ist ein Gewinner." : " hat gewonnen."));
                 }
             }
         }
@@ -70,7 +67,7 @@ namespace GUC.Scripts.Arena
             {
                 var oldTeam = teamDef;
                 teamDef = activeTODef.Teams[index];
-                Log.Logger.Log("Joined Team " + teamDef.Name);
+                TOMessage(string.Format("Du bist {0} beigetreten.", teamDef.Name));
 
                 if (oldTeam != teamDef)
                     Menus.TOClassMenu.Menu.Open();
@@ -82,7 +79,7 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.None;
 
-            Log.Logger.Log("TO End");
+            TOMessage("Team Objective ist vorüber!");
             Menus.TOInfoScreen.Hide();
             activeTODef = null;
             teamDef = null;
@@ -101,6 +98,12 @@ namespace GUC.Scripts.Arena
                 phaseEndTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
                 Menus.TOInfoScreen.Show();
             }
+        }
+
+        static void TOMessage(string text)
+        {
+            ChatMenu.Menu.AddMessage(ChatMode.Private, text);
+            Log.Logger.Log(text);
         }
     }
 }
