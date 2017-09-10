@@ -79,6 +79,7 @@ namespace GUC.Scripts.Arena
         {
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.PlayerQuitMessage);
+            stream.Write((byte)this.ID);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
             TOBoard.Instance.Remove(this);
@@ -137,6 +138,8 @@ namespace GUC.Scripts.Arena
             if (this.IsCharacter)
                 return;
 
+            TeamMode.JoinTeam(this, null);
+
             NPCDef def = NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer");
             NPCInst npc = new NPCInst(def);
             npc.UseCustoms = true;
@@ -169,6 +172,7 @@ namespace GUC.Scripts.Arena
             if (this.IsSpecating)
                 return;
 
+            TeamMode.JoinTeam(this, null);
             if (this.IsCharacter)
             {
                 var npc = this.Character;

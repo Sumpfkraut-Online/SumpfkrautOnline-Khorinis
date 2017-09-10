@@ -46,7 +46,7 @@ namespace GUC.Scripts.Arena
 
             titleVis = new GUCVisual(x, y - GUCView.FontsizeMenu, Width, GUCView.FontsizeMenu);
             titleVis.Font = GUCView.Fonts.Menu;
-            titleVis.CreateTextCenterX(title, y);
+            titleVis.CreateTextCenterX(title, 0);
 
         }
 

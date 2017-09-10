@@ -165,6 +165,8 @@ namespace GUC.Scripts.Arena
             phaseTimer.SetInterval(activeTODef.Duration * TimeSpan.TicksPerMinute);
             phaseTimer.SetCallback(PhaseFinish);
             Log.Logger.Log(phase.ToString());
+
+            RespawnPlayers();
         }
 
         static void PhaseFinish()
@@ -237,32 +239,38 @@ namespace GUC.Scripts.Arena
 
         public static void JoinTeam(ArenaClient client, TOTeamInst team)
         {
-            if (team == null || activeTODef == null || client.Team == team)
+            if (client.Team == team)
                 return;
 
             int index = teams.IndexOf(team);
-            if (index < 0)
-                return; // team is not from this TO
+            if (index >= 0)
+            {
+                // don't join a team which has already more players than the others
+                if (!teams.TrueForAll(t => team.Players.Count <= t.Players.Count - (t == client.Team ? 1 : 0)))
+                    return;
 
-            // don't join a team which has already more players than the others
-            if (!teams.TrueForAll(t => team.Players.Count <= t.Players.Count - (t == client.Team ? 1 : 0)))
-                return;
+                if (client.Team != null)
+                    client.Team.Players.Remove(client);
 
-            if (client.Team != null)
+                client.Team = team;
+                team.Players.Add(client);
+            }
+            else if (client.Team != null)
+            {
                 client.Team.Players.Remove(client);
-
-            client.Team = team;
-            team.Players.Add(client);
+                client.Team = null;
+            }
+            client.ClassDef = null;
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);
-            stream.Write((byte)index);
+            stream.Write((sbyte)index);
             client.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
         public static void WriteGameInfo(PacketWriter stream)
         {
-            stream.Write((byte)TOPhases.None);
+            stream.Write((byte)TeamMode.phase);
             if (TeamMode.Phase != TOPhases.None)
             {
                 stream.Write(TeamMode.ActiveTODef.Name);
@@ -276,6 +284,8 @@ namespace GUC.Scripts.Arena
             attacker.TOKills++;
             target.TODeaths++;
             attacker.Team.Score++;
+            if (attacker.Team.Score >= activeTODef.ScoreToWin)
+                PhaseFinish();
         }
     }
 }

@@ -43,15 +43,23 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "1h_parade2", "Fight1H.Parry[2]" },
             { "1h_dodge", "Fight1H.Dodge" },
             
-            // 2h attacks
-            { "s_2HAttack", "Fight2H.Fwd" },
-            { "t_2HAttackL", "Fight2H.Left" },
-            { "t_2HAttackR", "Fight2H.Right" },
-            { "t_2HAttackMove", "Fight2H.Run" },
-            { "t_2HParade_0", "Fight2H.Parry[0]" },
-            { "t_2HParade_0_A2", "Fight2H.Parry[1]" },
-            { "t_2HParade_0_A3", "Fight2H.Parry[2]" },
-            { "t_2HParadeJumpB", "Fight2H.Dodge" },
+            // 2H
+            { "draw2h_part0", "Draw2H.Draw" },
+            { "undraw2h_part0", "Draw2H.Undraw" },
+            { "draw2h_running", "Draw2H.DrawWhileRunning" },
+            { "undraw2h_running", "Draw2H.UndrawWhileRunning" },
+
+            { "2HAttack_fwd0", "Fight2H.Fwd[0]" },
+            { "2HAttack_fwd1", "Fight2H.Fwd[1]" },
+            { "2HAttack_fwd2", "Fight2H.Fwd[2]" },
+            { "2HAttack_fwd3", "Fight2H.Fwd[3]" },
+            { "2hAttack_left", "Fight2H.Left" },
+            { "2hAttack_right", "Fight2H.Right" },
+            { "2hattack_run", "Fight2H.Run" },
+            { "2h_parade0", "Fight2H.Parry[0]" },
+            { "2h_parade1", "Fight2H.Parry[1]" },
+            { "2h_parade2", "Fight2H.Parry[2]" },
+            { "2h_dodge", "Fight2H.Dodge" },
 
             // jumps
             { "jump_fwd", "Jumps.Fwd" },
@@ -72,23 +80,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "t_MAP_Stand_2_S0", "ItemHandling.ReadScroll" },
             { "t_JOINT_Stand_2_S0", "ItemHandling.SmokeAJoint" },
             { "s_FIRESPIT_S2", "ItemHandling.UseTorch" },
-
-
-
-            { "sok_draw2H", "Draw2H.Draw" },
-            { "sok_undraw2H", "Draw2H.Undraw" },
-            { "t_Move_2_2hMove", "Draw2H.DrawWhileRunning" },
-            { "t_2hMove_2_Move", "Draw2H.UndrawWhileRunning" },
-
-            { "sok_drawBow", "DrawBow.Draw" },
-            { "sok_undrawBow", "DrawBow.Undraw" },
-            { "t_Move_2_BowMove", "DrawBow.DrawWhileRunning" },
-            { "t_BowMove_2_Move", "DrawBow.UndrawWhileRunning" },
-
-            { "sok_drawXBow", "DrawXBow.Draw" },
-            { "sok_undrawXBow", "DrawXBow.Undraw" },
-            { "t_Move_2_CBowMove", "DrawXBow.DrawWhileRunning" },
-            { "t_CBowMove_2_Move", "DrawXBow.UndrawWhileRunning" },
 
         };
 

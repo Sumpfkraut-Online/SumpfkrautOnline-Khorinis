@@ -62,16 +62,20 @@ namespace GUC.Scripts.Arena
             if (!IsRunning)
                 return;
 
-            int index = stream.ReadByte();
-            if (index < activeTODef.Teams.Count)
+            int index = stream.ReadSByte();
+            if (index < 0)
+            {
+                teamDef = null;
+            }
+            else if (index < activeTODef.Teams.Count)
             {
                 var oldTeam = teamDef;
                 teamDef = activeTODef.Teams[index];
                 TOMessage(string.Format("Du bist {0} beigetreten.", teamDef.Name));
 
+                Menus.TOTeamsMenu.Menu.UpdateSelectedTeam();
                 if (oldTeam != teamDef)
                     Menus.TOClassMenu.Menu.Open();
-
             }
         }
 
@@ -88,7 +92,6 @@ namespace GUC.Scripts.Arena
         public static void ReadGameInfo(PacketReader stream)
         {
             phase = (TOPhases)stream.ReadByte();
-            Log.Logger.Log(phase);
             if (phase != TOPhases.None)
             {
                 string name = stream.ReadString();

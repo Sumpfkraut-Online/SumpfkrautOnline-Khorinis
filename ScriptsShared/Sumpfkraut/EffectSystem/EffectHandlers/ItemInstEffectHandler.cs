@@ -39,7 +39,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public static void OnSetAmount (ItemInst itemInst, int amount)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
         
     }

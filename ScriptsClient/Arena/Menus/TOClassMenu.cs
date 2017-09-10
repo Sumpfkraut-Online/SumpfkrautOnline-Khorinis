@@ -72,10 +72,20 @@ namespace GUC.Scripts.Arena.Menus
         void SelectClass(int index)
         {
             if (TeamMode.TeamDef == null)
+            {
                 Close();
-
-            if (TeamMode.TeamDef.ClassDefs.ElementAtOrDefault(index) == null)
                 return;
+            }
+
+            var classDef = TeamMode.TeamDef.ClassDefs.ElementAtOrDefault(index);
+            if (classDef == null)
+                return;
+
+            if (classDef == ArenaClient.Client.ClassDef)
+            {
+                Close();
+                return;
+            }
 
             if (!lockTimer.IsReady)
                 return;

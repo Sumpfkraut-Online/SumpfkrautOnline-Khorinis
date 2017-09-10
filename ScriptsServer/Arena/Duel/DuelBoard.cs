@@ -30,9 +30,9 @@ namespace GUC.Scripts.Arena
         void WritePlayer(ArenaClient client, PacketWriter stream)
         {
             stream.Write((byte)client.ID);
-            stream.Write(client.DuelScore);
-            stream.Write(client.DuelKills);
-            stream.Write(client.DuelDeaths);
+            stream.Write((short)client.DuelScore);
+            stream.Write((short)client.DuelKills);
+            stream.Write((short)client.DuelDeaths);
 
             int ping = client.BaseClient.GetLastPing();
             if (ping < 0) ping = -1;

@@ -19,15 +19,21 @@ namespace GUC.GUI
         public zCViewText zViewText { get { return viewText; } }
         int[] vpos;
 
+        public ViewPoint VPos { get { return new ViewPoint(vpos[0], vpos[1]); } }
+
         bool shown;
 
+        /// <summary>
+        ///If you simply want one text line, use this. GUCVisualText object will be vis.Texts[0]
+        /// </summary>
         public static GUCVisual Create(string text, int x, int y)
         {
-            //If you simply want one text line, use this.
-            //GUCVisualText object will be vis.Texts[0]
             return Create(text, x, y, false);
         }
 
+        /// <summary>
+        ///If you simply want one text line, use this. GUCVisualText object will be vis.Texts[0]
+        /// </summary>
         public static GUCVisual Create(string text, int x, int y, bool virtuals)
         {
             GUCVisual vis = new GUCVisual();
@@ -91,11 +97,13 @@ namespace GUC.GUI
             {
                 if (centeredX)
                 {
-                    viewText.PosX = (0x2000 - parent.zView.FontSize(viewText.Text)) / 2;
+                    vpos[0] = (0x2000 - parent.zView.FontSize(viewText.Text)) / 2;
+                    viewText.PosX = vpos[0];
                 }
                 if (centeredY)
                 {
-                    viewText.PosY = (0x2000 - parent.zView.FontY()) / 2;
+                    vpos[1] = (0x2000 - parent.zView.FontY()) / 2;
+                    viewText.PosY = vpos[1];
                 }
             }
             else

@@ -25,7 +25,22 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.Inventory, ToggleScoreBoard },
             { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
+            { VirtualKeys.P, PrintPosition }
         };
+
+        static void PrintPosition(bool down)
+        {
+            var hero = NPCInst.Hero;
+            if (hero == null)
+                return;
+
+            var pos = hero.GetPosition();
+            var dir = hero.GetDirection();
+
+            Log.Logger.Log(pos + " " + dir);
+            //System.Globalization.CultureInfo
+            System.IO.File.AppendAllText("positions.txt", string.Format("{{ new Vec3f({0}, {1}, {2}), new Vec3f({3}, {4}, {5}) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
+        }
 
         static void ToggleScoreBoard(bool down)
         {

@@ -81,10 +81,14 @@ namespace GUC.Scripts.Arena
                 {
                     new TOClassDef("Gardist", null, new List<string, int>()
                     {
-                    }),
+                        { "2hschwert", 1 }, { "itar_garde", 1}
+                    },
+                    new List<string>() { "2HST2"}),
                     new TOClassDef("Schatten", null, new List<string, int>()
                     {
-                    }),
+                        { "1hschwert", 1 }, { "itar_schatten", 1}
+                    },
+                    new List<string>() { "1HST2"}),
                 };
                 to.AddTeam("Team Gomez", spawnPoints, npcDefs, ColorRGBA.Red);
 
@@ -97,10 +101,14 @@ namespace GUC.Scripts.Arena
                 {
                     new TOClassDef("Söldner", null, new List<string, int>()
                     {
-                    }),
+                        { "2haxt", 1 }, { "itar_söldner", 1}
+                    },
+                    new List<string>() { "2HST2"}),
                     new TOClassDef("Bandit", null, new List<string, int>()
                     {
-                    }),
+                        { "1haxt", 1 }, { "itar_bandit", 1}
+                    },
+                    new List<string>() { "1HST2"}),
                 };
                 to.AddTeam("Tetriandoch", spawnPoints, npcDefs, ColorRGBA.Blue);
 

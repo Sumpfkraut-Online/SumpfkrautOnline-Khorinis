@@ -32,7 +32,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryDrawFists()
         {
-            if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
+            if (Host.IsDead || this.Host.ModelInst.IsInAnimation() || this.Host.Environment.InAir)
                 return;
 
             if (this.Host.IsInFightMode)
@@ -55,7 +55,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryDrawWeapon(ItemInst item)
         {
-            if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
+            if (Host.IsDead || this.Host.ModelInst.IsInAnimation() || this.Host.Environment.InAir)
                 return;
             
             if (this.Host.IsInFightMode)

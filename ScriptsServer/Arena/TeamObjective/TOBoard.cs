@@ -28,9 +28,9 @@ namespace GUC.Scripts.Arena
         void WritePlayer(ArenaClient client, PacketWriter stream)
         {
             stream.Write((byte)client.ID);
-            stream.Write(client.TOScore);
-            stream.Write(client.TOKills);
-            stream.Write(client.TODeaths);
+            stream.Write((short)client.TOScore);
+            stream.Write((short)client.TOKills);
+            stream.Write((short)client.TODeaths);
 
             int ping = client.BaseClient.GetLastPing();
             if (ping < 0) ping = -1;
