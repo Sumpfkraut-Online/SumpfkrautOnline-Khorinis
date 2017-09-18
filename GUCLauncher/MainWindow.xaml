@@ -11,7 +11,7 @@
         <ImageBrush ImageSource="Resources/empty_menu_back.png"/>
     </Window.Background>
     <Grid>
-        <Grid x:Name="serverGrid" Visibility="Hidden">
+        <Grid x:Name="serverGrid" Visibility="Visible">
             <Image Source="Resources/empty_menu_border.png"/>
             <ListView x:Name="lvServerList" BorderThickness="0" HorizontalAlignment="Left" Height="227" Margin="20,34,0,0" VerticalAlignment="Top" Width="602" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#BF3F3B37">
                 <ListView.ItemContainerStyle>
@@ -52,7 +52,7 @@
             <Button x:Name="bAddServer" Content="Hinzufügen" Style="{StaticResource MainButton}" Height="40" Margin="209,369,209,71" Click="bAddServer_Click"/>
             <Button x:Name="bRemoveServer" Content="Entfernen" Style="{StaticResource MainButton}" Height="40" Margin="209,414,209,26" Click="bRemoveServer_Click"/>
         </Grid>
-        <Grid x:Name="projectGrid" Visibility="Visible">
+        <Grid x:Name="projectGrid" Visibility="Hidden">
             <Image x:Name="image" Stretch="Fill" HorizontalAlignment="Left" Height="400" Margin="6,8,0,0" VerticalAlignment="Top" Width="628"/>
             <Image Source="Resources/empty_menu_border_project.png"/>
             <Label x:Name="lProjectTitle" Content="Projekt" HorizontalAlignment="Center" Height="91" Margin="10,10,10,0" VerticalAlignment="Top" Width="620" HorizontalContentAlignment="Center" FontSize="30" Foreground="#FFE07D06" FontFamily="Resources/#G2Font" VerticalContentAlignment="Center"/>

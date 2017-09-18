@@ -83,12 +83,12 @@ namespace GUC.Scripts.Arena
                     {
                         { "2hschwert", 1 }, { "itar_garde", 1}
                     },
-                    new List<string>() { "2HST2"}),
+                    new List<string>() { "2HST1"}),
                     new TOClassDef("Schatten", null, new List<string, int>()
                     {
                         { "1hschwert", 1 }, { "itar_schatten", 1}
                     },
-                    new List<string>() { "1HST2"}),
+                    new List<string>() { "1HST1"}),
                 };
                 to.AddTeam("Team Gomez", spawnPoints, npcDefs, ColorRGBA.Red);
 

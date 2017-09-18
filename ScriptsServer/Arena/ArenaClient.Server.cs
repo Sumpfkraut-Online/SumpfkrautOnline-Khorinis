@@ -169,10 +169,10 @@ namespace GUC.Scripts.Arena
 
         void Spectate()
         {
+            TeamMode.JoinTeam(this, null);
+
             if (this.IsSpecating)
                 return;
-
-            TeamMode.JoinTeam(this, null);
             if (this.IsCharacter)
             {
                 var npc = this.Character;

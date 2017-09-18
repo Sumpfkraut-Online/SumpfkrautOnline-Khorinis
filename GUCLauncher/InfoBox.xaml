@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUCLauncher"
         mc:Ignorable="d"
-        Title="InfoBox" Height="250" Width="350" AllowsTransparency="True" WindowStyle="None">
+        Title="InfoBox" Height="250" Width="350" AllowsTransparency="True" WindowStyle="None" KeyDown="Window_KeyDown">
     <Window.Background>
         <ImageBrush ImageSource="Resources/empty_menu_back.png"/>
     </Window.Background>

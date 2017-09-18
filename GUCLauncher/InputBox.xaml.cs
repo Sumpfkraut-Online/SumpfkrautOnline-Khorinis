@@ -45,5 +45,21 @@ namespace GUCLauncher
         {
             DialogResult = false;
         }
+
+        void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (DialogResult.HasValue)
+                return;
+
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    DialogResult = true;
+                    break;
+                case Key.Escape:
+                    DialogResult = false;
+                    break;
+            }
+        }
     }
 }

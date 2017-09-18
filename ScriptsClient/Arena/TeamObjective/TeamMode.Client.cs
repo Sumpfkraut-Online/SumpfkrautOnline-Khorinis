@@ -66,6 +66,7 @@ namespace GUC.Scripts.Arena
             if (index < 0)
             {
                 teamDef = null;
+                ArenaClient.Client.ClassDef = null;
             }
             else if (index < activeTODef.Teams.Count)
             {
@@ -75,7 +76,10 @@ namespace GUC.Scripts.Arena
 
                 Menus.TOTeamsMenu.Menu.UpdateSelectedTeam();
                 if (oldTeam != teamDef)
+                {
+                    ArenaClient.Client.ClassDef = null;
                     Menus.TOClassMenu.Menu.Open();
+                }
             }
         }
 
