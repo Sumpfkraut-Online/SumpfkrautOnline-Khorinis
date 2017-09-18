@@ -34,13 +34,7 @@ namespace GUCLauncher
             {
                 InitializeComponent();
 
-                foreach (TabItem item in tabControl.Items)
-                {
-                    item.Visibility = Visibility.Hidden;
-                }
-
                 Configuration.Init(lvServerList.Items);
-
                 if (Configuration.ActiveProject != null)
                     TryOpenProjectPage(Configuration.ActiveProject, Configuration.ActiveProject.Password);
             }
@@ -51,14 +45,33 @@ namespace GUCLauncher
             }
         }
 
-        #region Add & Remove Servers
-
-        private void bAddServer_Click(object sender, RoutedEventArgs e)
+        string ShowInputBox(string title, string input = "")
         {
-            Configuration.AddServer(tbAddIP.Text);
+            overshadow.Visibility = Visibility.Visible;
+            string str = InputBox.Show(this, title, input);
+            overshadow.Visibility = Visibility.Hidden;
+            return str;
         }
 
-        private void bRemoveServer_Click(object sender, RoutedEventArgs e)
+        void ShowInfoBox(string title)
+        {
+            overshadow.Visibility = Visibility.Visible;
+            InfoBox.Show(this, title);
+            overshadow.Visibility = Visibility.Hidden;
+        }
+
+        #region Add & Remove Servers
+
+        void bAddServer_Click(object sender, RoutedEventArgs e)
+        {
+            var address = ShowInputBox("Server hinzufügen");
+            if (!string.IsNullOrWhiteSpace(address))
+            {
+                Configuration.AddServer(address);
+            }
+        }
+
+        void bRemoveServer_Click(object sender, RoutedEventArgs e)
         {
             Configuration.RemoveServer(lvServerList.SelectedIndex);
         }
@@ -113,7 +126,8 @@ namespace GUCLauncher
             item.Ping = "Offline";
         }
 
-        private void bRefresh_Click(object sender, RoutedEventArgs e)
+        public static bool ServerWentOnline = false;
+        void bRefresh_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -121,7 +135,6 @@ namespace GUCLauncher
                 {
                     ThreadPool.QueueUserWorkItem(Refresh, item);
                 }
-
             }
             catch (Exception e2)
             {
@@ -139,8 +152,6 @@ namespace GUCLauncher
             {
                 if (lvServerList.SelectedIndex < 0)
                     return;
-
-                lPWWrong.Content = null;
 
                 ServerListItem item = (ServerListItem)lvServerList.SelectedItem;
                 TryOpenProjectPage(item, item.Password);
@@ -161,38 +172,28 @@ namespace GUCLauncher
                 updateThread.Join();
             }
             Configuration.SetActiveProject(null);
-            tabControl.SelectedIndex = 0;
+            projectGrid.Visibility = Visibility.Hidden;
+            serverGrid.Visibility = Visibility.Visible;
         }
 
         #region Password
 
         void ShowPasswordPage(ServerListItem item, bool wrongPW = false)
         {
-            lPWTitle.Content = item.Name;
-            lPWIP.Content = item.IP;
+            if (!this.IsLoaded)
+                return;
 
-            if (wrongPW)
-            {
-                lPWWrong.Content = "Falsches Passwort!";
-            }
-            else
-            {
-                tbPWInput.Text = "";
-                lPWWrong.Content = "Passwort benötigt!";
-            }
+            var pw = ShowInputBox("Passwort benötigt!");
+            if (pw == null)
+                return;
 
-            tabControl.SelectedIndex = 2;
-        }
-
-        void bPasswordOK_Click(object sender, RoutedEventArgs e)
-        {
-            byte[] pw;
+            byte[] hash;
             using (MD5 md5 = new MD5CryptoServiceProvider())
             {
-                pw = md5.ComputeHash(Encoding.Unicode.GetBytes(tbPWInput.Text));
+                hash = md5.ComputeHash(Encoding.Unicode.GetBytes(pw));
             }
 
-            TryOpenProjectPage((ServerListItem)lvServerList.SelectedItem, pw);
+            TryOpenProjectPage((ServerListItem)lvServerList.SelectedItem, hash);
         }
 
         #endregion
@@ -250,7 +251,8 @@ namespace GUCLauncher
                 }
             }
             //Could not connect
-            Title = "Could not connect";
+            if (this.IsLoaded)
+                ShowInfoBox("Verbindung konnte nicht hergestellt werden.");
             client.Close();
         }
 
@@ -262,7 +264,8 @@ namespace GUCLauncher
                 lProjectTitle.Content = item.Name;
                 lProjectIP.Content = item.IP + " : " + item.Port;
 
-                tabControl.SelectedIndex = 1;
+                projectGrid.Visibility = Visibility.Visible;
+                serverGrid.Visibility = Visibility.Hidden;
 
                 progressBar.Value = 0;
                 image.Source = null;
@@ -516,6 +519,45 @@ namespace GUCLauncher
         void ShowException(Exception e)
         {
             MessageBox.Show(string.Format("{0}: {1}\r\n{2}", e.Source, e.Message, e.StackTrace), e.GetType().ToString(), MessageBoxButton.OK);
+        }
+
+        void Click_Close(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void Click_Minimize(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        bool mDown = false;
+        Point lastPos;
+        void Window_MouseMove(object sender, MouseEventArgs e)
+        {
+            Point newPos = e.GetPosition(this);
+            if (mDown)
+            {
+                this.Left -= lastPos.X - newPos.X;
+                this.Top -= lastPos.Y - newPos.Y;
+            }
+        }
+
+        void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                lastPos = e.GetPosition(this);
+                mDown = true;
+            }
+        }
+
+        void Window_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Released)
+            {
+                mDown = false;
+            }
         }
     }
 }
