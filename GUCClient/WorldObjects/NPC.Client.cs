@@ -14,6 +14,9 @@ namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        const long HeroPosUpdateInterval = 40 * TimeSpan.TicksPerMillisecond;
+        const long NPCPosUpdateInterval = 80 * TimeSpan.TicksPerMillisecond;
+
         #region Network Messages
 
         new internal static class Messages
@@ -188,14 +191,14 @@ namespace GUC.WorldObjects
             if (hero == null)
                 return;
 
-            hero.UpdateGuidedNPCPosition(now, 800000, 10, 0.02f); // update our hero better
+            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 10, 0.02f); // update our hero better
         }
 
         #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
-            UpdateGuidedNPCPosition(now, 1200000, 14, 0.04f);
+            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 14, 0.04f);
         }
 
         NPCMovement guidedLastMovement;

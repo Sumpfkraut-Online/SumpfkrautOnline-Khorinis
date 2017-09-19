@@ -124,5 +124,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         }
 
         #endregion
+
+
+        public static void ForEach(Action<ItemDef> action)
+        {
+            BaseVobInstance.ForEachOfType(Types.VobTypes.Item, i => action((ItemDef)i.ScriptObject));
+        }
     }
+
 }

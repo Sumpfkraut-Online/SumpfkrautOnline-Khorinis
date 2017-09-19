@@ -151,16 +151,20 @@ namespace GUC.Scripts.Arena
             npc.CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth);
             npc.CustomName = charInfo.Name;
 
-            var item = new ItemInst(ItemDef.Get("ItMw_1h_Bau_Mace"));
-            npc.Inventory.AddItem(item);
-            npc.EquipItem(item);
+            ItemDef.ForEach(itemDef =>
+            {
+                var item = new ItemInst(itemDef);
+                npc.Inventory.AddItem(item);
+                if (string.Equals(itemDef.CodeName, "ItMw_1h_Bau_Mace", StringComparison.OrdinalIgnoreCase)
+                 || string.Equals(itemDef.CodeName, "ITAR_Prisoner", StringComparison.OrdinalIgnoreCase))
+                {
+                    npc.EquipItem(item);
+                }
+            });
 
-            item = new ItemInst(ItemDef.Get("ITAR_Prisoner"));
-            npc.Inventory.AddItem(item);
-            npc.EquipItem(item);
-
-            ScriptOverlay ov;
-            if (npc.ModelDef.TryGetOverlay("1HST1", out ov))
+            if (npc.ModelDef.TryGetOverlay("1HST1", out ScriptOverlay ov))
+                npc.ModelInst.ApplyOverlay(ov);
+            if (npc.ModelDef.TryGetOverlay("2HST1", out ov))
                 npc.ModelInst.ApplyOverlay(ov);
 
             npc.Spawn(WorldInst.Current);
