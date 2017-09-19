@@ -154,8 +154,6 @@ namespace GUC
                     Logger.LogError(e);
                 }
                 client.Close();
-
-                Thread.Sleep(50);
             }
         }
     }

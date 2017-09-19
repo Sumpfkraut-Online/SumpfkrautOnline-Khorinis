@@ -7,7 +7,6 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Log;
 using GUC.Utilities;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Visuals;
@@ -16,6 +15,34 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
+        #region Respawn
+
+        const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
+        static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
+        static ArenaClient()
+        {
+            respawnTimer.Start();
+        }
+        static void RespawnPlayers()
+        {
+            ArenaClient.ForEach(s =>
+            {
+                ArenaClient client = (ArenaClient)s;
+
+                if (client.Character == null || client.Character.IsDead)
+                {
+                    if (client.ClassDef != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish)
+                    {
+                        TeamMode.SpawnCharacter(client);
+                    }
+                    else if (client.Team == null && !client.IsSpecating)
+                        client.SpawnCharacter();
+                }
+            });
+        }
+
+        #endregion
+
         #region DuelMode
 
         public List<ArenaClient, GUCTimer> DuelRequests = new List<ArenaClient, GUCTimer>(3);
@@ -77,6 +104,8 @@ namespace GUC.Scripts.Arena
 
         partial void pOnDisconnect()
         {
+            KillCharacter();
+
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.PlayerQuitMessage);
             stream.Write((byte)this.ID);
@@ -135,11 +164,23 @@ namespace GUC.Scripts.Arena
 
         void JoinGame()
         {
-            if (this.IsCharacter)
-                return;
+            if (this.Character != null)
+            {
+                if (this.Team != null)
+                {
+                    TeamMode.JoinTeam(this, null);
+                }
+                else
+                {
+                    return;
+                }
+            }
 
-            TeamMode.JoinTeam(this, null);
+            SpawnCharacter();
+        }
 
+        public void SpawnCharacter()
+        {
             NPCDef def = NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer");
             NPCInst npc = new NPCInst(def);
             npc.UseCustoms = true;
@@ -167,26 +208,62 @@ namespace GUC.Scripts.Arena
             if (npc.ModelDef.TryGetOverlay("2HST1", out ov))
                 npc.ModelInst.ApplyOverlay(ov);
 
-            npc.Spawn(WorldInst.Current);
+            var pair = spawnPositions.GetRandom();
+            npc.Spawn(WorldInst.Current, pair.Item1, pair.Item2);
             this.SetControl(npc);
         }
 
         void Spectate()
         {
+            KillCharacter();
             TeamMode.JoinTeam(this, null);
-
-            if (this.IsSpecating)
-                return;
             if (this.IsCharacter)
             {
                 var npc = this.Character;
                 this.SetToSpectator(npc.World, npc.GetPosition(), npc.GetDirection());
-                npc.Despawn();
+            }
+            else if (!this.IsSpecating)
+            {
+                this.SetToSpectator(WorldInst.Current, new Vec3f(0, 1000, 0), new Vec3f(0, 0, 1));
+            }
+        }
+
+        public void KillCharacter()
+        {
+            if (this.Character == null || this.Character.IsDead)
+                return;
+
+            if (this.Team != null)
+            {
+                this.TODeaths++;
+                this.TOScore--;
+                this.Team.Score--;
             }
             else
             {
-                this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f());
+                this.DuelDeaths++;
+                this.DuelScore--;
             }
+
+            this.Character.SetHealth(0);
         }
+
+        static List<Vec3f, Vec3f> spawnPositions = new List<Vec3f, Vec3f>()
+        {
+            { new Vec3f(1103.581f, 247.9452f, 789.3878f), new Vec3f(-0.2739599f, 0f, -0.9617411f) },
+            { new Vec3f(1103.581f, 247.9272f, 789.3878f), new Vec3f(-0.2739599f, 0f, -0.9617411f) },
+            { new Vec3f(3125.09f, 248.0491f, -149.3765f), new Vec3f(-0.9181013f, 0f, -0.3963461f) },
+            { new Vec3f(3125.09f, 248.0578f, -149.3765f), new Vec3f(-0.9181013f, 0f, -0.3963461f) },
+            { new Vec3f(2819.372f, 247.8344f, -1710.958f), new Vec3f(-0.4671577f, 0f, 0.884174f) },
+            { new Vec3f(2819.372f, 247.8455f, -1710.958f), new Vec3f(-0.4671577f, 0f, 0.884174f) },
+            { new Vec3f(-79.50902f, 234.1128f, -1803.163f), new Vec3f(0.08106972f, 0f, 0.9967085f) },
+            { new Vec3f(-79.50902f, 234.0981f, -1803.163f), new Vec3f(0.08106972f, 0f, 0.9967085f) },
+            { new Vec3f(-1675.428f, -95.8408f, 1258.567f), new Vec3f(-0.4602006f, 0f, -0.8878149f) },
+            { new Vec3f(-1675.428f, -95.82971f, 1258.567f), new Vec3f(-0.4602006f, 0f, -0.8878149f) },
+            { new Vec3f(-4405.862f, -151.877f, -450.7282f), new Vec3f(0.9719613f, 0f, 0.235141f) },
+            { new Vec3f(-4405.862f, -151.8656f, -450.7282f), new Vec3f(0.9719613f, 0f, 0.235141f) },
+            { new Vec3f(-4092.241f, -284.683f, -2645.511f), new Vec3f(-0.02792043f, 0f, 0.9996101f) },
+            { new Vec3f(-4092.241f, -284.6982f, -2645.511f), new Vec3f(-0.02792043f, 0f, 0.9996101f) },
+        };
     }
 }

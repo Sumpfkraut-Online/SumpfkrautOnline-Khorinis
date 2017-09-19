@@ -89,6 +89,7 @@ namespace GUCLauncher
 
             try
             {
+                Stopwatch watch = Stopwatch.StartNew();
                 if (client.ConnectAsync(item.IP, 9054).Wait(1000))
                 {
                     var stream = client.GetStream();
@@ -97,6 +98,8 @@ namespace GUCLauncher
                         byte[] buf = new byte[byte.MaxValue];
                         if (stream.ReadAsync(buf, 0, 4).Wait(1000))
                         {
+                            watch.Stop();
+                            int ping = (int)watch.Elapsed.TotalMilliseconds;
                             int count = buf[0];
                             int slots = buf[1];
                             int pw = buf[2];
@@ -106,7 +109,8 @@ namespace GUCLauncher
                             {
                                 client.Close();
 
-                                item.Ping = new Ping().Send(item.IP, 1000).RoundtripTime.ToString();
+                                item.Ping = ping.ToString();
+                                //item.Ping = new Ping().Send(item.IP, 1000).RoundtripTime.ToString();
                                 item.Name = Encoding.UTF8.GetString(buf, 0, nameLen);
 
                                 item.Players = count + "/" + slots;

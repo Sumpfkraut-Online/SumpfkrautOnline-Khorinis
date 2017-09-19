@@ -437,13 +437,13 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
-            if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null && !this.environment.InAir)
+            if (!this.IsDead)
             {
                 switch (Movement)
                 {
                     case NPCMovement.Forward:
                         var gModel = this.gVob.GetModel();
-                        if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                        if (!this.environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
                         {
                             var ai = this.gVob.HumanAI;
                             ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
@@ -454,6 +454,8 @@ namespace GUC.WorldObjects
                         gVob.AniCtrl._Backward();
                         break;
                     case NPCMovement.Right:
+                        if (this.Model.IsInAnimation() || this.environment.InAir)
+                            break;
                         gModel = this.gVob.GetModel();
                         var strafeAni = gVob.AniCtrl._t_strafer;
                         if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
@@ -462,6 +464,8 @@ namespace GUC.WorldObjects
                         }
                         break;
                     case NPCMovement.Left:
+                        if (this.Model.IsInAnimation() || this.environment.InAir)
+                            break;
                         gModel = this.gVob.GetModel();
                         strafeAni = gVob.AniCtrl._t_strafel;
                         if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))

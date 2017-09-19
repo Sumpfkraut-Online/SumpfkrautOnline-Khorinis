@@ -213,6 +213,15 @@ namespace GUC.Scripts
             npcDef.HeadTex = (int)HumHeadTexs.Face_N_Player;
             npcDef.Create();
 
+            npcDef = new NPCDef("femaleplayer");
+            npcDef.Name = "Spielerin";
+            npcDef.Model = m;
+            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_BABE0.ToString();
+            npcDef.BodyTex = (int)HumBodyTexs.F_Babe1;
+            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
+            npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_N_Anne;
+            npcDef.Create();
+
             AddItems();
         }
 

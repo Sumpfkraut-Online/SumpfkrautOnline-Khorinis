@@ -91,6 +91,7 @@ namespace GUC.Scripts.Arena
             Menus.TOInfoScreen.Hide();
             activeTODef = null;
             teamDef = null;
+            ArenaClient.Client.ClassDef = null;
         }
 
         public static void ReadGameInfo(PacketReader stream)

@@ -16,13 +16,11 @@ namespace GUC.Scripts.Arena
     static partial class TeamMode
     {
         public const int MinClientsToStart = 1;
-        const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
 
         static List<TOTeamInst> teams = new List<TOTeamInst>(3);
         public static ReadOnlyList<TOTeamInst> Teams { get { return teams; } }
 
         static GUCTimer phaseTimer = new GUCTimer();
-        static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
 
         public static uint RemainingPhaseMsec { get { return (uint)(phaseTimer.GetRemainingTicks() / TimeSpan.TicksPerMillisecond); } }
 
@@ -39,19 +37,7 @@ namespace GUC.Scripts.Arena
             }
         }
 
-        static void RespawnPlayers()
-        {
-            foreach (var team in teams)
-                foreach (var player in team.Players)
-                {
-                    if (player.Character == null || player.Character.IsDead)
-                    {
-                        SpawnCharacter(player);
-                    }
-                }
-        }
-
-        static void SpawnCharacter(ArenaClient player)
+        public static void SpawnCharacter(ArenaClient player)
         {
             if (player.Team == null || player.ClassDef == null)
                 return;
@@ -149,8 +135,6 @@ namespace GUC.Scripts.Arena
             phaseTimer.SetCallback(PhaseStart);
             phaseTimer.Start();
 
-            respawnTimer.Start();
-
             Log.Logger.Log(phase.ToString());
         }
 
@@ -166,7 +150,10 @@ namespace GUC.Scripts.Arena
             phaseTimer.SetCallback(PhaseFinish);
             Log.Logger.Log(phase.ToString());
 
-            RespawnPlayers();
+            foreach (var team in teams)
+                foreach (var player in team.Players)
+                    if (player.Character == null || player.Character.IsDead)
+                        SpawnCharacter(player);
         }
 
         static void PhaseFinish()
@@ -197,7 +184,6 @@ namespace GUC.Scripts.Arena
             phaseTimer.SetInterval(FinishDuration);
             phaseTimer.SetCallback(EndTO);
 
-            respawnTimer.Stop();
             Log.Logger.Log(phase.ToString());
         }
 
@@ -209,12 +195,12 @@ namespace GUC.Scripts.Arena
             teams.Clear();
 
             activeTODef = null;
-            if (!CheckStartTO())
-            {
-                var stream = ArenaClient.GetScriptMessageStream();
-                stream.Write((byte)ScriptMessages.TOEnd);
-                ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
-            }
+
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.TOEnd);
+            ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
+
+            CheckStartTO();
         }
         public static void ReadSelectClass(ArenaClient client, PacketReader stream)
         {
@@ -241,6 +227,9 @@ namespace GUC.Scripts.Arena
         {
             if (client.Team == team)
                 return;
+
+            if (client.Character != null)
+                client.KillCharacter();
 
             int index = teams.IndexOf(team);
             if (index >= 0)

@@ -39,7 +39,7 @@ namespace GUC.Scripts.Arena.Controls
 
             Log.Logger.Log(pos + " " + dir);
             //System.Globalization.CultureInfo
-            System.IO.File.AppendAllText("positions.txt", string.Format("{{ new Vec3f({0}, {1}, {2}), new Vec3f({3}, {4}, {5}) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
+            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Vec3f({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
         }
 
         static void ToggleScoreBoard(bool down)
