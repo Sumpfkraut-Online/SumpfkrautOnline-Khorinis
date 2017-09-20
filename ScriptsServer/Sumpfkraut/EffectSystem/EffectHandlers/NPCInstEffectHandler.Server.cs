@@ -101,5 +101,26 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 Host.DoFightMove(move, 0);
             }
         }
+
+        public void TryEquipItem(ItemInst item)
+        {
+            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation() 
+                || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
+                || this.Host.IsInFightMode)
+                return;
+
+            this.Host.EquipItem(item);
+        }
+
+
+        public void TryUnequipItem(ItemInst item)
+        {
+            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation()
+                || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
+                || this.Host.IsInFightMode)
+                return;
+
+            this.Host.UnequipItem(item);
+        }
     }
 }

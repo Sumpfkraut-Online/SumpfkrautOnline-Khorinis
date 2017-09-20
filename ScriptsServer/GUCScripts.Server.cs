@@ -136,6 +136,8 @@ namespace GUC.Scripts
             NPCInst.Requests.OnDrawFists += npc => npc.EffectHandler.TryDrawFists();
             NPCInst.Requests.OnDrawWeapon += (npc, item) => npc.EffectHandler.TryDrawWeapon(item);
             NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
+            NPCInst.Requests.OnEquipItem += (npc, item) => npc.EffectHandler.TryEquipItem(item);
+            NPCInst.Requests.OnUnequipItem += (npc, item) => npc.EffectHandler.TryUnequipItem(item);
 
             AddSomeDefs();
 

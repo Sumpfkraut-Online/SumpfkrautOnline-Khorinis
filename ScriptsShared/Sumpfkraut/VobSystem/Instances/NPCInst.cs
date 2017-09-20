@@ -266,6 +266,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void EquipItem(ItemInst item)
         {
+            if (item == null || item.Container != this)
+                return;
+
             SlotNums slot;
 
             switch (item.ItemType)
@@ -293,7 +296,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
                 default:
                     return;
-
             }
             EquipItem((int)slot, item);
         }

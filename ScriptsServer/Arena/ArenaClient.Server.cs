@@ -29,7 +29,7 @@ namespace GUC.Scripts.Arena
             {
                 ArenaClient client = (ArenaClient)s;
 
-                if (!client.IsSpecating && client.Character.IsDead)
+                if (!client.IsSpecating && client.Character != null && client.Character.IsDead)
                 {
                     if (client.ClassDef != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish)
                     {
