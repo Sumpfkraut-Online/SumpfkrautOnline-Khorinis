@@ -122,6 +122,7 @@ namespace GUC.Network
             {
                 if (client.character != null)
                 {
+                    client.character.client = client;
                     client.JoinWorld(client.character.World, client.character.GetPosition());
                     client.character.SpawnPlayer();
                 }

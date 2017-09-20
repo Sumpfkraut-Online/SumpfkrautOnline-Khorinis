@@ -413,7 +413,7 @@ namespace GUC.WorldObjects
             if (this.movement == state)
                 return;
 
-            if (!this.IsDead && this.gVob != null && !this.Model.IsInAnimation())
+            if (!this.IsDead && this.gVob != null && this.gVob.GetModel().GetActiveAni(1).Address == 0)
                 if (this.movement == NPCMovement.Right || this.movement == NPCMovement.Left)
                 {
                     if (state == NPCMovement.Forward)
@@ -437,7 +437,7 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
-            if (!this.IsDead)
+            if (!this.IsDead && this.gVob.GetModel().GetActiveAni(1).Address == 0)
             {
                 switch (Movement)
                 {

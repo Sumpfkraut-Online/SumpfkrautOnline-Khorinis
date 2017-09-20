@@ -255,6 +255,8 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((sbyte)index);
             client.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+
+            SpawnCharacter(client);
         }
 
         public static void WriteGameInfo(PacketWriter stream)

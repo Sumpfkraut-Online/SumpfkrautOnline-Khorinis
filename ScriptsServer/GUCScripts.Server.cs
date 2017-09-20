@@ -439,6 +439,7 @@ namespace GUC.Scripts
 
             // Draw Fists running
             ScriptAniJob aniJob = new ScriptAniJob("drawfists_running", "t_Move_2_FistMove", new ScriptAni(0, 14));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 5);
             aniJob.Layer = 2;
 
@@ -459,6 +460,7 @@ namespace GUC.Scripts
 
             // Undraw Fists running
             aniJob = new ScriptAniJob("undrawfists_running", "t_FistMove_2_Move", new ScriptAni(0, 14));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 5);
             aniJob.Layer = 2;
 
@@ -478,6 +480,7 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 19);
             model.AddAniJob(aniJob);
 
@@ -524,6 +527,7 @@ namespace GUC.Scripts
 
             // Draw 1h running
             ScriptAniJob aniJob = new ScriptAniJob("draw1h_running", "t_Move_2_1hMove", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 6);
             model.AddAniJob(aniJob);
 
@@ -550,6 +554,7 @@ namespace GUC.Scripts
 
             // Undraw 1h running
             aniJob = new ScriptAniJob("undraw1h_running", "t_1hMove_2_Move", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 18);
             model.AddAniJob(aniJob);
 
@@ -599,6 +604,7 @@ namespace GUC.Scripts
 
             // run attack
             job = new ScriptAniJob("1hattack_run", "t_1HAttackMove");
+            job.Layer = 2;
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 29) { { SpecialFrame.Hit, 16 } });
 
@@ -657,6 +663,7 @@ namespace GUC.Scripts
 
             // Draw 2h running
             ScriptAniJob aniJob = new ScriptAniJob("draw2h_running", "t_Move_2_2hMove", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 6);
             model.AddAniJob(aniJob);
 
@@ -683,6 +690,7 @@ namespace GUC.Scripts
 
             // Undraw 2h running
             aniJob = new ScriptAniJob("undraw2h_running", "t_2hMove_2_Move", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 18);
             model.AddAniJob(aniJob);
 
@@ -731,6 +739,7 @@ namespace GUC.Scripts
 
             // run attack
             job = new ScriptAniJob("2hattack_run", "t_2hAttackMove");
+            job.Layer = 2;
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 23) { { SpecialFrame.Hit, 12 } });
 

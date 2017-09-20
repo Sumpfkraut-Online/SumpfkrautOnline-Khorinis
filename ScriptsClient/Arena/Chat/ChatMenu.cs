@@ -22,7 +22,7 @@ namespace GUC.Scripts.Arena
         public GUCVisual chatBackground;
         public GUCTextBox textBox;
         public GUCVisual prefix;
-        private ChatMode chatMode;
+        private ChatMode openChatMode;
         ViewSize screenSize;
         int chatHeigth, chatWidth;
         GUCTimer chatInactivityTimer;
@@ -86,7 +86,7 @@ namespace GUC.Scripts.Arena
 
         public void OpenAllChat()
         {
-            chatMode = ChatMode.All;
+            openChatMode = ChatMode.All;
             prefix.Texts[0].Text = "All: ";
             Open();
         }
@@ -99,7 +99,7 @@ namespace GUC.Scripts.Arena
                // OpenAllChat();
                 return;
             }
-            chatMode = ChatMode.Team;
+            openChatMode = ChatMode.Team;
             prefix.Texts[0].Text = "Team: ";
             Open();
         }
@@ -135,7 +135,7 @@ namespace GUC.Scripts.Arena
             string message = textBox.Input.Trim();
             if (message.Length == 0)
                 return;
-            switch (chatMode)
+            switch (openChatMode)
             {
                 case ChatMode.Team:
                     Chat.SendTeamMessage(message);
@@ -167,6 +167,12 @@ namespace GUC.Scripts.Arena
         /// <param name="message"></param>
         public void AddMessage(ChatMode chatmode, string message)
         {
+            if (!this.textBox.Enabled)
+            {
+                chatBackground.Show();
+                StartInactivityTimer();
+            }
+
             // resort chat rows if necessary
             int maxScreenSize = chatWidth - 30;
             if (chatBackground.Texts[chatBackground.Texts.Count - 1].Text.Length > 0)
@@ -187,7 +193,7 @@ namespace GUC.Scripts.Arena
                     charCounter++;
                     if (!(GUCView.StringPixelWidth(newMessage) < maxScreenSize))
                     {
-                        InsertMessage(chatMode, newMessage);
+                        InsertMessage(openChatMode, newMessage);
                         // remains of the message
                         if (message.Length > charCounter)
                             AddMessage(chatmode, message.Substring(charCounter));
@@ -204,7 +210,7 @@ namespace GUC.Scripts.Arena
         /// Makes sure messages is added to the correct row in the chat.
         /// </summary>
         /// <param name="message"></param>
-        private void InsertMessage(ChatMode chatmode, string message)
+        private void InsertMessage(ChatMode chatMode, string message)
         {
             int index = 0;
             while (index < chatBackground.Texts.Count - 1)

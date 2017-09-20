@@ -25,6 +25,7 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
             { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
+            { KeyBind.Inventory, d => { if (d) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
             { VirtualKeys.P, PrintPosition }
         };
 
@@ -137,7 +138,7 @@ namespace GUC.Scripts.Arena.Controls
 
             DoTurning(hero);
 
-            NPCMovement state = NPCMovement.Stand;
+            NPCMovement state = hero.Movement;
             if (KeyBind.MoveLeft.IsPressed()) // strafe left
             {
                 state = NPCMovement.Left;
@@ -169,6 +170,10 @@ namespace GUC.Scripts.Arena.Controls
                         state = NPCMovement.Backward;
                     }
                 }
+                else
+                {
+                    state = NPCMovement.Stand;
+                }
             }
             hero.SetMovement(state);
         }
@@ -193,16 +198,17 @@ namespace GUC.Scripts.Arena.Controls
                 return;
             }
 
-            if (hero.ModelInst.GetActiveAniFromLayer(1) == null)
+            // Fixme: do own turning
+            if (!KeyBind.Action.IsPressed() && hero.ModelInst.GetActiveAniFromLayer(2) == null)
             {
                 if (KeyBind.TurnLeft.IsPressed())
                 {
-                    hero.BaseInst.gVob.AniCtrl.Turn(-2.5f, true);
+                    hero.BaseInst.gVob.AniCtrl.Turn(-2.2f, true);
                     return;
                 }
                 else if (KeyBind.TurnRight.IsPressed())
                 {
-                    hero.BaseInst.gVob.AniCtrl.Turn(2.5f, true);
+                    hero.BaseInst.gVob.AniCtrl.Turn(2.2f, true);
                     return;
                 }
             }

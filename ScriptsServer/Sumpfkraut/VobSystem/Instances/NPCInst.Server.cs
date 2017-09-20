@@ -399,7 +399,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
             else
             {
-                ScriptAniJob job = this.Movement == NPCMovement.Stand ? catalog.Draw : catalog.DrawWhileRunning;
+                ScriptAniJob job = (this.Movement == NPCMovement.Stand && !this.Environment.InAir) ? catalog.Draw : catalog.DrawWhileRunning;
                 ScriptAni ani;
                 if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
                 {
@@ -456,7 +456,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
             else
             {
-                ScriptAniJob job = this.Movement == NPCMovement.Stand ? catalog.Undraw : catalog.UndrawWhileRunning;
+                ScriptAniJob job = (this.Movement == NPCMovement.Stand && !this.Environment.InAir) ? catalog.Undraw : catalog.UndrawWhileRunning;
                 ScriptAni ani;
                 if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
                 {

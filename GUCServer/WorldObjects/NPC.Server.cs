@@ -238,8 +238,12 @@ namespace GUC.WorldObjects
         internal void SpawnPlayer()
         {
             this.world.AddClient(this.client);
-            base.Spawn(this.world, this.pos, this.dir);
-            world.AddToNPCCells(this);
+
+            if (!this.IsSpawned)
+            {
+                base.Spawn(this.world, this.pos, this.dir);
+                world.AddToNPCCells(this);
+            }
 
             GameClient.Messages.WritePlayerControl(this.client, this);
         }

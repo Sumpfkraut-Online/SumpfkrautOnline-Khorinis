@@ -30,7 +30,6 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             rows = (screenSize.Height - GUCInventory.DescriptionBoxHeight - y) / GUCInventory.SlotSize;
 
             inv = new GUCInventory(x, y, cols, rows);
-            player = ScriptClient.Client.Character;
         }
 
         public void UpdateContents()
@@ -59,6 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem += UpdateInventory;
             VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem += UpdateInventory;
 
+            player = ScriptClient.Client.Character;
             if (player == null)
                 return;
 
