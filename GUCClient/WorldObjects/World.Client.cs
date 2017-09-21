@@ -49,7 +49,7 @@ namespace GUC.WorldObjects
                 PacketWriter confirmation = GameClient.SetupStream(ClientMessages.WorldLoadedMessage);
                 GameClient.Send(confirmation, NetPriority.Immediate, NetReliability.Reliable);
 
-                Gothic.CGameManager.ApplySomeSettings();
+                CGameManager.ApplySomeSettings();
             }
 
             public static void ReadJoinWorld(PacketReader stream)
