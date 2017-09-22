@@ -86,5 +86,15 @@ namespace GUC
         {
             return new Vec3f(pos.X + (float)GetDouble(-xLen, xLen), pos.Y, pos.Z + (float)GetDouble(-yLen, yLen));
         }
+
+        public static T GetRandom<T>(this T[] array)
+        {
+            return array[GetInt(array.Length)];
+        }
+
+        public static T GetRandom<T>(this List<T> list)
+        {
+            return list[GetInt(list.Count)];
+        }
     }
 }

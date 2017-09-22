@@ -17,11 +17,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         LockTimer jumpLockTimer = new LockTimer(500);
         public void TryJump(JumpMoves move)
         {
-
             if (Host.IsDead || Host.Environment.InAir)
                 return;
 
-            if (Host.ModelInst.IsInAnimation())
+            if (Host.ModelInst.GetActiveAniFromLayer(1) != null)
                 return;
 
             if (!jumpLockTimer.IsReady) // don't spam
@@ -77,7 +76,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryFightMove(FightMoves move)
         {
-            if (Host.IsDead || Host.Environment.InAir)
+            if (Host.IsDead || (Host.Environment.InAir && move != FightMoves.Run) || Host.ModelInst.GetActiveAniFromLayer(2) != null)
                 return;
             
             var otherAni = Host.ModelInst.GetActiveAniFromLayer(1);
@@ -101,6 +100,27 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             {
                 Host.DoFightMove(move, 0);
             }
+        }
+
+        public void TryEquipItem(ItemInst item)
+        {
+            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation() 
+                || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
+                || this.Host.IsInFightMode)
+                return;
+
+            this.Host.EquipItem(item);
+        }
+
+
+        public void TryUnequipItem(ItemInst item)
+        {
+            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation()
+                || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
+                || this.Host.IsInFightMode)
+                return;
+
+            this.Host.UnequipItem(item);
         }
     }
 }

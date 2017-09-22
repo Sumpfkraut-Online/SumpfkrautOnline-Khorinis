@@ -79,5 +79,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             def = default(T);
             return false;
         }
+
+        public static void ForEachOfType(VobTypes type, Action<BaseVobDef> action)
+        {
+            BaseVobInstance.ForEachOfType(type, v => action((BaseVobDef)v.ScriptObject));
+        }
     }
 }

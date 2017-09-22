@@ -19,6 +19,7 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.Shift, down => speedMultiplier = !down ? defaultSpeed : fastSpeed },
             { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
+            { KeyBind.OpenScoreBoard, ToggleScoreBoard }, 
         };
 
         long lastUpdate = 0;

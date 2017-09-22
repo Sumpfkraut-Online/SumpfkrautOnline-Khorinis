@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Arena\Scoreboard\" />
     <Folder Include="Properties\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />

@@ -14,6 +14,9 @@ namespace GUC.WorldObjects
 {
     public partial class NPC
     {
+        const long HeroPosUpdateInterval = 40 * TimeSpan.TicksPerMillisecond;
+        const long NPCPosUpdateInterval = 80 * TimeSpan.TicksPerMillisecond;
+
         #region Network Messages
 
         new internal static class Messages
@@ -188,14 +191,14 @@ namespace GUC.WorldObjects
             if (hero == null)
                 return;
 
-            hero.UpdateGuidedNPCPosition(now, 800000, 10, 0.02f); // update our hero better
+            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 10, 0.02f); // update our hero better
         }
 
         #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
-            UpdateGuidedNPCPosition(now, 1200000, 14, 0.04f);
+            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 14, 0.04f);
         }
 
         NPCMovement guidedLastMovement;
@@ -410,7 +413,7 @@ namespace GUC.WorldObjects
             if (this.movement == state)
                 return;
 
-            if (!this.IsDead && this.gVob != null && !this.Model.IsInAnimation())
+            if (!this.IsDead && this.gVob != null && this.gVob.GetModel().GetActiveAni(1).Address == 0)
                 if (this.movement == NPCMovement.Right || this.movement == NPCMovement.Left)
                 {
                     if (state == NPCMovement.Forward)
@@ -434,13 +437,13 @@ namespace GUC.WorldObjects
 
             this.ScriptObject.OnTick(now);
 
-            if (!this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null && !this.environment.InAir)
+            if (!this.IsDead && this.gVob.GetModel().GetActiveAni(1).Address == 0)
             {
                 switch (Movement)
                 {
                     case NPCMovement.Forward:
                         var gModel = this.gVob.GetModel();
-                        if (gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                        if (!this.environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
                         {
                             var ai = this.gVob.HumanAI;
                             ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
@@ -451,6 +454,8 @@ namespace GUC.WorldObjects
                         gVob.AniCtrl._Backward();
                         break;
                     case NPCMovement.Right:
+                        if (this.Model.IsInAnimation() || this.environment.InAir)
+                            break;
                         gModel = this.gVob.GetModel();
                         var strafeAni = gVob.AniCtrl._t_strafer;
                         if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
@@ -459,6 +464,8 @@ namespace GUC.WorldObjects
                         }
                         break;
                     case NPCMovement.Left:
+                        if (this.Model.IsInAnimation() || this.environment.InAir)
+                            break;
                         gModel = this.gVob.GetModel();
                         strafeAni = gVob.AniCtrl._t_strafel;
                         if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))

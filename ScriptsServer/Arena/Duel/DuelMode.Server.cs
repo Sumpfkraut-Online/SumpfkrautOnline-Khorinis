@@ -11,6 +11,7 @@ namespace GUC.Scripts.Arena
 {
     static partial class DuelMode
     {
+
         const long DuelRequestDuration = 20 * 1000 * 10000; // 20 secs
         const float DuelMaxDistance = 1500.0f; // distance between players for the duel to automatically end
 
@@ -33,19 +34,22 @@ namespace GUC.Scripts.Arena
                 }
                 return false;
             };
-            NPCInst.sOnHit += (a, t, d) =>
+            NPCInst.sOnHit += (NPCInst a, NPCInst t, ref int d) =>
             {
-                if (t.GetHealth() <= 0)
+                var attacker = (ArenaClient)a.Client;
+                var target = (ArenaClient)t.Client;
+
+                if (attacker != null && target != null)
                 {
-                    var attacker = (ArenaClient)a.Client;
-                    var target = (ArenaClient)t.Client;
-                    if (attacker != null && target != null)
+                    if (attacker.Team != null && attacker.Team == target.Team)
+                        d /= 2;
+
+                    if (t.GetHealth() <= 0)
                     {
                         if (attacker.Team != null && target.Team != null)
-                            attacker.Team.Score++;
+                            TeamMode.Kill(attacker, target);
                         else if (attacker.DuelEnemy == target)
                             DuelWin(attacker);
-
                     }
                 }
             };
@@ -136,10 +140,14 @@ namespace GUC.Scripts.Arena
             winner.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
             winner.DuelEnemy.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
 
+            winner.DuelEnemy.DuelDeaths++;
+            winner.DuelEnemy.DuelScore--;
+
+            winner.DuelKills++;
+            winner.DuelScore += 2;
+
             winner.DuelEnemy.DuelEnemy = null;
             winner.DuelEnemy = null;
-
-            winner.DuelWins++;
         }
 
         static void DuelEnd(ArenaClient client)

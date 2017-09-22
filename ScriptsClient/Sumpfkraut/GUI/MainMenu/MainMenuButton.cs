@@ -12,6 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
         GUCVisual vis;
         GUCVisualText visText;
 
+        public ViewPoint VPos { get { return this.visText.VPos; } }
+
         public MainMenuButton(string text, string help, int y, Action action, Fonts font = Fonts.Menu)
             : this(text, help, 0, y, action, font)
         {

@@ -14,9 +14,9 @@ namespace GUC.Scripts.Arena.Menus
         MainMenuButton teamButton;
         protected override void OnCreate()
         {
-            AddButton("Beitreten", "Dem Spiel beitreten.", 140, () => { ArenaClient.SendJoinGameMessage(); Close(); });
-            AddButton("Zuschauen", "Dem Spiel zuschauen.", 180, () => { ArenaClient.SendSpectateMessage(); Close(); });
-            teamButton = AddButton("Team beitreten", "Team beitreten.", 220, TOTeamsMenu.Menu.Open);
+            teamButton = AddButton("Team beitreten", "Team beitreten.", 140, TOTeamsMenu.Menu.Open);
+            AddButton("Beitreten", "Dem Spiel beitreten.", 180, () => { ArenaClient.SendJoinGameMessage(); Close(); });
+            AddButton("Zuschauen", "Dem Spiel zuschauen.", 220, () => { ArenaClient.SendSpectateMessage(); Close(); });
             AddButton("Charakter editieren", "Deinen Spielcharakter editieren.", 260, CharCreationMenu.Menu.Open);
             AddButton("Spiel verlassen", "Das Spiel schließen.", 340, ExitMenu.Menu.Open);
         }

@@ -8,6 +8,8 @@ namespace GUC.Scripts.Arena
 {
     enum ScriptMessages
     {
+        GameInfo,
+
         JoinGame,
         Spectate,
         CharEdit,
@@ -28,5 +30,11 @@ namespace GUC.Scripts.Arena
         ChatMessage,
         ChatTeamMessage,
         ChatPrivateMessage,
+
+        ScoreDuelMessage,
+        ScoreTOMessage,
+
+        PlayerInfoMessage,
+        PlayerQuitMessage,
     }
 }

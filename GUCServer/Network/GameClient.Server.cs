@@ -122,6 +122,7 @@ namespace GUC.Network
             {
                 if (client.character != null)
                 {
+                    client.character.client = client;
                     client.JoinWorld(client.character.World, client.character.GetPosition());
                     client.character.SpawnPlayer();
                 }
@@ -679,12 +680,17 @@ namespace GUC.Network
 
         #region Networking
 
-        internal void Send(PacketWriter stream, NetPriority pp, NetReliability pr, char orderingChannel)
+        internal void Send(byte[] data, int length, NetPriority pp, NetReliability pr, char orderingChannel)
         {
             if (!this.isCreated)
                 throw new Exception("Client has disconnected.");
 
-            GameServer.ServerInterface.Send(stream.GetData(), stream.GetLength(), (PacketPriority)pp, (PacketReliability)pr, '\0'/*orderingChannel*/, this.guid, false);
+            GameServer.ServerInterface.Send(data, length, (PacketPriority)pp, (PacketReliability)pr, (char)this.ID/*'\0'/*orderingChannel*/, this.guid, false);
+        }
+
+        internal void Send(PacketWriter stream, NetPriority pp, NetReliability pr, char orderingChannel)
+        {
+            this.Send(stream.GetData(), stream.GetLength(), pp, pr, orderingChannel);
         }
 
         public int GetLastPing()
@@ -717,6 +723,12 @@ namespace GUC.Network
         public void SendScriptMessage(PacketWriter stream, NetPriority pr, NetReliability rl)
         {
             this.Send(stream, pr, rl, 'M');
+        }
+
+        /// <summary> Only use if you know what you're doing. </summary>
+        public void SendScriptMessage(byte[] data, int length, NetPriority pr, NetReliability rl)
+        {
+            this.Send(data, length, pr, rl, 'M');
         }
 
         #endregion

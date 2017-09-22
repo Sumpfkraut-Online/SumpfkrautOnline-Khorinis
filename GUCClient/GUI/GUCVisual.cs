@@ -20,6 +20,8 @@ namespace GUC.GUI
         protected bool shown = false;
         public bool Shown { get { return shown; } }
 
+        public ViewPoint VPos { get { return new ViewPoint(vpos[0], vpos[1]); } }
+
         /// <summary>
         /// Fullscreen.
         /// </summary>
@@ -151,9 +153,9 @@ namespace GUC.GUI
         #endregion
 
         #region Size & Position
-        public void SetPosX(int val)
+        public void SetPosX(int val, bool virtuals = false)
         {
-            int newX = PixelToVirtualX(val);
+            int newX = virtuals ? val : PixelToVirtualX(val);
             int diff = newX - vpos[0];
             vpos[0] = newX;
             thisView.SetPos(vpos[0], vpos[1]);
@@ -165,9 +167,9 @@ namespace GUC.GUI
             }
         }
 
-        public void SetPosY(int val)
+        public void SetPosY(int val, bool virtuals = false)
         {
-            int newY = PixelToVirtualY(val);
+            int newY = virtuals ? val : PixelToVirtualY(val);
             int diff = newY - vpos[1];
             vpos[1] = newY;
             thisView.SetPos(vpos[0], vpos[1]);

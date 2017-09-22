@@ -231,7 +231,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             UpdateFightStance();
 
-            if (this.IsInFightMode && this.ModelInst.GetActiveAniFromLayer(1) != null)
+            if (this.IsInFightMode && this.ModelInst.IsInAnimation())
             {  // show weapon trails, fixme ? might not be a fight ani
                 this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
             }

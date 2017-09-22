@@ -18,5 +18,11 @@ namespace GUC.Scripts.Arena
             pOnConnect();
         }
 
+        partial void pOnDisconnect();
+        public override void OnDisconnection()
+        {
+            pOnDisconnect();
+        }
+
     }
 }

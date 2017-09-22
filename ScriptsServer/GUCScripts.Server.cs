@@ -136,6 +136,8 @@ namespace GUC.Scripts
             NPCInst.Requests.OnDrawFists += npc => npc.EffectHandler.TryDrawFists();
             NPCInst.Requests.OnDrawWeapon += (npc, item) => npc.EffectHandler.TryDrawWeapon(item);
             NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
+            NPCInst.Requests.OnEquipItem += (npc, item) => npc.EffectHandler.TryEquipItem(item);
+            NPCInst.Requests.OnUnequipItem += (npc, item) => npc.EffectHandler.TryUnequipItem(item);
 
             AddSomeDefs();
 
@@ -195,6 +197,7 @@ namespace GUC.Scripts
             m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
             AddFistAnis(m);
             Add1HAnis(m);
+            Add2hAnis(m);
             AddJumpAnis(m);
 
             m.Radius = 80;
@@ -210,6 +213,15 @@ namespace GUC.Scripts
             npcDef.BodyTex = (int)HumBodyTexs.G1Hero;
             npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_PONY.ToString();
             npcDef.HeadTex = (int)HumHeadTexs.Face_N_Player;
+            npcDef.Create();
+
+            npcDef = new NPCDef("femaleplayer");
+            npcDef.Name = "Spielerin";
+            npcDef.Model = m;
+            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_BABE0.ToString();
+            npcDef.BodyTex = (int)HumBodyTexs.F_Babe1;
+            npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
+            npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_N_Anne;
             npcDef.Create();
 
             AddItems();
@@ -429,6 +441,7 @@ namespace GUC.Scripts
 
             // Draw Fists running
             ScriptAniJob aniJob = new ScriptAniJob("drawfists_running", "t_Move_2_FistMove", new ScriptAni(0, 14));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 5);
             aniJob.Layer = 2;
 
@@ -449,6 +462,7 @@ namespace GUC.Scripts
 
             // Undraw Fists running
             aniJob = new ScriptAniJob("undrawfists_running", "t_FistMove_2_Move", new ScriptAni(0, 14));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 5);
             aniJob.Layer = 2;
 
@@ -468,6 +482,7 @@ namespace GUC.Scripts
             model.AddAniJob(aniJob);
 
             aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 19);
             model.AddAniJob(aniJob);
 
@@ -514,6 +529,7 @@ namespace GUC.Scripts
 
             // Draw 1h running
             ScriptAniJob aniJob = new ScriptAniJob("draw1h_running", "t_Move_2_1hMove", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 6);
             model.AddAniJob(aniJob);
 
@@ -524,14 +540,14 @@ namespace GUC.Scripts
             aniJob1.AddOverlayAni(new ScriptAni(0, 6) { { SpecialFrame.Draw, 6 } }, ov1);
             aniJob1.AddOverlayAni(new ScriptAni(0, 8) { { SpecialFrame.Draw, 8 } }, ov2);
 
-            aniJob2 = new ScriptAniJob("undraw1h_part1", "s_1h", new ScriptAni(0, 1));
+            aniJob2 = new ScriptAniJob("undraw1h_part1", "s_1h");
             model.AddAniJob(aniJob2);
             aniJob2.SetDefaultAni(new ScriptAni(0, 1));
             aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
             aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
             aniJob1.NextAni = aniJob2;
 
-            aniJob3 = new ScriptAniJob("undraw1h_part2", "t_1h_2_Run", new ScriptAni(0, 2));
+            aniJob3 = new ScriptAniJob("undraw1h_part2", "t_1h_2_Run");
             model.AddAniJob(aniJob3);
             aniJob3.SetDefaultAni(new ScriptAni(0, 2));
             aniJob3.AddOverlayAni(new ScriptAni(0, 3), ov1);
@@ -540,6 +556,7 @@ namespace GUC.Scripts
 
             // Undraw 1h running
             aniJob = new ScriptAniJob("undraw1h_running", "t_1hMove_2_Move", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 18);
             model.AddAniJob(aniJob);
 
@@ -552,37 +569,44 @@ namespace GUC.Scripts
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 23) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 15 } });
             job.AddOverlayAni(new ScriptAni(0, 33) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 14 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(0, 29) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 10 } }, ov2);
 
             // fwd combo 2
             job = new ScriptAniJob("1hattack_fwd1", "s_1hattack");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(26, 40) { { SpecialFrame.Hit, 7 } });
             job.AddOverlayAni(new ScriptAni(33, 68) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 15 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(33, 60) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 9 } }, ov2);
 
             // fwd combo 3
             job = new ScriptAniJob("1hattack_fwd2", "s_1hattack");
             model.AddAniJob(job);
             job.AddOverlayAni(new ScriptAni(68, 103) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 17 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(65, 92) { { SpecialFrame.Hit, 8 }, { SpecialFrame.Combo, 13 } }, ov2);
 
             // fwd combo 4
             job = new ScriptAniJob("1hattack_fwd3", "s_1hattack");
             model.AddAniJob(job);
             job.AddOverlayAni(new ScriptAni(103, 120) { { SpecialFrame.Hit, 7 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(97, 113) { { SpecialFrame.Hit, 10 } }, ov2);
 
             // left attack
             job = new ScriptAniJob("1hattack_left", "t_1HAttackL");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 30) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 15 } });
             job.AddOverlayAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 10 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(0, 20) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 8 } }, ov2);
 
             // right attack
             job = new ScriptAniJob("1hattack_right", "t_1HAttackR");
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 30) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 15 } });
             job.AddOverlayAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 10 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(0, 20) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 8 } }, ov2);
 
             // run attack
             job = new ScriptAniJob("1hattack_run", "t_1HAttackMove");
+            job.Layer = 2;
             model.AddAniJob(job);
             job.SetDefaultAni(new ScriptAni(0, 29) { { SpecialFrame.Hit, 16 } });
 
@@ -611,134 +635,135 @@ namespace GUC.Scripts
 
         #region 2H Anis
 
-        void Add2hAttacks(ModelDef model)
+        void Add2hAnis(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("2HST1", "Humans_2hST1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("2HST1", "Humans_2hST1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("2HST2", "Humans_2hST2"); model.AddOverlay(ov2);
 
-            // Weapon drawing
+            #region Draw
 
-            ScriptAniJob aniJob = new ScriptAniJob("draw2h");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Draw2H;
-            aniJob.AniName = "draw2h";
+            // Draw 2h
+            ScriptAniJob aniJob1 = new ScriptAniJob("draw2h_part0", "t_Run_2_2h");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 4) { { SpecialFrame.Draw, 4 } });
+            aniJob1.AddOverlayAni(new ScriptAni(0, 4) { { SpecialFrame.Draw, 4 } }, ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 3) { { SpecialFrame.Draw, 3 } }, ov2);
+
+            ScriptAniJob aniJob2 = new ScriptAniJob("draw2h_part1", "s_2h");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
+            aniJob1.NextAni = aniJob2;
+
+            ScriptAniJob aniJob3 = new ScriptAniJob("draw2h_part2", "t_2h_2_2hRun");
+            model.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 15));
+            aniJob3.AddOverlayAni(new ScriptAni(0, 15), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 10), ov2);
+            aniJob2.NextAni = aniJob3;
+
+            // Draw 2h running
+            ScriptAniJob aniJob = new ScriptAniJob("draw2h_running", "t_Move_2_2hMove", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 6);
             model.AddAniJob(aniJob);
 
-            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(8000000, 2400000));
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(8000000, 2400000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(6100000, 1330000), ov2);
+            // Undraw 2h
+            aniJob1 = new ScriptAniJob("undraw2h_part0", "t_2hRun_2_2h");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 15) { { SpecialFrame.Draw, 15 } });
+            aniJob1.AddOverlayAni(new ScriptAni(0, 15) { { SpecialFrame.Draw, 15 } }, ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 10) { { SpecialFrame.Draw, 10 } }, ov2);
 
-            aniJob = new ScriptAniJob("draw2hrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Draw2HRun;
-            aniJob.AniName = "T_MOVE_2_2HMOVE";
-            model.AddAniJob(aniJob);
-            var ani = ScriptAni.NewDrawAni(11000000, 2680000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
+            aniJob2 = new ScriptAniJob("undraw2h_part1", "s_2h");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
+            aniJob1.NextAni = aniJob2;
 
-            aniJob = new ScriptAniJob("undraw2h");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Undraw2H;
-            aniJob.AniName = "undraw2h";
-            model.AddAniJob(aniJob);
+            aniJob3 = new ScriptAniJob("undraw2h_part2", "t_2h_2_Run");
+            model.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 4));
+            aniJob3.AddOverlayAni(new ScriptAni(0, 4), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 3), ov2);
+            aniJob2.NextAni = aniJob3;
 
-            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(7500000, 5600000));
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(7500000, 5600000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(5600000, 2670000), ov2);
-
-            aniJob = new ScriptAniJob("undraw2hrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Undraw2HRun;
-            aniJob.AniName = "T_2HMOVE_2_MOVE";
-            model.AddAniJob(aniJob);
-            ani = ScriptAni.NewDrawAni(11000000, 6520000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
-
-            // 2h COMBO 1
-            aniJob = new ScriptAniJob("attack2hfwd1");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd1;
-            aniJob.AniName = "s_2hAttack";
+            // Undraw 2h running
+            aniJob = new ScriptAniJob("undraw2h_running", "t_2hMove_2_Move", new ScriptAni(0, 24));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 18);
             model.AddAniJob(aniJob);
 
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(10000000, 2800000, 5800000));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13000000, 2000000, 6000000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13000000, 1600000, 4800000), ov2);
+            #endregion
 
-            // 2h COMBO 2
-            aniJob = new ScriptAniJob("attack2hfwd2");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd2;
-            aniJob.AniName = "s_2hAttack";
-            model.AddAniJob(aniJob);
+            #region Fighting
 
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(6000000, 2300000, 4400000, 31));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(14000000, 2500000, 8000000, 40), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(11500000, 1800000, 6800000, 41), ov2);
+            // Fwd attack 1
+            ScriptAniJob job = new ScriptAniJob("2hattack_fwd0", "s_2hattack");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 31) { { SpecialFrame.Hit, 8 }, { SpecialFrame.Combo, 14 } });
+            job.AddOverlayAni(new ScriptAni(0, 35) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 16 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(0, 34) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 13 } }, ov2);
 
-            // 2h COMBO 3
-            aniJob = new ScriptAniJob("attack2hfwd3");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd3;
-            aniJob.AniName = "s_2hAttack";
-            model.AddAniJob(aniJob);
-            
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7000000, 3000000, 7000000, 80), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(13500000, 4000000, 8800000, 81), ov2);
+            // fwd combo 2
+            job = new ScriptAniJob("2hattack_fwd1", "s_2hattack");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(31, 50) { { SpecialFrame.Hit, 6 } });
+            job.AddOverlayAni(new ScriptAni(40, 75) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 16 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(39, 75) { { SpecialFrame.Hit, 4 }, { SpecialFrame.Combo, 12 } }, ov2);
 
-            // 2h COMBO 4
-            aniJob = new ScriptAniJob("attack2hfwd4");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HFwd4;
-            aniJob.AniName = "s_2hAttack";
-            model.AddAniJob(aniJob);
+            // fwd combo 3
+            job = new ScriptAniJob("2hattack_fwd2", "s_2hattack");
+            model.AddAniJob(job);
+            job.AddOverlayAni(new ScriptAni(80, 114) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 16 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(79, 118) { { SpecialFrame.Hit, 9 }, { SpecialFrame.Combo, 17 } }, ov2);
 
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(7500000, 4000000, 7500000, 126), ov2);
+            // fwd combo 4
+            job = new ScriptAniJob("2hattack_fwd3", "s_2hattack");
+            model.AddAniJob(job);
+            job.AddOverlayAni(new ScriptAni(124, 146) { { SpecialFrame.Hit, 12 } }, ov2);
 
-            // 2h LEFT ATTACK
-            aniJob = new ScriptAniJob("attack2hleft");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HLeft;
-            aniJob.AniName = "t_2hAttackL";
-            aniJob.AttackBonus = -2;
-            model.AddAniJob(aniJob);
+            // left attack
+            job = new ScriptAniJob("2hattack_left", "t_2hAttackL");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 36) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 18 } });
+            job.AddOverlayAni(new ScriptAni(0, 28) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 14 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(0, 26) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 14 } }, ov2);
 
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(14000000, 2300000, 7200000));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10700000, 2000000, 5600000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10200000, 2000000, 5600000), ov2);
+            // right attack
+            job = new ScriptAniJob("2hattack_right", "t_2hAttackR");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 36) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 18 } });
+            job.AddOverlayAni(new ScriptAni(0, 29) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 14 } }, ov1);
+            job.AddOverlayAni(new ScriptAni(0, 26) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 14 } }, ov2);
 
-            // 2h RIGHT ATTACK
-            aniJob = new ScriptAniJob("attack2hright");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRight;
-            aniJob.AniName = "t_2hAttackR";
-            aniJob.AttackBonus = -2;
-            model.AddAniJob(aniJob);
+            // run attack
+            job = new ScriptAniJob("2hattack_run", "t_2hAttackMove");
+            job.Layer = 2;
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 23) { { SpecialFrame.Hit, 12 } });
 
-            aniJob.SetDefaultAni(ScriptAni.NewAttackAni(14000000, 2300000, 7200000));
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10700000, 2000000, 5600000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewAttackAni(10200000, 2000000, 5600000), ov2);
+            // parades
+            job = new ScriptAniJob("2h_parade0", "t_2hParade_0");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 15));
 
-            // 2h RUN ATTACK
-            aniJob = new ScriptAniJob("attack2hrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HRun;
-            aniJob.AniName = "t_2hAttackMove";
-            aniJob.AttackBonus = 5;
-            model.AddAniJob(aniJob);
+            job = new ScriptAniJob("2h_parade1", "t_2hParade_0_A2");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 15));
 
-            ani = ScriptAni.NewAttackAni(8800000, 6000000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
+            job = new ScriptAniJob("2h_parade2", "t_2hParade_0_A3");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 15));
 
-            // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry1", ScriptAni.NewFightAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry1;
-            aniJob.AniName = "T_2HPARADE_0";
-            model.AddAniJob(aniJob);
+            // dodge
+            job = new ScriptAniJob("2h_dodge", "t_2hParadeJumpB");
+            model.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24));
 
-            // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry2", ScriptAni.NewFightAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry2;
-            aniJob.AniName = "T_2HPARADE_0_A2";
-            model.AddAniJob(aniJob);
-
-            // 2h Parry
-            aniJob = new ScriptAniJob("attack2hparry3", ScriptAni.NewFightAni(5600000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HParry3;
-            aniJob.AniName = "T_2HPARADE_0_A3";
-            model.AddAniJob(aniJob);
-
-            // 2h Dodge
-            aniJob = new ScriptAniJob("attack2hdodge", ScriptAni.NewFightAni(9200000));
-            aniJob.BaseAniJob.ID = (int)SetAnis.Attack2HDodge;
-            aniJob.AniName = "T_2HPARADEJUMPB";
-            model.AddAniJob(aniJob);*/
+            #endregion
         }
 
         #endregion

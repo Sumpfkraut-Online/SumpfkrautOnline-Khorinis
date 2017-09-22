@@ -11,6 +11,8 @@ namespace GUC.WorldObjects.VobGuiding
 {
     public partial class GuidedVob : BaseVob
     {
+        const long PosUpdateInterval = 120 * TimeSpan.TicksPerMillisecond;
+
         #region Network Messages
 
         new internal static class Messages
@@ -137,8 +139,6 @@ namespace GUC.WorldObjects.VobGuiding
             UpdateGuidePos(now);
         }
 
-        const long updateInterval = 1400000; // 140ms
-
         const float MinPositionDistance = 18.0f;
         const float MinDirectionDifference = 0.06f;
 
@@ -173,7 +173,7 @@ namespace GUC.WorldObjects.VobGuiding
 
             Messages.WritePosDirMessage(this, pos, dir, env);
 
-            guidedNextUpdate = now + updateInterval;
+            guidedNextUpdate = now + PosUpdateInterval;
 
             //this.ScriptObject.OnPosChanged();
         }

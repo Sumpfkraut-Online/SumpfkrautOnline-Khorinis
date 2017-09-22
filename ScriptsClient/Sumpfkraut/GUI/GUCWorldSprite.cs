@@ -66,6 +66,9 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             }
             else
             {
+                if (targetVob.BaseInst.gVob == null)
+                    return;
+
                 pos = targetVob.GetPosition();
                 pos.Y += targetVob.BaseInst.gVob.BBox3D.Height / 2.0f;
             }
@@ -74,9 +77,9 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             using (var gPos = zVec3.Create(pos.X, pos.Y, pos.Z))
             using (var vec = activeCam.CamMatrix * gPos)
             {
-                //if (vec.Z > 0)
+                int x, y;
+                if (vec.Z > 0)
                 {
-                    int x, y;
                     activeCam.Project(vec, out x, out y);
                     if (this.ShowOutOfScreen)
                     {
@@ -90,16 +93,15 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     // center it
                     x -= this.vsize[0] / 2;
                     y -= this.vsize[1] / 2;
-
-                    SetPosX(x);
-                    SetPosY(y);
                 }
-                /*else
+                else
                 {
-                    viewText.PosX = 0x2000;
-                    viewText.PosY = 0x2000;
+                    x = 0x2000;
+                    y = 0x2000;
                 }
-                */
+
+                SetPosX(x);
+                SetPosY(y);
             }
         }
     }

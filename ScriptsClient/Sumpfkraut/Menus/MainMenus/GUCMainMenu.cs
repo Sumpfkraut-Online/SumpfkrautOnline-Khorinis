@@ -33,8 +33,8 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
         #region Init
         public GUCMainMenu()
         {
-            int[] screenSize = GUCView.GetScreenSize();
-            pos = new int[] { (screenSize[0] - 640) / 2, (screenSize[1] - 480) / 2 };
+            var screenSize = GUCView.GetScreenSize();
+            pos = new int[] { (screenSize.Width - 640) / 2, (screenSize.Height - 480) / 2 };
             Back = new GUCVisual(pos[0], pos[1], 640, 480);
             Back.SetBackTexture("Menu_Ingame.tga");
             Back.Font = GUCVisual.Fonts.Menu;

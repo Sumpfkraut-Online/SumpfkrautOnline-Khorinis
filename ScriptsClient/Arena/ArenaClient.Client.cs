@@ -4,10 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Network;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Utilities;
-using GUC.Scripts.Sumpfkraut.GUI;
 
 namespace GUC.Scripts.Arena
 {
@@ -37,11 +33,24 @@ namespace GUC.Scripts.Arena
             SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 
+        void ReadGameInfo(PacketReader stream)
+        {
+            PlayerInfo.ReadHeroInfo(stream);
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+                PlayerInfo.ReadPlayerInfoMessage(stream);
+
+            TeamMode.ReadGameInfo(stream);
+        }
+
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
             switch (id)
             {
+                case ScriptMessages.GameInfo:
+                    ReadGameInfo(stream);
+                    break;
                 case ScriptMessages.DuelRequest:
                     DuelMode.ReadRequest(stream);
                     break;
@@ -75,6 +84,18 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.TOJoinTeam:
                     TeamMode.ReadJoinTeam(stream);
                     break;
+                case ScriptMessages.ScoreDuelMessage:
+                    DuelBoardScreen.Instance.ReadMessage(stream);
+                    break;
+                case ScriptMessages.ScoreTOMessage:
+                    TOBoardScreen.Instance.ReadMessage(stream);
+                    break;
+                case ScriptMessages.PlayerInfoMessage:
+                    PlayerInfo.ReadPlayerInfoMessage(stream);
+                    break;
+                case ScriptMessages.PlayerQuitMessage:
+                    PlayerInfo.ReadPlayerQuitMessage(stream);
+                    break;                
             }
         }
     }

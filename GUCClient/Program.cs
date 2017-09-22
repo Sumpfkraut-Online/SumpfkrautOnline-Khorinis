@@ -184,6 +184,15 @@ namespace GUC
 
                 Process.Write(0x76D9E0, 0xC3); // remove oCNPCStates.CloseCutscenes(); // made problems with npcs as menu3dvisuals
 
+                // double zFar limit
+                Process.Write(0x005E07C2, 0x830830); // indoor
+                Process.Write(0x005E07D3, 0x42c60000);
+                Process.Write(0x005E9EA2, 0x830830); // outdoor
+                Process.Write(0x005E9EB3, 0x42c60000);
+                Process.Write(0x004283AC, 10000); // applysomesettings
+                Process.Write(0x004283B6, 10000);
+
+
                 Logger.Log("Hooking & editing of gothic process completed. (for now...)");
                 #endregion
 

@@ -399,7 +399,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
             else
             {
-                ScriptAniJob job = this.Movement == NPCMovement.Stand ? catalog.Draw : catalog.DrawWhileRunning;
+                ScriptAniJob job = (this.Movement == NPCMovement.Stand && !this.Environment.InAir) ? catalog.Draw : catalog.DrawWhileRunning;
                 ScriptAni ani;
                 if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
                 {
@@ -456,7 +456,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
             else
             {
-                ScriptAniJob job = this.Movement == NPCMovement.Stand ? catalog.Undraw : catalog.UndrawWhileRunning;
+                ScriptAniJob job = (this.Movement == NPCMovement.Stand && !this.Environment.InAir) ? catalog.Undraw : catalog.UndrawWhileRunning;
                 ScriptAni ani;
                 if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
                 {
@@ -567,6 +567,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void Hit(NPCInst attacker, int damage)
         {
+            sOnHit?.Invoke(attacker, this, ref damage);
+
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.HitMessage);
             strm.Write((ushort)this.ID);
@@ -578,13 +580,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 damage = 1;
 
             this.SetHealth(this.GetHealth() - damage);
-
-            if (sOnHit != null)
-                sOnHit(attacker, this, damage);
         }
 
 
-        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
+        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, ref int damage);
         public static event OnHitHandler sOnHit;
 
         public delegate bool OnHitCheckHandler(NPCInst attacker, NPCInst target);

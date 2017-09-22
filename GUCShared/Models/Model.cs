@@ -101,7 +101,8 @@ namespace GUC.Models
             }
             else
             {
-                overlays = new List<Overlay>() { overlay };
+                overlays = new List<Overlay>(1);
+                overlays.Add(overlay);
             }
             pAddOverlay(overlay);
         }

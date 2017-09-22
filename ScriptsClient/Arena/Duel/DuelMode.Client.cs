@@ -44,8 +44,8 @@ namespace GUC.Scripts.Arena
                     DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " gewonnen.");
                 else
                     DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " verloren.");
-                SetEnemy(null);
             }
+            SetEnemy(null);
         }
         public static void ReadEnd(PacketReader stream)
         {
@@ -67,13 +67,14 @@ namespace GUC.Scripts.Arena
 
         static void DuelMessage(string text)
         {
+            ChatMenu.Menu.AddMessage(ChatMode.Private, text);
             Log.Logger.Log(text);
         }
 
         static GUCWorldSprite enemySprite = new GUCWorldSprite(100, 100, false);
         static void SetEnemy(NPCInst newEnemy)
         {
-            enemySprite.SetBackTexture("Letters.tga");
+            enemySprite.SetBackTexture("U.tga");
 
             enemy = newEnemy;
             enemySprite.SetTarget(newEnemy);

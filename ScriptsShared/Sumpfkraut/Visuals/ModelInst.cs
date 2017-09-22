@@ -59,6 +59,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         #region Animations
 
+        public void ForEachActiveAni(Action<ActiveAni> action)
+        {
+            this.BaseInst.ForEachActiveAni(action);
+        }
+
         public ActiveAni GetActiveAniFromLayer(int layer)
         {
             return this.BaseInst.GetActiveAniFromLayerID(layer);

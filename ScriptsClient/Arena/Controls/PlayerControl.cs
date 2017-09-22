@@ -22,127 +22,200 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.MoveBack, d => CheckFightMove(d, FightMoves.Parry) },
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
-            { KeyBind.Inventory, d => { if (d) Menus.DuelScoreBoard.Show(); else Menus.DuelScoreBoard.Hide(); } },
+            { KeyBind.OpenScoreBoard, ToggleScoreBoard },
             { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
+            { KeyBind.Inventory, d => { if (d) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
+            { VirtualKeys.P, PrintPosition }
         };
 
-static void DrawWeapon(bool down)
-{
-    if (!down) return;
-
-    var hero = ScriptClient.Client.Character;
-    if (hero.ModelInst.IsInAnimation())
-        return;
-
-    if (hero.MeleeWeapon != null)
-        NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
-    else if (hero.DrawnWeapon != null)
-        NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
-    else
-        NPCInst.Requests.DrawFists(hero);
-}
-
-static void CheckFightMove(bool down, FightMoves move)
-{
-    if (!down || !KeyBind.Action.IsPressed())
-        return;
-
-    var hero = ScriptClient.Client.Character;
-    if (hero.IsInFightMode)
-    {
-        NPCInst.Requests.Attack(hero, move);
-    }
-}
-
-static void PlayerActionButton(bool down)
-{
-    if (!down)
-        return;
-
-    var hero = ScriptClient.Client.Character;
-    if (KeyBind.MoveForward.IsPressed())
-        CheckFightMove(down, FightMoves.Run);
-    else if (!hero.IsDead && hero.IsInFightMode)
-    {
-        var focusVob = hero.GetFocusVob();
-        if (focusVob != null && focusVob is NPCInst)
-            DuelMode.SendRequest((NPCInst)focusVob);
-    }
-
-
-}
-
-long nextDodgeTime = 0;
-void PlayerUpdate()
-{
-    fwdTelHelper.Update(GameTime.Ticks);
-    upTelHelper.Update(GameTime.Ticks);
-
-    NPCInst hero = ScriptClient.Client.Character;
-    if (hero.IsDead)
-        return;
-
-    if (KeyBind.Action.IsPressed())
-    {
-        hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
-    }
-    else
-    {
-        hero.BaseInst.gVob.HumanAI.CheckFocusVob(1);
-        if (KeyBind.MoveLeft.IsPressed()) // strafe left
+        static void PrintPosition(bool down)
         {
-            hero.SetMovement(NPCMovement.Left);
+            var hero = NPCInst.Hero;
+            if (hero == null)
+                return;
+
+            var pos = hero.GetPosition();
+            var dir = hero.GetDirection();
+
+            Log.Logger.Log(pos + " " + dir);
+            //System.Globalization.CultureInfo
+            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Vec3f({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
         }
-        else if (KeyBind.MoveRight.IsPressed()) // strafe right
+
+        static void ToggleScoreBoard(bool down)
         {
-            hero.SetMovement(NPCMovement.Right);
-        }
-        else if (KeyBind.MoveForward.IsPressed()) // move forward
-        {
-            hero.SetMovement(NPCMovement.Forward);
-        }
-        else if (KeyBind.MoveBack.IsPressed()) // move backward
-        {
-            if (hero.IsInFightMode)
+            if (down)
             {
-                if (nextDodgeTime < GameTime.Ticks) // don't spam
+                if (TeamMode.IsRunning && TeamMode.TeamDef != null)
                 {
-                    NPCInst.Requests.Attack(hero, FightMoves.Dodge);
-                    nextDodgeTime = GameTime.Ticks + 50 * TimeSpan.TicksPerMillisecond;
+                    TOBoardScreen.Instance.Open();
+                }
+                else
+                {
+                    DuelBoardScreen.Instance.Open();
                 }
             }
             else
-                hero.SetMovement(NPCMovement.Backward);
-        }
-        else // not moving
-        {
-            hero.SetMovement(NPCMovement.Stand);
+            {
+                DuelBoardScreen.Instance.Close();
+                TOBoardScreen.Instance.Close();
+            }
         }
 
-        DoTurning(hero);
-    }
-}
-
-void DoTurning(NPCInst hero)
-{
-    if (hero.ModelInst.GetActiveAniFromLayer(1) == null)
-    {
-        if (KeyBind.TurnLeft.IsPressed())
+        static void DrawWeapon(bool down)
         {
-            hero.BaseInst.gVob.AniCtrl.Turn(-2.5f, true);
-            return;
-        }
-        else if (KeyBind.TurnRight.IsPressed())
-        {
-            hero.BaseInst.gVob.AniCtrl.Turn(2.5f, true);
-            return;
-        }
-    }
-    hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
-}
+            if (!down) return;
 
-static KeyHoldHelper fwdTelHelper = new KeyHoldHelper(500, 100)
+            var hero = ScriptClient.Client.Character;
+            if (hero.ModelInst.IsInAnimation())
+                return;
+
+            if (hero.MeleeWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
+            else if (hero.DrawnWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+            else
+                NPCInst.Requests.DrawFists(hero);
+        }
+
+        static void CheckFightMove(bool down, FightMoves move)
+        {
+            if (!down || !KeyBind.Action.IsPressed())
+                return;
+
+            var hero = ScriptClient.Client.Character;
+            if (hero.IsInFightMode)
+            {
+                NPCInst.Requests.Attack(hero, move);
+            }
+        }
+
+        static void PlayerActionButton(bool down)
+        {
+            var hero = ScriptClient.Client.Character;
+            if (KeyBind.MoveForward.IsPressed())
+            {
+                if (down)
+                    CheckFightMove(down, FightMoves.Run);
+            }
+            else if (!hero.IsDead)
+            {
+                if (hero.IsInFightMode)
+                {
+                    if (down)
+                    {
+                        var focus = hero.GetFocusVob();
+                        enemy = focus is NPCInst ? (NPCInst)focus : null;
+                    }
+                    else
+                    {
+                        enemy = null;
+                    }
+                    if (enemy == null)
+                        Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+                    else
+                        Gothic.Objects.oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
+                }
+                else if (down)
+                {
+                    var focusVob = hero.GetFocusVob();
+                    if (focusVob is NPCInst)
+                        DuelMode.SendRequest((NPCInst)focusVob);
+                }
+            }
+        }
+
+        long nextDodgeTime = 0;
+        void PlayerUpdate()
+        {
+            fwdTelHelper.Update(GameTime.Ticks);
+            upTelHelper.Update(GameTime.Ticks);
+
+            NPCInst hero = ScriptClient.Client.Character;
+            if (hero.IsDead)
+                return;
+
+            DoTurning(hero);
+
+            NPCMovement state = hero.Movement;
+            if (KeyBind.MoveLeft.IsPressed()) // strafe left
+            {
+                state = NPCMovement.Left;
+            }
+            else if (KeyBind.MoveRight.IsPressed()) // strafe right
+            {
+                state = NPCMovement.Right;
+            }
+            else if (!KeyBind.Action.IsPressed())
+            {
+                hero.BaseInst.gVob.HumanAI.CheckFocusVob(1);
+                if (KeyBind.MoveForward.IsPressed()) // move forward
+                {
+                    state = NPCMovement.Forward;
+                }
+                else if (KeyBind.MoveBack.IsPressed()) // move backward
+                {
+                    if (hero.IsInFightMode)
+                    {
+                        if (nextDodgeTime < GameTime.Ticks) // don't spam
+                        {
+                            NPCInst.Requests.Attack(hero, FightMoves.Dodge);
+                            nextDodgeTime = GameTime.Ticks + 50 * TimeSpan.TicksPerMillisecond;
+                        }
+                        return;
+                    }
+                    else
+                    {
+                        state = NPCMovement.Backward;
+                    }
+                }
+                else
+                {
+                    state = NPCMovement.Stand;
+                }
+            }
+            hero.SetMovement(state);
+        }
+
+        static NPCInst enemy;
+        static void DoTurning(NPCInst hero)
+        {
+            if (enemy != null)
+            {
+                Vec3f heroPos = hero.GetPosition();
+                Vec3f heroDir = hero.GetDirection();
+                Vec3f enemyPos = enemy.GetPosition();
+
+                Vec3f dir = (new Vec3f(enemyPos.X, 0, enemyPos.Z) - new Vec3f(heroPos.X, 0, heroPos.Z)).Normalise();
+                Vec3f diff = new Vec3f(heroDir.X, 0, heroDir.Z) - dir;
+                float len = diff.GetLength();
+                const float maxSpeed = 0.075f;
+                if (len > maxSpeed)
+                    diff = new Vec3f(diff.X / len * maxSpeed, 0, diff.Z / len * maxSpeed);
+
+                hero.SetDirection(heroDir - diff);
+                return;
+            }
+
+            // Fixme: do own turning
+            if (!KeyBind.Action.IsPressed() && hero.ModelInst.GetActiveAniFromLayer(2) == null)
+            {
+                if (KeyBind.TurnLeft.IsPressed())
+                {
+                    hero.BaseInst.gVob.AniCtrl.Turn(-2.2f, true);
+                    return;
+                }
+                else if (KeyBind.TurnRight.IsPressed())
+                {
+                    hero.BaseInst.gVob.AniCtrl.Turn(2.2f, true);
+                    return;
+                }
+            }
+            hero.BaseInst.gVob.AniCtrl.StopTurnAnis();
+        }
+
+        static KeyHoldHelper fwdTelHelper = new KeyHoldHelper(500, 100)
         {
             { () =>
                 {
@@ -155,7 +228,7 @@ static KeyHoldHelper fwdTelHelper = new KeyHoldHelper(500, 100)
             }
         };
 
-static KeyHoldHelper upTelHelper = new KeyHoldHelper(500, 100)
+        static KeyHoldHelper upTelHelper = new KeyHoldHelper(500, 100)
         {
             { () =>
                 {

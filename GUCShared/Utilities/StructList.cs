@@ -27,6 +27,11 @@ namespace GUC.Utilities
         {
             this.Add(new ValueTuple<T1, T2>(item1, item2));
         }
+
+        public ValueTuple<T1, T2> GetRandom()
+        {
+            return this[Randomizer.GetInt(this.Count)];
+        }
     }
 
     public struct ValueTuple<T1, T2, T3>
@@ -52,6 +57,11 @@ namespace GUC.Utilities
         public void Add(T1 item1, T2 item2, T3 item3)
         {
             this.Add(new ValueTuple<T1, T2, T3>(item1, item2, item3));
+        }
+
+        public ValueTuple<T1, T2, T3> GetRandom()
+        {
+            return this[Randomizer.GetInt(this.Count)];
         }
     }
 
@@ -81,10 +91,10 @@ namespace GUC.Utilities
         {
             this.Add(new ValueTuple<T1, T2, T3, T4>(item1, item2, item3, item4));
         }
-
-        public IEnumerable<T1, T2, T3, T4> AsEnumerable()
+        
+        public ValueTuple<T1, T2, T3, T4> GetRandom()
         {
-            return (IEnumerable<T1, T2, T3, T4>)this.AsEnumerable<ValueTuple<T1, T2, T3, T4>>(); ;
+            return this[Randomizer.GetInt(this.Count)];
         }
     }
 }

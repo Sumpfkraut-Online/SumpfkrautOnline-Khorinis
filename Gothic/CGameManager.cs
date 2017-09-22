@@ -24,6 +24,7 @@ namespace Gothic
         {
             public const int ExitGame = 0x00425780,
             Done = 0x004254E0,
+            ApplySomeSettings = 0x4276B0,
             PlayVideo = 0x0042B940;
         }
 
@@ -61,6 +62,11 @@ namespace Gothic
                 ret = PlayVideo(str);
 
             return ret;
+        }
+
+        public static void ApplySomeSettings()
+        {
+            Process.THISCALL<NullReturnCall>(Process.ReadInt(gameMan), FuncAddresses.ApplySomeSettings);
         }
     }
 }

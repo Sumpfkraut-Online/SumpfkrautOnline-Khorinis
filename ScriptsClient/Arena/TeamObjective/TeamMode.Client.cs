@@ -8,6 +8,9 @@ namespace GUC.Scripts.Arena
 {
     static partial class TeamMode
     {
+        static long phaseEndTime = 0;
+        public static long PhaseEndTime { get { return phaseEndTime; } }
+
         static TOTeamDef teamDef;
         public static TOTeamDef TeamDef { get { return teamDef; } }
 
@@ -18,9 +21,10 @@ namespace GUC.Scripts.Arena
                 throw new Exception("TODef not found: " + name);
 
             phase = TOPhases.Warmup;
+            phaseEndTime = GameTime.Ticks + WarmUpDuration;
 
-            Log.Logger.Log("TO Warmup: " + name);
-            Menus.TOInfoScreen.Show(activeTODef);
+            TOMessage(string.Format("Team Objective '{0}' startet in wenigen Sekunden!", name));
+            Menus.TOInfoScreen.Show();
         }
 
         public static void ReadStart(PacketReader stream)
@@ -29,7 +33,8 @@ namespace GUC.Scripts.Arena
                 return;
 
             phase = TOPhases.Battle;
-            Log.Logger.Log("TO Start: " + activeTODef.Name);
+            phaseEndTime = GameTime.Ticks + activeTODef.Duration * TimeSpan.TicksPerMinute;
+            TOMessage("Der Kampf beginnt!");
         }
 
         public static void ReadFinish(PacketReader stream)
@@ -38,38 +43,43 @@ namespace GUC.Scripts.Arena
                 return;
 
             phase = TOPhases.Finish;
-
-            Log.Logger.Log("TO Finish: " + activeTODef.Name);
+            phaseEndTime = GameTime.Ticks + FinishDuration;
+            TOMessage("Zeit ist vorüber!");
 
             int count = stream.ReadByte();
-            List<TOTeamDef> winners = new List<TOTeamDef>(count);
             for (int i = 0; i < count; i++)
             {
                 int index = stream.ReadByte();
                 if (index < activeTODef.Teams.Count)
                 {
-                    winners.Add(activeTODef.Teams[index]);
-                    Log.Logger.Log(activeTODef.Teams[index].Name + " is a winner.");
+                    TOMessage(activeTODef.Teams[index].Name + (count > 1 ? " ist ein Gewinner." : " hat gewonnen."));
                 }
             }
         }
-
-
+        
         public static void ReadJoinTeam(PacketReader stream)
         {
             if (!IsRunning)
                 return;
 
-            int index = stream.ReadByte();
-            if (index < activeTODef.Teams.Count)
+            int index = stream.ReadSByte();
+            if (index < 0)
+            {
+                teamDef = null;
+                ArenaClient.Client.ClassDef = null;
+            }
+            else if (index < activeTODef.Teams.Count)
             {
                 var oldTeam = teamDef;
                 teamDef = activeTODef.Teams[index];
-                Log.Logger.Log("Joined Team " + teamDef.Name);
+                TOMessage(string.Format("Du bist {0} beigetreten.", teamDef.Name));
 
+                Menus.TOTeamsMenu.Menu.UpdateSelectedTeam();
                 if (oldTeam != teamDef)
+                {
+                    ArenaClient.Client.ClassDef = null;
                     Menus.TOClassMenu.Menu.Open();
-
+                }
             }
         }
 
@@ -77,10 +87,31 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.None;
 
-            Log.Logger.Log("TO End");
+            TOMessage("Team Objective ist vorüber!");
             Menus.TOInfoScreen.Hide();
             activeTODef = null;
             teamDef = null;
+            ArenaClient.Client.ClassDef = null;
+        }
+
+        public static void ReadGameInfo(PacketReader stream)
+        {
+            phase = (TOPhases)stream.ReadByte();
+            if (phase != TOPhases.None)
+            {
+                string name = stream.ReadString();
+                if ((activeTODef = TODef.TryGet(name)) == null)
+                    throw new Exception("TODef not found: " + name);
+
+                phaseEndTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
+                Menus.TOInfoScreen.Show();
+            }
+        }
+
+        static void TOMessage(string text)
+        {
+            ChatMenu.Menu.AddMessage(ChatMode.Private, text);
+            Log.Logger.Log(text);
         }
     }
 }

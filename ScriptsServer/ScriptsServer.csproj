@@ -392,8 +392,11 @@
     </Compile>
     <Compile Include="Arena\ArenaClient.Server.cs" />
     <Compile Include="Arena\Chat\Chat.Server.cs" />
+    <Compile Include="Arena\Duel\DuelBoard.cs" />
     <Compile Include="Arena\Duel\DuelMode.Server.cs" />
+    <Compile Include="Arena\ScoreBoard\ScoreBoard.cs" />
     <Compile Include="Arena\TeamObjective\TeamMode.Server.cs" />
+    <Compile Include="Arena\TeamObjective\TOBoard.cs" />
     <Compile Include="Arena\TeamObjective\TOTeamInst.cs" />
     <Compile Include="Left4Gothic\L4Client.Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

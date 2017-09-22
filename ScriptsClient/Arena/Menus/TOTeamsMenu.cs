@@ -6,6 +6,7 @@ using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
 using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 using GUC.Log;
 using GUC.Utilities;
+using GUC.GUI;
 
 namespace GUC.Scripts.Arena.Menus
 {
@@ -30,6 +31,9 @@ namespace GUC.Scripts.Arena.Menus
             }
             AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, MainMenu.Menu.Open);
             OnEscape = MainMenu.Menu.Open;
+
+            arrow = new GUCVisual(0, 0, 20, 20);
+            arrow.SetBackTexture("R.tga");
         }
 
         public override void Open()
@@ -62,17 +66,36 @@ namespace GUC.Scripts.Arena.Menus
                 items[index].Enabled = false;
                 items[index].Hide();
             }
+
+            UpdateSelectedTeam();
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            arrow.Hide();
         }
 
         LockTimer lockTimer = new LockTimer(500);
         void SelectTeam(int index)
         {
             if (!TeamMode.IsRunning)
+            {
                 Close();
-            
-            if (TeamMode.ActiveTODef.Teams.ElementAtOrDefault(index) == null)
                 return;
-            
+            }
+
+            var team = TeamMode.ActiveTODef.Teams.ElementAtOrDefault(index);
+            if (team == null)
+                return;
+
+            if (team == TeamMode.TeamDef)
+            {
+                TOClassMenu.Menu.Open();
+                Close();
+                return;
+            }
+
             if (!lockTimer.IsReady)
                 return;
 
@@ -80,6 +103,27 @@ namespace GUC.Scripts.Arena.Menus
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((byte)index);
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+        }
+
+        GUCVisual arrow;
+        public void UpdateSelectedTeam()
+        {
+            if (TeamMode.ActiveTODef != null)
+            {
+                var team = TeamMode.TeamDef;
+                int index = TeamMode.ActiveTODef.Teams.IndexOf(team);
+                if (team != null && index >= 0)
+                {
+                    if (Cast.Try(items[index], out MainMenuButton button))
+                    {
+                        arrow.SetPosY(button.VPos.Y + GUCView.PixelToVirtualY(5), true);
+                        arrow.SetPosX(button.VPos.X - GUCView.PixelToVirtualX(25), true);
+                        arrow.Show();
+                        return;
+                    }
+                }
+            }
+            arrow.Hide();
         }
     }
 }

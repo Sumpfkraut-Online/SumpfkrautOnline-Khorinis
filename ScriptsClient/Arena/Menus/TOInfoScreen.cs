@@ -18,25 +18,38 @@ namespace GUC.Scripts.Arena.Menus
             vis.Font = GUCView.Fonts.Menu;
 
             const int yOffset = 60;
-            vis.CreateText("Team Objective läuft!", GUCView.GetScreenSize()[0], yOffset).Format = GUCVisualText.TextFormat.Right;
-            toName = vis.CreateText("TO_NAME", GUCView.GetScreenSize()[0], yOffset + GUCView.FontsizeMenu);
+            vis.CreateText("Team Objective läuft!", GUCView.GetScreenSize().Width, yOffset).Format = GUCVisualText.TextFormat.Right;
+            toName = vis.CreateText("TO_NAME", GUCView.GetScreenSize().Width, yOffset + GUCView.FontsizeMenu);
             toName.Format = GUCVisualText.TextFormat.Right;
-            toTime = vis.CreateText("TIME LEFT", GUCView.GetScreenSize()[0], yOffset + 2 * GUCView.FontsizeMenu);
+            toTime = vis.CreateText("TIME LEFT", GUCView.GetScreenSize().Width, yOffset + 2 * GUCView.FontsizeMenu);
             toTime.Format = GUCVisualText.TextFormat.Right;
         }
 
-        public static void Show(TODef def)
+        public static void Show()
         {
-            if (def == null)
+            if (TeamMode.ActiveTODef == null)
                 return;
 
-            toName.Text = def.Name;
+            toName.Text = TeamMode.ActiveTODef.Name;
             vis.Show();
+
+            GUCScripts.OnUpdate += Update;
         }
 
         public static void Hide()
         {
             vis.Hide();
+
+            GUCScripts.OnUpdate -= Update;
+        }
+
+        static void Update(long now)
+        {
+            long timeLeft = TeamMode.PhaseEndTime - now;
+            if (timeLeft < 0) timeLeft = 0;
+            long mins = timeLeft / TimeSpan.TicksPerMinute;
+            long secs = timeLeft % TimeSpan.TicksPerMinute / TimeSpan.TicksPerSecond;
+            toTime.Text = string.Format("{0} {1}:{2:00}", TeamMode.Phase, mins, secs);
         }
     }
 }

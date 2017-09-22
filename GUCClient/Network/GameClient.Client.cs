@@ -112,8 +112,8 @@ namespace GUC.Network
             }
 
             // Init debug info on screen
-            int[] screenSize = GUCView.GetScreenSize();
-            abortInfo = new GUCVisual((screenSize[0] - 300) / 2, 150, 300, 40);
+            var screenSize = GUCView.GetScreenSize();
+            abortInfo = new GUCVisual((screenSize.Width - 300) / 2, 150, 300, 40);
             abortInfo.SetBackTexture("Menu_Choice_Back.tga");
             GUCVisualText visText = abortInfo.CreateText("Verbindung unterbrochen!");
             visText.SetColor(ColorRGBA.Red);
