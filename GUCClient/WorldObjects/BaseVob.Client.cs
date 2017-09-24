@@ -15,7 +15,7 @@ namespace GUC.WorldObjects
         internal static class Messages
         {
             #region Positions
-            
+
             public static void ReadPosDirMessage(PacketReader stream)
             {
                 int id = stream.ReadUShort();
@@ -41,89 +41,11 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Position & Direction Interpolation
-
-        const float MaxPosDistToInterpolate = 5.0f;
-        const float MaxDirDiffToInterpolate = 0.5f;
-        protected void Interpolate(Vec3f newPos, Vec3f newDir)
+        
+        protected virtual void Interpolate(Vec3f newPos, Vec3f newDir)
         {
             SetPosition(newPos);
-            /*Vec3f curPos = GetPosition();
-            if (newPos.GetDistance(curPos) < MaxPosDistToInterpolate)
-            {
-                InterpolatePos(curPos, newPos);
-            }
-            else
-            {
-                SetPosition(newPos);
-                iPosEndTime = -1;
-            }*/
-
-            Vec3f curDir = GetDirection();
-            if (newDir.GetDistance(curDir) < MaxDirDiffToInterpolate)
-            {
-                InterpolateDir(curDir, newDir);
-            }
-            else
-            {
-                SetDirection(newDir);
-                iDirEndTime = -1;
-            }
-        }
-
-
-        Vec3f iPosStart;
-        Vec3f iPosEnd;
-        long iPosEndTime = -1;
-
-        Vec3f iDirStart;
-        Vec3f iDirEnd;
-        long iDirEndTime = -1;
-
-        const long InterpolationTimePos = 400000;
-        const long InterpolationTimeDir = 400000;
-        void InterpolatePos(Vec3f start, Vec3f end)
-        {
-            iPosStart = start;
-            iPosEnd = end;
-            iPosEndTime = GameTime.Ticks + InterpolationTimePos;
-        }
-
-        void InterpolateDir(Vec3f start, Vec3f end)
-        {
-            iDirStart = start;
-            iDirEnd = end;
-            iDirEndTime = GameTime.Ticks + InterpolationTimeDir;
-        }
-
-        void UpdateInterpolation(long now)
-        {
-            if (iPosEndTime != -1)
-            {
-                long timeDiff = iPosEndTime - now;
-                if (timeDiff < 0)
-                {
-                    this.SetPosition(iPosEnd);
-                    iPosEndTime = -1;
-                }
-                else
-                {
-                    this.SetPosition(iPosStart + (iPosEnd - iPosStart) * (float)Math.Pow(1.0 - (double)timeDiff / InterpolationTimeDir, 1 / 3d));
-                }
-            }
-
-            if (iDirEndTime != -1)
-            {
-                long timeDiff = iDirEndTime - now;
-                if (timeDiff < 0)
-                {
-                    this.SetDirection(iDirEnd);
-                    iDirEndTime = -1;
-                }
-                else
-                {
-                    this.SetDirection(iDirStart + (iDirEnd - iDirStart) * (float)Math.Pow(1.0 - (double)timeDiff / InterpolationTimeDir, 1 / 3d));
-                }
-            }
+            SetDirection(newDir);
         }
 
         #endregion
@@ -268,7 +190,6 @@ namespace GUC.WorldObjects
 
         partial void pOnTick(long now)
         {
-            this.UpdateInterpolation(now);
         }
     }
 }

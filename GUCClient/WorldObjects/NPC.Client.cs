@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using Gothic.Objects;
-using GUC.Animations;
+using Gothic.Objects.Meshes;
 using Gothic.Types;
 using WinApi;
 using GUC.Network;
@@ -116,8 +116,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                NPC npc;
-                if (World.Current.TryGetVob(id, out npc))
+                if (World.Current.TryGetVob(id, out NPC npc))
                 {
                     Vec3f newPos = stream.ReadCompressedPosition();
                     Vec3f newDir = stream.ReadCompressedDirection();
@@ -430,14 +429,118 @@ namespace GUC.WorldObjects
 
         #endregion
 
+        #region Turning
+
+        const float MaxDirDiffToInterpolate = 0.5f;
+        const long InterpolationTimeDir = 1200000;
+
+        Vec3f iDirStart;
+        Vec3f iDirEnd;
+        long iDirEndTime = -1;
+
+        protected override void Interpolate(Vec3f newPos, Vec3f newDir)
+        {
+            // gothic is already setting positions through animations, gravity etc. 
+            // so we just set the position because it would look twitchy otherwise
+            SetPosition(newPos);
+
+            Vec3f curDir = GetDirection();
+            if (newDir.GetDistance(curDir) < MaxDirDiffToInterpolate && Movement == NPCMovement.Stand)
+            {
+                iDirStart = curDir;
+                iDirEnd = newDir;
+                iDirEndTime = GameTime.Ticks + InterpolationTimeDir;
+
+                if (Movement == NPCMovement.Stand && !this.Model.IsInAnimation())
+                {
+                    float x = newDir.X - curDir.X;
+                    float z = newDir.Z - curDir.Z;
+
+                    if (x * x + z * z > 0.01f)
+                    {
+                        StartTurnAni(curDir.Z * newDir.X - newDir.Z * curDir.X > 0);
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                SetDirection(newDir);
+                iDirEndTime = -1;
+            }
+            StopTurnAni();
+        }
+
+        void UpdateInterpolation(long now)
+        {
+            if (iDirEndTime != -1)
+            {
+                long timeDiff = iDirEndTime - now;
+                if (timeDiff < 0)
+                {
+                    iDirEndTime = -1;
+                    SetDirection(iDirEnd);
+                    StopTurnAni();
+                }
+                else
+                {
+                    SetDirection(iDirStart + (iDirEnd - iDirStart) * (float)Math.Pow(1.0 - (double)timeDiff / InterpolationTimeDir, 1 / 3d));
+                }
+            }
+        }
+
+        int activeTurnAni = 0;
+        void StartTurnAni(bool right)
+        {
+            zCModel model = gVob.GetModel();
+            oCAniCtrl_Human aniCtrl = gVob.AniCtrl;
+
+            if (model.IsAniActive(model.GetAniFromAniID(aniCtrl._s_walk)))
+            {
+                activeTurnAni = right ? aniCtrl._t_turnr : aniCtrl._t_turnl;
+            }
+            else if (model.IsAniActive(model.GetAniFromAniID(aniCtrl._s_dive)))
+            {
+                activeTurnAni = right ? aniCtrl._t_diveturnr : aniCtrl._t_diveturnl;
+            }
+            else if (model.IsAniActive(model.GetAniFromAniID(aniCtrl._s_swim)))
+            {
+                activeTurnAni = right ? aniCtrl._t_swimturnr : aniCtrl._t_swimturnl;
+            }
+            else
+            {
+                StopTurnAni();
+                return;
+            }
+
+            model.StartAni(activeTurnAni, 0);
+        }
+
+        void StopTurnAni()
+        {
+            if (activeTurnAni != 0)
+            {
+                gVob.GetModel().FadeOutAni(activeTurnAni);
+                activeTurnAni = 0;
+            }
+        }
+
+        #endregion
+
         partial void pOnTick(long now)
         {
-            if (gVob == null || gVob.HumanAI.Address == 0)
+            if (gVob == null)
                 return;
+
+            oCAniCtrl_Human aniCtrl = gVob.AniCtrl;
+            if (aniCtrl.Address == 0)
+                return;
+
+            UpdateInterpolation(now);
 
             this.ScriptObject.OnTick(now);
 
-            if (!this.IsDead && this.gVob.GetModel().GetActiveAni(1).Address == 0)
+            if (!this.IsDead)
             {
                 switch (Movement)
                 {
@@ -448,16 +551,16 @@ namespace GUC.WorldObjects
                             var ai = this.gVob.HumanAI;
                             ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
                         }
-                        gVob.AniCtrl._Forward();
+                        aniCtrl._Forward();
                         break;
                     case NPCMovement.Backward:
-                        gVob.AniCtrl._Backward();
+                        aniCtrl._Backward();
                         break;
                     case NPCMovement.Right:
                         if (this.Model.IsInAnimation() || this.environment.InAir)
                             break;
                         gModel = this.gVob.GetModel();
-                        var strafeAni = gVob.AniCtrl._t_strafer;
+                        var strafeAni = aniCtrl._t_strafer;
                         if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
                         {
                             gModel.StartAni(strafeAni, 0);
@@ -467,14 +570,14 @@ namespace GUC.WorldObjects
                         if (this.Model.IsInAnimation() || this.environment.InAir)
                             break;
                         gModel = this.gVob.GetModel();
-                        strafeAni = gVob.AniCtrl._t_strafel;
+                        strafeAni = aniCtrl._t_strafel;
                         if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
                         {
                             gModel.StartAni(strafeAni, 0);
                         }
                         break;
                     case NPCMovement.Stand:
-                        gVob.AniCtrl._Stand();
+                        aniCtrl._Stand();
                         break;
                     default:
                         break;

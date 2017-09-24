@@ -23,8 +23,8 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
-            { KeyBind.OpenAllChat, d => { ChatMenu.Menu.OpenAllChat(); } },
-            { KeyBind.OpenTeamChat, d => { ChatMenu.Menu.OpenTeamChat(); } },
+            { KeyBind.OpenAllChat, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
+            { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.Inventory, d => { if (d) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
             { VirtualKeys.P, PrintPosition }
         };
@@ -203,12 +203,12 @@ namespace GUC.Scripts.Arena.Controls
             {
                 if (KeyBind.TurnLeft.IsPressed())
                 {
-                    hero.BaseInst.gVob.AniCtrl.Turn(-2.2f, true);
+                    hero.BaseInst.gVob.AniCtrl.Turn(-2f, true);
                     return;
                 }
                 else if (KeyBind.TurnRight.IsPressed())
                 {
-                    hero.BaseInst.gVob.AniCtrl.Turn(2.2f, true);
+                    hero.BaseInst.gVob.AniCtrl.Turn(2f, true);
                     return;
                 }
             }
