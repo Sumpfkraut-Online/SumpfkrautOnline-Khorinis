@@ -147,6 +147,7 @@ namespace GUC.Models
                 var gVob = ((NPC)vob).gVob;
                 if (gVob != null)
                 {
+                    gVob.AniCtrl.StopTurnAnis();
                     gVob.GetModel().StartAni(aniJob.Name, 0); 
                 }
             }
@@ -159,6 +160,8 @@ namespace GUC.Models
                 var gVob = ((NPC)vob).gVob;
                 if (gVob != null)
                 {
+                    gVob.AniCtrl.StopTurnAnis();
+
                     var gModel = gVob.GetModel();
                     int aniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
                     if (aniID > 0)

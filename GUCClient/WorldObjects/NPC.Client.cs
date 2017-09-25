@@ -280,12 +280,10 @@ namespace GUC.WorldObjects
         {
             ClimbingLedge result;
 
-            var ai = this.gVob.HumanAI;
-
             using (var dummy = zVec3.Create())
-                ai.DetectClimbUpLedge(dummy, true);
+                humanAI.DetectClimbUpLedge(dummy, true);
 
-            var li = ai.GetLedgeInfo();
+            var li = humanAI.GetLedgeInfo();
             if (li.Address != 0)
             {
                 result = new ClimbingLedge(li);
@@ -294,7 +292,7 @@ namespace GUC.WorldObjects
             {
                 result = null;
             }
-            ai.ClearFoundLedge();
+            humanAI.ClearFoundLedge();
 
             return result;
         }
@@ -302,7 +300,7 @@ namespace GUC.WorldObjects
         public void SetGClimbingLedge(ClimbingLedge ledge)
         {
             int ai = Process.Alloc(4).ToInt32();
-            Process.Write(this.gVob.HumanAI.Address, ai);
+            Process.Write(humanAI.Address, ai);
 
             Process.THISCALL<NullReturnCall>(0x8D44E0, 0x512310, (IntArg)ai);
             if (Process.THISCALL<BoolArg>(0x8D44E0, 0x5123E0, (IntArg)ai))
@@ -323,11 +321,17 @@ namespace GUC.WorldObjects
         /// <summary> The correlated gothic-object of this npc. </summary>
         new public oCNpc gVob { get { return (oCNpc)base.gVob; } }
 
+        oCAIHuman humanAI;
+        public oCAIHuman gAI { get { return this.humanAI; } }
+
+        zCModel gmodel;
+        public zCModel gModel { get { return this.gmodel; } }
+
         #region Environment
 
         partial void pGetEnvironment()
         {
-            this.environment = CalculateEnvironment(this.gVob.HumanAI.StepHeight);
+            this.environment = CalculateEnvironment(humanAI.StepHeight);
         }
 
         #endregion
@@ -360,13 +364,16 @@ namespace GUC.WorldObjects
 
             gVob.Guild = 1;
             gVob.InitHumanAI();
+            this.humanAI = gVob.HumanAI;
+            this.gmodel = gVob.GetModel();
 
+            // for monsters, because they only have fist animations
             if (string.Compare(this.ModelInstance.Visual, "humans.mds", true) != 0)
                 gVob.SetToFistMode();
 
             gVob.Name.Set(this.Name);
 
-            gVob.HumanAI.Bitfield0 &= ~4; // some shitty flag which makes npcs always check their ground
+            humanAI.Bitfield0 &= ~4; // some shitty flag which makes npcs always check their ground
         }
 
         partial void pAfterDespawn()
@@ -376,6 +383,9 @@ namespace GUC.WorldObjects
                 if (item.gVob != null)
                     item.DeleteGVob();
             });
+
+            this.humanAI = null;
+            this.gmodel = null;
         }
 
         #endregion
@@ -387,8 +397,8 @@ namespace GUC.WorldObjects
             if (this.gVob == null)
                 return;
 
-            /*var gModel = gVob.GetModel();
-            var gAniCtrl = gVob.AniCtrl;
+            /*var gModel = gModel;
+            var gAniCtrl = gAI;
 
             gModel.StopAni(gAniCtrl._t_strafel);
             gModel.StopAni(gAniCtrl._t_strafer);*/
@@ -398,7 +408,7 @@ namespace GUC.WorldObjects
 
             if (this.hp == 0)
             {
-                this.gVob.GetModel().StopAnisLayerRange(int.MinValue, int.MaxValue);
+                gModel.StopAnisLayerRange(int.MinValue, int.MaxValue);
                 this.gVob.DoDie();
             }
         }
@@ -412,13 +422,14 @@ namespace GUC.WorldObjects
             if (this.movement == state)
                 return;
 
-            if (!this.IsDead && this.gVob != null && this.gVob.GetModel().GetActiveAni(1).Address == 0)
+            if (this.gVob != null && !this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null
+                && !this.environment.InAir && (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) == 0)
                 if (this.movement == NPCMovement.Right || this.movement == NPCMovement.Left)
                 {
                     if (state == NPCMovement.Forward)
-                        this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walkl, 0);
+                        gModel.StartAni(gAI._s_walkl, 0);
                     else
-                        this.gVob.GetModel().StartAni(this.gVob.AniCtrl._s_walk, 0);
+                        gModel.StartAni(gAI._s_walk, 0);
                 }
 
             this.movement = state;
@@ -492,20 +503,17 @@ namespace GUC.WorldObjects
         int activeTurnAni = 0;
         void StartTurnAni(bool right)
         {
-            zCModel model = gVob.GetModel();
-            oCAniCtrl_Human aniCtrl = gVob.AniCtrl;
-
-            if (model.IsAniActive(model.GetAniFromAniID(aniCtrl._s_walk)))
+            if (gModel.IsAniActive(gModel.GetAniFromAniID(gAI._s_walk)))
             {
-                activeTurnAni = right ? aniCtrl._t_turnr : aniCtrl._t_turnl;
+                activeTurnAni = right ? gAI._t_turnr : gAI._t_turnl;
             }
-            else if (model.IsAniActive(model.GetAniFromAniID(aniCtrl._s_dive)))
+            else if (gModel.IsAniActive(gModel.GetAniFromAniID(gAI._s_dive)))
             {
-                activeTurnAni = right ? aniCtrl._t_diveturnr : aniCtrl._t_diveturnl;
+                activeTurnAni = right ? gAI._t_diveturnr : gAI._t_diveturnl;
             }
-            else if (model.IsAniActive(model.GetAniFromAniID(aniCtrl._s_swim)))
+            else if (gModel.IsAniActive(gModel.GetAniFromAniID(gAI._s_swim)))
             {
-                activeTurnAni = right ? aniCtrl._t_swimturnr : aniCtrl._t_swimturnl;
+                activeTurnAni = right ? gAI._t_swimturnr : gAI._t_swimturnl;
             }
             else
             {
@@ -513,14 +521,14 @@ namespace GUC.WorldObjects
                 return;
             }
 
-            model.StartAni(activeTurnAni, 0);
+            gModel.StartAni(activeTurnAni, 0);
         }
 
         void StopTurnAni()
         {
             if (activeTurnAni != 0)
             {
-                gVob.GetModel().FadeOutAni(activeTurnAni);
+                gModel.FadeOutAni(activeTurnAni);
                 activeTurnAni = 0;
             }
         }
@@ -529,11 +537,7 @@ namespace GUC.WorldObjects
 
         partial void pOnTick(long now)
         {
-            if (gVob == null)
-                return;
-
-            oCAniCtrl_Human aniCtrl = gVob.AniCtrl;
-            if (aniCtrl.Address == 0)
+            if (gVob == null || gAI == null || gModel == null)
                 return;
 
             UpdateInterpolation(now);
@@ -545,39 +549,23 @@ namespace GUC.WorldObjects
                 switch (Movement)
                 {
                     case NPCMovement.Forward:
-                        var gModel = this.gVob.GetModel();
-                        if (!this.environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND") != 0)
+                        if (!this.environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND"))
                         {
-                            var ai = this.gVob.HumanAI;
-                            ai.LandAndStartAni(gModel.GetAniFromAniID(ai._t_jump_2_runl));
+                            gAI.LandAndStartAni(gModel.GetAniFromAniID(gAI._t_jump_2_runl));
                         }
-                        aniCtrl._Forward();
+                        gAI._Forward();
                         break;
                     case NPCMovement.Backward:
-                        aniCtrl._Backward();
+                        gAI._Backward();
                         break;
                     case NPCMovement.Right:
-                        if (this.Model.IsInAnimation() || this.environment.InAir)
-                            break;
-                        gModel = this.gVob.GetModel();
-                        var strafeAni = aniCtrl._t_strafer;
-                        if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
-                        {
-                            gModel.StartAni(strafeAni, 0);
-                        }
+                        DoStrafe(true);
                         break;
                     case NPCMovement.Left:
-                        if (this.Model.IsInAnimation() || this.environment.InAir)
-                            break;
-                        gModel = this.gVob.GetModel();
-                        strafeAni = aniCtrl._t_strafel;
-                        if (!gModel.IsAniActive(gModel.GetAniFromAniID(strafeAni)))
-                        {
-                            gModel.StartAni(strafeAni, 0);
-                        }
+                        DoStrafe(false);
                         break;
                     case NPCMovement.Stand:
-                        aniCtrl._Stand();
+                        gAI._Stand();
                         break;
                     default:
                         break;
@@ -585,16 +573,48 @@ namespace GUC.WorldObjects
             }
         }
 
+        void DoStrafe(bool right)
+        {
+            if (this.Model.GetActiveAniFromLayerID(1) != null
+                || this.environment.InAir || (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0)
+                return;
+
+            var strafeAni = right ? gAI._t_strafer : gAI._t_strafel;
+            var ani = gModel.GetAniFromAniID(strafeAni);
+            if (ani.Address == 0)
+                return;
+
+            var aa = gModel.GetActiveAni(gModel.GetAniIDFromAniName("T_FALLDN_2_STAND"));
+            if (aa.Address != 0)
+            {
+                if (aa.GetProgressPercent() > 0.8f)
+                    gAI.LandAndStartAni(ani);
+
+                return;
+            }
+
+            aa = gModel.GetActiveAni(gModel.GetAniIDFromAniName("T_JUMP_2_STAND"));
+            if (aa.Address != 0)
+            {
+                if (aa.GetProgressPercent() > 0.5f)
+                    gAI.LandAndStartAni(ani);
+
+                return;
+            }
+
+            if (!gModel.IsAniActive(ani))
+                gModel.StartAni(ani, 0);
+        }
+
         public override void Throw(Vec3f velocity)
         {
-            var aiVel = new zVec3(this.gVob.HumanAI.Address + 0x90);
+            var aiVel = new zVec3(gAI.Address + 0x90);
             base.Throw((Vec3f)aiVel + velocity);
         }
 
         public BaseVob GetFocusVob()
         {
-            BaseVob baseVob;
-            this.World.TryGetVobByAddress(this.gVob.FocusVob.Address, out baseVob);
+            this.World.TryGetVobByAddress(this.gVob.FocusVob.Address, out BaseVob baseVob);
             return baseVob;
         }
     }

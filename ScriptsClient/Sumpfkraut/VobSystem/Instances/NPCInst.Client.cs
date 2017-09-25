@@ -6,7 +6,6 @@ using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
-using GUC.Scripting;
 using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Networking;
@@ -104,10 +103,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 default:
                     return;
             }
-            
+
             gNpc.PutInSlot(node, gItem, true);
             PlayDrawItemSound(item, undraw);
-            
+
             Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
@@ -187,10 +186,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 case ScriptVobMessageIDs.HitMessage:
                     var targetID = stream.ReadUShort();
-                    WorldObjects.NPC target;
-                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out target))
+                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out NPC target))
                     {
-                        //this.BaseInst.gVob.AniCtrl.CreateHit(target.gVob);
+                        //this.BaseInst.gAI.CreateHit(target.gVob);
                         int index = Randomizer.GetInt(hitSounds.Count);
                         SoundHandler.PlaySound3D(hitSounds[index], target);
 
@@ -208,15 +206,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                             Log.Logger.Log(str);
                         }
 
-                        target.gVob.GetModel().StartAni("T_GOTHIT", 0);
+                        target.gModel.StartAni("T_GOTHIT", 0);
                     }
                     break;
                 case ScriptVobMessageIDs.ParryMessage:
                     targetID = stream.ReadUShort();
-                    WorldObjects.NPC targetNPC;
-                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out targetNPC))
+                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out NPC targetNPC))
                     {
-                        this.BaseInst.gVob.AniCtrl.StartParadeEffects(targetNPC.gVob);
+                        this.BaseInst.gAI.StartParadeEffects(targetNPC.gVob);
                     }
                     break;
                 default:
@@ -231,27 +228,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             UpdateFightStance();
 
-            if (this.IsInFightMode && this.ModelInst.IsInAnimation())
+            if (this.IsInFightMode)
             {  // show weapon trails, fixme ? might not be a fight ani
-                this.BaseInst.gVob.AniCtrl.ShowWeaponTrail();
+                var aa = this.ModelInst.GetActiveAniFromLayer(2);
+                if (aa == null)
+                    aa = this.ModelInst.GetActiveAniFromLayer(1);
+
+                if (aa != null)
+                {
+                    float percent = aa.GetProgress();
+                    if (percent > 0.05f && percent < 0.7f)
+                        this.BaseInst.gAI.ShowWeaponTrail();
+                }
             }
 
             /*var activeJumpAni = GetJumpAni();
             if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
             {
                 var gVob = this.BaseInst.gVob;
-                var ai = gVob.HumanAI;
+                var ai = BaseInst.HumanAI;
                 if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
                 {
                     // LAND
                     int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
-                    ai.LandAndStartAni(gVob.GetModel().GetAniFromAniID(id));
+                    ai.LandAndStartAni(gModel.GetAniFromAniID(id));
                 }
             }*/
 
             /*if (this.drawnWeapon != null)
             {
-                var gModel = this.BaseInst.gVob.GetModel();
+                var gModel = this.BaseInst.gModel;
 
                 int aniID;
                 if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
@@ -319,7 +325,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             /*this.StartAnimation(ani);
 
-            var ai = this.BaseInst.gVob.HumanAI;
+            var ai = this.BaseInst.HumanAI;
             ai.AniCtrlBitfield &= ~(1 << 3);
             //this.BaseInst.gVob.SetBodyState(8);
 
@@ -367,7 +373,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             SoundHandler.PlaySound3D(sound, this.BaseInst);
         }
-        
+
         public void StartAniDraw(ScriptAni ani, ItemInst item)
         {
             /*this.StartAnimation(ani);
@@ -470,7 +476,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 ai.SetWalkMode(0);
 
                 // override active animations from the old animation set
-                var gModel = gNpc.GetModel();
+                var gModel = BaseInst.gModel;
                 if (running)
                 {
                     gModel.StartAni(ai._s_walkl, 0);

@@ -10,7 +10,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         partial void pSpawn()
         {
-            this.BaseInst.gVob.Name.Set(this.Definition.Name);
+            var gVob = this.BaseInst.gVob;
+            gVob.Name.Set(this.Name);
+            gVob.Material = (int)this.Material;
         }
     }
 }

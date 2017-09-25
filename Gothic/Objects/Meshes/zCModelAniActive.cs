@@ -16,7 +16,8 @@ namespace Gothic.Objects.Meshes
         public abstract class FuncAddresses
         {
             public const int SetActFrame = 0x00576CF0,
-            SetProgressPercent = 0x00576CA0;
+            SetProgressPercent = 0x00576CA0,
+            GetProgressPercent = 0x00576C60;
         }
 
         /* public enum HookSize : uint
@@ -53,6 +54,15 @@ namespace Gothic.Objects.Meshes
         public void SetProgressPercent(float value)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetProgressPercent, new FloatArg(value));
+        }
+
+        public float GetProgressPercent()
+        {
+            // does not work???
+            //return Process.THISCALL<FloatArg>(Address, FuncAddresses.GetProgressPercent);
+
+            var modelAni = ModelAni;
+            return modelAni.IsReversed ? (1.0f - ActFrame / (float)(modelAni.NumFrames-1)) : ActFrame / (float)(modelAni.NumFrames-1);
         }
     }
 }

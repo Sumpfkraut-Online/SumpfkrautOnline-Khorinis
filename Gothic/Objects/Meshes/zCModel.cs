@@ -209,9 +209,9 @@ namespace Gothic.Objects.Meshes
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.FadeOutAni_AktivAni, ani);
         }
 
-        public int IsAnimationActive(String animname)
+        public bool IsAnimationActive(String animname)
         {
-            int result = 0;
+            bool result;
 
             using (zString str = zString.Create(animname))
                 result = IsAnimationActive(str);
@@ -219,9 +219,9 @@ namespace Gothic.Objects.Meshes
             return result;
         }
 
-        public int IsAnimationActive(zString animname)
+        public bool IsAnimationActive(zString animname)
         {
-            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsAnimationActive, animname);
+            return Process.THISCALL<IntArg>(Address, FuncAddresses.IsAnimationActive, animname) != 0;
         }
 
         public bool IsAniActive(zCModelAni ani)

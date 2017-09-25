@@ -30,9 +30,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
         
-        new public NamedVobInstEffectHandler EffectHandler () { return (NamedVobInstEffectHandler)base.EffectHandler; }
+        new public NamedVobInstEffectHandler EffectHandler { get { return (NamedVobInstEffectHandler)base.EffectHandler; } }
 
         new public NamedVobDef Definition { get { return (NamedVobDef)base.Definition; } set { base.Definition = value; } }
+
+        public string Name { get { return this.Definition.Name; } }
 
         #endregion
     }

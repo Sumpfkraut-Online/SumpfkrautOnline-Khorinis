@@ -22,7 +22,7 @@ namespace GUC.Utilities
         /// <param name="newDuration">New lock duration in milliseconds.</param>
         public void SetDuration(int newDuration)
         {
-            this.duration = duration * TimeSpan.TicksPerMillisecond;
+            this.duration = newDuration * TimeSpan.TicksPerMillisecond;
         }
 
         /// <summary> Checks if the lock duration is over and restarts the timer if true. </summary>

@@ -12,7 +12,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class ItemInst : VobInst, WorldObjects.Item.IScriptItem
+    public partial class ItemInst : NamedVobInst, WorldObjects.Item.IScriptItem
     {
         #region Constructors
 
@@ -44,6 +44,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public int Amount { get { return this.BaseInst.Amount; } }
 
         public bool IsEquipped { get { return this.BaseInst.IsEquipped; } }
+
+        public ItemMaterials Material { get { return this.Definition.Material; } }
 
         public ItemTypes ItemType { get { return this.Definition.ItemType; } }
 
