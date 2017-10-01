@@ -14,7 +14,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
-    public partial class VobDefLoader : BaseObjectLoader
+    public partial class VobDefLoader : BaseLoader
     {
 
         public static readonly Dictionary<string, List<DBTables.ColumnGetTypeInfo>> DBStructure =
