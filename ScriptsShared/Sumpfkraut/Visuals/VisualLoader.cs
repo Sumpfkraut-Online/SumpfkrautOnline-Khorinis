@@ -108,7 +108,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 // send out DBAgent which might work asynchronously
                 // ...use AutoResetEvent for that case (forces thread to wait until continue is signalled)
                 DBAgent dbAgent = new DBAgent(dbFilePath, commandQueue, false, useAsyncMode);
-                dbAgent.SetObjName("DBAgent (EffectLoader)");
+                dbAgent.SetObjName("DBAgent (VisualLoader)");
                 dbAgent.FinishedQueue += VisualsFromSQLResults;
                 //dbAgent.waitHandle.WaitOne();
                 dbAgent.Start();
@@ -125,7 +125,67 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
                 // convert the data-strings to their respective types
                 ConvertSQLResults(sqlResults, colGetTypeInfo);
+
+                var tableModelDef = sqlResults[0];
+                var tableScriptOverlay = sqlResults[1];
+                var tableScriptAniJob = sqlResults[2];
+                var tableScriptAni = sqlResults[3];
+
+                List<ScriptAni> scriptAnis;
+                if (!TryGenerateScriptAnis(tableScriptAni, out scriptAnis))
+                {
+                    MakeLogError("Failed to produce ScriptAni-objects from sql data. "
+                        + "Aborting Generation of Visuals.");
+                    return;
+                }
+
+                List<ScriptAniJob> scriptAniJobs;
+                if (!TryGenerateScriptAniJobs(tableScriptAni, out scriptAniJobs))
+                {
+                    MakeLogError("Failed to produce ScriptAniJob-objects from sql data. "
+                        + "Aborting Generation of Visuals.");
+                    return;
+                }
+
+                List<ScriptOverlay> scriptOverlays;
+                if (!TryGenerateScriptOverlays(tableScriptAni, out scriptOverlays))
+                {
+                    MakeLogError("Failed to produce ScriptOverlay-objects from sql data. "
+                        + "Aborting Generation of Visuals.");
+                    return;
+                }
+
+                List<ModelDef> modelDefs;
+                if (!TryGenerateModelDefs(tableScriptAni, out modelDefs))
+                {
+                    MakeLogError("Failed to produce ModelDef-objects from sql data. "
+                        + "Aborting Generation of Visuals.");
+                    return;
+                }
+
             }
+        }
+
+        private bool TryGenerateModelDefs (List<List<object>> tableScriptAni, out List<ModelDef> modelDefs)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool TryGenerateScriptOverlays (List<List<object>> tableScriptAni, out List<ScriptOverlay> scriptOverlays)
+        {
+            throw new NotImplementedException();
+        }
+
+        private bool TryGenerateScriptAniJobs (List<List<object>> tableScriptAni, out List<ScriptAniJob> scriptAniJobs)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool TryGenerateScriptAnis (List<List<object>> tableScriptAni, out List<ScriptAni> scriptAnis)
+        {
+            scriptAnis = null;
+
+            return false;
         }
 
     }

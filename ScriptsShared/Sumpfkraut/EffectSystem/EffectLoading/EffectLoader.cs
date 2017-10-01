@@ -170,56 +170,49 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
         public void EffectsFromSQLResults (AbstractRunnable sender, FinishedQueueEventHandlerArgs e)
         {
-            try
+            lock (loadLock)
             {
-                lock (loadLock)
-                {
-                    sqlResults = e.GetSQLResults();
+                sqlResults = e.GetSQLResults();
 
-                    // return if there is nothing to process
-                    if ((sqlResults == null) || (sqlResults.Count < 2)) { return; }
+                // return if there is nothing to process
+                if ((sqlResults == null) || (sqlResults.Count < 2)) { return; }
 
-                    // convert the data-strings to their respective types
-                    ConvertSQLResults(sqlResults, colGetTypeInfo);
+                // convert the data-strings to their respective types
+                ConvertSQLResults(sqlResults, colGetTypeInfo);
                     
-                    var tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("Effect") ];
-                    var tableChange = sqlResults[ DBTableLoadOrder.IndexOf("Change") ];
+                var tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("Effect") ];
+                var tableChange = sqlResults[ DBTableLoadOrder.IndexOf("Change") ];
 
-                    List<IDAndChanges> idAndChangesList = null;
-                    if (!TryGenerateIDAndChanges(tableChange, out idAndChangesList))
-                    {
-                        MakeLogError("Aborting effect generation due to"
-                            + " failed generation of Changes from raw database-data!");
-                        return;
-                    }
-
-                    List<int> failedIndices;
-                    if (!TryGenerateEffects(idAndChangesList, out effectByID, out failedIndices))
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("Failed to generate Effects with [temporary index | EffectID]: ");
-                        for (int i = 0; i < failedIndices.Count; i++)
-                        {
-                            sb.Append("[");
-                            sb.Append(i);
-                            sb.Append("|");
-                            if ((failedIndices[i] < 0) || (failedIndices[i] > (idAndChangesList.Count - 1)))
-                            {
-                                sb.Append("?");
-                            }
-                            else
-                            {
-                                sb.Append(failedIndices[i]);
-                            }
-                            sb.Append("],");
-                        }
-                        MakeLogError(sb.ToString());
-                    }
+                List<IDAndChanges> idAndChangesList = null;
+                if (!TryGenerateIDAndChanges(tableChange, out idAndChangesList))
+                {
+                    MakeLogError("Aborting effect generation due to"
+                        + " failed generation of Changes from raw database-data!");
+                    return;
                 }
-            }
-            catch (Exception ex)
-            {
-                MakeLogError("Error while converting sqlResults to Effects: " + ex);
+
+                List<int> failedIndices;
+                if (!TryGenerateEffects(idAndChangesList, out effectByID, out failedIndices))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Failed to generate Effects with [temporary index | EffectID]: ");
+                    for (int i = 0; i < failedIndices.Count; i++)
+                    {
+                        sb.Append("[");
+                        sb.Append(i);
+                        sb.Append("|");
+                        if ((failedIndices[i] < 0) || (failedIndices[i] > (idAndChangesList.Count - 1)))
+                        {
+                            sb.Append("?");
+                        }
+                        else
+                        {
+                            sb.Append(failedIndices[i]);
+                        }
+                        sb.Append("],");
+                    }
+                    MakeLogError(sb.ToString());
+                }
             }
             // no return value necessary because final results, effectsByID, is already saved as property in the loader
         }
