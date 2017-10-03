@@ -177,7 +177,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
-                    var scriptAni = new ScriptAni();
+                    var modelDef = new ModelDef();
                     for (int c = 0; c < row.Count; c++)
                     {
                         switch (info[c].colName)
@@ -185,6 +185,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                             // ...
                         }
                     }
+                    modelDefs.Add(modelDef);
                 }
             }
             catch (Exception ex)
@@ -203,14 +204,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             scriptOverlays = null;
 
             List<ColumnGetTypeInfo> info;
-            if (!TryGetColGetTypeInfo("ModelDef", out info)) { return false; }
+            if (!TryGetColGetTypeInfo("ScriptOverlay", out info)) { return false; }
 
             try
             {
                 info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
-                    var scriptAni = new ScriptAni();
+                    var scriptOverlay = new ScriptOverlay();
                     for (int c = 0; c < row.Count; c++)
                     {
                         switch (info[c].colName)
@@ -218,6 +219,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                             // ...
                         }
                     }
+                    scriptOverlays.Add(scriptOverlay);
                 }
             }
             catch (Exception ex)
@@ -236,14 +238,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             scriptAniJobs = null;
 
             List<ColumnGetTypeInfo> info;
-            if (!TryGetColGetTypeInfo("ModelDef", out info)) { return false; }
+            if (!TryGetColGetTypeInfo("ScriptAniJob", out info)) { return false; }
 
             try
             {
                 info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
-                    var scriptAni = new ScriptAni();
+                    var scriptAniJob = new ScriptAniJob();
                     for (int c = 0; c < row.Count; c++)
                     {
                         switch (info[c].colName)
@@ -251,6 +253,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                             // ...
                         }
                     }
+                    scriptAniJobs.Add(scriptAniJob);
                 }
             }
             catch (Exception ex)
@@ -292,6 +295,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                 break;
                         }
                     }
+                    scriptAnis.Add(scriptAni);
                 }
             }
             catch (Exception ex)
