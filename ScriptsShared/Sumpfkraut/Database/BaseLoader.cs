@@ -42,6 +42,17 @@ namespace GUC.Scripts.Sumpfkraut.Database
         // uses DBTableLoadOrder and arranges the GetTypeInfos for result-data-conversion for later reusability
         protected List<List<DBTables.ColumnGetTypeInfo>> colGetTypeInfo = null;
         public List<List<DBTables.ColumnGetTypeInfo>> GetColGetTypeInfo () { return colGetTypeInfo; }
+        public bool TryGetColGetTypeInfo (string tableName, out List<ColumnGetTypeInfo> info)
+        {
+            info = null;
+            int index = GetDBTableLoadOrder().IndexOf(tableName);
+            if (index < 0) { return false; }
+            else
+            {
+                info = GetColGetTypeInfo()[index];
+                return true;
+            }
+        }
 
         protected string dbFilePath = null;
         public string GetDBFilePath () { return dbFilePath; }
@@ -173,6 +184,8 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
 
         public abstract void Load (bool useAsyncMode);
+
+        public abstract void Save (bool useAsyncMode);
 
     }
 

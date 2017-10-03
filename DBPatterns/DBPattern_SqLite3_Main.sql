@@ -176,6 +176,7 @@ CREATE TABLE IF NOT EXISTS ScriptAniJob
     AniJobType INTEGER NOT NULL,
 	PrevCodeName TEXT DEFAULT NULL,
 	NextCodeName TEXT DEFAULT NULL,
+    Layer INTEGER NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptAniJob_PK PRIMARY KEY (ScriptAniJobID),
@@ -196,8 +197,7 @@ CREATE TABLE IF NOT EXISTS ScriptAni
     ScriptAniID INTEGER NOT NULL, -- unique primary key id
     ScriptOverlayID INTEGER NOT NULL,
     ScriptAniJobID INTEGER NOT NULL,
-    Layer INTEGER NOT NULL,
-    Duration INTEGER NOT NULL,
+    FPS INTEGER NOT NULL,
     StartFrame INTEGER NOT NULL,
     EndFrame INTEGER NOT NULL,
     SpecialFrames TEXT NOT NULL,

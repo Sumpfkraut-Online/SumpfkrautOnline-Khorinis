@@ -47,6 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     new ColumnGetTypeInfo("AniJobType", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("PrevCodeName", SQLiteGetType.GetString),
                     new ColumnGetTypeInfo("NextCodeName", SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("Layer", SQLiteGetType.GetInt32),
                 }
             },
             {
@@ -55,8 +56,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     new ColumnGetTypeInfo("ScriptAniID", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ScriptOverlayID", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ScriptAniJobID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("Layer", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("Duration", SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("FPS", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("StartFrame", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("EndFrame", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("SpecialFrames", SQLiteGetType.GetString),
@@ -140,7 +140,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
 
                 List<ScriptAniJob> scriptAniJobs;
-                if (!TryGenerateScriptAniJobs(tableScriptAni, out scriptAniJobs))
+                if (!TryGenerateScriptAniJobs(tableScriptAniJob, out scriptAniJobs))
                 {
                     MakeLogError("Failed to produce ScriptAniJob-objects from sql data. "
                         + "Aborting Generation of Visuals.");
@@ -148,7 +148,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
 
                 List<ScriptOverlay> scriptOverlays;
-                if (!TryGenerateScriptOverlays(tableScriptAni, out scriptOverlays))
+                if (!TryGenerateScriptOverlays(tableScriptOverlay, out scriptOverlays))
                 {
                     MakeLogError("Failed to produce ScriptOverlay-objects from sql data. "
                         + "Aborting Generation of Visuals.");
@@ -156,38 +156,161 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
 
                 List<ModelDef> modelDefs;
-                if (!TryGenerateModelDefs(tableScriptAni, out modelDefs))
+                if (!TryGenerateModelDefs(tableModelDef, out modelDefs))
                 {
                     MakeLogError("Failed to produce ModelDef-objects from sql data. "
                         + "Aborting Generation of Visuals.");
                     return;
                 }
-
             }
         }
 
-        private bool TryGenerateModelDefs (List<List<object>> tableScriptAni, out List<ModelDef> modelDefs)
+        public bool TryGenerateModelDefs (List<List<object>> dataTable, out List<ModelDef> modelDefs)
         {
-            throw new NotImplementedException();
+            modelDefs = null;
+
+            List<ColumnGetTypeInfo> info;
+            if (!TryGetColGetTypeInfo("ModelDef", out info)) { return false; }
+
+            try
+            {
+                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                foreach (List<object> row in dataTable)
+                {
+                    var scriptAni = new ScriptAni();
+                    for (int c = 0; c < row.Count; c++)
+                    {
+                        switch (info[c].colName)
+                        {
+                            // ...
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                info = null;
+                MakeLogError(ex);
+                return false;
+            }
+            finally { }
+
+            return true;
         }
 
-        private bool TryGenerateScriptOverlays (List<List<object>> tableScriptAni, out List<ScriptOverlay> scriptOverlays)
+        public bool TryGenerateScriptOverlays (List<List<object>> dataTable, out List<ScriptOverlay> scriptOverlays)
         {
-            throw new NotImplementedException();
+            scriptOverlays = null;
+
+            List<ColumnGetTypeInfo> info;
+            if (!TryGetColGetTypeInfo("ModelDef", out info)) { return false; }
+
+            try
+            {
+                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                foreach (List<object> row in dataTable)
+                {
+                    var scriptAni = new ScriptAni();
+                    for (int c = 0; c < row.Count; c++)
+                    {
+                        switch (info[c].colName)
+                        {
+                            // ...
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                info = null;
+                MakeLogError(ex);
+                return false;
+            }
+            finally { }
+
+            return true;
         }
 
-        private bool TryGenerateScriptAniJobs (List<List<object>> tableScriptAni, out List<ScriptAniJob> scriptAniJobs)
+        public bool TryGenerateScriptAniJobs (List<List<object>> dataTable, out List<ScriptAniJob> scriptAniJobs)
         {
-            throw new NotImplementedException();
+            scriptAniJobs = null;
+
+            List<ColumnGetTypeInfo> info;
+            if (!TryGetColGetTypeInfo("ModelDef", out info)) { return false; }
+
+            try
+            {
+                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                foreach (List<object> row in dataTable)
+                {
+                    var scriptAni = new ScriptAni();
+                    for (int c = 0; c < row.Count; c++)
+                    {
+                        switch (info[c].colName)
+                        {
+                            // ...
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                info = null;
+                MakeLogError(ex);
+                return false;
+            }
+            finally { }
+
+            return true;
         }
 
-        public bool TryGenerateScriptAnis (List<List<object>> tableScriptAni, out List<ScriptAni> scriptAnis)
+        public bool TryGenerateScriptAnis (List<List<object>> dataTable, out List<ScriptAni> scriptAnis)
         {
             scriptAnis = null;
 
-            return false;
+            List<ColumnGetTypeInfo> info;
+            if (!TryGetColGetTypeInfo("ScriptAni", out info)) { return false; }
+
+            try
+            {
+                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                foreach (List<object> row in dataTable)
+                {
+                    var scriptAni = new ScriptAni();
+                    for (int c = 0; c < row.Count; c++)
+                    {
+                        switch (info[c].colName)
+                        {
+                            case "FPS":
+                                scriptAni.FPS = (float) row[c];
+                                break;
+                            case "StartFrame":
+                                scriptAni.StartFrame = (float) row[c];
+                                break;
+                            case "EndFrame":
+                                scriptAni.EndFrame = (float) row[c];
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                info = null;
+                MakeLogError(ex);
+                return false;
+            }
+            finally { }
+
+            return true;
         }
 
+
+
+        public override void Save (bool useAsyncMode)
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
