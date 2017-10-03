@@ -213,7 +213,7 @@ namespace GUC.Scripts.Arena
             this.SetControl(npc);
         }
 
-        void Spectate()
+        public void Spectate()
         {
             KillCharacter();
             TeamMode.JoinTeam(this, null);

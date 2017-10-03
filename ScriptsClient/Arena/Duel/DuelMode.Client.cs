@@ -67,7 +67,8 @@ namespace GUC.Scripts.Arena
 
         static void DuelMessage(string text)
         {
-            ChatMenu.Menu.AddMessage(ChatMode.Private, text);
+            //ChatMenu.Menu.AddMessage(ChatMode.Private, text);
+            Sumpfkraut.Menus.ScreenScrollText.AddText(text, GUI.GUCView.Fonts.Menu);
             Log.Logger.Log(text);
         }
 

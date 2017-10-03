@@ -191,7 +191,7 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.None;
 
-            teams.ForEach(team => team.Players.ForEach(p => p.Team = null));
+            ArenaClient.ForEach(c => ((ArenaClient)c).Spectate());
             teams.Clear();
 
             activeTODef = null;
@@ -254,7 +254,7 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);
             stream.Write((sbyte)index);
-            client.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+            client.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
 
             SpawnCharacter(client);
         }

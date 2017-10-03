@@ -44,16 +44,37 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Finish;
             phaseEndTime = GameTime.Ticks + FinishDuration;
-            TOMessage("Zeit ist vorüber!");
-
+            TOMessage("Der Kampf ist vorüber!");
+            
             int count = stream.ReadByte();
+            List<TOTeamDef> winners = new List<TOTeamDef>(count);
             for (int i = 0; i < count; i++)
             {
                 int index = stream.ReadByte();
                 if (index < activeTODef.Teams.Count)
+                    winners.Add(activeTODef.Teams[index]);
+            }
+
+            if (winners.Count == 0 || winners.Count == activeTODef.Teams.Count)
+            {
+                TOMessage("Unentschieden.");
+            }
+            else if (winners.Count == 1)
+            {
+                TOMessage(winners[0].Name + " hat gewonnen.");
+            }
+            else
+            {
+                string message = "";
+                for (int i = 0; i < winners.Count; i++)
                 {
-                    TOMessage(activeTODef.Teams[index].Name + (count > 1 ? " ist ein Gewinner." : " hat gewonnen."));
+                    message += winners[i].Name;
+                    if (i < winners.Count - 2)
+                        message += ", ";
+                    else if (i == winners.Count - 2)
+                        message += " und ";
                 }
+                TOMessage(message + " haben gewonnen.");
             }
         }
         
@@ -87,7 +108,7 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.None;
 
-            TOMessage("Team Objective ist vorüber!");
+            //TOMessage("Team Objective ist vorüber!");
             Menus.TOInfoScreen.Hide();
             activeTODef = null;
             teamDef = null;
@@ -110,7 +131,8 @@ namespace GUC.Scripts.Arena
 
         static void TOMessage(string text)
         {
-            ChatMenu.Menu.AddMessage(ChatMode.Private, text);
+            //ChatMenu.Menu.AddMessage(ChatMode.Private, text);
+            Sumpfkraut.Menus.ScreenScrollText.AddText(text, GUI.GUCView.Fonts.Menu);
             Log.Logger.Log(text);
         }
     }

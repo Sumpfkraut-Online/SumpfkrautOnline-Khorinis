@@ -54,6 +54,12 @@ namespace Gothic.View
             set { Process.Write(Address + VarOffsets.font, value.Address); }
         }
 
+        public void SetFont(string fontName)
+        {
+            var fontMan = zCFontManager.Manager;
+            this.Font = fontMan.GetFont(fontMan.Load(fontName));
+        }
+
         public zColor Color
         {
             get { return new zColor(Address + VarOffsets.color); }

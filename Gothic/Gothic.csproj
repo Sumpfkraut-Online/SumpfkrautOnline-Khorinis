@@ -92,6 +92,7 @@
     <Compile Include="System\zFile.cs" />
     <Compile Include="System\zFile_File.cs" />
     <Compile Include="System\zFile_VDFS.cs" />
+    <Compile Include="View\zCFontManager.cs" />
     <Compile Include="View\zCFont.cs" />
     <Compile Include="View\zCViewDraw.cs" />
     <Compile Include="View\zCViewProgressBar.cs" />

@@ -118,6 +118,12 @@ namespace GUC.GUI
             { Fonts.Menu, "Font_Old_20_White.tga"},
             { Fonts.Menu_Hi, "Font_Old_20_White_Hi.tga"}
         };
+
+        public static int GetFontSize(Fonts font)
+        {
+            return font < Fonts.Menu ? FontsizeDefault : FontsizeMenu;
+        }
+
         #endregion
 
         #region pixel virtual conversion

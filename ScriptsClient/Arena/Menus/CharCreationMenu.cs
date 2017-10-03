@@ -77,7 +77,7 @@ namespace GUC.Scripts.Arena
             bodywidth = AddChoice("Breite", "Wähle die Körperbreite deines Charakters.", offsetX, offsetY + dist * 6, c_BodyWidth, false, MoveCursor, ChangedVisual);
             voice = AddChoice("Stimme", "Wähle die Stimme deines Charakters.", offsetX, offsetY + dist * 7, c_Voices_M, true, PlayVoice, PlayVoice);
 
-            OnEscape = ExitMenu.Menu.Open;
+            OnEscape = Menus.ExitMenu.Menu.Open;
             
             ChangedVisual();
         }
