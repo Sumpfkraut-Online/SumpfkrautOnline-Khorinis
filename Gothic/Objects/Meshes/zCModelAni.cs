@@ -23,7 +23,7 @@ namespace Gothic.Objects.Meshes
             collVolumeScale = 0x90,
             nextAni = 0x94,
             nextAniName = 0x98,
-            aniEvents = 0xAC, // zCModelAniEvent*
+            aniEvents = 0xAC, // aniEvents*
             fpsRate = 0xB0,
             fpsRateSource = 0xB4,
             numFrames = 0xD8,
@@ -89,6 +89,16 @@ namespace Gothic.Objects.Meshes
         {
             get { return new zCModelAni(Process.ReadInt(Address + VarOffsets.nextAni)); }
             set { Process.Write(Address + VarOffsets.nextAni, value.Address); }
+        }
+
+        public int NumAniEvents
+        {
+            get { return (Process.ReadInt(Address + 0xDD) & 0x3F); }
+        }
+
+        public zCModelAniEvent GetAniEvent(int index)
+        {
+            return new zCModelAniEvent(Process.ReadInt(Address + VarOffsets.aniEvents) + index * zCModelAniEvent.ByteSize);
         }
 
         #endregion

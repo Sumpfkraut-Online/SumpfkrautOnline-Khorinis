@@ -221,6 +221,38 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
+        void ShowWeaponTrail()
+        {
+            if (!this.IsInFightMode)
+                return;
+
+            var aa = this.ModelInst.GetActiveAniFromLayer(2);
+            if (aa == null)
+                aa = this.ModelInst.GetActiveAniFromLayer(1);
+            if (aa == null)
+                return;
+
+            var gModel = this.BaseInst.gModel;
+            var gAniActive = gModel.GetActiveAni(gModel.GetAniIDFromAniName(aa.AniJob.Name));
+            if (gAniActive.Address == 0)
+                return;
+
+            var gAni = gAniActive.ModelAni;
+            int numEvents = gAni.NumAniEvents;
+            for (int index = 0; index < numEvents; index++)
+            {
+                var aniEvent = gAni.GetAniEvent(index);
+                if (aniEvent.AniType != Gothic.Objects.Meshes.zCModelAniEvent.Types.Tag)
+                    continue;
+
+                if (aniEvent.TagString.ToString() == "DEF_OPT_FRAME")
+                {
+                    this.BaseInst.gAI.ShowWeaponTrail();
+                    return;
+                }
+            }
+        }
+
         public void OnTick(long now)
         {
             if (this.IsDead)
@@ -228,19 +260,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             UpdateFightStance();
 
-            if (this.IsInFightMode)
-            {  // show weapon trails, fixme ? might not be a fight ani
-                var aa = this.ModelInst.GetActiveAniFromLayer(2);
-                if (aa == null)
-                    aa = this.ModelInst.GetActiveAniFromLayer(1);
-
-                if (aa != null)
-                {
-                    float percent = aa.GetProgress();
-                    if (percent > 0.05f && percent < 0.7f)
-                        this.BaseInst.gAI.ShowWeaponTrail();
-                }
-            }
+            ShowWeaponTrail();
 
             /*var activeJumpAni = GetJumpAni();
             if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)

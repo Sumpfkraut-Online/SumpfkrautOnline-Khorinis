@@ -49,6 +49,7 @@
     <Compile Include="Objects\Meshes\zCModel.cs" />
     <Compile Include="Objects\Meshes\zCModelAni.cs" />
     <Compile Include="Objects\Meshes\zCModelAniActive.cs" />
+    <Compile Include="Objects\Meshes\zCModelAniEvent.cs" />
     <Compile Include="Objects\Meshes\zCModelPrototype.cs" />
     <Compile Include="Objects\Meshes\zCPolygon.cs" />
     <Compile Include="Objects\Meshes\zCVertex.cs" />
