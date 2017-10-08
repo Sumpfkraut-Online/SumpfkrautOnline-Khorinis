@@ -8,17 +8,43 @@ using System.Linq;
 namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 {
 
+    /// <summary>
+    /// Class which manages the listing and on-point application of TimedFunctions
+    /// which are able to preserve state.
+    /// Use it for function calls which are repeateded in intervals or at certain times.
+    /// Very useful for lingering ingame status effects likme poisoning.
+    /// </summary>
     public class FunctionManager : ExtendedObject
     {
 
+        /// <summary>
+        /// Lock which is used when TimedFunctions are processed.
+        /// </summary>
         protected object _runLock;
+        /// <summary>
+        /// Lock which is used when the storageBuffer is accessed.
+        /// </summary>
         protected object _bufferLock;
 
         protected bool isRunning = false;
+        /// <summary>
+        /// Whether the FunctionManager is active or not at the moment.
+        /// </summary>
         public bool IsRunning { get { return isRunning; } }
 
+        /// <summary>
+        /// Internal sotrage of all subscribed TimedFunctions with their respective amounts.
+        /// </summary>
         protected Dictionary<TimedFunction, int> storage;
+        /// <summary>
+        /// Buffer used to seperate public access from internal sotrage processes.
+        /// </summary>
         protected List<IManagerInteraction> storageBuffer;
+        /// <summary>
+        /// Ever up-to-date schedule which determines which TimedFunctions are to be
+        /// invoked at which times. TimedFunctions are only listed for one point in time
+        /// and possible subsequent invocations are deduced one after another.
+        /// </summary>
         protected SortedDictionary<DateTime, List<TimedFunction>> schedule;
 
 
@@ -34,6 +60,13 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
+        /// <summary>
+        /// Add a TimedFunction to the query amount-times, possibly ignoring
+        /// that the same TimedFunction is already listed.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="amount"></param>
+        /// <param name="allowDuplicate"></param>
         public void Add (TimedFunction f, int amount, bool allowDuplicate)
         {
             lock (_bufferLock)
@@ -42,6 +75,13 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Add multiple TimedFunctions to the query amount-times each, possibly ignoring
+        /// that the same TimedFunctions are already listed.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="amount"></param>
+        /// <param name="allowDuplicate"></param>
         public void Add (TimedFunction[] f, int amount, bool allowDuplicate)
         {
             lock (_bufferLock)
@@ -50,6 +90,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Removes all TimedFunctions from this FunctionManager.
+        /// </summary>
         public void Clear ()
         {
             lock (_bufferLock)
@@ -58,6 +101,13 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Remove a specified TimedFunction from storage and schedule. Either all
+        /// occurrences can be deleted or a certain amount.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="removeAll"></param>
+        /// <param name="amount"></param>
         public void Remove (TimedFunction f, bool removeAll, int amount)
         {
             lock (_bufferLock)
@@ -66,6 +116,13 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Remove specified TimedFunctions from storage and schedule. Either all
+        /// occurrences can be deleted or a certain amount each.
+        /// </summary>
+        /// <param name="f"></param>
+        /// <param name="removeAll"></param>
+        /// <param name="amount"></param>
         public void Remove (TimedFunction[] f, bool removeAll, int amount)
         {
             lock (_bufferLock)
@@ -74,6 +131,14 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Replace a specified TimedFunction with another. Either all occurences are converted
+        /// or a given amount.
+        /// </summary>
+        /// <param name="oldTF"></param>
+        /// <param name="newTF"></param>
+        /// <param name="replaceAll"></param>
+        /// <param name="amount"></param>
         public void Replace (TimedFunction oldTF, TimedFunction newTF, bool replaceAll, int amount)
         {
             lock (_bufferLock)
@@ -82,6 +147,14 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Replace specified TimedFunctions with their coutnerparts. Either all occurences are converted
+        /// or a given amount.
+        /// </summary>
+        /// <param name="oldTF"></param>
+        /// <param name="newTF"></param>
+        /// <param name="replaceAll"></param>
+        /// <param name="amount"></param>
         public void Replace (TimedFunction[] oldTF, TimedFunction[] newTF, bool replaceAll, int amount)
         {
             lock (_bufferLock)
@@ -92,6 +165,9 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
+        /// <summary>
+        /// Applies all buffered storage access actions (ManagerInteractions).
+        /// </summary>
         public void IntegrateBuffer ()
         {
             lock (_runLock)
@@ -118,12 +194,19 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Used to apply buffered clear action (MI_Clear).
+        /// </summary>
         protected void Buffer_Clear ()
         {
             storage.Clear();
             schedule.Clear();
         }
 
+        /// <summary>
+        /// Used to apply buffered add action.
+        /// </summary>
+        /// <param name="action"></param>
         protected void Buffer_Add (MI_Add action)
         {
             if (storage.ContainsKey(action.TF))
@@ -156,6 +239,10 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Used to apply buffered add range action.
+        /// </summary>
+        /// <param name="action"></param>
         protected void Buffer_AddRange (MI_AddRange action)
         {
             for (int i = 0; i < action.TF.Length; i++)
@@ -164,6 +251,10 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Used to apply buffered remove action.
+        /// </summary>
+        /// <param name="action"></param>
         protected void Buffer_Remove (MI_Remove action)
         {
             if (action.RemoveAll)
@@ -185,6 +276,10 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Used to apply buffered remove range action.
+        /// </summary>
+        /// <param name="action"></param>
         protected void Buffer_RemoveRange (MI_RemoveRange action)
         {
             for (int i = 0; i < action.TF.Length; i++)
@@ -193,16 +288,30 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
-        protected void Buffer_RemoveExceptTimeRange (MI_RemoveExceptTimeRange action)
-        {
-            throw new NotImplementedException();    
-        }
+        ///// <summary>
+        ///// Used to apply buffered remove action while preserving a specific time range.
+        ///// NOT IMPLEMENTED YET.
+        ///// </summary>
+        ///// <param name="action"></param>
+        //protected void Buffer_RemoveExceptTimeRange (MI_RemoveExceptTimeRange action)
+        //{
+        //    throw new NotImplementedException();    
+        //}
 
-        protected void Buffer_RemoveInTimeRange (MI_RemoveInTimeRange action)
-        {
-            throw new NotImplementedException();
-        }
+        ///// <summary>
+        ///// Used to apply buffered remove action while only deleting in a specific time range.
+        ///// NOT IMPLEMENTED YET.
+        ///// </summary>
+        ///// <param name="action"></param>
+        //protected void Buffer_RemoveInTimeRange (MI_RemoveInTimeRange action)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
+        /// <summary>
+        /// Used to apply buffered replace action.
+        /// </summary>
+        /// <param name="action"></param>
         protected void Buffer_Replace (MI_Replace action)
         {
             int amount = 1;
@@ -223,6 +332,10 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
+        /// <summary>
+        /// Used to apply buffered replace action.
+        /// </summary>
+        /// <param name="action"></param>
         protected void Buffer_ReplaceRange (MI_ReplaceRange action)
         {
             int maxLength = action.OldTF.Length <= action.NewTF.Length ? action.OldTF.Length : action.NewTF.Length;
@@ -235,7 +348,11 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        // only use in internally in Run-method
+        /// <summary>
+        /// Adds a TimedFunction to the time schedule if not already present.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="tf"></param>
         protected void AddToSchedule (DateTime time, TimedFunction tf)
         {
             if (schedule.ContainsKey(time))
@@ -251,7 +368,11 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             }
         }
 
-        // only use in internally in Run-method
+        /// <summary>
+        /// Removes a TimedFunction from the timed schedule.
+        /// </summary>
+        /// <param name="tf"></param>
+        /// <returns></returns>
         protected bool RemoveFromSchedule (TimedFunction tf)
         {
             // get copy of all schedule times (keys)
@@ -265,16 +386,24 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
             return false;
         }
 
-        // only use in internally in Run-method
+        /// <summary>
+        /// Removes a possible TimedFunction-entry in the schedule at the given time.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="tf"></param>
+        /// <returns></returns>
         protected bool RemoveFromSchedule (DateTime time, TimedFunction tf)
         {
             List<TimedFunction> timedFunctions;
             if (schedule.TryGetValue(time, out timedFunctions))
             {
-                // possibly remove the schedule entry if it would'nt contain any TimedFunctions anyway
-                if (timedFunctions.Count < 2) { schedule.Remove(time); Print("GOTCHA"); }
-                else { timedFunctions.Remove(tf); }
-                return true;
+                if (timedFunctions.Contains(tf))
+                {
+                    // possibly remove the schedule entry if it would'nt contain any TimedFunctions anyway
+                    if (timedFunctions.Count < 2) { schedule.Remove(time); }
+                    else { timedFunctions.Remove(tf); }
+                    return true;
+                }
             }
 
             return false;
@@ -282,7 +411,11 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
-        // only use in internally in Run-method
+        /// <summary>
+        /// Invoke a TimedFunction and pass it the calculated new state parameters.
+        /// </summary>
+        /// <param name="tf"></param>
+        /// <returns></returns>
         protected int InvokeFunction (TimedFunction tf)
         {
             int callAmount;
@@ -295,16 +428,30 @@ namespace GUC.Scripts.Sumpfkraut.Utilities.Functions
 
 
 
+        /// <summary>
+        /// Starts the FunctionManager.
+        /// It only functions when Run-method is called continuously on a Thread.
+        /// </summary>
         public void Start ()
         {
             lock (_runLock) { isRunning = true; }
         }
 
+        /// <summary>
+        /// Marks the FunctionManager to be stopped.
+        /// Prevents invocation of scheduled TimedFunctions and automated internal management
+        /// routines in the Run-method.
+        /// </summary>
         public void Stop ()
         {
             lock (_runLock) { isRunning = false; }
         }
 
+        /// <summary>
+        /// Central routine which dives automated internal management and invocation of scheduled
+        /// TimedFunctions.
+        /// Must be called externally on a single thread for the Function Manager to work properly.
+        /// </summary>
         public void Run ()
         {
             if (isRunning)

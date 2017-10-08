@@ -319,6 +319,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptOverlay.cs">
       <Link>Sumpfkraut\Visuals\ScriptOverlay.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\VisualLoader.cs">
+      <Link>Sumpfkraut\Visuals\VisualLoader.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs</Link>
     </Compile>
@@ -455,6 +458,7 @@
     <Compile Include="Sumpfkraut\Visuals\ScriptAniJob.Server.cs" />
     <Compile Include="Sumpfkraut\Visuals\ScriptOverlay.Server.cs" />
     <Compile Include="Sumpfkraut\Visuals\ModelDef.Server.cs" />
+    <Compile Include="Sumpfkraut\Visuals\VisualLoader.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />
