@@ -19,46 +19,48 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             {
                 "ModelDef", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    new ColumnGetTypeInfo("ModelDefID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ModelDefName", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("Visual", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("Radius", SQLiteGetType.GetFloat),
-                    new ColumnGetTypeInfo("Height", SQLiteGetType.GetFloat),
-                    new ColumnGetTypeInfo("FistRange", SQLiteGetType.GetFloat),
+                    new ColumnGetTypeInfo("ModelDefID",         SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ModelDefName",       SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("Visual",             SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("AniCatalog",         SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("Radius",             SQLiteGetType.GetFloat),
+                    new ColumnGetTypeInfo("Height",             SQLiteGetType.GetFloat),
+                    new ColumnGetTypeInfo("FistRange",          SQLiteGetType.GetFloat),
                 }
             },
             {
                 "ScriptOverlay", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    new ColumnGetTypeInfo("ScriptOverlayID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ModelDefID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("CodeName", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("ScriptOverlayName", SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ModelDefID",         SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("CodeName",           SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("ScriptOverlayName",  SQLiteGetType.GetString),
                 }
             },
             {
                 "ScriptAniJob", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    new ColumnGetTypeInfo("ScriptAniJobID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ScriptAniID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("AniName", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("CodeName", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("AniJobType", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("PrevCodeName", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("NextCodeName", SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("Layer", SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ScriptAniJobID",     SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ScriptAniID",        SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("AniName",            SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("CodeName",           SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("AniJobType",         SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("PrevCodeName",       SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("NextCodeName",       SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("Layer",              SQLiteGetType.GetInt32),
                 }
             },
             {
                 "ScriptAni", new List<DBTables.ColumnGetTypeInfo>
                 {
-                    new ColumnGetTypeInfo("ScriptAniID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ScriptOverlayID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ScriptAniJobID", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("FPS", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("StartFrame", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("EndFrame", SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("SpecialFrames", SQLiteGetType.GetString),
+                    new ColumnGetTypeInfo("ScriptAniID",        SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("ScriptAniJobID",     SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("FPS",                SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("StartFrame",         SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("EndFrame",           SQLiteGetType.GetInt32),
+                    new ColumnGetTypeInfo("SpecialFrames",      SQLiteGetType.GetString),
                 }
             },
         };
@@ -124,47 +126,53 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 // convert the data-strings to their respective types
                 ConvertSQLResults(sqlResults, colGetTypeInfo);
 
-                var tableModelDef = sqlResults[0];
-                var tableScriptOverlay = sqlResults[1];
-                var tableScriptAniJob = sqlResults[2];
-                var tableScriptAni = sqlResults[3];
+                var tableModelDef       = sqlResults[DBTableLoadOrder.IndexOf("ModelDef")];
+                var tableScriptOverlay  = sqlResults[DBTableLoadOrder.IndexOf("ScriptOverlay")];
+                var tableScriptAniJob   = sqlResults[DBTableLoadOrder.IndexOf("ScriptAniJob")];
+                var tableScriptAni      = sqlResults[DBTableLoadOrder.IndexOf("ScriptAni")];
 
-                List<ModelDef> modelDefs;
-                if (!TryGenerateModelDefs(tableModelDef, out modelDefs))
-                {
-                    MakeLogError("Failed to produce ModelDef-objects from sql data. "
-                        + "Aborting Generation of Visuals.");
-                    return;
-                }
-
-                List<ScriptOverlay> scriptOverlays;
-                if (!TryGenerateScriptOverlays(tableScriptOverlay, out scriptOverlays))
-                {
-                    MakeLogError("Failed to produce ScriptOverlay-objects from sql data. "
-                        + "Aborting Generation of Visuals.");
-                    return;
-                }
-
-                List<ScriptAni> scriptAnis;
-                if (!TryGenerateScriptAnis(tableScriptAni, out scriptAnis))
+                Dictionary<int, ScriptAni> aniByAniJobID;
+                if (!TryGenerateScriptAnis(tableScriptAni, 
+                    out aniByAniJobID))
                 {
                     MakeLogError("Failed to produce ScriptAni-objects from sql data. "
                         + "Aborting Generation of Visuals.");
                     return;
                 }
 
-                List<ScriptAniJob> scriptAniJobs;
-                if (!TryGenerateScriptAniJobs(tableScriptAniJob, out scriptAniJobs))
+                Dictionary<int, ScriptOverlay> overlayByModelDefID;
+                Dictionary<int, ScriptOverlay> overlayByAniID;
+                if (!TryGenerateScriptOverlays(tableScriptOverlay, 
+                    out overlayByModelDefID, out overlayByAniID))
+                {
+                    MakeLogError("Failed to produce ScriptOverlay-objects from sql data. "
+                        + "Aborting Generation of Visuals.");
+                    return;
+                }
+
+                Dictionary<int, ScriptAniJob> aniJobByModelDefID;
+                if (!TryGenerateScriptAniJobs(tableScriptAniJob, aniByAniJobID, overlayByAniID, 
+                    out aniJobByModelDefID))
                 {
                     MakeLogError("Failed to produce ScriptAniJob-objects from sql data. "
                         + "Aborting Generation of Visuals.");
                     return;
-                } 
+                }
+
+                Dictionary<int, ModelDef> modelDefByID;
+                if (!TryGenerateModelDefs(tableModelDef, overlayByModelDefID, aniJobByModelDefID, 
+                    out modelDefByID))
+                {
+                    MakeLogError("Failed to produce ModelDef-objects from sql data. "
+                        + "Aborting Generation of Visuals.");
+                    return;
+                }
             }
         }
 
         public bool TryGenerateModelDefs (List<List<object>> dataTable, 
-            out List<ModelDef> modelDefs)
+            Dictionary<int, ScriptOverlay> overlayByModelDefID, Dictionary<int, ScriptAniJob> aniJobByModelDefID,
+            out Dictionary<int, ModelDef> modelDefByID)
         {
             modelDefs = null;
 
@@ -212,8 +220,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return true;
         }
 
-        public bool TryGenerateScriptOverlays (List<List<object>> dataTable, List<ModelDef> modelDefs, 
-            out List<ScriptOverlay> scriptOverlays)
+        public bool TryGenerateScriptOverlays (List<List<object>> dataTable,
+            out Dictionary<int, ScriptOverlay> overlayByModelDefID, out Dictionary<int, ScriptOverlay> overlayByAniJobID)
         {
             scriptOverlays = null;
 
@@ -253,7 +261,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         }
 
         public bool TryGenerateScriptAniJobs (List<List<object>> dataTable, 
-            out List<ScriptAniJob> scriptAniJobs)
+            Dictionary<int, ScriptAni> aniByAniJobID, Dictionary<int, ScriptOverlay> overlayByAniJobID, 
+            out Dictionary<int, ScriptAniJob> aniJobByModelDefID)
         {
             scriptAniJobs = null;
 
@@ -288,7 +297,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         }
 
         public bool TryGenerateScriptAnis (List<List<object>> dataTable, 
-            out List<ScriptAni> scriptAnis)
+            out Dictionary<int, ScriptAni> aniByAniJobID)
         {
             scriptAnis = null;
 

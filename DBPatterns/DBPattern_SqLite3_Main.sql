@@ -127,11 +127,12 @@ CREATE TABLE IF NOT EXISTS ModelDef
 (
     ModelDefID INTEGER NOT NULL, -- unique primary key id
     ModelDefName TEXT NOT NULL, -- descriptive name
-    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     Visual TEXT NOT NULL, -- Gothic visual name
+    AniCatalog TEXT NOT NULL, -- name  of catalog for possible animations (e.g. NPCCatalog)
     Radius REAL DEFAULT 0, -- radius for collision detection
     Height REAL DEFAULT 0, -- height for collision detection
     FistRange REAL DEFAULT 0, -- fist range for hit detection without weapon
+    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
@@ -149,13 +150,15 @@ DROP TABLE IF EXISTS ScriptOverlay;
 CREATE TABLE IF NOT EXISTS ScriptOverlay 
 (
     ScriptOverlayID INTEGER NOT NULL, -- unique primary key id
-    ModelDefID INTEGER NOT NULL,
+    ModelDefID INTEGER, -- possibly belongs to a ModelDef
+    ScriptAniJobID INTEGER, -- possible bleongs to a ScriptAniJob
     CodeName TEXT NOT NULL,
     ScriptOverlayName TEXT NOT NULL, -- descriptive name
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptOverlay_PK PRIMARY KEY (ScriptOverlayID),
-    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID)
+    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID),
+    FOREIGN KEY (ScriptAniJobID) REFERENCES ScriptAniJob(ScriptAniJobID)
 );
 
 CREATE TRIGGER Update_ScriptOverlay
