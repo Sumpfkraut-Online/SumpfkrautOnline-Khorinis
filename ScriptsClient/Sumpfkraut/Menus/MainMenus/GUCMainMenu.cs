@@ -34,7 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
         public GUCMainMenu()
         {
             var screenSize = GUCView.GetScreenSize();
-            pos = new int[] { (screenSize.Width - 640) / 2, (screenSize.Height - 480) / 2 };
+            pos = new int[] { (screenSize.X - 640) / 2, (screenSize.Y - 480) / 2 };
             Back = new GUCVisual(pos[0], pos[1], 640, 480);
             Back.SetBackTexture("Menu_Ingame.tga");
             Back.Font = GUCVisual.Fonts.Menu;

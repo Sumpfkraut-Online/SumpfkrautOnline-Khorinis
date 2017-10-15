@@ -71,8 +71,9 @@ namespace GUC.Scripts.Arena.Menus
         LockTimer lockTimer = new LockTimer(500);
         void SelectClass(int index)
         {
-            if (TeamMode.TeamDef == null)
+            if (TeamMode.TeamDef == null || TeamMode.Phase == TOPhases.None || TeamMode.Phase == TOPhases.Finish)
             {
+                Sumpfkraut.Menus.ScreenScrollText.AddText("TeamObjective ist vorüber.", GUCView.Fonts.Menu);
                 Close();
                 return;
             }
@@ -94,6 +95,8 @@ namespace GUC.Scripts.Arena.Menus
             stream.Write((byte)ScriptMessages.TOSelectClass);
             stream.Write((byte)index);
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+
+            ArenaClient.Client.ClassDef = classDef;
 
             Close();
         }

@@ -9,6 +9,9 @@ namespace GUC.Scripts.Arena
     class PlayerInfo
     {
         static Dictionary<int, PlayerInfo> players = new Dictionary<int, PlayerInfo>();
+        public static IEnumerable<PlayerInfo> GetInfos() { return players.Values; }
+
+        public static event Action OnPlayerListChange;
 
         static int heroID = -1;
         public static int HeroID { get { return heroID; } }
@@ -45,6 +48,8 @@ namespace GUC.Scripts.Arena
             }
 
             pi.name = stream.ReadString();
+
+            OnPlayerListChange?.Invoke();
         }
 
         public static void ReadPlayerQuitMessage(PacketReader stream)

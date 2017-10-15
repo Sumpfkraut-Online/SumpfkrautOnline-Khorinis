@@ -95,14 +95,13 @@ namespace Gothic.Objects
             TakeAnimalTrophy,
             Foreignlanguage
         }
-
-        [Flags]
-        public enum NPC_Flags
+        
+        public enum NPCFlags
         {
             None = 0,
             Friend = 1,
             Immortal = 2,
-            Ghost = 3
+            Ghost = 4
         }
 
         new public abstract class FuncAddresses : zCVob.FuncAddresses
@@ -718,6 +717,12 @@ namespace Gothic.Objects
             Process.THISCALL<IntArg>(Address, FuncAddresses.InitModel);
         }
 
+        public NPCFlags Flags
+        {
+            get { return (NPCFlags)Process.ReadInt(Address + VarOffsets.flags); }
+            set { Process.Write((int)value, Address + VarOffsets.flags); }
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {
@@ -833,11 +838,6 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetInteractItem, new CallValue[] { item });
         }
 
-        public int Flags
-        {
-            get { return Process.ReadInt(Address + (int)Offsets.flags); }
-            set { Process.Write(value, Address + (int)Offsets.flags); }
-        }
 
         public int WeaponMode
         {

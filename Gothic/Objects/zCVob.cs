@@ -266,6 +266,12 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetVisualStr, str);
         }
 
+        public float VisualAlpha
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.visualAlpha); }
+            set { Process.Write(Address + VarOffsets.visualAlpha, value); }
+        }
+
         public zMat4 TrafoObjToWorld
         {
             get { return new zMat4(Address + VarOffsets.trafoObjToWorld); }

@@ -56,10 +56,10 @@ namespace GUC.Hooks
                     var text = connectionVis.CreateText("");
                 }
                 var screenSize = GUCView.GetScreenSize();
-                connectionVis.SetPosX(screenSize.Width / 2 - 200);
+                connectionVis.SetPosX(screenSize.X / 2 - 200);
                 connectionVis.SetPosY(200);
-                connectionVis.SetSizeY(40);
-                connectionVis.SetSizeX(400);
+                connectionVis.SetHeight(40);
+                connectionVis.SetWidth(400);
                 connectionVis.Texts[0].Text = string.Format("Connecting to '{0}:{1}' ... ({2})", Program.ServerIP, Program.ServerPort, GameClient.ConnectionAttempts);
                 connectionVis.Show();
                 return true;

@@ -27,7 +27,8 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenAllChat, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.Inventory, d => { if (d) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
-            { VirtualKeys.P, PrintPosition }
+            { VirtualKeys.P, PrintPosition },
+            { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() }
         };
 
         static void PrintPosition(bool down)
@@ -153,6 +154,12 @@ namespace GUC.Scripts.Arena.Controls
             }
             else if (!KeyBind.Action.IsPressed())
             {
+                if (enemy != null)
+                {
+                    Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+                    enemy = null;
+                }
+
                 hero.BaseInst.gAI.CheckFocusVob(1);
                 if (KeyBind.MoveForward.IsPressed()) // move forward
                 {

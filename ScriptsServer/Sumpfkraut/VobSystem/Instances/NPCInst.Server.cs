@@ -567,8 +567,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void Hit(NPCInst attacker, int damage)
         {
-            sOnHit?.Invoke(attacker, this, ref damage);
-
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.HitMessage);
             strm.Write((ushort)this.ID);
@@ -580,10 +578,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 damage = 1;
 
             this.SetHealth(this.GetHealth() - damage);
+            sOnHit?.Invoke(attacker, this, damage);
         }
 
 
-        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, ref int damage);
+        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
 
         public delegate bool OnHitCheckHandler(NPCInst attacker, NPCInst target);

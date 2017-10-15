@@ -34,6 +34,9 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Battle;
             phaseEndTime = GameTime.Ticks + activeTODef.Duration * TimeSpan.TicksPerMinute;
+
+            if (teamDef == null)
+                return;
             TOMessage("Der Kampf beginnt!");
         }
 
@@ -44,6 +47,10 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Finish;
             phaseEndTime = GameTime.Ticks + FinishDuration;
+
+            if (teamDef == null)
+                return;
+
             TOMessage("Der Kampf ist vorüber!");
             
             int count = stream.ReadByte();

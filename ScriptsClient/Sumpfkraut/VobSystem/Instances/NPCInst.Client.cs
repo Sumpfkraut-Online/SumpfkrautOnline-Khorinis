@@ -255,6 +255,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
+            // Arena
+            if (Hero != null && Hero.TeamPlayer != this.TeamPlayer)
+            {
+                this.BaseInst.gVob.BitField1 |= zCVob.BitFlag0.visualAlphaEnabled;
+                this.BaseInst.gVob.VisualAlpha = 0.5f;
+            }
+            else
+            {
+                this.BaseInst.gVob.BitField1 &= ~zCVob.BitFlag0.visualAlphaEnabled;
+            }
+
             if (this.IsDead)
                 return;
 

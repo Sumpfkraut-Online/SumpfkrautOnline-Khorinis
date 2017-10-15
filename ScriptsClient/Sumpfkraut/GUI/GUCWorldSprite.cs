@@ -12,7 +12,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 {
     class GUCWorldSprite : GUCVisual
     {
-        public GUCWorldSprite(int w, int h, bool virtuals)
+        public GUCWorldSprite(int w, int h, bool virtuals = false)
             : base(0, 0, w, h, virtuals, null)
         {
         }
@@ -70,38 +70,39 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     return;
 
                 pos = targetVob.GetPosition();
-                pos.Y += targetVob.BaseInst.gVob.BBox3D.Height / 2.0f;
+                pos.Y += targetVob.BaseInst.gVob.BBox3D.Height / 1.5f;
             }
 
             var activeCam = zCCamera.ActiveCamera;
             using (var gPos = zVec3.Create(pos.X, pos.Y, pos.Z))
             using (var vec = activeCam.CamMatrix * gPos)
             {
-                int x, y;
+                ViewPoint screenPos;
                 if (vec.Z > 0)
                 {
-                    activeCam.Project(vec, out x, out y);
+                    activeCam.Project(vec, out screenPos.X, out screenPos.Y);
+
+                    screenPos = PixelToVirtual(screenPos.X, screenPos.Y);
                     if (this.ShowOutOfScreen)
                     {
-                        if (x < 0) x = 0;
-                        else if (x > 0x2000) x = 0x2000;
+                        if (screenPos.X < 0) screenPos.X = 0;
+                        else if (screenPos.X > 0x2000) screenPos.X = 0x2000;
 
-                        if (y < 0) y = 0;
-                        if (y > 0x2000) y = 0x2000;
+                        if (screenPos.Y < 0) screenPos.Y = 0;
+                        if (screenPos.Y > 0x2000) screenPos.Y = 0x2000;
                     }
 
                     // center it
-                    x -= this.vsize[0] / 2;
-                    y -= this.vsize[1] / 2;
+                    screenPos.X -= this.vsize.X / 2;
+                    screenPos.Y -= this.vsize.Y / 2;
                 }
                 else
                 {
-                    x = 0x2000;
-                    y = 0x2000;
+                    screenPos.X = 0x2000;
+                    screenPos.Y = 0x2000;
                 }
 
-                SetPosX(x);
-                SetPosY(y);
+                SetPos(screenPos, true);
             }
         }
     }

@@ -79,8 +79,9 @@ namespace GUC.Scripts.Arena.Menus
         LockTimer lockTimer = new LockTimer(500);
         void SelectTeam(int index)
         {
-            if (!TeamMode.IsRunning)
+            if (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.Finish || TeamMode.Phase == TOPhases.None)
             {
+                Sumpfkraut.Menus.ScreenScrollText.AddText("TeamObjective ist vorüber.", GUCView.Fonts.Menu);
                 Close();
                 return;
             }

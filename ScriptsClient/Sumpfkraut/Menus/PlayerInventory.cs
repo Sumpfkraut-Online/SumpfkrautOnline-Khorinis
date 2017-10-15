@@ -25,9 +25,9 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             var screenSize = GUCView.GetScreenSize();
 
             cols = 5;
-            x = screenSize.Width - (GUCInventory.SlotSize * cols + screenSize.Width / 25);
-            y = screenSize.Height / 7 + 15;
-            rows = (screenSize.Height - GUCInventory.DescriptionBoxHeight - y) / GUCInventory.SlotSize;
+            x = screenSize.X - (GUCInventory.SlotSize * cols + screenSize.X / 25);
+            y = screenSize.Y / 7 + 15;
+            rows = (screenSize.Y - GUCInventory.DescriptionBoxHeight - y) / GUCInventory.SlotSize;
 
             inv = new GUCInventory(x, y, cols, rows);
         }
@@ -54,9 +54,6 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public override void Open()
         {
-            ItemInst.OnSetAmount += UpdateAmountEventMethod;
-            VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem += UpdateInventory;
-            VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem += UpdateInventory;
 
             player = ScriptClient.Client.Character;
             if (player == null)
@@ -66,8 +63,11 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             if (env.InAir)
                 return;
 
-            if (player.Movement != NPCMovement.Stand)
-                player.SetMovement(NPCMovement.Stand);
+            player.SetMovement(NPCMovement.Stand);
+
+            ItemInst.OnSetAmount += UpdateAmountEventMethod;
+            VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem += UpdateInventory;
+            VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem += UpdateInventory;
 
             base.Open();
             inv.SetContents(player.Inventory);
@@ -84,7 +84,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             base.Close();
             inv.Hide();
         }
-        
+
 
         protected override void KeyDown(VirtualKeys key)
         {
@@ -100,43 +100,28 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                         ItemInst selectedItem = inv.GetSelectedItem();
                         if (selectedItem != null)
                         {
-                            /*Animations.AniJob dropJob = 
-                             player.StartAniJump(ani, 10, 10);
-                             player.ModelInst.StartAnimation(dropJob, 0.2f);
-                             if (player.Model.TryGetAniJob((int)SetAnis.DropItem, out dropJob))
-                             {
-                                 if (selItem.Amount > 1)
-                                 {
-
-                                 }
-                                 else
-                                 {
-                                     ScriptClient.Client.BaseClient.DoStartAni(dropJob.BaseAniJob, selItem);
-                                 }
-                             }
-                         */
-                         if (selectedItem.Amount > 1)
+                            if (selectedItem.Amount > 1)
                             {
                                 DropItemMenu.Menu.Open(selectedItem);
                             }
-                         else if(selectedItem.Amount == 1)
+                            else if (selectedItem.Amount == 1)
                             {
                                 NPCInst.Requests.DropItem(player, selectedItem, 1);
                             }
                         }
-                    }  
+                    }
                     break;
                 case VirtualKeys.Control: // USE
                     ItemInst selItem = inv.GetSelectedItem();
                     if (selItem == null)
                         return;
 
-                    if(selItem.ItemType < ItemTypes.MAXWEAPON)
+                    if (selItem.ItemType < ItemTypes.MAXWEAPON)
                     {
                         player.LastUsedWeapon = selItem;
                     }
-                    
-                    switch(selItem.ItemType)
+
+                    switch (selItem.ItemType)
                     {
                         case ItemTypes.Wep1H:
                         case ItemTypes.Wep2H:

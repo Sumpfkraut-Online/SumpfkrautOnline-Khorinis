@@ -23,17 +23,6 @@ namespace GUC.GUI
         }
     }
 
-    public struct ViewSize
-    {
-        public int Width, Height;
-
-        public ViewSize(int width, int height)
-        {
-            this.Width = width;
-            this.Height = height;
-        }
-    }
-
     public abstract class GUCView
     {
         #region Chars
@@ -102,9 +91,13 @@ namespace GUC.GUI
         #region Fonts
         public enum Fonts
         {
+            /// <summary> Small text font. </summary>
             Default,
+            /// <summary> Highlighted text font, so it's just white. </summary>
             Default_Hi,
+            /// <summary> Large text font. </summary>
             Menu,
+            /// <summary> Highlighted text font, so it's just white. </summary>
             Menu_Hi
         }
 
@@ -129,49 +122,51 @@ namespace GUC.GUI
         #region pixel virtual conversion
 
         static bool iniRes = false;
-        public static ViewSize GetScreenSize()
+        public static ViewPoint GetScreenSize()
         {
             var screen = Gothic.View.zCView.GetScreen();
 
-            var ret = new ViewSize(screen.pSizeX, screen.pSizeY);
+            var ret = new ViewPoint(screen.pSizeX, screen.pSizeY);
 
-            if (ret.Width > 0 && ret.Height > 0)
+            if (ret.X > 0 && ret.Y > 0)
             {
                 iniRes = false;
             }
             else
             {
                 var sec = Gothic.zCOption.GetSectionByName("VIDEO");
-                ret.Width = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenX").VarValue.ToString());
-                ret.Height = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenY").VarValue.ToString());
+                ret.X = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenX").VarValue.ToString());
+                ret.Y = Convert.ToInt32(sec.GetEntryByName("zVidResFullscreenY").VarValue.ToString());
 
                 if (!iniRes)
                 {
-                    Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret.Width + "x" + ret.Height);
+                    Log.Logger.LogWarning("Couldn't find real resolution, using Gothic.ini resolution: " + ret.X + "x" + ret.Y);
                 }
                 iniRes = true;
             }
             return ret;
         }
 
-        public static int[] PixelToVirtual(int x, int y)
+        public static ViewPoint PixelToVirtual(int x, int y)
         {
             var res = GetScreenSize();
-            return new int[]
-            {
-                x * 0x2000 / res.Width,
-                y * 0x2000 / res.Height
-            };
+            return new ViewPoint(x * 0x2000 / res.X, y * 0x2000 / res.Y);
+        }
+
+        public static ViewPoint PixelToVirtual(ViewPoint point)
+        {
+            var res = GetScreenSize();
+            return new ViewPoint(point.X * 0x2000 / res.X, point.Y * 0x2000 / res.Y);
         }
 
         public static int PixelToVirtualX(int x)
         {
-            return x * 0x2000 / GetScreenSize().Width;
+            return x * 0x2000 / GetScreenSize().X;
         }
 
         public static int PixelToVirtualY(int y)
         {
-            return y * 0x2000 / GetScreenSize().Height;
+            return y * 0x2000 / GetScreenSize().Y;
         }
 
         #endregion

@@ -57,8 +57,8 @@ namespace GUC.Network
 
             public static void WriteConnection()
             {
-                string signature = Program.GetSignature(0);
-                string mac = Program.GetMacAddress();
+                string signature = ""; // Program.GetSignature(0);
+                string mac = ""; // Program.GetMacAddress();
 
                 Logger.Log("Signature: " + signature);
                 Logger.Log("MAC: " + mac);
@@ -113,7 +113,7 @@ namespace GUC.Network
 
             // Init debug info on screen
             var screenSize = GUCView.GetScreenSize();
-            abortInfo = new GUCVisual((screenSize.Width - 300) / 2, 150, 300, 40);
+            abortInfo = new GUCVisual((screenSize.Y - 300) / 2, 150, 300, 40);
             abortInfo.SetBackTexture("Menu_Choice_Back.tga");
             GUCVisualText visText = abortInfo.CreateText("Verbindung unterbrochen!");
             visText.SetColor(ColorRGBA.Red);

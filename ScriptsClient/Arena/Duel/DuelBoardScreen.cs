@@ -18,33 +18,25 @@ namespace GUC.Scripts.Arena
             vis = CreateBoard();
 
             var screenSize = GUCView.GetScreenSize();
-            vis.SetPosX((screenSize.Width - Width) / 2);
+            vis.SetPosX((screenSize.X - Width) / 2);
             vis.SetPosY(yScreenDist);
         }
 
         public override void ReadMessage(PacketReader stream)
         {
             int count = stream.ReadByte();
-            for (int i = 1; i <= count; i++)
-            {
-                if (i >= vis.Texts.Count / 5)
-                    return;
+            List<BoardEntry> list = new List<BoardEntry>(count);
+            for (int i = 0; i < count; i++)
+                list.Add(new BoardEntry()
+                {
+                    ID = stream.ReadByte(),
+                    Score = stream.ReadShort(),
+                    Kills = stream.ReadShort(),
+                    Deaths = stream.ReadShort(),
+                    Ping = stream.ReadShort()
+                });
 
-                int id = stream.ReadByte();
-                int score = stream.ReadShort();
-                int kills = stream.ReadShort();
-                int deaths = stream.ReadShort();
-                int ping = stream.ReadShort();
-
-                SetText(vis.Texts[5 * i], PlayerInfo.TryGetInfo(id, out PlayerInfo pi) ? pi.Name : "!Unknown Player!", id);
-                SetText(vis.Texts[5 * i + 1], score, id);
-                SetText(vis.Texts[5 * i + 2], kills, id);
-                SetText(vis.Texts[5 * i + 3], deaths, id);
-                SetText(vis.Texts[5 * i + 4], ping, id);
-            }
-
-            for (int i = 5 * (count + 1); i < vis.Texts.Count; i++)
-                vis.Texts[i].Text = "";
+            FillBoard(vis, list);
         }
 
         protected override void HideBoard()

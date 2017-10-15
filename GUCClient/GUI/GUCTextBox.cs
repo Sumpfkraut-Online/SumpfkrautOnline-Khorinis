@@ -257,7 +257,7 @@ namespace GUC.GUI
                 if (changed)
                 {
                     inputVis.SetPosX(pos[0]);
-                    inputVis.SetSizeX(width);
+                    inputVis.SetWidth(width);
                     UpdateInputVisual();
                 }
             }

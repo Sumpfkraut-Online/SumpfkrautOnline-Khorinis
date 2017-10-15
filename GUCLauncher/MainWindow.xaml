@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:GUCLauncher"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="GUCLauncher.MainWindow"
         mc:Ignorable="d"
-        Title="Gothic: Untold Chapters - Launcher" Height="480" Width="640" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp" >
+        Title="Gothic: Untold Chapters - Launcher" Height="480" Width="640" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp" KeyDown="Window_KeyDown" >
     <Window.Background>
         <ImageBrush ImageSource="Resources/empty_menu_back.png"/>
     </Window.Background>
     <Grid>
         <Grid x:Name="serverGrid" Visibility="Visible">
             <Image Source="Resources/empty_menu_border.png"/>
-            <ListView x:Name="lvServerList" BorderThickness="0" HorizontalAlignment="Left" Height="227" Margin="20,34,0,0" VerticalAlignment="Top" Width="602" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#BF3F3B37">
+            <ListView x:Name="lvServerList" BorderThickness="0" HorizontalAlignment="Left" Height="227" Margin="20,34,0,0" VerticalAlignment="Top" Width="602" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#BF3F3B37" MouseDoubleClick="lvServerList_MouseDoubleClick">
                 <ListView.ItemContainerStyle>
                     <Style BasedOn="{StaticResource ServerListViewItem}" TargetType="{x:Type ListViewItem}"/>
                 </ListView.ItemContainerStyle>

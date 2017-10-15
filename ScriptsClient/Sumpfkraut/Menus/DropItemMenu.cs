@@ -25,16 +25,16 @@ namespace GUC.Scripts.Sumpfkraut.Menus
         {
             const int backWidth = 120;
             const int backHeight = 64;
-            back = new GUCVisual((GUCView.GetScreenSize().Width- backWidth)/2, (GUCView.GetScreenSize().Height - backHeight)/2, backWidth, backHeight);
+            back = new GUCVisual((GUCView.GetScreenSize().X- backWidth)/2, (GUCView.GetScreenSize().Y - backHeight)/2, backWidth, backHeight);
             back.SetBackTexture("Inv_Back.tga");
 
             const int borderWidth = 80;
             const int borderHeight = 24;
-            border = (GUCVisual)back.AddChild(new GUCVisual((GUCView.GetScreenSize().Width - borderWidth) / 2, (GUCView.GetScreenSize().Height - borderHeight) / 2, borderWidth, borderHeight));
+            border = (GUCVisual)back.AddChild(new GUCVisual((GUCView.GetScreenSize().X - borderWidth) / 2, (GUCView.GetScreenSize().Y - borderHeight) / 2, borderWidth, borderHeight));
             border.SetBackTexture("Inv_Titel.tga");
 
             const int tbWidth = borderWidth - 20;
-            tb = (GUCTextBox)border.AddChild(new GUCTextBox((GUCView.GetScreenSize().Width - tbWidth) / 2, (GUCView.GetScreenSize().Height - GUCView.FontsizeDefault) / 2, tbWidth,true));
+            tb = (GUCTextBox)border.AddChild(new GUCTextBox((GUCView.GetScreenSize().X - tbWidth) / 2, (GUCView.GetScreenSize().Y - GUCView.FontsizeDefault) / 2, tbWidth,true));
             tb.OnlyNumbers = true;
 
             player = ScriptClient.Client.Character;

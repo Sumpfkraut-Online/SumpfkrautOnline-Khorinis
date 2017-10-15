@@ -41,6 +41,9 @@ namespace GUC.Scripts.Arena
                 PlayerInfo.ReadPlayerInfoMessage(stream);
 
             TeamMode.ReadGameInfo(stream);
+
+            long remainingSpawnTicks = stream.ReadUInt();
+            Menus.RespawnTimer.NextSpawnTime = GameTime.Ticks + remainingSpawnTicks;
         }
 
         public override void ReadScriptMessage(PacketReader stream)

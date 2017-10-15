@@ -15,12 +15,13 @@ namespace GUC.GUI
         protected zCView thisView;
         public zCView zView { get { return thisView; } }
 
-        protected int[] vpos;
-        protected int[] vsize;
+        protected ViewPoint vpos;
+        protected ViewPoint vsize;
         protected bool shown = false;
         public bool Shown { get { return shown; } }
 
-        public ViewPoint VPos { get { return new ViewPoint(vpos[0], vpos[1]); } }
+        public ViewPoint VPos { get { return vpos; } }
+        public ViewPoint VSize { get { return vsize; } }
 
         /// <summary>
         /// Fullscreen.
@@ -60,15 +61,15 @@ namespace GUC.GUI
             parent = p;
             if (virtuals)
             {
-                vpos = new int[] { x, y };
-                vsize = new int[] { w, h };
+                vpos = new ViewPoint(x, y);
+                vsize = new ViewPoint(w, h);
             }
             else
             {
                 vpos = PixelToVirtual(x, y);
                 vsize = PixelToVirtual(w, h);
             }
-            thisView = zCView.Create(vpos[0], vpos[1], vpos[0] + vsize[0], vpos[1] + vsize[1]);
+            thisView = zCView.Create(vpos.X, vpos.Y, vpos.X + vsize.X, vpos.Y + vsize.Y);
             shown = false;
         }
 
@@ -139,7 +140,7 @@ namespace GUC.GUI
 
         public GUCVisualText CreateText(string text, int x, int y, bool virtuals)
         {
-            GUCVisualText newText = new GUCVisualText(text, x, y, this, vsize, virtuals);
+            GUCVisualText newText = new GUCVisualText(text, x, y, this, virtuals);
             texts.Add(newText);
             return newText;
         }
@@ -153,45 +154,78 @@ namespace GUC.GUI
         #endregion
 
         #region Size & Position
-        public void SetPosX(int val, bool virtuals = false)
+
+        public void SetPosX(int newPosX, bool virtuals = false)
         {
-            int newX = virtuals ? val : PixelToVirtualX(val);
-            int diff = newX - vpos[0];
-            vpos[0] = newX;
-            thisView.SetPos(vpos[0], vpos[1]);
+            if (!virtuals)
+                newPosX = PixelToVirtualX(newPosX);
+
+            int diff = newPosX - vpos.X;
+            vpos.X = newPosX;
+            thisView.SetPos(vpos.X, vpos.Y);
 
             //update children
             foreach (GUCVisual vis in children)
-            {
-                vis.SetPosX(vis.vpos[0] + diff);
-            }
+                vis.SetPosX(vis.vpos.X + diff);
         }
 
-        public void SetPosY(int val, bool virtuals = false)
+        public void SetPosY(int newPosY, bool virtuals = false)
         {
-            int newY = virtuals ? val : PixelToVirtualY(val);
-            int diff = newY - vpos[1];
-            vpos[1] = newY;
-            thisView.SetPos(vpos[0], vpos[1]);
+            if (!virtuals)
+                newPosY = PixelToVirtualY(newPosY);
+
+            int diff = newPosY - vpos.Y;
+            vpos.Y = newPosY;
+            thisView.SetPos(vpos.X, vpos.Y);
 
             //update children
             foreach (GUCVisual vis in children)
-            {
-                vis.SetPosY(vis.vpos[1] + diff);
-            }
+                vis.SetPosY(vis.vpos.Y + diff);
         }
 
-        public void SetSizeX(int val)
+        public void SetPos(int x, int y, bool virtuals = false)
         {
-            vsize[0] = PixelToVirtualX(val);
-            thisView.SetSize(vsize[0], vsize[1]);
+            SetPos(new ViewPoint(x, y), virtuals);
         }
 
-        public void SetSizeY(int val)
+        public void SetPos(ViewPoint newPos, bool virtuals = false)
         {
-            vsize[1] = PixelToVirtualY(val);
-            thisView.SetSize(vsize[0], vsize[1]);
+            if (!virtuals)
+                newPos = PixelToVirtual(newPos);
+
+            int diffX = newPos.X - vpos.X;
+            int diffY = newPos.Y - vpos.Y;
+            vpos = newPos;
+            thisView.SetPos(vpos.X, vpos.Y);
+
+            //update children
+            foreach (GUCVisual vis in children)
+                vis.SetPos(vis.vpos.X + diffX, vis.vpos.Y + diffY);
         }
+
+        public void SetWidth(int width, bool virtuals = false)
+        {
+            vsize.X = virtuals ? width : PixelToVirtualX(width);
+            thisView.SetSize(vsize.X, vsize.Y);
+        }
+
+        public void SetHeight(int height, bool virtuals = false)
+        {
+            vsize.Y = virtuals ? height : PixelToVirtualY(height);
+            thisView.SetSize(vsize.X, vsize.Y);
+        }
+        
+        public void SetSize(int width, int height, bool virtuals = false)
+        {
+            SetSize(new ViewPoint(width, height), virtuals);
+        }
+        
+        public void SetSize(ViewPoint size, bool virtuals = false)
+        {
+            vsize = virtuals ? size : PixelToVirtual(size);
+            thisView.SetSize(vsize.X, vsize.Y);
+        }
+
         #endregion
 
         #region Children

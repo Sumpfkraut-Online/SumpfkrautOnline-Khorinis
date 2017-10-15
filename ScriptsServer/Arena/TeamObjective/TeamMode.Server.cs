@@ -42,6 +42,8 @@ namespace GUC.Scripts.Arena
             if (player.Team == null || player.ClassDef == null)
                 return;
 
+            player.KillCharacter();
+
             var classDef = player.ClassDef;
             NPCInst npc;
             if (classDef.NPCDef == null)
@@ -76,6 +78,8 @@ namespace GUC.Scripts.Arena
                 if (npc.ModelDef.TryGetOverlay(overlay, out ov))
                     npc.ModelInst.ApplyOverlay(ov);
             }
+
+            npc.TeamPlayer = true;
 
             var spawnPoint = player.Team.GetSpawnPoint();
             npc.Spawn(WorldInst.Current, spawnPoint.Item1, spawnPoint.Item2);
@@ -191,7 +195,7 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.None;
 
-            ArenaClient.ForEach(c => ((ArenaClient)c).Spectate());
+            ArenaClient.ForEach(c => { if (((ArenaClient)c).Team != null) ((ArenaClient)c).Spectate(); });
             teams.Clear();
 
             activeTODef = null;
@@ -204,13 +208,16 @@ namespace GUC.Scripts.Arena
         }
         public static void ReadSelectClass(ArenaClient client, PacketReader stream)
         {
-            if (!IsRunning || client.Team == null)
+            if (!IsRunning || client.Team == null || Phase == TOPhases.None || Phase == TOPhases.Finish)
                 return;
 
             int index = stream.ReadByte();
             var classDef = client.Team.Def.ClassDefs.ElementAtOrDefault(index);
             if (classDef != null)
                 client.ClassDef = classDef;
+
+            if (Phase == TOPhases.Warmup)
+                SpawnCharacter(client);
         }
 
         public static void ReadJoinTeam(ArenaClient client, PacketReader stream)
@@ -228,8 +235,10 @@ namespace GUC.Scripts.Arena
             if (client.Team == team)
                 return;
 
-            if (client.Character != null)
-                client.KillCharacter();
+            if (team != null && (!IsRunning || Phase == TOPhases.None || Phase == TOPhases.Finish))
+                return;
+
+            client.KillCharacter();
 
             int index = teams.IndexOf(team);
             if (index >= 0)

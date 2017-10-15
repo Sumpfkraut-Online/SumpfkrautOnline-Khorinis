@@ -89,7 +89,6 @@ namespace GUCLauncher
 
             try
             {
-                Stopwatch watch = Stopwatch.StartNew();
                 if (client.ConnectAsync(item.IP, 9054).Wait(1000))
                 {
                     var stream = client.GetStream();
@@ -98,8 +97,6 @@ namespace GUCLauncher
                         byte[] buf = new byte[byte.MaxValue];
                         if (stream.ReadAsync(buf, 0, 4).Wait(1000))
                         {
-                            watch.Stop();
-                            int ping = (int)watch.Elapsed.TotalMilliseconds;
                             int count = buf[0];
                             int slots = buf[1];
                             int pw = buf[2];
@@ -109,12 +106,10 @@ namespace GUCLauncher
                             {
                                 client.Close();
 
-                                item.Ping = ping.ToString();
-                                //item.Ping = new Ping().Send(item.IP, 1000).RoundtripTime.ToString();
                                 item.Name = Encoding.UTF8.GetString(buf, 0, nameLen);
-
                                 item.Players = count + "/" + slots;
                                 item.HasPW = pw > 0;
+                                item.Ping = new Ping().Send(item.IP, 1000).RoundtripTime.ToString();
                                 return;
                             }
                         }
@@ -561,6 +556,36 @@ namespace GUCLauncher
             if (e.LeftButton == MouseButtonState.Released)
             {
                 mDown = false;
+            }
+        }
+
+        void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    bConnect_Click(null, null);
+                    break;
+                case Key.F5:
+                    bRefresh_Click(null, null);
+                    break;
+                case Key.Delete:
+                    bRemoveServer_Click(null, null);
+                    break;
+            }
+        }
+
+        void lvServerList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DependencyObject obj = (DependencyObject)e.OriginalSource;
+            while (obj != null && obj != lvServerList)
+            {
+                if (obj.GetType() == typeof(ListViewItem))
+                {
+                    bConnect_Click(null, null);
+                    break;
+                }
+                obj = VisualTreeHelper.GetParent(obj);
             }
         }
     }

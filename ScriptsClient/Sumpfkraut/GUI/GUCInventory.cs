@@ -208,7 +208,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             }
 
             // create the description
-            descrBack = new GUCVisual((GetScreenSize().Width - DescriptionBoxWidth) / 2, GetScreenSize().Height - DescriptionBoxHeight - 30, DescriptionBoxWidth, DescriptionBoxHeight);
+            descrBack = new GUCVisual((GetScreenSize().X - DescriptionBoxWidth) / 2, GetScreenSize().Y - DescriptionBoxHeight - 30, DescriptionBoxWidth, DescriptionBoxHeight);
             descrBack.SetBackTexture(backTex); // "Inv_Desc.tga");
 
             descrBack.CreateTextCenterX("", 10); // title
@@ -221,7 +221,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 count.Format = GUCVisualText.TextFormat.Right;
             }
 
-            descrVis = new GUC3DVisual(GetScreenSize().Width / 2 + 160, GetScreenSize().Height - 128 - 48, 128, 128);
+            descrVis = new GUC3DVisual(GetScreenSize().X / 2 + 160, GetScreenSize().Y - 128 - 48, 128, 128);
 
             // create the right info box
             rightBack = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);

@@ -374,6 +374,11 @@ namespace GUC.WorldObjects
             gVob.Name.Set(this.Name);
 
             humanAI.Bitfield0 &= ~4; // some shitty flag which makes npcs always check their ground
+
+            if (this.hp <= 0)
+            {
+                gModel.StartAnimation("S_DEAD");
+            }
         }
 
         partial void pAfterDespawn()

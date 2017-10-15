@@ -72,7 +72,7 @@ namespace GUC.Scripts.Arena
             Log.Logger.Log(text);
         }
 
-        static GUCWorldSprite enemySprite = new GUCWorldSprite(100, 100, false);
+        static GUCWorldSprite enemySprite = new GUCWorldSprite(20, 20);
         static void SetEnemy(NPCInst newEnemy)
         {
             enemySprite.SetBackTexture("U.tga");

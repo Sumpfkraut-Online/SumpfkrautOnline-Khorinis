@@ -34,16 +34,13 @@ namespace GUC.Scripts.Arena
                 }
                 return false;
             };
-            NPCInst.sOnHit += (NPCInst a, NPCInst t, ref int d) =>
+            NPCInst.sOnHit += (NPCInst a, NPCInst t, int d) =>
             {
                 var attacker = (ArenaClient)a.Client;
                 var target = (ArenaClient)t.Client;
 
                 if (attacker != null && target != null)
                 {
-                    if (attacker.Team != null && attacker.Team == target.Team)
-                        d /= 2;
-
                     if (t.GetHealth() <= 0)
                     {
                         if (attacker.Team != null && target.Team != null)
@@ -53,6 +50,7 @@ namespace GUC.Scripts.Arena
                     }
                 }
             };
+
             NPCInst.sOnNPCInstMove += (npc, p, d, m) =>
             {
                 if (npc.Client != null)
@@ -68,18 +66,17 @@ namespace GUC.Scripts.Arena
 
         public static void ReadRequest(ArenaClient requester, PacketReader stream)
         {
-            if (requester.Character == null || requester.IsDueling || requester.Character.IsDead)
+            if (requester.Character == null || requester.IsDueling || requester.Character.IsDead || requester.Team != null)
                 return;
 
-            NPCInst target;
-            if (!requester.Character.World.TryGetVob(stream.ReadUShort(), out target))
+            if (!requester.Character.World.TryGetVob(stream.ReadUShort(), out NPCInst target))
                 return;
 
             if (target.Client == null || target.IsDead)
                 return;
 
             var targetClient = (ArenaClient)target.Client;
-            if (targetClient.Character == null || targetClient.IsDueling)
+            if (targetClient.IsDueling || targetClient.Team != null)
                 return;
 
             int index;
@@ -129,7 +126,7 @@ namespace GUC.Scripts.Arena
             player2.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
         }
 
-        static void DuelWin(ArenaClient winner)
+        public static void DuelWin(ArenaClient winner)
         {
             if (!winner.IsDueling)
                 return;

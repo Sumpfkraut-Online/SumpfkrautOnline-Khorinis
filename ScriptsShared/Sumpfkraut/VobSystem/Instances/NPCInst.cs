@@ -57,7 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         #endregion
 
         #region Properties
-        
+
         new public NPCInstEffectHandler EffectHandler { get { return (NPCInstEffectHandler)base.EffectHandler; } }
 
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
@@ -65,7 +65,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public ScriptInventory Inventory { get { return (ScriptInventory)BaseInventory.ScriptObject; } }
 
         public new NPCDef Definition { get { return (NPCDef)base.Definition; } set { base.Definition = value; } }
-        
+
         public NPCMovement Movement { get { return this.BaseInst.Movement; } }
         public BaseVob.Environment Environment { get { return this.BaseInst.GetEnvironment(); } }
 
@@ -102,7 +102,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public string CustomName;
 
         #endregion
-                
+
         public void OnWriteTakeControl(PacketWriter stream)
         {
             // write everything the player needs to know about this npc
@@ -114,7 +114,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             // read everything the player needs to know about this npc
             // i.e. abilities, level, guild etc
         }
-        
+
         #region Equipment
 
         ItemInst armor;
@@ -130,7 +130,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         ItemInst drawnWeapon;
         public ItemInst DrawnWeapon { get { return this.drawnWeapon; } }
-        
+
         public enum SlotNums
         {
 
@@ -217,7 +217,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
                 case SlotNums.Righthand:
                 case SlotNums.Lefthand:
-                    if (this.drawnWeapon!= null)
+                    if (this.drawnWeapon != null)
                         UnequipItem(this.drawnWeapon);
                     this.drawnWeapon = item;
                     break;
@@ -337,7 +337,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 CustomScale = stream.ReadVec3f();
                 CustomName = stream.ReadString();
             }
+
+            this.TeamPlayer = stream.ReadBit();
         }
+
+        // ARENA
+        public bool TeamPlayer;
 
         public override void OnWriteProperties(PacketWriter stream)
         {
@@ -357,6 +362,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 stream.Write(false);
             }
+
+            stream.Write(TeamPlayer);
         }
 
         #region FightMode

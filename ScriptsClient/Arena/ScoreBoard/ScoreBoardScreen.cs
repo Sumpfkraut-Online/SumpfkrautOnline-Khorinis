@@ -12,8 +12,40 @@ namespace GUC.Scripts.Arena
 {
     abstract class ScoreBoardScreen : GUCMenu
     {
-        static readonly ColorRGBA PlayerColor = new ColorRGBA(200, 200, 200, 200);
-        static readonly ColorRGBA HeroColor = new ColorRGBA(255, 255, 255, 255);
+        protected struct BoardEntry
+        {
+            public int ID;
+            public int Score;
+            public int Kills;
+            public int Deaths;
+            public int Ping;
+        }
+
+        protected void FillBoard(GUCVisual board, List<BoardEntry> list)
+        {
+            int index = 5; // column specifier offset
+            foreach (BoardEntry entry in list.OrderByDescending(b => b.Score))
+            {
+                if (index >= board.Texts.Count)
+                    return;
+
+                string name = PlayerInfo.TryGetInfo(entry.ID, out PlayerInfo pi) ? pi.Name : "!Unknown Player!";
+                SetText(board.Texts[index++], name, entry.ID);
+                SetText(board.Texts[index++], entry.Score, entry.ID);
+                SetText(board.Texts[index++], entry.Kills, entry.ID);
+                SetText(board.Texts[index++], entry.Deaths, entry.ID);
+                SetText(board.Texts[index++], entry.Ping, entry.ID);
+            }
+
+            for (; index < board.Texts.Count; index++)
+                board.Texts[index].Text = string.Empty;
+        }
+
+        protected void SetText(GUCVisualText visText, object text, int playerID)
+        {
+            visText.Text = text.ToString();
+            visText.Font = playerID == PlayerInfo.HeroID ? GUCView.Fonts.Default_Hi : GUCView.Fonts.Default;
+        }
 
         const long MinOpenDuration = 750 * TimeSpan.TicksPerMillisecond;
 
@@ -41,7 +73,7 @@ namespace GUC.Scripts.Arena
             this.closeTimer = new GUCTimer(DoClose);
 
             var screen = GUCView.GetScreenSize();
-            int x = (screen.Width - Width) / 2;
+            int x = (screen.X - Width) / 2;
             int y = yScreenDist;
 
             titleVis = new GUCVisual(x, y - GUCView.FontsizeMenu, Width, GUCView.FontsizeMenu);
@@ -53,7 +85,7 @@ namespace GUC.Scripts.Arena
         protected GUCVisual CreateBoard()
         {
             var screen = GUCView.GetScreenSize();
-            int height = screen.Height - yScreenDist * 2;
+            int height = screen.Y - yScreenDist * 2;
 
             var vis = new GUCVisual(0, 0, Width, height);
             vis.SetBackTexture(BackTex);
@@ -138,11 +170,5 @@ namespace GUC.Scripts.Arena
         }
 
         public abstract void ReadMessage(PacketReader stream);
-
-        protected void SetText(GUCVisualText visText, object text, int playerID)
-        {
-            visText.Text = text.ToString();
-            visText.SetColor(playerID == PlayerInfo.HeroID ? HeroColor : PlayerColor);
-        }
     }
 }

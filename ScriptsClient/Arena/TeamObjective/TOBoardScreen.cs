@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena
     class TOBoardScreen : ScoreBoardScreen
     {
         public static readonly TOBoardScreen Instance = new TOBoardScreen();
-        
+
         List<GUCVisual> boards = new List<GUCVisual>(3);
 
         private TOBoardScreen() : base(ScriptMessages.ScoreTOMessage, "Team Objective")
@@ -24,34 +24,30 @@ namespace GUC.Scripts.Arena
 
             UpdateBoards();
 
+            List<BoardEntry> list = new List<BoardEntry>();
+
             int teamCount = stream.ReadByte();
             for (int t = 0; t < teamCount; t++)
             {
                 if (t >= boards.Count)
                     return;
-                var vis = boards[t];
 
                 int count = stream.ReadByte();
-                for (int i = 1; i <= count; i++)
-                {
-                    if (i >= vis.Texts.Count / 5)
-                        return;
+                if (count > list.Capacity)
+                    list.Capacity = count;
 
-                    int id = stream.ReadByte();
-                    int score = stream.ReadShort();
-                    int kills = stream.ReadShort();
-                    int deaths = stream.ReadShort();
-                    int ping = stream.ReadShort();
+                for (int i = 0; i < count; i++)
+                    list.Add(new BoardEntry()
+                    {
+                        ID = stream.ReadByte(),
+                        Score = stream.ReadShort(),
+                        Kills = stream.ReadShort(),
+                        Deaths = stream.ReadShort(),
+                        Ping = stream.ReadShort()
+                    });
 
-                    SetText(vis.Texts[5 * i], PlayerInfo.TryGetInfo(id, out PlayerInfo pi) ? pi.Name : "!Unknown Player!", id);
-                    SetText(vis.Texts[5 * i + 1], score, id);
-                    SetText(vis.Texts[5 * i + 2], kills, id);
-                    SetText(vis.Texts[5 * i + 3], deaths, id);
-                    SetText(vis.Texts[5 * i + 4], ping, id);
-                }
-
-                for (int i = 5 * (count + 1); i < vis.Texts.Count; i++)
-                    vis.Texts[i].Text = "";
+                FillBoard(boards[t], list);
+                list.Clear();
             }
         }
 
@@ -92,7 +88,7 @@ namespace GUC.Scripts.Arena
                     board = boards[i];
                 }
 
-                board.SetPosX((screenSize.Width - Width * teamCount) / 2 + i * Width);
+                board.SetPosX((screenSize.X - Width * teamCount) / 2 + i * Width);
                 board.SetPosY(yScreenDist);
             }
         }

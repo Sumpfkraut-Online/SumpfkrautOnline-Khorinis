@@ -379,6 +379,8 @@
     <Compile Include="Arena\Chat\ChatMenu.cs" />
     <Compile Include="Arena\Menus\ExitMenu.cs" />
     <Compile Include="Arena\Menus\MainMenu.cs" />
+    <Compile Include="Arena\Menus\PlayerList.cs" />
+    <Compile Include="Arena\Menus\RespawnTimer.cs" />
     <Compile Include="Arena\Menus\TOClassMenu.cs" />
     <Compile Include="Arena\Menus\TOInfoScreen.cs" />
     <Compile Include="Arena\Menus\TOTeamsMenu.cs" />

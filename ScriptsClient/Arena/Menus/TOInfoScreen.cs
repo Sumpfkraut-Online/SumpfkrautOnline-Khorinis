@@ -9,7 +9,7 @@ namespace GUC.Scripts.Arena.Menus
     static class TOInfoScreen
     {
         static GUCVisual vis;
-        static GUCVisualText toName;
+        //static GUCVisualText toName;
         static GUCVisualText toTime;
 
         static TOInfoScreen()
@@ -18,10 +18,13 @@ namespace GUC.Scripts.Arena.Menus
             vis.Font = GUCView.Fonts.Menu;
 
             const int yOffset = 60;
-            vis.CreateText("Team Objective", GUCView.GetScreenSize().Width, yOffset).Format = GUCVisualText.TextFormat.Right;
+            var text = vis.CreateText("Team Objective", GUCView.GetScreenSize().X, yOffset);
+            text.Format = GUCVisualText.TextFormat.Right;
+
             //toName = vis.CreateText("TO_NAME", GUCView.GetScreenSize().Width, yOffset + GUCView.FontsizeMenu);
             //toName.Format = GUCVisualText.TextFormat.Right;
-            toTime = vis.CreateText("TIME LEFT", GUCView.GetScreenSize().Width, yOffset + 1 * GUCView.FontsizeMenu);
+
+            toTime = vis.CreateText("TIME LEFT", GUCView.GetScreenSize().X, yOffset + 1 * GUCView.FontsizeMenu);
             toTime.Format = GUCVisualText.TextFormat.Right;
         }
 

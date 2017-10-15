@@ -28,14 +28,15 @@ namespace GUC.Scripts.Arena
             ArenaClient.ForEach(s =>
             {
                 ArenaClient client = (ArenaClient)s;
-
-                if (!client.IsSpecating && client.Character != null && client.Character.IsDead)
+                if (client.Team != null)
                 {
-                    if (client.ClassDef != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish)
-                    {
+                    if (client.ClassDef != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish
+                        && (client.Character == null || client.Character.IsDead))
                         TeamMode.SpawnCharacter(client);
-                    }
-                    else if (client.Team == null)
+                }
+                else
+                {
+                    if (!client.IsSpecating && client.Character != null && client.Character.IsDead)
                         client.SpawnCharacter();
                 }
             });
@@ -75,6 +76,8 @@ namespace GUC.Scripts.Arena
             ArenaClient.ForEach(c => ((ArenaClient)c).WritePlayerInfo(stream));
 
             TeamMode.WriteGameInfo(stream);
+
+            stream.Write((uint)respawnTimer.GetRemainingTicks());
 
             client.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
         }
@@ -181,6 +184,8 @@ namespace GUC.Scripts.Arena
 
         public void SpawnCharacter()
         {
+            KillCharacter();
+
             NPCDef def = NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer");
             NPCInst npc = new NPCInst(def);
             npc.UseCustoms = true;
@@ -239,10 +244,9 @@ namespace GUC.Scripts.Arena
                 this.TOScore--;
                 this.Team.Score--;
             }
-            else
+            else if (this.DuelEnemy != null)
             {
-                this.DuelDeaths++;
-                this.DuelScore--;
+                DuelMode.DuelWin(this.DuelEnemy);
             }
 
             this.Character.SetHealth(0);

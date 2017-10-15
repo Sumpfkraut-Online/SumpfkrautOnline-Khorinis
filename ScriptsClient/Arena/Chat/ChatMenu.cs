@@ -12,7 +12,6 @@ namespace GUC.Scripts.Arena
 {
     /*
      *  TODO
-     *  - Chatbox automatisch anzeigen wenn neue Nachrichten kommen
      *  - bug fixen beim nachrichten splitten
      */
     class ChatMenu : GUCMenu
@@ -23,15 +22,15 @@ namespace GUC.Scripts.Arena
         public GUCTextBox textBox;
         public GUCVisual prefix;
         private ChatMode openChatMode;
-        ViewSize screenSize;
+        ViewPoint screenSize;
         int chatHeigth, chatWidth;
         GUCTimer chatInactivityTimer;
         
         public ChatMenu()
         {
             screenSize = GUCView.GetScreenSize();
-            chatHeigth = screenSize.Height / 5;
-            chatWidth = screenSize.Width - 350;
+            chatHeigth = screenSize.Y / 5;
+            chatWidth = screenSize.X - 350;
 
             chatBackground = new GUCVisual(0, 0, chatWidth, chatHeigth + 5);
             chatBackground.SetBackTexture("Dlg_Conversation.tga");

@@ -13,13 +13,12 @@ namespace GUC.GUI
     {
         GUCVisual parent;
         public GUCVisual Parent { get { return parent; } }
-        int[] parentSize;
 
         zCViewText zviewText;
         public zCViewText zViewText { get { return zviewText; } }
-        int[] vpos;
 
-        public ViewPoint VPos { get { return new ViewPoint(vpos[0], vpos[1]); } }
+        ViewPoint vpos;
+        public ViewPoint VPos { get { return new ViewPoint(vpos.X, vpos.Y); } }
 
         bool shown;
 
@@ -41,21 +40,20 @@ namespace GUC.GUI
             return vis;
         }
 
-        public GUCVisualText(string text, int x, int y, GUCVisual parent, int[] psize, bool virtuals)
+        public GUCVisualText(string text, int x, int y, GUCVisual parent, bool virtuals)
         {
             this.parent = parent;
-            parentSize = psize;
             if (virtuals)
             {
-                vpos = new int[] { x, y };
+                vpos = new ViewPoint(x, y);
             }
             else
             {
                 vpos = GUCVisual.PixelToVirtual(x, y);
             }
-            vpos = new int[] { vpos[0] * 0x2000 / parentSize[0], vpos[1] * 0x2000 / parentSize[1] };
+            vpos = new ViewPoint(vpos.X * 0x2000 / parent.VSize.X, vpos.Y * 0x2000 / parent.VSize.Y);
             using (zString z = zString.Create(text))
-                zviewText = parent.zView.CreateText(vpos[0], vpos[1], z);
+                zviewText = parent.zView.CreateText(vpos.X, vpos.Y, z);
 
             shown = true;
         }
@@ -97,28 +95,28 @@ namespace GUC.GUI
             {
                 if (centeredX)
                 {
-                    vpos[0] = (0x2000 - parent.zView.FontSize(zviewText.Text)) / 2;
-                    zviewText.PosX = vpos[0];
+                    vpos.X = (0x2000 - parent.zView.FontSize(zviewText.Text)) / 2;
+                    zviewText.PosX = vpos.X;
                 }
                 if (centeredY)
                 {
-                    vpos[1] = (0x2000 - parent.zView.FontY()) / 2;
-                    zviewText.PosY = vpos[1];
+                    vpos.Y = (0x2000 - parent.zView.FontY()) / 2;
+                    zviewText.PosY = vpos.Y;
                 }
             }
             else
             {
                 if (format == TextFormat.Center)
                 {
-                    zviewText.PosX = vpos[0] - parent.zView.FontSize(zviewText.Text) / 2;
+                    zviewText.PosX = vpos.X - parent.zView.FontSize(zviewText.Text) / 2;
                 }
                 else if (format == TextFormat.Right)
                 {
-                    zviewText.PosX = vpos[0] - parent.zView.FontSize(zviewText.Text);
+                    zviewText.PosX = vpos.X - parent.zView.FontSize(zviewText.Text);
                 }
                 else
                 {
-                    zviewText.PosX = vpos[0];
+                    zviewText.PosX = vpos.X;
                 }
             }
         }
@@ -168,14 +166,14 @@ namespace GUC.GUI
 
         public void SetPosX(int val, bool virtuals = false)
         {
-            vpos[0] = virtuals ? val : PixelToVirtualX(val) * 0x2000 / parentSize[0];
-            zviewText.PosX = vpos[0];
+            vpos.X = virtuals ? val : PixelToVirtualX(val) * 0x2000 / parent.VSize.X;
+            zviewText.PosX = vpos.X;
         }
 
         public void SetPosY(int val, bool virtuals = false)
         {
-            vpos[1] = virtuals ? val : PixelToVirtualY(val) * 0x2000 / parentSize[1];
-            zviewText.PosY = vpos[1];
+            vpos.Y = virtuals ? val : PixelToVirtualY(val) * 0x2000 / parent.VSize.Y;
+            zviewText.PosY = vpos.Y;
         }
 
         #endregion
