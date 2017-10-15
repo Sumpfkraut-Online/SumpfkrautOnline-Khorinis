@@ -173,13 +173,13 @@ DROP TABLE IF EXISTS ScriptAniJob;
 CREATE TABLE IF NOT EXISTS ScriptAniJob 
 (
     ScriptAniJobID INTEGER NOT NULL, -- unique primary key id
-    ScriptAniID INTEGER NOT NULL,
 	AniName TEXT NOT NULL,
 	CodeName TEXT NOT NULL,
     AniJobType INTEGER NOT NULL,
-	PrevCodeName TEXT DEFAULT NULL,
-	NextCodeName TEXT DEFAULT NULL,
+	-- PrevScriptAniJobID INTEGER DEFAULT NULL,
+	NextScriptAniJobID INTEGER DEFAULT NULL,
     Layer INTEGER NOT NULL,
+    SpecialFrames TEXT NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptAniJob_PK PRIMARY KEY (ScriptAniJobID),
@@ -203,7 +203,6 @@ CREATE TABLE IF NOT EXISTS ScriptAni
     FPS INTEGER NOT NULL,
     StartFrame INTEGER NOT NULL,
     EndFrame INTEGER NOT NULL,
-    SpecialFrames TEXT NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
