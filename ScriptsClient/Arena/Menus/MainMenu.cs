@@ -24,7 +24,19 @@ namespace GUC.Scripts.Arena.Menus
         public override void Open()
         {
             base.Open();
-            teamButton.Enabled = TeamMode.IsRunning;
+            UpdateTeamButton();
+            TeamMode.OnPhaseChange += UpdateTeamButton;
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            TeamMode.OnPhaseChange -= UpdateTeamButton;
+        }
+
+        void UpdateTeamButton()
+        {
+            teamButton.Enabled = TeamMode.IsRunning && TeamMode.Phase != TOPhases.Finish && TeamMode.Phase != TOPhases.None;
         }
     }
 }

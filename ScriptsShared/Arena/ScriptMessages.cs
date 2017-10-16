@@ -27,6 +27,8 @@ namespace GUC.Scripts.Arena
         TOJoinTeam,
         TOSelectClass,
 
+        TOTeamCount,
+
         ChatMessage,
         ChatTeamMessage,
         ChatPrivateMessage,

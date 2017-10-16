@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.GUI.MainMenu;
 using GUC.Log;
 using GUC.Utilities;
 using GUC.GUI;
+using GUC.Network;
 
 namespace GUC.Scripts.Arena.Menus
 {
@@ -43,37 +44,25 @@ namespace GUC.Scripts.Arena.Menus
 
             base.Open();
 
-            int index = 0;
-            foreach (var team in TeamMode.ActiveTODef.Teams)
-            {
-                if (index >= items.Count - 1)
-                {
-                    Logger.LogWarning("Too many teams to show in the menu!");
-                    break;
-                }
+            SetTexts();
 
-                var button = (MainMenuButton)items[index];
-                button.Text = team.Name;
-                button.HelpText = team.Name + " als Team wählen.";
-                items[index].Enabled = true;
-                button.Show();
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.TOTeamCount);
+            ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
 
-                index++;
-            }
-
-            for (; index < items.Count - 1; index++)
-            {
-                items[index].Enabled = false;
-                items[index].Hide();
-            }
-
-            UpdateSelectedTeam();
+            TeamMode.OnPhaseChange += TOPhaseChanged;
         }
 
         public override void Close()
         {
             base.Close();
             arrow.Hide();
+
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.TOTeamCount);
+            ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+
+            TeamMode.OnPhaseChange -= TOPhaseChanged;
         }
 
         LockTimer lockTimer = new LockTimer(500);
@@ -81,7 +70,8 @@ namespace GUC.Scripts.Arena.Menus
         {
             if (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.Finish || TeamMode.Phase == TOPhases.None)
             {
-                Sumpfkraut.Menus.ScreenScrollText.AddText("TeamObjective ist vorüber.", GUCView.Fonts.Menu);
+                if (TeamMode.TeamDef == null)
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("TeamObjective ist vorüber.", GUCView.Fonts.Menu);
                 Close();
                 return;
             }
@@ -125,6 +115,60 @@ namespace GUC.Scripts.Arena.Menus
                 }
             }
             arrow.Hide();
+        }
+
+        void SetTexts(List<int> counts = null)
+        {
+            int index = 0;
+            foreach (var team in TeamMode.ActiveTODef.Teams)
+            {
+                if (index >= items.Count - 1)
+                {
+                    Logger.LogWarning("Too many teams to show in the menu!");
+                    break;
+                }
+
+                var button = (MainMenuButton)items[index];
+                button.Text = team.Name;
+                if (counts != null && index < counts.Count && counts[index] > 0)
+                    button.Text += string.Format(" ({0})", counts[index]);
+                button.HelpText = team.Name + " als Team wählen.";
+                items[index].Enabled = true;
+                button.Show();
+
+                index++;
+            }
+
+            for (; index < items.Count - 1; index++)
+            {
+                items[index].Enabled = false;
+                items[index].Hide();
+            }
+
+            UpdateSelectedTeam();
+        }
+
+        public void ReadCountMessage(PacketReader stream)
+        {
+            if (!this.isOpen)
+                return;
+
+            int count = stream.ReadByte();
+            List<int> counts = new List<int>(count);
+            for (int i = 0; i < count; i++)
+                counts.Add(stream.ReadByte());
+
+            SetTexts(counts);
+        }
+
+        void TOPhaseChanged()
+        {
+            if (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.Finish || TeamMode.Phase == TOPhases.None)
+            {
+                Sumpfkraut.Menus.ScreenScrollText.AddText("TeamObjective ist vorüber.", GUCView.Fonts.Menu);
+                Close();
+                return;
+            }
         }
     }
 }

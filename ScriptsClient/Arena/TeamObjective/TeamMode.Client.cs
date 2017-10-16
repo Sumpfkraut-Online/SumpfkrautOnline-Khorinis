@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.Menus;
 
 namespace GUC.Scripts.Arena
 {
@@ -14,6 +15,8 @@ namespace GUC.Scripts.Arena
         static TOTeamDef teamDef;
         public static TOTeamDef TeamDef { get { return teamDef; } }
 
+        public static event Action OnPhaseChange;
+
         public static void ReadWarmup(PacketReader stream)
         {
             string name = stream.ReadString();
@@ -22,6 +25,7 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Warmup;
             phaseEndTime = GameTime.Ticks + WarmUpDuration;
+            OnPhaseChange?.Invoke();
 
             TOMessage(string.Format("Team Objective '{0}' startet in wenigen Sekunden!", name));
             Menus.TOInfoScreen.Show();
@@ -34,6 +38,7 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Battle;
             phaseEndTime = GameTime.Ticks + activeTODef.Duration * TimeSpan.TicksPerMinute;
+            OnPhaseChange?.Invoke();
 
             if (teamDef == null)
                 return;
@@ -47,12 +52,13 @@ namespace GUC.Scripts.Arena
 
             phase = TOPhases.Finish;
             phaseEndTime = GameTime.Ticks + FinishDuration;
+            OnPhaseChange?.Invoke();
 
             if (teamDef == null)
                 return;
 
             TOMessage("Der Kampf ist vorüber!");
-            
+
             int count = stream.ReadByte();
             List<TOTeamDef> winners = new List<TOTeamDef>(count);
             for (int i = 0; i < count; i++)
@@ -84,7 +90,7 @@ namespace GUC.Scripts.Arena
                 TOMessage(message + " haben gewonnen.");
             }
         }
-        
+
         public static void ReadJoinTeam(PacketReader stream)
         {
             if (!IsRunning)
@@ -114,6 +120,7 @@ namespace GUC.Scripts.Arena
         public static void ReadEnd(PacketReader stream)
         {
             phase = TOPhases.None;
+            OnPhaseChange?.Invoke();
 
             //TOMessage("Team Objective ist vorüber!");
             Menus.TOInfoScreen.Hide();
@@ -139,7 +146,8 @@ namespace GUC.Scripts.Arena
         static void TOMessage(string text)
         {
             //ChatMenu.Menu.AddMessage(ChatMode.Private, text);
-            Sumpfkraut.Menus.ScreenScrollText.AddText(text, GUI.GUCView.Fonts.Menu);
+            if (GUCMenu.GetActiveMenus().FirstOrDefault(m => m is Sumpfkraut.Menus.MainMenus.GUCMainMenu) == null)
+                ScreenScrollText.AddText(text, GUI.GUCView.Fonts.Menu);
             Log.Logger.Log(text);
         }
     }

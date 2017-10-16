@@ -66,6 +66,14 @@ namespace GUC.Scripts.Arena.Menus
                 items[index].Enabled = false;
                 items[index].Hide();
             }
+
+            TeamMode.OnPhaseChange += TOPhaseChanged;
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            TeamMode.OnPhaseChange -= TOPhaseChanged;
         }
 
         LockTimer lockTimer = new LockTimer(500);
@@ -99,6 +107,15 @@ namespace GUC.Scripts.Arena.Menus
             ArenaClient.Client.ClassDef = classDef;
 
             Close();
+        }
+
+        void TOPhaseChanged()
+        {
+            if (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.Finish || TeamMode.Phase == TOPhases.None)
+            {
+                Close();
+                return;
+            }
         }
     }
 }

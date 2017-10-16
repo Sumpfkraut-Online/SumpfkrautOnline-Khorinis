@@ -98,7 +98,10 @@ namespace GUC.Scripts.Arena
                     break;
                 case ScriptMessages.PlayerQuitMessage:
                     PlayerInfo.ReadPlayerQuitMessage(stream);
-                    break;                
+                    break;
+                case ScriptMessages.TOTeamCount:
+                    Menus.TOTeamsMenu.Menu.ReadCountMessage(stream);
+                    break;
             }
         }
     }

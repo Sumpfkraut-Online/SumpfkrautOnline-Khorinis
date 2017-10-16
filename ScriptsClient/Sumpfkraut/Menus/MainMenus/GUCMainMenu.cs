@@ -57,6 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
         #region Open & Close
 
         protected bool isOpen = false;
+        public bool IsOpen { get { return this.isOpen; } }
 
         public override void Open()
         {

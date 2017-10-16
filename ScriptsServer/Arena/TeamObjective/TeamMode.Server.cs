@@ -230,6 +230,7 @@ namespace GUC.Scripts.Arena
             JoinTeam(client, team);
         }
 
+        public static Action OnChangeTeamComposition;
         public static void JoinTeam(ArenaClient client, TOTeamInst team)
         {
             if (client.Team == team)
@@ -266,6 +267,8 @@ namespace GUC.Scripts.Arena
             client.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
 
             SpawnCharacter(client);
+
+            OnChangeTeamComposition?.Invoke();
         }
 
         public static void WriteGameInfo(PacketWriter stream)

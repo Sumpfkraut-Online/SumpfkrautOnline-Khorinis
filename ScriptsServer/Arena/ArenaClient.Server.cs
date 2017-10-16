@@ -115,6 +115,7 @@ namespace GUC.Scripts.Arena
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
             TOBoard.Instance.Remove(this);
+            TeamMenu.Remove(this);
 
             if (this.Team != null)
                 this.Team.Players.Remove(this);
@@ -158,6 +159,9 @@ namespace GUC.Scripts.Arena
                     break;
                 case ScriptMessages.ScoreTOMessage:
                     TOBoard.Instance.Toggle(this);
+                    break;
+                case ScriptMessages.TOTeamCount:
+                    TeamMenu.Toggle(this);
                     break;
             }
         }
