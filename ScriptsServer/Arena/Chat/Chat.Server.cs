@@ -25,7 +25,10 @@ namespace GUC.Scripts.Arena
 
         public static void ReadTeamMessage(ArenaClient sender, PacketReader stream)
         {
-            SendMessage(sender.CharInfo.Name + " (Team): " + stream.ReadString());
+            if (sender.Team == null)
+                return;
+
+            SendTeamMessage(sender.Team, sender.CharInfo.Name + " (Team): " + stream.ReadString());
         }
 
         public static void SendMessage(string message)

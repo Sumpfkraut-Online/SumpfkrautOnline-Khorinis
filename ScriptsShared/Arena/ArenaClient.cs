@@ -18,10 +18,10 @@ namespace GUC.Scripts.Arena
             pOnConnect();
         }
 
-        partial void pOnDisconnect();
-        public override void OnDisconnection()
+        partial void pOnDisconnect(int id);
+        public override void OnDisconnection(int id)
         {
-            pOnDisconnect();
+            pOnDisconnect(id);
         }
 
     }

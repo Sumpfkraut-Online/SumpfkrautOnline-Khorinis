@@ -18,7 +18,7 @@ namespace GUC.Network
         public partial interface IScriptClient : IScriptGameObject
         {
             void OnConnection();
-            void OnDisconnection();
+            void OnDisconnection(int id);
 
             void SetControl(NPC npc);
             void SetToSpectator(World world, Vec3f pos, Vec3f dir);

@@ -166,6 +166,7 @@ namespace GUC.Scripts.Arena
         /// <param name="message"></param>
         public void AddMessage(ChatMode chatmode, string message)
         {
+            Log.Logger.Log(chatmode);
             if (!this.textBox.Enabled)
             {
                 chatBackground.Show();
@@ -221,7 +222,7 @@ namespace GUC.Scripts.Arena
                 }
                 index++;
             }
-
+            
             if (chatMode == ChatMode.Team && TeamMode.TeamDef != null)
             {
                 chatBackground.Texts[index].SetColor(TeamMode.TeamDef.Color);

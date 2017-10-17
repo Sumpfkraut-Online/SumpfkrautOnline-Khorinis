@@ -104,6 +104,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     return;
             }
 
+            gItem.Material = (int)item.Material;
             gNpc.PutInSlot(node, gItem, true);
             PlayDrawItemSound(item, undraw);
 
@@ -196,17 +197,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         if (index > 0)
                         {
                             string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
-                            SoundInstance scream;
-                            if (!hitScreams.TryGetValue(str, out scream))
+                            if (!hitScreams.TryGetValue(str, out SoundInstance scream))
                             {
                                 scream = new SoundInstance(str);
                                 hitScreams.Add(str, scream);
                             }
                             SoundHandler.PlaySound3D(scream, target);
-                            Log.Logger.Log(str);
                         }
 
-                        target.gModel.StartAni("T_GOTHIT", 0);
+                        if (!target.Model.IsInAnimation())
+                            target.gModel.StartAni("T_GOTHIT", 0);
+
+                        // fixme: transmit hit direction and use stumble animation
                     }
                     break;
                 case ScriptVobMessageIDs.ParryMessage:
@@ -253,18 +255,41 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        public void OnTick(long now)
+        partial void pSetHealth(int hp, int hpmax)
         {
-            // Arena
-            if (Hero != null && Hero.TeamPlayer != this.TeamPlayer)
+            if (isGhost && hp <= 0)
+                this.BaseInst.gVob.Name.Clear();
+        }
+
+        bool isGhost = false;
+        public void SetToGhost(bool ghost)
+        {
+            if (ghost)
             {
+                if (isGhost)
+                    return;
                 this.BaseInst.gVob.BitField1 |= zCVob.BitFlag0.visualAlphaEnabled;
                 this.BaseInst.gVob.VisualAlpha = 0.5f;
+
+                if (this.HP <= 0)
+                    this.BaseInst.gVob.Name.Clear();
+
+                isGhost = true;
             }
             else
             {
+                if (!isGhost)
+                    return;
+
                 this.BaseInst.gVob.BitField1 &= ~zCVob.BitFlag0.visualAlphaEnabled;
+                this.BaseInst.gVob.Name.Set(this.UseCustoms ? this.CustomName : this.Definition.Name);
+                isGhost = false;
             }
+        }
+
+        public void OnTick(long now)
+        {
+            SetToGhost((Arena.TeamMode.TeamDef == null && TeamPlayer && !ScriptClient.Client.IsSpecating) || (Arena.TeamMode.TeamDef != null && !TeamPlayer));
 
             if (this.IsDead)
                 return;

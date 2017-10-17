@@ -15,8 +15,9 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
             GUCMenu.CloseActiveMenus();
             //if (oCGame.GetWorld().LevelName != worldName)
-            oCGame.LoadGame(true, "OLDWORLD\\OLDWORLD.ZEN");
-            //oCGame.LoadGame(true, "NEWWkORLD\\NEWWORLD.ZEN");
+            //oCGame.LoadGame(true, "OLDWORLD\\OLDWORLD.ZEN");
+            //oCGame.LoadGame(true, "NEWWORLD\\NEWWORLD.ZEN");
+            oCGame.LoadGame(true, "G1\\G1-OLDWORLD.ZEN");
         }
     }
 }

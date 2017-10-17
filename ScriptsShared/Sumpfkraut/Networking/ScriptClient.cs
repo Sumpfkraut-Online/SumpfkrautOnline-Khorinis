@@ -47,9 +47,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             pOnConnect();
         }
 
-        public virtual void OnDisconnection()
+        public virtual void OnDisconnection(int id)
         {
-
         }
 
         #endregion

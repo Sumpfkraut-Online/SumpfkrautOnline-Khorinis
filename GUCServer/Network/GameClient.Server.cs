@@ -222,10 +222,12 @@ namespace GUC.Network
 
             this.isCreated = false;
 
+            int id = this.ID; // preserve the id
             idColl.Remove(this);
             clients.Remove(ref this.collID);
 
-            this.ScriptObject.OnDisconnection();
+          
+            this.ScriptObject.OnDisconnection(id);
 
             this.character = null;
 

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.Menus;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Arena
 {

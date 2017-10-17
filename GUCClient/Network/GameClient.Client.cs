@@ -196,7 +196,7 @@ namespace GUC.Network
                     if (counter >= 1000)
                     {
                         counter = 0;
-                        Logger.LogWarning("1000 Pakete hintereinander");
+                        Logger.Log("1000 Pakete hintereinander");
                     }
                 }
                 catch (Exception e)
@@ -346,7 +346,7 @@ namespace GUC.Network
                     isConnecting = false;
                     isDisconnected = true;
                     Logger.Log("Disconnected from server.");
-                    Client.ScriptObject.OnDisconnection();
+                    Client.ScriptObject.OnDisconnection(-1);
                     break;
 
                 #endregion
@@ -627,7 +627,7 @@ namespace GUC.Network
             isConnected = false;
             isConnecting = false;
             isDisconnected = true;
-            Client.ScriptObject.OnDisconnection();
+            Client.ScriptObject.OnDisconnection(-1);
         }
 
         #region Script Message

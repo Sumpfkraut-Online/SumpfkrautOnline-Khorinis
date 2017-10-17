@@ -105,13 +105,13 @@ namespace GUC.Scripts.Arena
             TeamMode.CheckStartTO();
         }
 
-        partial void pOnDisconnect()
+        partial void pOnDisconnect(int id)
         {
             KillCharacter();
 
             var stream = GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.PlayerQuitMessage);
-            stream.Write((byte)this.ID);
+            stream.Write((byte)id);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
             TOBoard.Instance.Remove(this);
