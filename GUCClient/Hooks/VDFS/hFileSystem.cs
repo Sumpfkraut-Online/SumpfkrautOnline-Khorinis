@@ -13,80 +13,44 @@ namespace GUC.Hooks.VDFS
     {
         public static void AddHooks()
         {
-
-
-            // Process.AddHook(h => Logger.Log("Exists " + new zString(h.GetECX() + 0x60)), 0x449020, 6);
-
-            /*Process.AddHook(h =>
-            {
-                string p = Path.GetFileName(new zString(h.GetECX() + 0x60).ToString());
-                Logger.Log("Open '" + p + "'");
-            }, 0x449120, 6);
-
-            Process.AddHook(h =>
-            {
-                Logger.Log("Close ");
-            }, 0x4493A8, 5);
-
-            
-
-            Process.AddHook(h =>
-            {
-                string p = Path.GetFileName(new zString(h.GetECX() + 0x60).ToString());
-                if (p == "STARTSCREEN-C.TEX")
-                    Logger.Log("ReadString ");
-            }, 0x44A8D0, 6, 1);
-
-            Process.AddHook(h =>
-            {
-                string p = Path.GetFileName(new zString(h.GetECX() + 0x60).ToString());
-                if (p == "OU.BIN")
-                {
-                    File.AppendAllText("oubin2.txt", h.GetArgument(1) + "\n");
-                }
-            }, 0x44ABF0, 6, 2);
-
-            // Process.AddHook(h => Logger.Log("Search " + new zString(h.GetArgument(0))), 0x449E80, 6, 3);*/
-
-            //Process.AddHook(h => Logger.Log("Destruct " + new zString(h.GetECX() + 0x60)), 0x448ED0, 7);
-
-            /*var h = Process.AddHook(InitFileSystem, 0x558CC8, 5);
-            Process.Nop(5, h.OldInNewAddress);
+            Hook h;
+            h = Process.AddHook(InitFileSystem, 0x558CC8, 5);
+            Process.Nop(h.OldInNewAddress, 5);
 
             h = Process.AddHook(DeinitFileSystem, 0x5593A6, 5);
-            Process.Nop(5, h.OldInNewAddress);
+            Process.Nop(h.OldInNewAddress, 5);
 
             h = Process.AddHook(VDFS_Exists, 0x449020, 6);
-            Process.Write(new byte[6] { 0xC3, 0x90, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            Process.Write(h.OldInNewAddress, 0xC3, 0x90, 0x90, 0x90, 0x90, 0x90);
 
             h = Process.AddHook(VDFS_Open, 0x449120, 6);
-            Process.Write(new byte[6] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            Process.Write(h.OldInNewAddress, 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90);
 
             h = Process.AddHook(VDFS_Close, 0x4493A0, 8);
-            Process.Write(new byte[8] { 0xC3, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            Process.Write(h.OldInNewAddress, 0xC3, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90);
 
-            h = Process.AddHook(VDFS_Seek, 0x449490, 6, 1);
-            Process.Write(new byte[6] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            h = Process.FastHook(VDFS_Seek, 0x449490, 6);
+            Process.Write(h.OldInNewAddress, 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90);
 
-            h = Process.AddHook(VDFS_Pos, 0x449A50, 5);
-            Process.Write(new byte[5] { 0xC3, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            h = Process.FastHook(VDFS_Pos, 0x449A50, 5);
+            Process.Write(h.OldInNewAddress, 0xC3, 0x90, 0x90, 0x90, 0x90);
 
-            h = Process.AddHook(VDFS_EOF, 0x449470, 5, 0);
-            Process.Write(new byte[5] { 0xC3, 0x90, 0x90, 0x00, 0x90 }, h.OldInNewAddress);
+            h = Process.FastHook(VDFS_EOF, 0x449470, 5);
+            Process.Write(h.OldInNewAddress, 0xC3, 0x90, 0x90, 0x00, 0x90);
 
-            h = Process.AddHook(VDFS_Size, 0x449410, 5);
-            Process.Write(new byte[5] { 0xC3, 0x90, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            h = Process.FastHook(VDFS_Size, 0x449410, 5);
+            Process.Write(h.OldInNewAddress, 0xC3, 0x90, 0x90, 0x90, 0x90);
 
-            h = Process.AddHook(VDFS_ReadString, 0x44A8D0, 6, 1);
-            Process.Write(new byte[6] { 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            h = Process.FastHook(VDFS_ReadString, 0x44A8D0, 6);
+            Process.Write(h.OldInNewAddress, 0xC2, 0x04, 0x00, 0x90, 0x90, 0x90);
+           
+            h = Process.FastHook(VDFS_ReadSize, 0x44ABF0, 6);
+            Process.Write(h.OldInNewAddress, 0xC2, 0x08, 0x00, 0x90, 0x90, 0x90);
 
-            h = Process.AddHook(VDFS_ReadSize, 0x44ABF0, 6, 2);
-            Process.Write(new byte[6] { 0xC2, 0x08, 0x00, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
+            h = Process.AddHook(VDFS_SearchFile, 0x449E80, 6);
+            Process.Write(h.OldInNewAddress, 0xC2, 0x0C, 0x00, 0x90, 0x90, 0x90);
 
-            h = Process.AddHook(VDFS_SearchFile, 0x449E80, 6, 3);
-            Process.Write(new byte[6] { 0xC2, 0x0C, 0x00, 0x90, 0x90, 0x90 }, h.OldInNewAddress);
-
-            h = Process.AddHook(VDFS_Close, 0x448ED0, 7); // zFile_VDFS Destructor*/
+            h = Process.AddHook(VDFS_Close, 0x448ED0, 7); // zFile_VDFS Destructor
 
             /*h = Process.AddHook(File_Append, 0x444270, 6);
             h = Process.AddHook(File_ChangeDir, 0x446670, 6, 1);
@@ -99,24 +63,21 @@ namespace GUC.Hooks.VDFS
             h = Process.AddHook(File_Eof, 0x444290, 6);
             h = Process.AddHook(File_Exists, 0x4436B0, 6);*/
 
-            Logger.Log("Added file system hooks.");
-
-            //System.Threading.Thread.Sleep(12000);
+            Logger.Log("Added VDFS file system hooks.");
         }
 
         static Dictionary<string, VDFSDirectoryInfo> vDirs { get { return VDFSArchive.vDirs; } }
         static Dictionary<string, VDFSFileInfo> vFiles { get { return VDFSArchive.vFiles; } }
 
-        static void InitFileSystem(Hook hook)
+        static void InitFileSystem(Hook hook, RegisterMemory mem)
         {
             Logger.Log("Initializing GUC FileSystem...");
 
             long m1 = GC.GetTotalMemory(true);
-
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
+            vDirs.Clear();
             vFiles.Clear();
-
             // Check the project folder for vdfs
             DirectoryInfo folder = new DirectoryInfo(Program.ProjectPath + "\\data");
             if (folder.Exists)
@@ -140,8 +101,8 @@ namespace GUC.Hooks.VDFS
             }
 
             Gothic.System.zFile_VDFS.VDFSInitialized = true;
-            watch.Stop();
 
+            watch.Stop();
             long m2 = GC.GetTotalMemory(true);
 
             Logger.Log("Initialized {0} VDFS-Files in {1:0}ms. {2}kB", vFiles.Count, watch.Elapsed.TotalMilliseconds, (m2 - m1) / 1000);
@@ -149,9 +110,10 @@ namespace GUC.Hooks.VDFS
             Gothic.System.zFile_File.InitFileSystem();
         }
 
-        static void DeinitFileSystem(Hook hook)
+        static void DeinitFileSystem(Hook hook, RegisterMemory mem)
         {
             Logger.Log("Deinitializing GUC FileSystem...");
+            vDirs.Clear();
             vFiles.Clear();
             foreach (var handle in openedFiles.Values)
                 handle.Close();
@@ -200,9 +162,9 @@ namespace GUC.Hooks.VDFS
             return path;
         }
 
-        static void VDFS_Exists(Hook hook)
+        static void VDFS_Exists(Hook hook, RegisterMemory mem)
         {
-            string path = GetPath(GetZFilePath(hook.GetECX()));
+            string path = GetPath(GetZFilePath(mem[Registers.ECX]));
 
             if (!string.IsNullOrWhiteSpace(path))
             {
@@ -211,23 +173,23 @@ namespace GUC.Hooks.VDFS
                     || File.Exists(Program.GetGothicRootPath(path)))
                 {
                     //Logger.Log("Exists: " + path);
-                    hook.SetEAX(1);
+                    mem[Registers.EAX] = 1;
                     return;
                 }
             }
             //Logger.Log("Not Existing: " + path);
-            hook.SetEAX(0);
+            mem[Registers.EAX] = 0;
         }
 
         static Dictionary<int, IFileHandle> openedFiles = new Dictionary<int, IFileHandle>(1000);
-
-        static void VDFS_Open(Hook hook)
+        
+        static void VDFS_Open(Hook hook, RegisterMemory mem)
         {
-            int self = hook.GetECX();
+            int self = mem[Registers.ECX];
             if (openedFiles.ContainsKey(self))
             {
                 Logger.Log("File is already opened!");
-                hook.SetEAX(0);
+                mem[Registers.EAX] = 0;
                 return;
             }
 
@@ -235,13 +197,12 @@ namespace GUC.Hooks.VDFS
             if (string.IsNullOrWhiteSpace(path))
             {
                 Logger.Log("Path is null or white space!");
-                hook.SetEAX(0x13F2);
+                mem[Registers.EAX] = 0x13F2;
                 return;
             }
 
             IFileHandle fileHandle;
-            VDFSFileInfo vdfsFileInfo;
-            if (vFiles.Count > 0 && vFiles.TryGetValue(path, out vdfsFileInfo))
+            if (vFiles.Count > 0 && vFiles.TryGetValue(path, out VDFSFileInfo vdfsFileInfo))
             {
                 fileHandle = new VDFSFileHandle(vdfsFileInfo);
             }
@@ -263,7 +224,7 @@ namespace GUC.Hooks.VDFS
                     else
                     {
                         Logger.Log("Open: File not found! '" + fullPath + "'");
-                        hook.SetEAX(0x13F2);
+                        mem[Registers.EAX] = 0x13F2;
                         return;
                     }
                 }
@@ -271,73 +232,67 @@ namespace GUC.Hooks.VDFS
 
             fileHandle.Open();
             openedFiles.Add(self, fileHandle);
-            hook.SetEAX(0);
+            mem[Registers.EAX] = 0;
             Process.Write(self + 0x29FC, true);
             Process.Write(self + 0x8C, true);
-            Logger.Log("Open " + self.ToString("X4") + " " + path);
-
-            string p = Path.GetFileName(new zString(self + 0x60).ToString());
-            if (p == "OU.BIN")
-            {
-                //System.Threading.Thread.Sleep(12000);
-            }
+            //Logger.Log("Open " + self.ToString("X4") + " " + path);
         }
 
-        static void VDFS_Close(Hook hook)
+        static void VDFS_Close(Hook hook, RegisterMemory mem)
         {
-            int self = hook.GetECX();
+            int self = mem[Registers.ECX];
 
             IFileHandle handle;
-            if (openedFiles.TryGetValue(hook.GetECX(), out handle))
+            if (openedFiles.TryGetValue(self, out handle))
             {
                 handle.Close();
                 openedFiles.Remove(self);
-                Process.Write(false, self + 0x29FC);
-                Process.Write(false, self + 0x8C);
-                Logger.Log("Close " + self.ToString("X4"));
+                Process.Write(self + 0x29FC, false);
+                Process.Write(self + 0x8C, false);
+                //Logger.Log("Close " + self.ToString("X4"));
             }
             //hook.SetEAX(0);
         }
 
-        static void VDFS_Seek(Hook hook)
+        static void VDFS_Seek(Process.HookStruct mem)
         {
-            int self = hook.GetECX();
+            int self = mem.ECX;
 
             IFileHandle handle;
-            if (!openedFiles.TryGetValue(hook.GetECX(), out handle))
+            if (!openedFiles.TryGetValue(self, out handle))
             {
                 Logger.LogError("Seek: File is not opened!" + new zString(self + 0x60));
                 return;
             }
 
-            long pos = (long)hook.GetArgument(0);// | ((long)hook.GetArgument(1) << 32);
-            // Logger.Log("Seek: " + pos + " " + self.ToString("X4"));
+            long pos = mem.GetArgument(0);// | ((long)hook.GetArgument(1) << 32);
+                              // Logger.Log("Seek: " + pos + " " + self.ToString("X4"));
 
             handle.Seek(pos);
-            hook.SetEAX(0);
+            mem.EAX = 0;
         }
 
-        static void VDFS_EOF(Hook hook)
+        static void VDFS_EOF(Process.HookStruct mem)
         {
-            int self = hook.GetECX();
+            int self = mem.ECX;
 
             IFileHandle handle;
-            if (!openedFiles.TryGetValue(hook.GetECX(), out handle))
+            if (!openedFiles.TryGetValue(self, out handle))
             {
                 Logger.LogError("EOF: File is not opened!" + new zString(self + 0x60));
                 return;
             }
             // Logger.Log("EOF: " + self.ToString("X4"));
 
-            hook.SetEAX(handle.GetSize() - handle.GetPos() <= 0 ? 1 : 0);
+            mem.EAX = handle.GetSize() - handle.GetPos() <= 0 ? 1 : 0;
         }
 
-        static void VDFS_Pos(Hook hook)
+        static void VDFS_Pos(Process.HookStruct mem)
         {
-            int self = hook.GetECX();
+            int self = mem.ECX;
 
             IFileHandle handle;
-            if (!openedFiles.TryGetValue(hook.GetECX(), out handle))
+            if (!openedFiles.TryGetValue(self, out handle))
             {
                 Logger.LogError("Pos: File is not opened!" + new zString(self + 0x60));
                 return;
@@ -346,15 +301,15 @@ namespace GUC.Hooks.VDFS
             long pos = handle.GetPos();
             //Logger.Log("Pos: " + self.ToString("X4") + " " + pos);
             //hook.SetEDX((int)(pos >> 32));
-            hook.SetEAX((int)pos);
+            mem.EAX = (int)pos;
         }
 
-        static void VDFS_Size(Hook hook)
+        static void VDFS_Size(Process.HookStruct mem)
         {
-            int self = hook.GetECX();
+            int self = mem.ECX;
 
             IFileHandle handle;
-            if (!openedFiles.TryGetValue(hook.GetECX(), out handle))
+            if (!openedFiles.TryGetValue(self, out handle))
             {
                 Logger.LogError("Size: File is not opened!" + new zString(self + 0x60));
                 return;
@@ -363,104 +318,88 @@ namespace GUC.Hooks.VDFS
             long size = handle.GetSize();
             //Logger.Log("Size: " + size);
             //hook.SetEDX((int)(size >> 32));
-            hook.SetEAX((int)size);
+            mem.EAX = (int)size;
         }
 
 
         static byte[] Buffer = new byte[10000];
         // Reads until 0x0A
-        static void VDFS_ReadString(Hook hook)
+        static void VDFS_ReadString(Process.HookStruct mem)
         {
-            int self = hook.GetECX();
+            int self = mem.ECX;
 
-            try
+            IFileHandle handle;
+            if (!openedFiles.TryGetValue(self, out handle))
             {
-                IFileHandle handle;
-                if (!openedFiles.TryGetValue(hook.GetECX(), out handle))
-                {
-                    Logger.LogError("Read: File is not opened!");
-                    return;
-                }
+                Logger.LogError("Read: File is not opened!");
+                return;
+            }
 
-                int index = 0;
-                while (index < 399) // it's like in this in gothic
-                {
-                    if (handle.Read(Buffer, index, 1) == 0)
-                        break;
+            int index = 0;
+            while (index < 399) // it's like this in gothic
+            {
+                if (handle.Read(Buffer, index, 1) == 0)
+                    break;
 
-                    if (Buffer[index] == 0x0A) // \n break
-                        break;
+                if (Buffer[index] == 0x0A) // \n break
+                    break;
 
-                    index++;
-                }
                 index++;
-
-                Buffer[index] = 0;
-
-                int ptr = hook.GetArgument(0);
-                if (ptr == 0)
-                    Logger.LogError("ReadString ptr is 0!");
-
-                Process.Write(Buffer, index + 1, hook.GetArgument(0));
-
-                hook.SetEAX(1);
-
             }
-            catch (Exception e)
-            {
-                Logger.LogWarning("ReadString '{0}' '{1}': " + e, new zString(self + 0x60), hook.GetArgument(0).ToString("X4"));
-                hook.SetEAX(0);
-            }
+            index++;
+
+            Buffer[index] = 0;
+
+            int ptr = mem.GetArgument(0);
+            if (ptr == 0)
+                Logger.LogError("ReadString ptr is 0!");
+
+            Process.Write(ptr, Buffer, index + 1);
+            mem.EAX = 1;
         }
 
-        static void VDFS_ReadSize(Hook hook)
+        static void VDFS_ReadSize(Process.HookStruct mem)
         {
-            int self = hook.GetECX();
+            int self = mem.ECX;
 
-            try
+            IFileHandle handle;
+            if (!openedFiles.TryGetValue(self, out handle))
             {
-                IFileHandle handle;
-                if (!openedFiles.TryGetValue(hook.GetECX(), out handle))
-                {
-                    Logger.LogError("ReadSize: File is not opened!");
-                    return;
-                }
-
-                int ptr = hook.GetArgument(0);
-                if (ptr == 0)
-                    Logger.LogError("ReadSize ptr is 0!");
-
-                long count = (long)hook.GetArgument(1);// | ((long)hook.GetArgument(2) << 32);
-                                                       //Logger.Log("Read: " + count + " " + self.ToString("X4") + " " + Path.GetFileName(new zString(self + 0x60).ToString()));
-
-                if (count > 0)
-                {
-                    if (count > Buffer.Length)
-                        Buffer = new byte[count];
-
-                    int read = handle.Read(Buffer, 0, (int)count);
-                    Process.Write(ptr, Buffer, (int)count);
-
-                    hook.SetEAX(read);
-                    return;
-                }
+                Logger.LogError("ReadSize: File is not opened!");
+                return;
             }
-            catch (Exception e)
+            
+            int ptr = mem.GetArgument(0);
+            if (ptr == 0)
+                Logger.LogError("ReadSize ptr is 0!");
+
+            long count = (long)mem.GetArgument(1);// | ((long)hook.GetArgument(2) << 32);
+                                                  //Logger.Log("Read: " + count + " " + self.ToString("X4") + " " + Path.GetFileName(new zString(self + 0x60).ToString()));
+
+            if (count > 0)
             {
-                Logger.LogWarning("ReadSize '{0}' '{1}': " + e, new zString(self + 0x60), hook.GetArgument(0).ToString("X4"));
+                if (count > Buffer.Length)
+                    Buffer = new byte[count];
+
+                int read = handle.Read(Buffer, 0, (int)count);
+                Process.Write(ptr, Buffer, (int)count);
+
+                mem.EAX = read;
+                return;
             }
-            hook.SetEAX(0);
+            
+            mem.EAX = 0;
         }
 
-        static void VDFS_SearchFile(Hook hook)
+        static void VDFS_SearchFile(Hook hook, RegisterMemory mem)
         {
-            int self = hook.GetECX();
+            int self = mem[Registers.ECX];
 
-            string fileName = new zString(hook.GetArgument(0)).ToString();
-            string folder = GetPathFolder(new zString(hook.GetArgument(1)).ToString());
-            int arg3 = hook.GetArgument(2);
+            string fileName = new zString(mem[0]).ToString();
+            string folder = GetPathFolder(new zString(mem[1]).ToString());
+            int arg3 = mem[2];
 
-            Logger.Log("SearchFile: " + fileName + " " + folder + " " + arg3);
+            //Logger.Log("SearchFile: " + fileName + " " + folder + " " + arg3);
             if (vFiles.Count > 0)
             {
                 VDFSDirectoryInfo dir;
@@ -469,10 +408,10 @@ namespace GUC.Hooks.VDFS
                     VDFSFileInfo fi = dir.SearchFile(fileName);
                     if (fi != null)
                     {
-                        new zString(hook.GetECX() + 0x60).Set(fi.Path);
-                        hook.SetEAX(0);
-                        Logger.Log("Result: '" + new zString(hook.GetECX() + 0x60) + "'");
-                        //return;
+                        new zString(self + 0x60).Set(fi.Path);
+                        mem[Registers.EAX] = 0;
+                        //Logger.Log("Result: '" + new zString(self + 0x60) + "'");
+                        return;
                     }
                 }
             }
@@ -483,10 +422,10 @@ namespace GUC.Hooks.VDFS
                 FileInfo fi = dirInfo.EnumerateFiles(fileName, SearchOption.AllDirectories).FirstOrDefault();
                 if (fi != null)
                 {
-                    new zString(hook.GetECX() + 0x60).Set(GetPath(fi.FullName));
-                    hook.SetEAX(0);
-                    Logger.Log("Result: '" + new zString(hook.GetECX() + 0x60) + "'");
-                    //return;
+                    new zString(self + 0x60).Set(GetPath(fi.FullName));
+                    mem[Registers.EAX] = 0;
+                    //Logger.Log("Result: '" + new zString(self + 0x60) + "'");
+                    return;
                 }
             }
 
@@ -496,20 +435,19 @@ namespace GUC.Hooks.VDFS
                 FileInfo fi = dirInfo.EnumerateFiles(fileName, SearchOption.AllDirectories).FirstOrDefault();
                 if (fi != null)
                 {
-                    new zString(hook.GetECX() + 0x60).Set(GetPath(fi.FullName));
-                    hook.SetEAX(0);
-                    Logger.Log("Result: '" + new zString(hook.GetECX() + 0x60) + "'");
-                    //return;
+                    new zString(self + 0x60).Set(GetPath(fi.FullName));
+                    mem[Registers.EAX] = 0;
+                    //Logger.Log("Result: '" + new zString(self + 0x60) + "'");
+                    return;
                 }
             }
 
-
-            hook.SetEAX(0x138B);
+            mem[Registers.EAX] = 0x138B;
         }
 
-        /*static void VDFS_IsOpened(Hook hook)
+        /*static void VDFS_IsOpened(Hook hook, RegisterMemory mem)
         {
-            hook.SetEAX(openedFiles.ContainsKey(hook.GetECX()) ? 1 : 0);
+            mem[Registers.EAX] = openedFiles.ContainsKey(mem[Registers.ECX]) ? 1 : 0;
         }*/
 
         /*static void File_Append(Hook hook)

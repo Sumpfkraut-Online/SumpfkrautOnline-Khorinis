@@ -122,10 +122,14 @@ namespace GUC.WorldObjects.WorldGlobals
             if (!isRunning)
                 return;
             
-            long departedSeconds = (long)((GameTime.Ticks - startTicks) / TimeSpan.TicksPerSecond * (double)rate);
-            this.time = new WorldTime((int)departedSeconds);
+            this.time = new WorldTime((int)(GetPreciseTicks() / TimeSpan.TicksPerSecond));
 
             pUpdateTime();
+        }
+
+        public long GetPreciseTicks()
+        {
+            return (long)(rate * (GameTime.Ticks - startTicks));
         }
 
         #endregion

@@ -179,6 +179,21 @@ namespace GUC.Scripts.Arena
                         winIndices.Add(i);
             }
 
+            for (int i = 0; i < teams.Count; i++)
+                if (!winIndices.Contains(i))
+                    teams[i].Players.ForEach(c =>
+                    {
+                        var inv = c.Character.Inventory;
+                        inv.ForEachItem(item =>
+                        {
+                            if (item.IsWeapon)
+                            {
+                                c.Character.UnequipItem(item);
+                                inv.RemoveItem(item);
+                            }
+                        });
+                    });
+
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOFinish);
             stream.Write((byte)winIndices.Count); // write the winners
@@ -283,6 +298,13 @@ namespace GUC.Scripts.Arena
 
         public static void Kill(ArenaClient attacker, ArenaClient target)
         {
+            if (Phase != TOPhases.Battle)
+                return;
+
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.PointsMessage);
+            attacker.SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
+
             attacker.TOScore++;
             attacker.TOKills++;
             target.TODeaths++;

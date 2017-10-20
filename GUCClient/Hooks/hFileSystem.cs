@@ -7,8 +7,6 @@ using WinApi;
 using System.IO;
 using Gothic.Types;
 using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
-using Microsoft.Win32.SafeHandles;
 
 namespace GUC.Hooks
 {

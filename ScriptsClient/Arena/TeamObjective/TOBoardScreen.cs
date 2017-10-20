@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.GUI;
 
 namespace GUC.Scripts.Arena
 {
@@ -11,10 +10,9 @@ namespace GUC.Scripts.Arena
     {
         public static readonly TOBoardScreen Instance = new TOBoardScreen();
 
-        List<GUCVisual> boards = new List<GUCVisual>(3);
-
-        private TOBoardScreen() : base(ScriptMessages.ScoreTOMessage, "Team Objective")
+        private TOBoardScreen() : base(ScriptMessages.ScoreTOMessage)
         {
+            OnOpen += UpdateBoards;
         }
 
         public override void ReadMessage(PacketReader stream)
@@ -24,20 +22,23 @@ namespace GUC.Scripts.Arena
 
             UpdateBoards();
 
-            List<BoardEntry> list = new List<BoardEntry>();
+            var list = new List<ScoreBoard.Entry>(10);
 
             int teamCount = stream.ReadByte();
             for (int t = 0; t < teamCount; t++)
             {
-                if (t >= boards.Count)
+                if (t >= UsedCount)
                     return;
 
+                list.Clear();
+                int teamScore = stream.ReadShort();
                 int count = stream.ReadByte();
                 if (count > list.Capacity)
                     list.Capacity = count;
 
                 for (int i = 0; i < count; i++)
-                    list.Add(new BoardEntry()
+                {
+                    list.Add(new ScoreBoard.Entry()
                     {
                         ID = stream.ReadByte(),
                         Score = stream.ReadShort(),
@@ -45,25 +46,12 @@ namespace GUC.Scripts.Arena
                         Deaths = stream.ReadShort(),
                         Ping = stream.ReadShort()
                     });
+                }
 
-                FillBoard(boards[t], list);
-                list.Clear();
+                var board = GetBoard(t);
+                board.Fill(list);
+                board.SetTitle(string.Format("{0} ({1})", activeDef.Teams[t].Name, teamScore));
             }
-        }
-
-        protected override void HideBoard()
-        {
-            boards.ForEach(b => b.Hide());
-        }
-
-        protected override void ShowBoard()
-        {
-            if (TeamMode.ActiveTODef == null)
-                return;
-
-            UpdateBoards();
-            for (int i = 0; i < activeDef.Teams.Count; i++)
-                boards[i].Show();
         }
 
         TODef activeDef = null;
@@ -72,24 +60,12 @@ namespace GUC.Scripts.Arena
             if (activeDef == TeamMode.ActiveTODef)
                 return;
             activeDef = TeamMode.ActiveTODef;
-
-            var screenSize = GUCView.GetScreenSize();
-            int teamCount = activeDef.Teams.Count;
-            for (int i = 0; i < teamCount; i++)
+            
+            SetUsedCount(activeDef.Teams.Count);
+            for (int i = 0; i < UsedCount; i++)
             {
-                GUCVisual board;
-                if (i >= boards.Count)
-                {
-                    board = CreateBoard();
-                    boards.Add(board);
-                }
-                else
-                {
-                    board = boards[i];
-                }
-
-                board.SetPosX((screenSize.X - Width * teamCount) / 2 + i * Width);
-                board.SetPosY(yScreenDist);
+                TOTeamDef team = activeDef.Teams[i];
+                GetBoard(i).SetTitle(team.Name, team.Color);
             }
         }
     }

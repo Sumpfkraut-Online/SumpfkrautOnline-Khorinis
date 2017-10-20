@@ -23,11 +23,13 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         partial void pCreate()
         {
             this.Weather.StartRainTimer();
+            this.Barrier.StartTimer();
         }
 
         partial void pDelete()
         {
             this.Weather.StopRainTimer();
+            this.Barrier.StopTimer();
         }
     }
 }

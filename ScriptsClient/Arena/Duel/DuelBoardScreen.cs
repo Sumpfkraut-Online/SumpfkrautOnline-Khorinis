@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.GUI;
 
 namespace GUC.Scripts.Arena
 {
@@ -11,23 +10,21 @@ namespace GUC.Scripts.Arena
     {
         public static readonly DuelBoardScreen Instance = new DuelBoardScreen();
 
-        GUCVisual vis;
+        ScoreBoard board;
 
-        private DuelBoardScreen() : base(ScriptMessages.ScoreDuelMessage, "Duellpunkte")
+        private DuelBoardScreen() : base(ScriptMessages.ScoreDuelMessage)
         {
-            vis = CreateBoard();
-
-            var screenSize = GUCView.GetScreenSize();
-            vis.SetPosX((screenSize.X - Width) / 2);
-            vis.SetPosY(yScreenDist);
+            SetUsedCount(1);
+            this.board = GetBoard(0);
+            this.board.SetTitle("Duellpunkte");
         }
 
         public override void ReadMessage(PacketReader stream)
         {
             int count = stream.ReadByte();
-            List<BoardEntry> list = new List<BoardEntry>(count);
+            List<ScoreBoard.Entry> list = new List<ScoreBoard.Entry>(count);
             for (int i = 0; i < count; i++)
-                list.Add(new BoardEntry()
+                list.Add(new ScoreBoard.Entry()
                 {
                     ID = stream.ReadByte(),
                     Score = stream.ReadShort(),
@@ -36,17 +33,7 @@ namespace GUC.Scripts.Arena
                     Ping = stream.ReadShort()
                 });
 
-            FillBoard(vis, list);
-        }
-
-        protected override void HideBoard()
-        {
-            vis.Hide();
-        }
-
-        protected override void ShowBoard()
-        {
-            vis.Show();
+            board.Fill(list);
         }
     }
 }

@@ -233,7 +233,7 @@ namespace GUC.Scripts.Arena
             }
             else if (!this.IsSpecating)
             {
-                this.SetToSpectator(WorldInst.Current, new Vec3f(0, 1000, 0), new Vec3f(0, 0, 1));
+                this.SetToSpectator(WorldInst.Current, new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
             }
         }
 
@@ -258,20 +258,13 @@ namespace GUC.Scripts.Arena
 
         static List<Vec3f, Vec3f> spawnPositions = new List<Vec3f, Vec3f>()
         {
-            { new Vec3f(1103.581f, 247.9452f, 789.3878f), new Vec3f(-0.2739599f, 0f, -0.9617411f) },
-            { new Vec3f(1103.581f, 247.9272f, 789.3878f), new Vec3f(-0.2739599f, 0f, -0.9617411f) },
-            { new Vec3f(3125.09f, 248.0491f, -149.3765f), new Vec3f(-0.9181013f, 0f, -0.3963461f) },
-            { new Vec3f(3125.09f, 248.0578f, -149.3765f), new Vec3f(-0.9181013f, 0f, -0.3963461f) },
-            { new Vec3f(2819.372f, 247.8344f, -1710.958f), new Vec3f(-0.4671577f, 0f, 0.884174f) },
-            { new Vec3f(2819.372f, 247.8455f, -1710.958f), new Vec3f(-0.4671577f, 0f, 0.884174f) },
-            { new Vec3f(-79.50902f, 234.1128f, -1803.163f), new Vec3f(0.08106972f, 0f, 0.9967085f) },
-            { new Vec3f(-79.50902f, 234.0981f, -1803.163f), new Vec3f(0.08106972f, 0f, 0.9967085f) },
-            { new Vec3f(-1675.428f, -95.8408f, 1258.567f), new Vec3f(-0.4602006f, 0f, -0.8878149f) },
-            { new Vec3f(-1675.428f, -95.82971f, 1258.567f), new Vec3f(-0.4602006f, 0f, -0.8878149f) },
-            { new Vec3f(-4405.862f, -151.877f, -450.7282f), new Vec3f(0.9719613f, 0f, 0.235141f) },
-            { new Vec3f(-4405.862f, -151.8656f, -450.7282f), new Vec3f(0.9719613f, 0f, 0.235141f) },
-            { new Vec3f(-4092.241f, -284.683f, -2645.511f), new Vec3f(-0.02792043f, 0f, 0.9996101f) },
-            { new Vec3f(-4092.241f, -284.6982f, -2645.511f), new Vec3f(-0.02792043f, 0f, 0.9996101f) },
+            { new Vec3f(-3309.678f, -611.897f, 3652.568f), new Vec3f(0.4438523f, 0f, -0.8961f) },
+            { new Vec3f(-3748.823f, -631.83f, 4098.888f), new Vec3f(-0.9585717f, 0f, -0.2848513f) },
+            { new Vec3f(-4857.682f, -861.8788f, 4186.245f), new Vec3f(-0.2697614f, 0f, -0.9629272f) },
+            { new Vec3f(-5558.795f, -881.8917f, 4982.458f), new Vec3f(-0.7366884f, 0f, -0.6762323f) },
+            { new Vec3f(-5431.704f, -1086.897f, 2389.581f), new Vec3f(-0.6826372f, 0f, -0.7307576f) },
+            { new Vec3f(-7645.023f, -611.8591f, 3334.188f), new Vec3f(0.4344447f, 0f, -0.9006985f) },
+            { new Vec3f(-1778.532f, -1021.838f, 2775.348f), new Vec3f(-0.2376849f, 0f, 0.9713424f) },
         };
     }
 }

@@ -47,6 +47,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
 
             this.BaseInst.ForEachEquippedItem(i => this.pEquipItem(i.Slot, (ItemInst)i.ScriptObject));
+
+            if (this.HP <= 0)
+                this.BaseInst.gVob.Name.Clear();
         }
 
         #region Equipment
@@ -257,8 +260,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pSetHealth(int hp, int hpmax)
         {
-            if (isGhost && hp <= 0)
+            if (hp <= 0)
+            {
                 this.BaseInst.gVob.Name.Clear();
+                if (this == NPCInst.Hero)
+                {
+                    Menus.PlayerInventory.Menu.Close();
+                }
+            }
         }
 
         bool isGhost = false;
@@ -289,8 +298,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
-            SetToGhost((Arena.TeamMode.TeamDef == null && TeamPlayer && !ScriptClient.Client.IsSpecating) || (Arena.TeamMode.TeamDef != null && !TeamPlayer));
-
             if (this.IsDead)
                 return;
 

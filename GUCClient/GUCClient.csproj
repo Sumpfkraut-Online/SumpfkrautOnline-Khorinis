@@ -18,7 +18,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>..\GothicII\localhost-9054\</OutputPath>
     <OutputPath>..\bin\localhost-9054\</OutputPath>
     <DefineConstants>TRACE;DEBUG;D_CLIENT</DefineConstants>
@@ -27,6 +27,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -311,6 +312,11 @@
     <Compile Include="Hooks\hPlayerVob.cs" />
     <Compile Include="Hooks\hWeather.cs" />
     <Compile Include="Hooks\hBarrier.cs" />
+    <Compile Include="Hooks\VDFS\FileHandle.cs" />
+    <Compile Include="Hooks\VDFS\hFileSystem.cs" />
+    <Compile Include="Hooks\VDFS\VDFSArchive.cs" />
+    <Compile Include="Hooks\VDFS\VDFSDirectoryInfo.cs" />
+    <Compile Include="Hooks\VDFS\VDFSFileInfo.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="Models\Model.Client.cs" />
     <Compile Include="Models\ModelInstance.Client.cs" />

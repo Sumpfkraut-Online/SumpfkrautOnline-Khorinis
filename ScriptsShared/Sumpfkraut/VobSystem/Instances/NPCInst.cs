@@ -91,6 +91,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         public int HP { get { return this.BaseInst.HP; } }
+        public int HPMax { get { return this.BaseInst.HPMax; } }
 
         public bool UseCustoms = false;
         public HumBodyTexs CustomBodyTex;

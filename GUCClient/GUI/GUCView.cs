@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
-using WinApi;
 
 namespace GUC.GUI
 {
@@ -20,6 +19,11 @@ namespace GUC.GUI
         {
             this.X = x;
             this.Y = y;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("ViewPoint({0} {1})", X, Y);
         }
     }
 

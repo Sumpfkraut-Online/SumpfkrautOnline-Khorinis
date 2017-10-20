@@ -24,8 +24,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
         }
 
+        Vec3f lastRegPos;
         void ChangePosDir(Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement)
         {
+            Vec3f newPos = GetPosition();
+            if (lastRegPos.GetDistance(newPos) > 30.0f)
+            {
+                lastHitMoveTime = GameTime.Ticks;
+                lastRegPos = newPos;
+            }
+
             if (this.FightAnimation != null && this.CanCombo && this.Movement != NPCMovement.Stand)
             { // so the npc can instantly stop the attack and run into a direction
                 this.ModelInst.StopAnimation(this.fightAni, false);
@@ -79,7 +87,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (job == null)
                 return;
-            
+
             this.ModelInst.StartAniJobUncontrolled(job);
             this.Throw(velocity);
         }
@@ -255,11 +263,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (job == null)
                 return;
-            
+
             ScriptAni ani;
             if (!ModelInst.TryGetAniFromJob(job, out ani))
                 return;
-            
+
             // combo window
             float comboFrame;
             if (!ani.TryGetSpecialFrame(SpecialFrame.Combo, out comboFrame))
@@ -279,7 +287,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             // end of animation
             var endPair = Animations.FrameActionPair.OnEnd(() => EndFightAni());
-            
+
             // start ani first, because the OnEnd-Callback from the former attack resets the fight stance
             this.fightAni = this.ModelInst.StartAniJob(job, comboPair, hitPair, endPair);
             this.currentFightMove = move;
@@ -565,6 +573,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
         #endregion
 
+        long lastHitMoveTime;
+        public long LastHitMove { get { return this.lastHitMoveTime; } }
+
         public void Hit(NPCInst attacker, int damage)
         {
             var strm = this.BaseInst.GetScriptVobStream();
@@ -579,6 +590,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             this.SetHealth(this.GetHealth() - damage);
             sOnHit?.Invoke(attacker, this, damage);
+            lastHitMoveTime = GameTime.Ticks;
         }
 
 

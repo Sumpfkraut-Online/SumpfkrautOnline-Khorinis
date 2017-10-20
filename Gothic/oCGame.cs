@@ -59,6 +59,7 @@ namespace Gothic
             Process.THISCALL<NullReturnCall>(GetGameAddress(), FuncAddresses.OpenLoadscreen, new BoolArg(useStandardTex), screenName);
         }
 
+
         /// <summary>
         /// 
         /// </summary>

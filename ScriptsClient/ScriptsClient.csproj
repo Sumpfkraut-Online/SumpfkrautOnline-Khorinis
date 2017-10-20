@@ -385,6 +385,7 @@
     <Compile Include="Arena\Menus\TOInfoScreen.cs" />
     <Compile Include="Arena\Menus\TOTeamsMenu.cs" />
     <Compile Include="Arena\PlayerInfo.cs" />
+    <Compile Include="Arena\ScoreBoard\ScoreBoard.cs" />
     <Compile Include="Arena\ScoreBoard\ScoreBoardScreen.cs" />
     <Compile Include="Arena\TeamObjective\TeamMode.Client.cs" />
     <Compile Include="Arena\TeamObjective\TOBoardScreen.cs" />

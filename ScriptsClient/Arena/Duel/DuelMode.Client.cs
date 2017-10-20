@@ -28,22 +28,27 @@ namespace GUC.Scripts.Arena
         }
         public static void ReadStart(PacketReader stream)
         {
-            NPCInst enemy;
-            if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out enemy))
+            if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out NPCInst enemy))
             {
                 SetEnemy(enemy);
                 DuelMessage("Duell gegen " + enemy.CustomName + " + gestartet");
             }
         }
+
         public static void ReadWin(PacketReader stream)
         {
-            NPCInst winner;
-            if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out winner))
+            if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out NPCInst winner))
             {
                 if (winner == ArenaClient.Client.Character)
+                {
                     DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " gewonnen.");
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("Punkte +2");
+                }
                 else
+                {
                     DuelMessage("Du hast das Duell gegen " + Enemy.CustomName + " verloren.");
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("Punkte -1");
+                }
             }
             SetEnemy(null);
         }

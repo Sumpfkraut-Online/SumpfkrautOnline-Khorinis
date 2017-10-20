@@ -200,7 +200,7 @@ namespace GUC.GUI
 
             //update children
             foreach (GUCVisual vis in children)
-                vis.SetPos(vis.vpos.X + diffX, vis.vpos.Y + diffY);
+                vis.SetPos(vis.vpos.X + diffX, vis.vpos.Y + diffY, true);
         }
 
         public void SetWidth(int width, bool virtuals = false)

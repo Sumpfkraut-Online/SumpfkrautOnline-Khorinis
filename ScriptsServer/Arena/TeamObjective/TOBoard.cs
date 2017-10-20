@@ -19,6 +19,7 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)TeamMode.Teams.Count);
             for (int t = 0; t < TeamMode.Teams.Count; t++)
             {
+                stream.Write((short)TeamMode.Teams[t].Score);
                 var players = TeamMode.Teams[t].Players;
                 stream.Write((byte)players.Count);
                 players.ForEach(p => WritePlayer(p, stream));

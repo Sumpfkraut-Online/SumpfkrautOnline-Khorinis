@@ -38,5 +38,7 @@ namespace GUC.Scripts.Arena
 
         PlayerInfoMessage,
         PlayerQuitMessage,
+
+        PointsMessage,
     }
 }

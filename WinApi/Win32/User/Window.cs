@@ -2,39 +2,53 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
-using WinApi.User.Structures;
 
 namespace WinApi.User
 {
-    class Window
+    public class Window
     {
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
         [DllImport("user32.dll", EntryPoint = "FindWindow", SetLastError = true)]
-        public static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
+        static extern IntPtr FindWindowByCaption(IntPtr ZeroOnly, string lpWindowName);
 
         [DllImport("USER32.DLL")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
+        static extern bool SetForegroundWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool SetWindowText(IntPtr hwnd, String lpString);
+        static extern bool SetWindowText(IntPtr hwnd, String lpString);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
+        static extern IntPtr GetForegroundWindow();
 
-        [DllImport("user32.dll")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetWindowRect(HandleRef hwnd, out RECT lpRect);
-
-        public static uint GetWindowThreadProcessId(IntPtr hwnd)
+        public static String GetWindowText()
         {
-            uint processID = 0;
-            GetWindowThreadProcessId(hwnd, out processID);
-            return processID;
+            int length = GetWindowTextLength(Process.Handle);
+            StringBuilder sb = new StringBuilder(length + 1);
+            GetWindowText(Process.Handle, sb, sb.Capacity);
+            return sb.ToString();
+        }
+
+        public static bool SetWindowText(String text)
+        {
+            return SetWindowText(Process.Handle, text);
+        }
+
+        public static bool IsForeground()
+        {
+            var hwnd = GetForegroundWindow();
+            GetWindowThreadProcessId(hwnd, out uint processID);
+            return processID == Process.ID;
         }
     }
 }

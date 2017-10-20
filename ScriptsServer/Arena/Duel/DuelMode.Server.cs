@@ -36,6 +36,9 @@ namespace GUC.Scripts.Arena
             };
             NPCInst.sOnHit += (NPCInst a, NPCInst t, int d) =>
             {
+                if (a == null)
+                    return;
+
                 var attacker = (ArenaClient)a.Client;
                 var target = (ArenaClient)t.Client;
 

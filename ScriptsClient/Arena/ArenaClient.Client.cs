@@ -102,6 +102,9 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.TOTeamCount:
                     Menus.TOTeamsMenu.Menu.ReadCountMessage(stream);
                     break;
+                case ScriptMessages.PointsMessage:
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("Punkte +1");
+                    break;
             }
         }
     }

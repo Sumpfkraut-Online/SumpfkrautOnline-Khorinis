@@ -41,7 +41,7 @@ namespace GUC.WorldObjects.WorldGlobals
         World world;
         /// <summary> The World of this SkyController. </summary>
         public World World { get { return this.world; } }
-        
+
         WorldTime startTime;
         /// <summary> The WorldTime from which the interpolation started. </summary>
         public WorldTime StartTime { get { return this.startTime; } }
@@ -52,7 +52,7 @@ namespace GUC.WorldObjects.WorldGlobals
 
         WorldTime endTime;
         /// <summary> The WorldTime at which the interpolation reaches its EndWeight. </summary>
-        public WorldTime EndTime { get { return this.startTime; } }
+        public WorldTime EndTime { get { return this.endTime; } }
         
         float endWeight;
         /// <summary> The weight reached at the EndTime. </summary>
@@ -93,19 +93,21 @@ namespace GUC.WorldObjects.WorldGlobals
             {
                 float percent;
 
-                WorldTime currentTime = world.Clock.Time;
-                if (currentTime > this.endTime)
+                long currentTicks = world.Clock.GetPreciseTicks();
+                long startTicks = this.startTime.GetTotalSeconds() * TimeSpan.TicksPerSecond;
+                long endTicks = this.endTime.GetTotalSeconds() * TimeSpan.TicksPerSecond;
+                
+                if (currentTicks > endTicks)
                 {
                     percent = 1;
                 }
-                
-                else if (currentTime < this.startTime)
+                else if (currentTicks < startTicks)
                 {
                     percent = 0;
                 }
                 else
                 {
-                    percent = (float)((double)(currentTime - this.startTime).GetTotalSeconds() / (endTime - this.startTime).GetTotalSeconds());
+                    percent = (float)((double)(currentTicks - startTicks) / (endTicks - startTicks));
                 }
 
                 this.currentWeight = startWeight + (endWeight - startWeight) * percent;

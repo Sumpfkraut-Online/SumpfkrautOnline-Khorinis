@@ -26,7 +26,7 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
             { KeyBind.OpenAllChat, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
-            { KeyBind.Inventory, d => { if (d) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
+            { KeyBind.Inventory, d => { if (d && TeamMode.TeamDef == null) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
             { VirtualKeys.P, PrintPosition },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() }
         };
@@ -34,14 +34,13 @@ namespace GUC.Scripts.Arena.Controls
         static void PrintPosition(bool down)
         {
             var hero = NPCInst.Hero;
-            if (hero == null)
+            if (!down || hero == null)
                 return;
 
             var pos = hero.GetPosition();
             var dir = hero.GetDirection();
 
             Log.Logger.Log(pos + " " + dir);
-            //System.Globalization.CultureInfo
             System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Vec3f({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
         }
 

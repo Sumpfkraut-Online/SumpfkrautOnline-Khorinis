@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using System.Runtime.InteropServices;
 
 namespace Gothic.View
 {
@@ -26,7 +27,7 @@ namespace Gothic.View
         public zCFont()
         {
         }
-        
+
         public int GetFontX(zString str)
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetFontX, str).Value;

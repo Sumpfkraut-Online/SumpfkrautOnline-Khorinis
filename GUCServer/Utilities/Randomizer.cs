@@ -72,7 +72,22 @@ namespace GUC.Utilities
         {
             return rand.NextDouble() * (maxValue - minValue) + minValue;
         }
-        
+
+        public static float GetFloat()
+        {
+            return (float)rand.NextDouble();
+        }
+
+        public static float GetFloat(float maxValue)
+        {
+            return (float)(rand.NextDouble() * maxValue);
+        }
+
+        public static float GetFloat(float minValue, float maxValue)
+        {
+            return (float)(rand.NextDouble() * (maxValue - minValue) + minValue);
+        }
+
         public static Vec3f GetVec3fRad(Vec3f pos, float radius)
         {
             float x = (float)GetDouble(-radius, radius);

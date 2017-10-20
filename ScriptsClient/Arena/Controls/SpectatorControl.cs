@@ -20,8 +20,22 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenAllChat, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
-            { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() }
+            { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
+            { VirtualKeys.P, PrintSpectatorPosition}
         };
+
+        static void PrintSpectatorPosition(bool down)
+        {
+            if (!down || !ArenaClient.Client.IsSpecating)
+                return;
+
+            var vob = Gothic.oCGame.GetCameraVob();
+            var pos = (Vec3f)vob.Position;
+            var dir = (Vec3f)vob.Direction;
+
+            Log.Logger.Log(pos + " " + dir);
+            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Vec3f({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
+        }
 
         long lastUpdate = 0;
         void SpectatorUpdate()

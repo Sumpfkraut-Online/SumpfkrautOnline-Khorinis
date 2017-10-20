@@ -12,7 +12,6 @@ using WinApi;
 using GUC.Hooks;
 using System.Reflection;
 using System.Management;
-using System.Runtime.InteropServices;
 
 namespace GUC
 {
@@ -50,7 +49,7 @@ namespace GUC
         {
             return Path.Combine(gothicRootPath, path);
         }
-        
+
         static void SetRootPathHook(Hook hook, RegisterMemory rmem)
         {
             //Logger.LogWarning("Set root!");
@@ -63,7 +62,7 @@ namespace GUC
             gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
             if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
                 throw new Exception("Gothic folder environment variable is null or not found!");
-            
+
             Process.AddHook(SetRootPathHook, 0x44235E, 7);
             Process.AddHook(SetRootPathHook, 0x44237A, 7);
             gothicRootPath = Path.Combine(gothicPath, "SYSTEM");
@@ -101,7 +100,7 @@ namespace GUC
 
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
-        
+
         static bool mained = false;
         public static int Main(string message)
         {
@@ -110,15 +109,14 @@ namespace GUC
                 if (mained) return 0;
                 mained = true;
 
-                Logger.Log("GUC started...");      
-
                 SetupProject();
 
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-                
+
                 // add hooks
                 hFileSystem.AddHooks();
+                //Hooks.VDFS.hFileSystem.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hPlayerVob.AddHooks();
@@ -128,7 +126,7 @@ namespace GUC
                 hModel.AddHooks();
 
                 #region Some more editing
-                
+
                 Process.Write(0x42687F, 0xE9, 0xA3, 0x00, 0x00, 0x00); // skip intro videos
 
                 Process.Write(0x00424EE2, 0xEB, 0x35); // don't init savegame manager
@@ -182,7 +180,7 @@ namespace GUC
 
                 Process.Nop(0x4A059C, 7); // don't load dialogcams.zen
 
-                Process.Write(0x76D9E0, 0xC3); // remove oCNPCStates.CloseCutscenes(); // made problems with npcs as menu3dvisuals
+                Process.Write(0x76D9E0, (byte)0xC3); // remove oCNPCStates.CloseCutscenes(); // made problems with npcs as menu3dvisuals
 
                 // double zFar limit
                 Process.Write(0x005E07C2, 0x830830); // indoor
@@ -209,7 +207,7 @@ namespace GUC
             }
             return 0;
         }
-        
+
 
         public static void Exit()
         {

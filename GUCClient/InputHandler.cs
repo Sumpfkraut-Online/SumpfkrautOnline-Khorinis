@@ -35,25 +35,7 @@ namespace GUC
             },
             { VirtualKeys.F6, () =>
                 {
-                    var npc = Gothic.Objects.oCNpc.Create();
-                    npc.SetVisual("itfo_apple.3ds");
-                    //npc.SetAdditionalVisuals("hum_body_Naked0", 9, 0, "Hum_Head_Pony", 2, 0, -1);
-                    npc.HP = 10;
-                    npc.HPMax = 10;
-                    npc.Name.Set("TESTCHARAKTER");
-                    npc.InitHumanAI();
-                    npc.InitModel();
-                    npc.SetAdditionalVisuals(npc.GetModel().ModelPrototype.Mesh.ToString(), 0, 0, "", 0, 0, -1);
-                    Gothic.oCGame.GetWorld().AddVob(npc);
 
-                    if (Network.GameClient.Client.Character != null)
-                    {
-                        using (var zvec = Network.GameClient.Client.Character.GetPosition().CreateGVec())
-                        {
-                            npc.TrafoObjToWorld.Position = Network.GameClient.Client.Character.GetPosition().ToArray();
-                            npc.SetPositionWorld(zvec);
-                        }
-                    }
                 }
             },
             { VirtualKeys.F7, () =>
@@ -95,7 +77,7 @@ namespace GUC
         internal static void Update()
         {
             long now = GameTime.Ticks;
-            if (Process.IsForeground())
+            if (Window.IsForeground())
             {
                 if (!shown)
                 {
@@ -111,8 +93,7 @@ namespace GUC
                 }
                 else
                 {
-                    Input.POINT pos;
-                    if (Input.GetCursorPos(out pos))
+                    if (Input.GetCursorPos(out Input.POINT pos))
                     {
                         movedX = pos.X - DefaultMousePosX;
                         movedY = pos.Y - DefaultMousePosY;
