@@ -55,6 +55,11 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x54ABD0, viewBase);
         }
 
+        public void SetFOV(float x, float y)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x54A960, (FloatArg)x, (FloatArg)y);
+        }
+
         public zCCamera()
         {
 

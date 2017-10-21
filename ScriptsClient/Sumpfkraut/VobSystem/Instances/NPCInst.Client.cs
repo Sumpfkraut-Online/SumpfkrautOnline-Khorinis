@@ -40,7 +40,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 using (var vec = Gothic.Types.zVec3.Create(CustomScale.X, 1, CustomScale.Z))
                     this.BaseInst.gVob.SetModelScale(vec);
 
-                this.BaseInst.gVob.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_NAKED0.ToString(), (int)CustomBodyTex, 0, CustomHeadMesh.ToString(), (int)CustomHeadTex, 0, -1);
+                this.BaseInst.gVob.SetAdditionalVisuals(this.Definition.BodyMesh, (int)CustomBodyTex, 0, CustomHeadMesh.ToString(), (int)CustomHeadTex, 0, -1);
                 this.BaseInst.gVob.Voice = (int)CustomVoice;
                 this.BaseInst.gVob.SetFatness(CustomFatness);
                 this.BaseInst.gVob.Name.Set(CustomName);

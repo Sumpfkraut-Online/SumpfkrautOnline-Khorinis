@@ -102,15 +102,6 @@ namespace WinApi.Kernel
             public int dwThreadId;
         }
 
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern bool SetWindowText(IntPtr hwnd, String lpString);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowTextLength(IntPtr hWnd);
-
-
         [DllImport("kernel32.dll")]
         public static extern bool TerminateThread(IntPtr hThread, uint dwExitCode);
 

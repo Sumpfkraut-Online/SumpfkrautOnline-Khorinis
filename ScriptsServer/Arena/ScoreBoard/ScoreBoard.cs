@@ -36,11 +36,6 @@ namespace GUC.Scripts.Arena
                 timer = new GUCTimer(UpdateInterval, () => SendUpdate(client));
                 clients.Add(client, timer);
                 timer.Start();
-
-                if (client.IsCharacter)
-                {
-                    client.Character.Hit(null, 99);
-                }
             }
             else
             {

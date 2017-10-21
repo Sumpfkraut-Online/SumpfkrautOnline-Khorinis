@@ -77,7 +77,7 @@ namespace GUC
         internal static void Update()
         {
             long now = GameTime.Ticks;
-            if (Window.IsForeground())
+            if (Process.IsForeground())
             {
                 if (!shown)
                 {

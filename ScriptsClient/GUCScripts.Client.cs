@@ -41,8 +41,7 @@ namespace GUC.Scripts
         {
             GUCMenu.UpdateMenus(ticks);
             InputControl.UpdateControls(ticks);
-            if (OnUpdate != null)
-                OnUpdate(ticks);
+            OnUpdate?.Invoke(ticks);
             //CheckMusic();
         }
 

@@ -8,6 +8,7 @@ using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Controls;
 using GUC.Utilities;
+using Gothic.Objects;
 
 namespace GUC.Scripts.Arena.Controls
 {
@@ -28,8 +29,41 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.Inventory, d => { if (d && TeamMode.TeamDef == null) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
             { VirtualKeys.P, PrintPosition },
-            { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() }
+            { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
+            { VirtualKeys.F3, ToggleG1Camera },
         };
+
+        static bool g1 = false;
+        static void ToggleG1Camera(bool down)
+        {
+            if (down && zCCamera.ActiveCamera.Address != 0)
+            {
+                var screen = GUI.GUCView.GetScreenSize();
+                if (screen.X != 0 && screen.Y != 0)
+                {
+                    const float FOV = 90.0f;
+                    if (g1)
+                    {
+                        if (Gothic.System.zCParser.GetCameraParser().LoadDat("CAMERA.DAT"))
+                        {
+                            zCAICamera.CurrentCam.CreateInstance(zCAICamera.CurrentCam.CurrentMode);
+                            zCCamera.ActiveCamera.SetFOV(FOV, (float)(FOV * 0.75d));
+                            g1 = false;
+                        }
+                    }
+                    else
+                    {
+                        if (Gothic.System.zCParser.GetCameraParser().LoadDat("CAMERA.DAT.G1"))
+                        {
+                            zCAICamera.CurrentCam.CreateInstance(zCAICamera.CurrentCam.CurrentMode);
+                            double ratio = (double)screen.Y / screen.X;
+                            zCCamera.ActiveCamera.SetFOV(FOV, (float)(FOV * ratio));
+                            g1 = true;
+                        }
+                    }
+                }
+            }
+        }
 
         static void PrintPosition(bool down)
         {

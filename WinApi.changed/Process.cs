@@ -22,29 +22,32 @@ namespace WinApi
         EDI,
         ESI,
         EBP,
-        ESP, 
-        EBX, 
-        EDX, 
-        ECX, 
+        ESP,
+        EBX,
+        EDX,
+        ECX,
         EAX
     }
-    
-    public static class Process
+
+    public static unsafe class Process
     {
         #region Initialization
 
-        static IntPtr Handle;
-        static uint ProcessID;
+        static IntPtr handle;
+        internal static IntPtr Handle { get { return handle; } }
+
+        static uint procID;
+        internal static uint ID { get { return procID; } }
 
         static Process()
         {
             try
             {
-                ProcessID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
+                procID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
                 System.Diagnostics.Process.EnterDebugMode();
-                Handle = ProcessImports.OpenProcess((uint)ProcessImports.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
-                if (Handle == IntPtr.Zero)
-                    Error.GetLastError();
+                handle = ProcessImports.OpenProcess((uint)ProcessImports.ProcessAccess.PROCESS_ALL_ACCESS, false, procID);
+                if (handle == IntPtr.Zero)
+                    Win32Exception.ThrowLastError();
 
                 Guid CLSID_CLRRuntimeHost = new Guid(0x90F1A06E, 0x7712, 0x4762, 0x86, 0xB5, 0x7A, 0x5E, 0xBA, 0x6B, 0xDB, 0x02);
                 Guid IID_ICLRRuntimeHost = new Guid(0x90F1A06C, 0x7712, 0x4762, 0x86, 0xB5, 0x7A, 0x5E, 0xBA, 0x6B, 0xDB, 0x02);
@@ -55,11 +58,11 @@ namespace WinApi
 
                 IntPtr user32Handle = ProcessImports.GetModuleHandle("user32.dll");
                 if (user32Handle == IntPtr.Zero)
-                    Error.GetLastError("GetModuleHandle user32.dll");
+                    Win32Exception.ThrowLastError("GetModuleHandle user32.dll");
 
                 IntPtr wptr = ProcessImports.GetProcAddress(user32Handle, "wsprintfW");
                 if (wptr == IntPtr.Zero)
-                    Error.GetLastError("GetProcAddress wsprintfW");
+                    Win32Exception.ThrowLastError("GetProcAddress wsprintfW");
 
                 wsprintfWPtr = wptr.ToInt32();
                 wsprintfWTypeArg = AllocString("%p");
@@ -105,17 +108,16 @@ namespace WinApi
 
         public static bool VirtualProtect(int address, uint size)
         {
-            ProcessImports.MemoryProtection k;
-            return ProcessImports.VirtualProtect(new IntPtr(address), size, ProcessImports.MemoryProtection.ExecuteReadWrite, out k);
+            return ProcessImports.VirtualProtect(new IntPtr(address), size, ProcessImports.MemoryProtection.ExecuteReadWrite, out ProcessImports.MemoryProtection k);
         }
 
         public static IntPtr Alloc(uint size)
         {
             if (size == 0)
                 return IntPtr.Zero;
-            IntPtr ptr = ProcessImports.VirtualAllocEx(Handle, IntPtr.Zero, size, ProcessImports.AllocationType.Reserve | ProcessImports.AllocationType.Commit, ProcessImports.MemoryProtection.ReadWrite);
+            IntPtr ptr = ProcessImports.VirtualAllocEx(handle, IntPtr.Zero, size, ProcessImports.AllocationType.Reserve | ProcessImports.AllocationType.Commit, ProcessImports.MemoryProtection.ReadWrite);
             if (ptr == IntPtr.Zero)
-                Error.GetLastError();
+                Win32Exception.ThrowLastError();
 
             return ptr;
         }
@@ -124,79 +126,130 @@ namespace WinApi
         {
             if (ptr == IntPtr.Zero || size == 0)
                 return false;
-            if (!ProcessImports.VirtualFreeEx(Handle, ptr, size, ProcessImports.AllocationType.Decommit))
-                Error.GetLastError();
-            if (!ProcessImports.VirtualFreeEx(Handle, ptr, 0, ProcessImports.AllocationType.Release))
-                Error.GetLastError();
+            if (!ProcessImports.VirtualFreeEx(handle, ptr, size, ProcessImports.AllocationType.Decommit))
+                Win32Exception.ThrowLastError();
+            if (!ProcessImports.VirtualFreeEx(handle, ptr, 0, ProcessImports.AllocationType.Release))
+                Win32Exception.ThrowLastError();
 
             return true;
         }
 
+        const int PointerBorder = int.MaxValue; //0xB61000;
+        const int ProcessBorder = 0x401000;
+
         #region Write
 
-        public static uint Write(int address, bool value)
+        public static void Write(int address, bool value)
         {
-            return Write(address, value ? 1 : 0);
+            Write(address, value ? 1 : 0);
         }
 
-        public static uint Write(int address, int value)
+        public static void Write(int address, int value)
         {
-            if (address == 0)
-                throw new Exception("Write position is 0!");
+            if (address < PointerBorder)
+            {
+                if (address < ProcessBorder)
+                    throw new ArgumentOutOfRangeException("Address: " + address.ToString("X4"));
 
-            IntPtr byteWritten = IntPtr.Zero;
-            IntPtr ptr = new IntPtr(value);
-            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(address), out ptr, 4, out byteWritten))
-                Error.GetLastError();
-
-            return (uint)byteWritten.ToInt32();
+                IntPtr ptr = new IntPtr(value);
+                if (!ProcessImports.WriteProcessMemory(handle, new IntPtr(address), out ptr, 4, out IntPtr byteWritten))
+                    Win32Exception.ThrowLastError();
+            }
+            else
+            {
+                *(int*)address = value;
+            }
         }
 
-        public static uint Write(int address, byte value)
+        public static void Write(int address, byte value)
         {
-            return Write(address, new byte[1] { value });
+            if (address < PointerBorder)
+            {
+                Write(address, new byte[1] { value });
+            }
+            else
+            {
+                *(byte*)address = value;
+            }
         }
 
-        public static uint Write(int address, float value)
+        public static void Write(int address, float value)
         {
-            return Write(address, BitConverter.GetBytes(value));
+            if (address < PointerBorder)
+            {
+                Write(address, BitConverter.GetBytes(value));
+            }
+            else
+            {
+                *(float*)address = value;
+            }
         }
 
-        public static uint Write(int address, short value)
+        public static void Write(int address, short value)
         {
-            return Write(address, BitConverter.GetBytes(value));
+            if (address < PointerBorder)
+            {
+                Write(address, BitConverter.GetBytes(value));
+            }
+            else
+            {
+                *(short*)address = value;
+            }
         }
 
-        public static uint Write(int address, ushort value)
+        public static void Write(int address, ushort value)
         {
-            return Write(address, BitConverter.GetBytes(value));
+            if (address < PointerBorder)
+            {
+                Write(address, BitConverter.GetBytes(value));
+            }
+            else
+            {
+                *(ushort*)address = value;
+            }
         }
 
-        public static uint Write(int address, params byte[] bytes)
+        public static void Write(int address, params byte[] bytes)
         {
-            return Write(address, bytes, bytes.Length);
+            Write(address, bytes, bytes.Length);
         }
 
-        public static uint Write(int address, byte[] arr, int count)
+        public static void Write(int address, byte[] arr, int count)
         {
-            if (address == 0)
-                throw new ArgumentException("Write address is 0!");
+            if (arr.Length < count)
+                throw new ArgumentException("Length < Count");
 
-            uint byteWritten;
-            if (!ProcessImports.WriteProcessMemory(Handle, new IntPtr(address), arr, (uint)count, out byteWritten))
-                Error.GetLastError();
+            if (address < PointerBorder)
+            {
+                if (address < ProcessBorder)
+                    throw new ArgumentOutOfRangeException("Address: " + address.ToString("X4"));
 
-            return byteWritten;
+                if (!ProcessImports.WriteProcessMemory(handle, new IntPtr(address), arr, (uint)count, out uint byteWritten))
+                    Win32Exception.ThrowLastError();
+            }
+            else
+            {
+                // FIXME: use memcpy or ints
+                for (int i = 0; i < count; i++)
+                    *(byte*)(address + i) = arr[i];
+            }
         }
 
-        public static uint Nop(int address, int count)
+        public static void Nop(int address, int count)
         {
-            byte[] buf = new byte[count];
-            for (int i = 0; i < count; i++)
-                buf[i] = 0x90;
+            if (address < PointerBorder)
+            {
+                byte[] buf = new byte[count];
+                for (int i = 0; i < count; i++)
+                    buf[i] = 0x90;
 
-            return Write(address, buf);
-
+                Write(address, buf);
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                    *(byte*)(address + i) = 0x90;
+            }
         }
 
         #endregion
@@ -210,34 +263,35 @@ namespace WinApi
 
         public static int ReadInt(int address)
         {
-            if (address == 0)
-                throw new Exception("Read address is 0!");
+            if (address < ProcessBorder)
+                throw new ArgumentException("Address: " + address.ToString("X4"));
 
-            IntPtr rw;
-            IntPtr puffer;
-            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(address), out puffer, new UIntPtr(4), out rw))
-                Error.GetLastError();
-            return puffer.ToInt32();
+            /*if (!ProcessImports.ReadProcessMemory(handle, new IntPtr(address), out IntPtr puffer, new UIntPtr(4), out IntPtr rw))
+                Error.ThrowLastError();
+            return puffer.ToInt32();*/
+
+            return *(int*)address;
+
         }
 
         public static byte ReadByte(int address)
         {
-            return ReadBytes(address, 1)[0];
+            return *(byte*)address;
         }
 
         public static float ReadFloat(int address)
         {
-            return BitConverter.ToSingle(ReadBytes(address, 4), 0);
+            return *(float*)address;
         }
 
         public static short ReadShort(int address)
         {
-            return BitConverter.ToInt16(ReadBytes(address, 2), 0);
+            return *(short*)address;
         }
 
         public static ushort ReadUShort(int address)
         {
-            return BitConverter.ToUInt16(ReadBytes(address, 2), 0);
+            return *(ushort*)address;
         }
 
         public static byte[] ReadBytes(int address, uint count)
@@ -247,16 +301,21 @@ namespace WinApi
             return arr;
         }
 
-        public static uint Read(int address, byte[] buffer, uint count)
+        public static void Read(int address, byte[] buffer, uint count)
         {
-            if (address == 0)
-                throw new Exception("Read address is 0!");
+            if (address < ProcessBorder)
+                throw new ArgumentException("Address: " + address.ToString("X4"));
 
-            uint bytesRead = 0;
-            if (!ProcessImports.ReadProcessMemory(Handle, new IntPtr(address), buffer, count, ref bytesRead))
-                Error.GetLastError();
+            if (buffer.Length < count)
+                throw new ArgumentException("Length < Count");
 
-            return bytesRead;
+            /*uint bytesRead = 0;
+            if (!ProcessImports.ReadProcessMemory(handle, new IntPtr(address), buffer, count, ref bytesRead))
+                Error.ThrowLastError();*/
+
+            // FIXME: use memcpy or ints
+            for (int i = 0; i < count; i++)
+                buffer[i] = *(byte*)(address + i);
         }
 
         #endregion
@@ -413,18 +472,17 @@ namespace WinApi
         public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options);
 
         static List<Hook> hooks = new List<Hook>();
-        
+
         public static int ApiHook(string message)
         {
             try
             {
-                int address;
-                if (!int.TryParse(message, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.CurrentCulture, out address))
+                if (!int.TryParse(message, System.Globalization.NumberStyles.AllowHexSpecifier, System.Globalization.CultureInfo.CurrentCulture, out int address))
                     return 0;
 
                 int espValue = ReadInt(address + 0x12);
 
-                int hookID = ReadInt(espValue);  
+                int hookID = ReadInt(espValue);
                 if (hookID >= 0 && hookID < hooks.Count)
                 {
                     Hook hook = hooks[hookID];
@@ -454,7 +512,6 @@ namespace WinApi
 
         */
 
-
         public static Hook AddHook(HookCallback callback, int address, uint length)
         {
             if (callback == null)
@@ -473,14 +530,14 @@ namespace WinApi
 
             Hook result;
             int hookID = hooks.Count;
-            
+
             int funcPtr = Alloc(funcLen).ToInt32();
             using (MemoryStream ms = new MemoryStream((int)funcLen))
             using (BinaryWriter bw = new BinaryWriter(ms))
             {
                 // push registers, flags and hook id
                 bw.Write((byte)0x60); // pushad, EAX, ECX, EDX, EBX, EBP, ESP (original value), EBP, ESI, and EDI
-                
+
                 bw.Write((byte)0x66); // pushf 
                 bw.Write((byte)0x9C);
 
@@ -498,7 +555,7 @@ namespace WinApi
                 bw.Write((byte)0xFF); // call [malloc] (imported)
                 bw.Write((byte)0x15);
                 bw.Write(0x0082E30C);
-                
+
                 /*bw.Write((byte)0x85); // test eax, eax
                 bw.Write((byte)0xC0);
 
@@ -508,7 +565,7 @@ namespace WinApi
                 // save memory address
                 bw.Write((byte)0x8B); // mov ebp, eax
                 bw.Write((byte)0xE8);
-                
+
                 // write memory address as wchar into memory location
                 bw.Write((byte)0x50); // push eax
 
@@ -551,14 +608,14 @@ namespace WinApi
                 bw.Write((byte)0xFF); // call [ECX+0x2C] https://msdn.microsoft.com/de-de/library/ms164411(v=vs.110).aspx
                 bw.Write((byte)0x51);
                 bw.Write((byte)0x2C);
-                
+
                 // free memory location
                 bw.Write((byte)0x55); // push ebp (memory location ptr)
 
                 bw.Write((byte)0xFF); // call [free] (imported)
                 bw.Write((byte)0x15);
                 bw.Write(0x0082E308);
-                
+
                 bw.Write((byte)0x83); // add esp, 24 -> flag push
                 bw.Write((byte)0xC4);
                 bw.Write((byte)0x18);
@@ -572,7 +629,7 @@ namespace WinApi
                 // write old code
                 byte[] oldCode = ReadBytes(address, length);
                 bw.Write(oldCode);
-                
+
                 // write jump back
                 bw.Write((byte)0xE9);
                 bw.Write((address + length) - (funcPtr + funcLen - 4));
@@ -601,22 +658,159 @@ namespace WinApi
 
         #endregion
 
-        public static bool SetWindowText(String text)
+        #region FastHook
+
+        [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 34)]
+        public unsafe struct HookStruct
         {
-            return ProcessImports.SetWindowText(Handle, text);
+            short flags;
+            int edi;
+            int esi;
+            int ebp;
+            int esp;
+            int ebx;
+            int edx;
+            int ecx;
+            int eax;
+
+            public int EDI
+            {
+                get { return this.edi; }
+                set
+                {
+                    *(int*)(esp - 32) = value;
+                }
+            }
+
+            public int ESI
+            {
+                get { return this.esi; }
+                set
+                {
+                    *(int*)(esp - 28) = value;
+                }
+            }
+
+            public int EBP
+            {
+                get { return this.ebp; }
+                set
+                {
+                    *(int*)(esp - 24) = value;
+                }
+            }
+
+            public int ESP
+            {
+                get { return this.esp; }
+                /*set
+                {
+                    *(int*)(esp - 20) = value;
+                }*/
+            }
+
+            public int EBX
+            {
+                get { return this.ebx; }
+                set
+                {
+                    *(int*)(esp - 16) = value;
+                }
+            }
+
+            public int EDX
+            {
+                get { return this.edx; }
+                set
+                {
+                    *(int*)(esp - 12) = value;
+                }
+            }
+
+            public int ECX
+            {
+                get { return this.ecx; }
+                set
+                {
+                    *(int*)(esp - 8) = value;
+                }
+            }
+
+            public int EAX
+            {
+                get { return this.eax; }
+                set
+                {
+                    *(int*)(esp - 4) = value;
+                }
+            }
+
+            public int GetArgument(int index)
+            {
+                return *(int*)(esp + 4 * (index + 1));
+            }
+
+            public void SetArgument(int index, int value)
+            {
+                *(int*)(esp + 4 * (index + 1)) = value;
+            }
         }
 
-        public static String GetWindowText()
+        static List<FastHookCallback> fastHooks = new List<FastHookCallback>();
+        
+        public delegate void FastHookCallback(HookStruct args);
+        public static Hook FastHook(FastHookCallback callback, int address, uint length)
         {
-            int length = ProcessImports.GetWindowTextLength(Handle);
-            StringBuilder sb = new StringBuilder(length + 1);
-            ProcessImports.GetWindowText(Handle, sb, sb.Capacity);
-            return sb.ToString();
+            if (callback == null)
+                throw new ArgumentNullException("Callback is null!");
+            if (address == 0)
+                throw new ArgumentNullException("Address is zero!");
+            if (length < 5)
+                throw new ArgumentException("Length is < 5!");
+
+            fastHooks.Add(callback);
+            byte[] oldCode = ReadBytes(address, length);
+
+            int cavity = Alloc(19 + length).ToInt32();
+            using (MemoryStream ms = new MemoryStream(19 + (int)length))
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                // JMP
+                bw.Write((byte)0xE9);
+                bw.Write(cavity - address - 5);
+                for (int i = 5; i < length; i++)
+                    bw.Write((byte)0x90);
+                bw.Flush();
+                Write(address, ms.ToArray());
+
+                // HOOK
+                ms.Position = 0;
+                ms.SetLength(0);
+
+                bw.Write((byte)0x60); // pushad
+                bw.Write((byte)0x66); // pushf
+                bw.Write((byte)0x9C);
+
+                bw.Write((byte)0xE8);
+                bw.Write(Marshal.GetFunctionPointerForDelegate(callback).ToInt32() - cavity - 8);
+                bw.Write((byte)0x83); // sub, esp 34
+                bw.Write((byte)0xEC);
+                bw.Write((byte)36);
+
+                bw.Write((byte)0x66); // popf
+                bw.Write((byte)0x9D);
+                bw.Write((byte)0x61); // popad
+
+                bw.Write(oldCode);
+                bw.Write((byte)0xE9);
+                bw.Write(address - cavity - 19);
+                bw.Flush();
+                Write(cavity, ms.ToArray());
+            }
+
+            return new Hook(address, null, cavity, 19 + length, cavity + 14, oldCode);
         }
 
-        public static bool IsForeground()
-        {
-            return User.Window.GetWindowThreadProcessId(User.Window.GetForegroundWindow()) == ProcessID;
-        }
+        #endregion
     }
 }

@@ -84,12 +84,14 @@
     <Compile Include="Objects\Sky\zCSkyState.cs" />
     <Compile Include="Objects\Sky\zCOutdoorRainFX.cs" />
     <Compile Include="Objects\zCAIBase.cs" />
+    <Compile Include="Objects\zCAICamera.cs" />
     <Compile Include="Objects\zCAIPlayer.cs" />
     <Compile Include="Objects\zCCamera.cs" />
     <Compile Include="Objects\zCCollisionObject.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />
     <Compile Include="Sound\zTSound3DParams.cs" />
+    <Compile Include="System\zCParser.cs" />
     <Compile Include="System\zFile.cs" />
     <Compile Include="System\zFile_File.cs" />
     <Compile Include="System\zFile_VDFS.cs" />

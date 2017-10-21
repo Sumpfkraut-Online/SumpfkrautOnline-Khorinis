@@ -7,6 +7,7 @@ using Gothic.Objects;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Types;
+using GUC.GUI;
 
 namespace GUC.WorldObjects
 {
