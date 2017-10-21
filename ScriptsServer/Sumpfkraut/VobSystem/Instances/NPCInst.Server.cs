@@ -14,6 +14,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
+        const long CorpseRemoveTime = 3 * TimeSpan.TicksPerMinute;
+
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
         public delegate void NPCInstMoveHandler(NPCInst npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
@@ -571,6 +573,39 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     return AniCatalog.Draw1H;
             }
         }
+        #endregion
+
+        partial void pSetHealth(int hp, int hpmax)
+        {
+            if (hp <= 0)
+            {
+                StartCorpseTimer();
+            }
+        }
+        #region Corpse Removal
+
+        public void StartCorpseTimer()
+        {
+            var timer = new GUCTimer<NPCInst, GUCAbstractTimer>(CorpseRemoveTime);
+            timer.SetCallback(RemoveCorpse, this, timer);
+            timer.Start();
+        }
+
+        static void RemoveCorpse(NPCInst npc, GUCAbstractTimer timer)
+        {
+            if (npc == null || timer == null)
+                throw new ArgumentNullException();
+
+            if (npc.IsSpawned)
+            {
+                if (npc.IsPlayer || npc.HP > 0)
+                    return; // FIXME: start timer through events
+
+                npc.Despawn();
+            }
+            timer.Stop();
+        }
+
         #endregion
 
         long lastHitMoveTime;

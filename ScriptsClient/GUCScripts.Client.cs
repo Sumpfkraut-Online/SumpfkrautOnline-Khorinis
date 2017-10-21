@@ -56,6 +56,10 @@ namespace GUC.Scripts
 
         public void StartIngame()
         {
+            // make checkmeleehitslevel always available
+            WinApi.Process.Write(0x006B0CF8, 0xEB, 0x1C);
+            WinApi.Process.Write(0x006B0D65, (byte)0xEB);
+
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             GUCMenu.CloseActiveMenus();
             Ingame = true;

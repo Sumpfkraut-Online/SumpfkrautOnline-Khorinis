@@ -31,6 +31,7 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.P, PrintPosition },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
             { VirtualKeys.F3, ToggleG1Camera },
+            { VirtualKeys.N1, d => GUC.GUI.GUCView.DebugText.Text = NPCInst.Hero.DrawnWeapon.BaseInst.gVob.BBox3D.Height + " " + NPCInst.Hero.DrawnWeapon.BaseInst.gVob.LastTimeDrawn }
         };
 
         static bool g1 = false;

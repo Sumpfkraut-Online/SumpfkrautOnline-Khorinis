@@ -265,14 +265,19 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x6A3DC0);
         }
 
-        public void CheckMeleeWeaponHitsLevel(oCItem item)
+        public bool CheckMeleeWeaponHitsLevel(oCItem item)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.CheckMeleeWeaponHitsLevel, item);
+            return Process.THISCALL<BoolArg>(Address, FuncAddresses.CheckMeleeWeaponHitsLevel, item);
         }
 
         public void GetFightLimbs()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.GetFightLimbs);
+        }
+
+        public void CorrectFightPosition()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6AAB80);
         }
 
         public void Turn(float amount, bool playAni)

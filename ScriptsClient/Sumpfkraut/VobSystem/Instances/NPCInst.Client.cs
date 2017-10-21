@@ -226,7 +226,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        void ShowWeaponTrail()
+        GUC.Utilities.LockTimer collisionFXTimer = new GUC.Utilities.LockTimer(300);
+        void DoFightStuff()
         {
             if (!this.IsInFightMode)
                 return;
@@ -250,9 +251,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 if (aniEvent.AniType != Gothic.Objects.Meshes.zCModelAniEvent.Types.Tag)
                     continue;
 
-                if (aniEvent.TagString.ToString() == "DEF_OPT_FRAME")
+                if (aniEvent.TagString.ToString() == "DEF_OPT_FRAME") // it's a attack ani
                 {
-                    this.BaseInst.gAI.ShowWeaponTrail();
+                    var ai = this.BaseInst.gAI;
+                    ai.ShowWeaponTrail();
+                    ai.CorrectFightPosition();
+                    if (this.DrawnWeapon != null && collisionFXTimer.IsReady)
+                    {
+                        ai.GetFightLimbs();
+                        ai.CheckMeleeWeaponHitsLevel(this.DrawnWeapon.BaseInst.gVob);
+                    }
                     return;
                 }
             }
@@ -303,7 +311,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             UpdateFightStance();
 
-            ShowWeaponTrail();
+            DoFightStuff();
 
             /*var activeJumpAni = GetJumpAni();
             if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)

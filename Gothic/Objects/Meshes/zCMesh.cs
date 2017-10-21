@@ -69,5 +69,11 @@ namespace Gothic.Objects.Meshes
         }
 
         public zTBBox3D BBox3D { get { return new zTBBox3D(Address + 88); } }
+
+
+        public void CalcBBox3D()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x56A610);
+        }
     }
 }
