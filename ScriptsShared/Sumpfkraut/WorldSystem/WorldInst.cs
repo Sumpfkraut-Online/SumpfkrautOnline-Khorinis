@@ -30,29 +30,25 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         public ScriptClock Clock { get { return (ScriptClock)this.baseWorld.Clock.ScriptObject; } }
         public ScriptWeatherCtrl Weather { get { return (ScriptWeatherCtrl)this.baseWorld.WeatherCtrl.ScriptObject; } }
         public ScriptBarrierCtrl Barrier { get { return (ScriptBarrierCtrl)this.baseWorld.BarrierCtrl.ScriptObject; } }
-
-
-
+        
         public WorldInst ()
-            : this("WorldInst (default)")
-        { }
-
-        public WorldInst (string objName)
         {
             this.baseWorld = new WorldObjects.World(new ScriptClock(this), 
                 new ScriptWeatherCtrl(this), new ScriptBarrierCtrl(this), this);
         }
 
-
+        public string Path;
 
         public void OnWriteProperties(PacketWriter stream)
         {
             // write definition id
+            stream.Write(Path);
         }
 
         public void OnReadProperties(PacketReader stream)
         {
             // read definition id
+            Path = stream.ReadString();
         }
 
         partial void pCreate ();

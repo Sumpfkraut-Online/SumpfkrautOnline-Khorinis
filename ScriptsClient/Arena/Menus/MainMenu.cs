@@ -19,6 +19,7 @@ namespace GUC.Scripts.Arena.Menus
             AddButton("Zuschauen", "Dem Spiel zuschauen.", 220, () => { ArenaClient.SendSpectateMessage(); Close(); });
             AddButton("Charakter editieren", "Deinen Spielcharakter editieren.", 260, CharCreationMenu.Menu.Open);
             AddButton("Spiel verlassen", "Das Spiel schließen.", 340, ExitMenu.Menu.Open);
+            OnEscape = () => { if (!GUCScripts.Ingame) Open(); };
         }
 
         public override void Open()
@@ -37,6 +38,8 @@ namespace GUC.Scripts.Arena.Menus
         void UpdateTeamButton()
         {
             teamButton.Enabled = TeamMode.IsRunning && TeamMode.Phase != TOPhases.Finish && TeamMode.Phase != TOPhases.None;
+            if (!teamButton.Enabled && CurrentItem == teamButton)
+                MoveCursor();
         }
     }
 }

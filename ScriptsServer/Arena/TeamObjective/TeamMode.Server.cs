@@ -22,6 +22,8 @@ namespace GUC.Scripts.Arena
 
         static GUCTimer phaseTimer = new GUCTimer();
 
+        static WorldInst World = null;
+
         public static uint RemainingPhaseMsec { get { return (uint)(phaseTimer.GetRemainingTicks() / TimeSpan.TicksPerMillisecond); } }
 
         public static void AddScore(ArenaClient client)
@@ -82,7 +84,7 @@ namespace GUC.Scripts.Arena
             npc.TeamPlayer = true;
 
             var spawnPoint = player.Team.GetSpawnPoint();
-            npc.Spawn(WorldInst.Current, spawnPoint.Item1, spawnPoint.Item2);
+            npc.Spawn(World, spawnPoint.Item1, spawnPoint.Item2);
             player.SetControl(npc);
         }
 
@@ -117,6 +119,10 @@ namespace GUC.Scripts.Arena
         public static void StartTO(TODef def)
         {
             if (def == null)
+                return;
+
+            World = WorldInst.List.Find(w => w.Path == def.WorldPath);
+            if (World == null)
                 return;
 
             activeTODef = def;
@@ -214,6 +220,7 @@ namespace GUC.Scripts.Arena
             teams.Clear();
 
             activeTODef = null;
+            World = null;
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOEnd);

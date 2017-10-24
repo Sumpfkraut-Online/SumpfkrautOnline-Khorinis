@@ -160,18 +160,20 @@ namespace GUC.Scripts
 
         void CreateTestWorld()
         {
-            WorldDef wDef = new WorldDef();
-            WorldInst.Current = new WorldInst(default(WorldDef));
-
-            WorldInst.Current.Create();
-            WorldInst.Current.Clock.SetTime(new WorldTime(0, 8), 10.0f);
-            WorldInst.Current.Clock.Start();
-
-            var def = NPCDef.Get("maleplayer");
-            var inst = new NPCInst(def);
-            inst.CustomName = "Testcharakter";
-            inst.BaseInst.SetNeedsClientGuide(true);
-            inst.Spawn(WorldInst.Current, new Vec3f(0, 1000, 0), new Vec3f(0, 0, 1));
+            var world = new WorldInst(null);
+            world.Path = "G1\\OLDWORLD.ZEN";
+            world.Create();
+            world.Clock.SetTime(new WorldTime(0, 8), 10.0f);
+            world.Clock.Start();
+            WorldInst.List.Add(world);
+            
+            world = new WorldInst(null);
+            world.Path = "G1\\OLDMINE.ZEN";
+            world.Create();
+            world.Clock.Stop();
+            world.Barrier.StopTimer();
+            world.Weather.StopRainTimer();
+            WorldInst.List.Add(world);
 
             /* for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
              {

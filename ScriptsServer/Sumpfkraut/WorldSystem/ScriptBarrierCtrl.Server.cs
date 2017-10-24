@@ -9,8 +9,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
     partial class ScriptBarrierCtrl
     {
-        const long InvisibleTimeMin = 1 * TimeSpan.TicksPerMinute;
-        const long InvisibleTimeMax = 5 * TimeSpan.TicksPerMinute;
+        const long InvisibleTimeMin = 30 * TimeSpan.TicksPerSecond;
+        const long InvisibleTimeMax = 3 * TimeSpan.TicksPerMinute;
 
         const long VisibleTimeMin = 1 * TimeSpan.TicksPerSecond;
         const long VisibleTimeMax = 20 * TimeSpan.TicksPerSecond;
@@ -23,7 +23,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         void ShowBarrier()
         {
             int transition = (int)(Randomizer.GetInt(TransitionSecondsMin, TransitionSecondsMax) * this.World.Clock.Rate);
-            SetNextWeight(this.World.Clock.Time + transition, Randomizer.GetFloat(0.2f, 1.0f)); // barrier visible
+            SetNextWeight(this.World.Clock.Time + transition, 1.0f); // barrier visible
             timer.SetInterval(VisibleTimeMin + (long)(Randomizer.GetDouble() * VisibleTimeMax));
             timer.SetCallback(HideBarrier);
         }

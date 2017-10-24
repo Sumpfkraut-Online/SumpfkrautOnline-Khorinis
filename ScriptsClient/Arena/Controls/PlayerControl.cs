@@ -190,7 +190,7 @@ namespace GUC.Scripts.Arena.Controls
             {
                 if (enemy != null)
                 {
-                    Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+                    oCNpcFocus.StopHighlightingFX();
                     enemy = null;
                 }
 
@@ -220,12 +220,35 @@ namespace GUC.Scripts.Arena.Controls
                     state = NPCMovement.Stand;
                 }
             }
+
+            if (state == NPCMovement.Forward)
+            {
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(false))
+                    state = NPCMovement.Stand;
+            }
+            else if (state == NPCMovement.Backward)
+            {
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveBackward(false))
+                    state = NPCMovement.Stand;
+            }
+            else if (state == NPCMovement.Left)
+            {
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveLeft(false))
+                    state = NPCMovement.Stand;
+            }
+            else if (state == NPCMovement.Right)
+            {
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveRight(false))
+                    state = NPCMovement.Stand;
+            }
+
             hero.SetMovement(state);
         }
 
         static NPCInst enemy;
         static void DoTurning(NPCInst hero)
         {
+            const float maxTurnFightSpeed = 0.075f;
             if (enemy != null)
             {
                 Vec3f heroPos = hero.GetPosition();
@@ -235,25 +258,42 @@ namespace GUC.Scripts.Arena.Controls
                 Vec3f dir = (new Vec3f(enemyPos.X, 0, enemyPos.Z) - new Vec3f(heroPos.X, 0, heroPos.Z)).Normalise();
                 Vec3f diff = new Vec3f(heroDir.X, 0, heroDir.Z) - dir;
                 float len = diff.GetLength();
-                const float maxSpeed = 0.075f;
-                if (len > maxSpeed)
-                    diff = new Vec3f(diff.X / len * maxSpeed, 0, diff.Z / len * maxSpeed);
+                if (len > maxTurnFightSpeed)
+                    diff = new Vec3f(diff.X / len * maxTurnFightSpeed, 0, diff.Z / len * maxTurnFightSpeed);
 
                 hero.SetDirection(heroDir - diff);
                 return;
             }
 
+            const float maxLookupSpeed = 2f;
+            float rotSpeed = 0;
+            if (InputHandler.MouseDistY != 0)
+            {
+                rotSpeed = InputHandler.MouseDistY * 0.1f;
+                if (rotSpeed > maxLookupSpeed) rotSpeed = maxLookupSpeed;
+                else if (rotSpeed < -maxLookupSpeed) rotSpeed = -maxLookupSpeed;
+                zCAICamera.CurrentCam.BestRotX += rotSpeed;
+            }
+
             // Fixme: do own turning
+            const float maxTurnSpeed = 2f;
             if (!KeyBind.Action.IsPressed())
             {
+                float turn = 0;
                 if (KeyBind.TurnLeft.IsPressed())
-                {
-                    hero.BaseInst.gVob.AniCtrl.Turn(-2f, !hero.ModelInst.IsInAnimation());
-                    return;
-                }
+                    turn = -maxTurnSpeed;
                 else if (KeyBind.TurnRight.IsPressed())
+                    turn = maxTurnSpeed;
+                else if (Math.Abs(InputHandler.MouseDistX) > ((rotSpeed > 0.5f && hero.Movement == NPCMovement.Stand) ? 18 : 2))
                 {
-                    hero.BaseInst.gVob.AniCtrl.Turn(2f, !hero.ModelInst.IsInAnimation());
+                    turn = InputHandler.MouseDistX * 0.075f;
+                    if (turn > maxTurnSpeed) turn = maxTurnSpeed;
+                    else if (turn < -maxTurnSpeed) turn = -maxTurnSpeed;
+                }
+
+                if (turn != 0)
+                {
+                    hero.BaseInst.gAI.Turn(turn, !hero.ModelInst.IsInAnimation());
                     return;
                 }
             }

@@ -100,8 +100,6 @@ namespace GUC.Scripts.Arena
         {
             SendGameInfo(this);
             SendPlayerInfoMessage();
-            Spectate();
-
             TeamMode.CheckStartTO();
         }
 
@@ -218,7 +216,7 @@ namespace GUC.Scripts.Arena
                 npc.ModelInst.ApplyOverlay(ov);
 
             var pair = spawnPositions.GetRandom();
-            npc.Spawn(WorldInst.Current, pair.Item1, pair.Item2);
+            npc.Spawn(WorldInst.List[0], pair.Item1, pair.Item2);
             this.SetControl(npc);
         }
 
@@ -226,15 +224,7 @@ namespace GUC.Scripts.Arena
         {
             KillCharacter();
             TeamMode.JoinTeam(this, null);
-            if (this.IsCharacter)
-            {
-                var npc = this.Character;
-                this.SetToSpectator(npc.World, npc.GetPosition(), npc.GetDirection());
-            }
-            else if (!this.IsSpecating)
-            {
-                this.SetToSpectator(WorldInst.Current, new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
-            }
+            this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
         }
 
         public void KillCharacter()

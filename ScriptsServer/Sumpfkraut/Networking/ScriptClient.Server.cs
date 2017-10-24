@@ -17,11 +17,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             return true;
         }
 
-        partial void pOnConnect()
-        {
-            this.SetToSpectator(WorldInst.Current, new Vec3f(), new Vec3f(0, 0, 1));
-        }
-
         public static void ForEach(Action<ScriptClient> action)
         {
             GameClient.ForEach(client => action((ScriptClient)client.ScriptObject));

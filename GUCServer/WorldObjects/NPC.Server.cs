@@ -244,6 +244,10 @@ namespace GUC.WorldObjects
                 base.Spawn(this.world, this.pos, this.dir);
                 world.AddToNPCCells(this);
             }
+            else
+            {
+                this.Cell.AddClient(this.client);
+            }
 
             GameClient.Messages.WritePlayerControl(this.client, this);
         }
