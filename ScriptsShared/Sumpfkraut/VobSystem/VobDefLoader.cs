@@ -512,5 +512,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
+        public override void Save (bool useAsyncMode)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

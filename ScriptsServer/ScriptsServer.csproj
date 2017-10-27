@@ -319,6 +319,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptOverlay.cs">
       <Link>Sumpfkraut\Visuals\ScriptOverlay.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\ScriptOverlayAniJobRelation.cs">
+      <Link>Sumpfkraut\Visuals\ScriptOverlayAniJobRelation.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\VisualLoader.cs">
       <Link>Sumpfkraut\Visuals\VisualLoader.cs</Link>
     </Compile>
