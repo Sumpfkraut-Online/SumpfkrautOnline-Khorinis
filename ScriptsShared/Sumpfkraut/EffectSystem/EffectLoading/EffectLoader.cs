@@ -15,10 +15,10 @@ using static GUC.Scripts.Sumpfkraut.Database.DBTables;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem
 {
 
-    public partial class EffectLoader : BaseObjectLoader
+    public partial class EffectLoader : BaseLoader
     {
 
-        public static char[] defaultParamsSeperator = new char[] { ';' };
+        public static new char[] defaultParamsSeperator = new char[] { ';' };
 
         public static readonly Dictionary<string, List<ColumnGetTypeInfo>> DBStructure =
             new Dictionary<string, List<ColumnGetTypeInfo>>()
@@ -140,8 +140,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             lock (loadLock)
             {
                 // start prepared, fresh and clean as morning dew
-                PrepareColGetTypeInfo();
-                DropResults();
+                InitLoad();
                 // fill the queue of commands / subsequent sql-database-requests
                 List<string> commandQueue = PrepareLoadCommandQueue();
                 //foreach (var cmd in commandQueue) { Log.Logger.Log(cmd); }
@@ -169,88 +168,51 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             };
         }
 
-        public string PrepareLoadCommand (string tableName, List<ColumnGetTypeInfo> getTypeInfos, 
-            string additionalSQLSort = null)
-        {
-            StringBuilder commandSB = new StringBuilder();
-
-            // select columns in order (by their names) --> SELECT col1, col2, ... coln
-            commandSB.Append("SELECT ");
-            int lastColumnIndex = getTypeInfos.Count - 1;
-            for (int c = 0; c < getTypeInfos.Count; c++)
-            {
-                if (c != lastColumnIndex)
-                {
-                    commandSB.Append(getTypeInfos[c].colName + ",");
-                }
-                else
-                {
-                    commandSB.Append(getTypeInfos[c].colName);
-                }
-            }
-
-            commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {0}ID ASC", tableName);
-            if (additionalSQLSort != null)
-            {
-                commandSB.Append(additionalSQLSort);
-            }
-            commandSB.Append(";");
-
-            return commandSB.ToString();
-        }
-
         public void EffectsFromSQLResults (AbstractRunnable sender, FinishedQueueEventHandlerArgs e)
         {
-            try
+            lock (loadLock)
             {
-                lock (loadLock)
-                {
-                    sqlResults = e.GetSQLResults();
+                sqlResults = e.GetSQLResults();
 
-                    // return if there is nothing to process
-                    if ((sqlResults == null) || (sqlResults.Count < 2)) { return; }
+                // return if there is nothing to process
+                if ((sqlResults == null) || (sqlResults.Count < 2)) { return; }
 
-                    // convert the data-strings to their respective types
-                    ConvertSQLResults(sqlResults, colGetTypeInfo);
+                // convert the data-strings to their respective types
+                ConvertSQLResults(sqlResults, colGetTypeInfo);
                     
-                    var tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("Effect") ];
-                    var tableChange = sqlResults[ DBTableLoadOrder.IndexOf("Change") ];
+                var tableEffect = sqlResults[ DBTableLoadOrder.IndexOf("Effect") ];
+                var tableChange = sqlResults[ DBTableLoadOrder.IndexOf("Change") ];
 
-                    List<IDAndChanges> idAndChangesList = null;
-                    if (!TryGenerateIDAndChanges(tableChange, out idAndChangesList))
-                    {
-                        MakeLogError("Aborting effect generation due to"
-                            + " failed generation of Changes from raw database-data!");
-                        return;
-                    }
-
-                    List<int> failedIndices;
-                    if (!TryGenerateEffects(idAndChangesList, out effectByID, out failedIndices))
-                    {
-                        StringBuilder sb = new StringBuilder();
-                        sb.Append("Failed to generate Effects with [temporary index | EffectID]: ");
-                        for (int i = 0; i < failedIndices.Count; i++)
-                        {
-                            sb.Append("[");
-                            sb.Append(i);
-                            sb.Append("|");
-                            if ((failedIndices[i] < 0) || (failedIndices[i] > (idAndChangesList.Count - 1)))
-                            {
-                                sb.Append("?");
-                            }
-                            else
-                            {
-                                sb.Append(failedIndices[i]);
-                            }
-                            sb.Append("],");
-                        }
-                        MakeLogError(sb.ToString());
-                    }
+                List<IDAndChanges> idAndChangesList = null;
+                if (!TryGenerateIDAndChanges(tableChange, out idAndChangesList))
+                {
+                    MakeLogError("Aborting effect generation due to"
+                        + " failed generation of Changes from raw database-data!");
+                    return;
                 }
-            }
-            catch (Exception ex)
-            {
-                MakeLogError("Error while converting sqlResults to Effects: " + ex);
+
+                List<int> failedIndices;
+                if (!TryGenerateEffects(idAndChangesList, out effectByID, out failedIndices))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    sb.Append("Failed to generate Effects with [temporary index | EffectID]: ");
+                    for (int i = 0; i < failedIndices.Count; i++)
+                    {
+                        sb.Append("[");
+                        sb.Append(i);
+                        sb.Append("|");
+                        if ((failedIndices[i] < 0) || (failedIndices[i] > (idAndChangesList.Count - 1)))
+                        {
+                            sb.Append("?");
+                        }
+                        else
+                        {
+                            sb.Append(failedIndices[i]);
+                        }
+                        sb.Append("],");
+                    }
+                    MakeLogError(sb.ToString());
+                }
             }
             // no return value necessary because final results, effectsByID, is already saved as property in the loader
         }
@@ -471,54 +433,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return true;
         }
 
-        protected bool TryParseParameters (string parameterString, List<Type> types, 
-            out List<object> parameters)
+        public override void Save (bool useAsyncMode)
         {
-            return TryParseParameters(parameterString, types, out parameters, defaultParamsSeperator);
+            throw new NotImplementedException();
         }
-
-        protected bool TryParseParameters (string parameterString, List<Type> types, 
-            out List<object> parameters, string seperator)
-        {
-            return TryParseParameters(parameterString, types, out parameters, seperator);
-        }
-
-        // try parse parameter-string into a List of usable paramters of their respective types
-        protected bool TryParseParameters (string parameterString, List<Type> types, 
-            out List<object> parameters, char[] seperator)
-        {
-            parameters = null;
-            string[] splitted = parameterString.Split(seperator);
-            if (types == null)
-            {
-                MakeLogError("Aborting TryParseParameters because parameter parameterTypes is null!");
-                return false;
-            }
-            if (types.Count < splitted.Length)
-            {
-                MakeLogError("Aborting TryParseParameters because the amount of parameterTypes is insufficient: " 
-                    + types.Count + " instead of the required " + splitted.Length + ". ");
-            }
-
-            parameters = new List<object>(splitted.Length);
-            object p;
-            Type t;
-            for (int i = 0; i < splitted.Length; i++)
-            {
-                t = types[i];
-                if (!TrySqlStringToData(splitted[i], t, out p))
-                {
-                    MakeLogError(string.Format("Aborting TryParseParameters because Params[{0}]" 
-                        + "couldn't be converted according to applied SQLiteGetType {1}",
-                        splitted[i], types[i]));
-                }
-                
-                parameters.Add(p);
-            }
-
-            return true;
-        }
-
     }
 
 }

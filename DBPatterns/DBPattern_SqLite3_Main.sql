@@ -127,8 +127,12 @@ CREATE TABLE IF NOT EXISTS ModelDef
 (
     ModelDefID INTEGER NOT NULL, -- unique primary key id
     ModelDefName TEXT NOT NULL, -- descriptive name
-    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     Visual TEXT NOT NULL, -- Gothic visual name
+    AniCatalog TEXT NOT NULL, -- name  of catalog for possible animations (e.g. NPCCatalog)
+    Radius REAL DEFAULT 0, -- radius for collision detection
+    Height REAL DEFAULT 0, -- height for collision detection
+    FistRange REAL DEFAULT 0, -- fist range for hit detection without weapon
+    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
@@ -146,13 +150,13 @@ DROP TABLE IF EXISTS ScriptOverlay;
 CREATE TABLE IF NOT EXISTS ScriptOverlay 
 (
     ScriptOverlayID INTEGER NOT NULL, -- unique primary key id
-    ModelDefID INTEGER NOT NULL,
     CodeName TEXT NOT NULL,
     ScriptOverlayName TEXT NOT NULL, -- descriptive name
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptOverlay_PK PRIMARY KEY (ScriptOverlayID),
-    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID)
+    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID),
+    FOREIGN KEY (ScriptAniJobID) REFERENCES ScriptAniJob(ScriptAniJobID)
 );
 
 CREATE TRIGGER Update_ScriptOverlay
@@ -162,17 +166,43 @@ BEGIN
     UPDATE ScriptOverlay SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptOverlayID = OLD.ScriptOverlayID;
 END;
 
+-- list of ScriptAniJob--
+DROP TABLE IF EXISTS ScriptAniJob;
+CREATE TABLE IF NOT EXISTS ScriptAniJob 
+(
+    ScriptAniJobID INTEGER NOT NULL, -- unique primary key id
+    DefaultAniID INTEGER NOT NULL,
+	AniName TEXT NOT NULL,
+	CodeName TEXT NOT NULL,
+    AniJobType INTEGER NOT NULL,
+	-- PrevScriptAniJobID INTEGER DEFAULT NULL,
+	NextScriptAniJobID INTEGER DEFAULT NULL,
+    Layer INTEGER NOT NULL,
+    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
+    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
+    CONSTRAINT ScriptAniJob_PK PRIMARY KEY (ScriptAniJobID),
+    FOREIGN KEY (DefaultAniID) REFERENCES ScriptAni(ScriptAniID)
+);
+
+CREATE TRIGGER Update_ScriptAniJob
+    AFTER UPDATE
+    ON ScriptAniJob
+BEGIN
+    UPDATE ScriptAniJob SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniJobID = OLD.ScriptAniJobID;
+END;
+
 -- list of ScriptAni --
+-- combination of ScriptOverlayID and ScriptAniJobID must be unique
 DROP TABLE IF EXISTS ScriptAni;
 CREATE TABLE IF NOT EXISTS ScriptAni 
 (
     ScriptAniID INTEGER NOT NULL, -- unique primary key id
     ScriptOverlayID INTEGER NOT NULL,
     ScriptAniJobID INTEGER NOT NULL,
-    Layer INTEGER NOT NULL,
-    Duration INTEGER NOT NULL,
+    FPS INTEGER NOT NULL,
     StartFrame INTEGER NOT NULL,
     EndFrame INTEGER NOT NULL,
+    SpecialFrames TEXT NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
@@ -185,47 +215,37 @@ BEGIN
     UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
 END;
 
--- ActionFrameList --
-DROP TABLE IF EXISTS ActionFrameList;
-CREATE TABLE IF NOT EXISTS ActionFrameList 
+-- maps ScriptOverlays to ScriptAniJobs
+DROP TABLE IF EXISTS OverlayAniJobRelation
+CREATE TABLE IF NOT EXISTS OverlayAniJobRelation
 (
-    ScriptAniID INTEGER NOT NULL, -- unique primary key id
-    FrameList TEXT NOT NULL,
-    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
-    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
-);
-
-CREATE TRIGGER Update_ActionFrameList
-    AFTER UPDATE
-    ON ScriptAni
-BEGIN
-    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
-END;
-
--- list of ScriptAniJob--
-DROP TABLE IF EXISTS ScriptAniJob;
-CREATE TABLE IF NOT EXISTS ScriptAniJob 
-(
-    ScriptAniJobID INTEGER NOT NULL, -- unique primary key id
+    ScriptOverlayID INTEGER NOT NULL,
+    ScriptAniJobID INTEGER NOT NULL,
     ScriptAniID INTEGER NOT NULL,
-	AniName TEXT NOT NULL,
-	CodeName TEXT NOT NULL,
-    AniJobType INTEGER NOT NULL,
-	PrevCodeName TEXT DEFAULT NULL,
-	NextCodeName TEXT DEFAULT NULL,
-    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
-    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptAniJob_PK PRIMARY KEY (ScriptAniJobID),
+    FOREIGN KEY (ScriptOverlayID) REFERENCES ScriptOverlay(ScriptOverlayID),
+    FOREIGN KEY (ScriptAniJobID) REFERENCES ScriptAniJob(ScriptAniJobID),
     FOREIGN KEY (ScriptAniID) REFERENCES ScriptAni(ScriptAniID)
 );
 
-CREATE TRIGGER Update_ScriptAniJob
-    AFTER UPDATE
-    ON ScriptAniJob
-BEGIN
-    UPDATE ScriptAniJob SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniJobID = OLD.ScriptAniJobID;
-END;
+-- maps ScriptOverlays to ModelDefs
+DROP TABLE IF EXISTS ScriptOverlayModelDef
+CREATE TABLE IF NOT EXISTS ScriptOverlayModelDef
+(
+    ScriptOverlayID INTEGER NOT NULL,
+    ModelDefID INTEGER NOT NULL,
+    FOREIGN KEY (ScriptOverlayID) REFERENCES ScriptOverlay(ScriptOverlayID),
+    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID)
+);
+
+-- maps ScriptAniJobs to ModelDefs
+DROP TABLE IF EXISTS ScriptAniJobModelDef
+CREATE TABLE IF NOT EXISTS ScriptAniJobModelDef
+(
+    ScriptAniJobID INTEGER NOT NULL,
+    ModelDefID INTEGER NOT NULL,
+    FOREIGN KEY (ScriptAniJobID) REFERENCES ScriptAniJob(ScriptAniJobID),
+    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID)
+);
 
 -- >> static and dynamic content management << --
 --------------------------------------------------------------

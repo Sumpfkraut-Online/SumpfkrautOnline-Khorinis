@@ -25,21 +25,21 @@ namespace GUC.Scripts.Sumpfkraut.Database
             // detect malicious sql-code
             if (rgx_sqlMeta_1.Match(cmd).Length > 0)
             {
-                MakeLogWarningStatic(typeof(DBSecurity), String.Format(
+                MakeLogWarningStatic(typeof(DBSecurity), string.Format(
                     "IsSecureSQLCommand: Detected malicious sql-command (pattern {0}): {1}{2}{1}In:{1}{3}", 
                     1, Environment.NewLine, rgx_sqlMeta_1.Match(cmd).Value, cmd));
                 return false;
             }
             else if (rgx_sqlMeta_2.Match(cmd).Length > 0)
             {
-                MakeLogWarningStatic(typeof(DBSecurity), String.Format(
+                MakeLogWarningStatic(typeof(DBSecurity), string.Format(
                     "IsSecureSQLCommand: Detected malicious sql-command (pattern {0}): {1}{2}{1}In:{1}{3}", 
                     2, Environment.NewLine, rgx_sqlMeta_2.Match(cmd).Value, cmd));
                 return false;
             }
             else if (rgx_sqlMeta_3.Match(cmd).Length > 0)
             {
-                MakeLogWarningStatic(typeof(DBSecurity), String.Format(
+                MakeLogWarningStatic(typeof(DBSecurity), string.Format(
                     "IsSecureSQLCommand: Detected malicious sql-command (pattern {0}): {1}{2}{1}In:{1}{3}", 
                     3, Environment.NewLine, rgx_sqlMeta_3.Match(cmd).Value, cmd));
                 return false;
