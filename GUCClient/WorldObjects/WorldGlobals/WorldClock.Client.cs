@@ -42,7 +42,7 @@ namespace GUC.WorldObjects.WorldGlobals
 
         partial void pUpdateTime()
         {
-            oCGame.WorldTimer.SetTime(this.time.GetHour(), this.time.GetMinute());
+            GothicGlobals.Game.WorldTimer.SetTime(this.time.GetHour(), this.time.GetMinute());
         }
     }
 }

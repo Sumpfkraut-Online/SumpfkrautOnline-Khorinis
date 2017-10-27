@@ -620,6 +620,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (this.Armor != null)
                 damage -= this.Armor.Protection;
+
+            // ARENA
+            if (this.TeamID != -1 && attacker.TeamID == this.TeamID) // same team
+                damage /= 2;
+
             if (damage < 0)
                 damage = 1;
 
@@ -658,7 +663,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       Vec3f targetDir = npc.GetDirection();
 
                       float realRange = weaponRange + target.ModelDef.Radius;
-                      if (target.CurrentFightMove == FightMoves.Dodge) realRange /= 2.0f; // extra radius if target is backing up
+                      if (target.CurrentFightMove == FightMoves.Dodge) realRange /= 3.0f; // extra radius if target is backing up
 
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
@@ -702,7 +707,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-
+        partial void pBeforeSpawn()
+        {
+            if (this.ModelDef.Visual != "HUMANS.MDS" && this.ModelDef.Visual != "ORC.MDS")
+                this.SetFightMode(true);
+        }
 
     }
 }

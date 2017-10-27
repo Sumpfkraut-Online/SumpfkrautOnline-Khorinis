@@ -161,6 +161,9 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.TOTeamCount:
                     TeamMenu.Toggle(this);
                     break;
+                case ScriptMessages.SpectateTeam:
+                    Spectate(true);
+                    break;
             }
         }
 
@@ -220,11 +223,22 @@ namespace GUC.Scripts.Arena
             this.SetControl(npc);
         }
 
-        public void Spectate()
+        public void Spectate(bool team = false)
         {
+            if (team && (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.None))
+                return;
+
             KillCharacter();
             TeamMode.JoinTeam(this, null);
-            this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
+            
+            if (!team)
+            {
+                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
+            }
+            else
+            {
+                this.SetToSpectator(TeamMode.World, TeamMode.ActiveTODef.SpecPos.Item1, TeamMode.ActiveTODef.SpecPos.Item2);
+            }  
         }
 
         public void KillCharacter()

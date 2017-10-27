@@ -15,7 +15,7 @@ namespace GUC
         static Dictionary<VirtualKeys, Action> gucKeys = new Dictionary<VirtualKeys, Action>()
         {
             { VirtualKeys.F4, Program.Exit },
-            { VirtualKeys.F5, () =>
+            { VirtualKeys.F7, () =>
                 {
                     var ai = Network.GameClient.Client?.Character?.gVob?.HumanAI;
                     if (ai != null)
@@ -32,26 +32,8 @@ namespace GUC
                         Process.Write(ai.Address + 0x1204, bitField);
                     }
                 }
-            },
-            { VirtualKeys.F6, () =>
-                {
-
-                }
-            },
-            { VirtualKeys.F7, () =>
-                {
-                    if (sword == null)
-                    {
-                        sword = Gothic.Objects.oCItem.Create();
-                        sword.ItemVisual.Set("ItMw_060_2h_sword_01.3DS");
-                    }
-                    if (WorldObjects.NPC.Hero != null)
-                    WorldObjects.NPC.Hero.gVob.PutInSlot(Gothic.Objects.oCNpc.NPCNodes.RightHand, sword, true);
-                    WorldObjects.NPC.Hero.gVob.ApplyOverlay("Humans_2hST2.mds");
-                }
             }
         };
-        static Gothic.Objects.oCItem sword;
 
         #endregion
 

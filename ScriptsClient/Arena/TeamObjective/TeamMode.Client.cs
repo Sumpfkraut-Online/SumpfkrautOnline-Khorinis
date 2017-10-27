@@ -30,7 +30,6 @@ namespace GUC.Scripts.Arena
             OnPhaseChange?.Invoke();
 
             TOMessage(string.Format("Team Objective '{0}' startet in wenigen Sekunden!", name));
-            Menus.TOInfoScreen.Show();
         }
 
         public static void ReadStart(PacketReader stream)
@@ -125,7 +124,6 @@ namespace GUC.Scripts.Arena
             OnPhaseChange?.Invoke();
 
             //TOMessage("Team Objective ist vorüber!");
-            Menus.TOInfoScreen.Hide();
             activeTODef = null;
             teamDef = null;
             ArenaClient.Client.ClassDef = null;
@@ -141,8 +139,8 @@ namespace GUC.Scripts.Arena
                     throw new Exception("TODef not found: " + name);
 
                 phaseEndTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
-                Menus.TOInfoScreen.Show();
             }
+            Menus.TOInfoScreen.Shown = true;
         }
 
         static void TOMessage(string text)

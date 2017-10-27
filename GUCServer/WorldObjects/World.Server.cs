@@ -19,6 +19,7 @@ namespace GUC.WorldObjects
 
             public static void WriteLoadWorld(GameClient client, World world)
             {
+                client.Loading = true;
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.LoadWorldMessage);
                 world.WriteStream(stream);
                 stream.Write(world.Clock.IsRunning);

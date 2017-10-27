@@ -22,7 +22,8 @@ namespace GUC.Scripts.Arena
 
         static GUCTimer phaseTimer = new GUCTimer();
 
-        static WorldInst World = null;
+        static WorldInst world = null;
+        public static WorldInst World { get { return world; } }
 
         public static uint RemainingPhaseMsec { get { return (uint)(phaseTimer.GetRemainingTicks() / TimeSpan.TicksPerMillisecond); } }
 
@@ -81,10 +82,10 @@ namespace GUC.Scripts.Arena
                     npc.ModelInst.ApplyOverlay(ov);
             }
 
-            npc.TeamPlayer = true;
+            npc.TeamID = teams.IndexOf(player.Team);
 
             var spawnPoint = player.Team.GetSpawnPoint();
-            npc.Spawn(World, spawnPoint.Item1, spawnPoint.Item2);
+            npc.Spawn(world, spawnPoint.Item1, spawnPoint.Item2);
             player.SetControl(npc);
         }
 
@@ -121,8 +122,8 @@ namespace GUC.Scripts.Arena
             if (def == null)
                 return;
 
-            World = WorldInst.List.Find(w => w.Path == def.WorldPath);
-            if (World == null)
+            world = WorldInst.List.Find(w => w.Path == def.WorldPath);
+            if (world == null)
                 return;
 
             activeTODef = def;
@@ -189,15 +190,18 @@ namespace GUC.Scripts.Arena
                 if (!winIndices.Contains(i))
                     teams[i].Players.ForEach(c =>
                     {
-                        var inv = c.Character.Inventory;
-                        inv.ForEachItem(item =>
+                        if (!c.Character.IsDead && c.Character.TeamID != -1)
                         {
-                            if (item.IsWeapon)
+                            var inv = c.Character.Inventory;
+                            inv.ForEachItem(item =>
                             {
-                                c.Character.UnequipItem(item);
-                                inv.RemoveItem(item);
-                            }
-                        });
+                                if (item.IsWeapon)
+                                {
+                                    c.Character.UnequipItem(item);
+                                    inv.RemoveItem(item);
+                                }
+                            });
+                        }
                     });
 
             var stream = ArenaClient.GetScriptMessageStream();
@@ -216,11 +220,16 @@ namespace GUC.Scripts.Arena
         {
             phase = TOPhases.None;
 
-            ArenaClient.ForEach(c => { if (((ArenaClient)c).Team != null) ((ArenaClient)c).Spectate(); });
+            ArenaClient.ForEach(c => 
+            {
+                ArenaClient client = (ArenaClient)c;
+                if (client.Team != null || client.BaseClient.SpecWorld == world.BaseWorld)
+                    client.Spectate();
+            });
             teams.Clear();
 
             activeTODef = null;
-            World = null;
+            world = null;
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOEnd);

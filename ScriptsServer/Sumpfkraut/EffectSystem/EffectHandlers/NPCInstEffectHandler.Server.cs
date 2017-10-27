@@ -31,6 +31,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryDrawFists()
         {
+            if (Host.ModelDef.Visual != "HUMANS.MDS")
+                return;
+
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
 
@@ -54,6 +57,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryDrawWeapon(ItemInst item)
         {
+            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS")
+                return;
+
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
             

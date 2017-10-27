@@ -32,9 +32,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             BaseInst.SetMovement(state);
         }
 
-        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        partial void pAfterSpawn()
         {
-            base.Spawn(world, pos, dir);
             if (UseCustoms)
             {
                 using (var vec = Gothic.Types.zVec3.Create(CustomScale.X, 1, CustomScale.Z))
@@ -50,6 +49,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (this.HP <= 0)
                 this.BaseInst.gVob.Name.Clear();
+            else
+            {
+                // because monsters were looking at some weird angle
+                this.BaseInst.gAI.SetLookAtTarget(1.0f, 1.0f); // need to change the value or it's not updated
+                this.BaseInst.gAI.LookAtTarget(); // update
+                this.BaseInst.gAI.StopLookAtTarget(); // change back to default
+            }
         }
 
         #region Equipment

@@ -63,7 +63,7 @@ namespace GUC.Hooks
                 Logger.Log("LoadParserFile: " + str);
 
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793100); //parser.reset
-                Process.THISCALL<NullReturnCall>(Process.ReadInt(Gothic.oCGame.ogame), 0x006D4780, new IntArg(0xAB40C0)); //Define_ulfi_externals
+                Process.THISCALL<NullReturnCall>(Gothic.Session.oCGame.GameAddress, 0x006D4780, new IntArg(0xAB40C0)); //Define_ulfi_externals
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793460, new IntArg(0)); //parser.enabletreeload(0)
                 Process.THISCALL<NullReturnCall>(0xAB40C0, 0x00793440, new IntArg(0)); //parser.enabletreesave(0)
 

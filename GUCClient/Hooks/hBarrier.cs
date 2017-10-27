@@ -7,7 +7,7 @@ using WinApi;
 using Gothic.Objects.Sky;
 using Gothic.System;
 using Gothic.Objects;
-using Gothic;
+using Gothic.Session;
 
 namespace GUC.Hooks
 {
@@ -100,7 +100,7 @@ namespace GUC.Hooks
                 barrierAlpha = value;
                 if (inited)
                 {
-                    oCGame.GetWorld().SkyControlerOutdoor.Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
+                    GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
                 }
 
                 if (!hooked)
@@ -120,7 +120,7 @@ namespace GUC.Hooks
                 if (!inited)
                     Init();
 
-                var barrier = oCGame.GetWorld().SkyControlerOutdoor.Barrier;
+                var barrier = GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier;
 
                 if (barrierAlpha > 0)
                 {

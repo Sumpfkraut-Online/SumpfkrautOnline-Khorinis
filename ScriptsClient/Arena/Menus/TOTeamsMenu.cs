@@ -17,11 +17,14 @@ namespace GUC.Scripts.Arena.Menus
 
         protected override void OnCreate()
         {
-            Back.CreateTextCenterX("Team auswählen", 50);
+            AddButton("Zuschauen", "TeamObjective zuschauen.", 40, Spectate);
 
-            const int offset = 100;
-            const int distance = 50;
-            const int backButtonOffset = 350;
+            Back.CreateTextCenterX("Team auswählen", 100);
+
+            const int offset = 150;
+            const int distance = 40;
+            const int backButtonOffset = 380;
+
 
             int y, i = 0;
             while ((y = offset + i * distance) < backButtonOffset - distance)
@@ -35,6 +38,14 @@ namespace GUC.Scripts.Arena.Menus
 
             arrow = new GUCVisual(0, 0, 20, 20);
             arrow.SetBackTexture("R.tga");
+        }
+
+        void Spectate()
+        {
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.SpectateTeam);
+            ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+            Close();
         }
 
         public override void Open()
@@ -105,7 +116,7 @@ namespace GUC.Scripts.Arena.Menus
                 int index = TeamMode.ActiveTODef.Teams.IndexOf(team);
                 if (team != null && index >= 0)
                 {
-                    if (Cast.Try(items[index], out MainMenuButton button))
+                    if (Cast.Try(items[index+1], out MainMenuButton button))
                     {
                         arrow.SetPosY(button.VPos.Y + GUCView.PixelToVirtualY(5), true);
                         arrow.SetPosX(button.VPos.X - GUCView.PixelToVirtualX(25), true);
@@ -119,7 +130,7 @@ namespace GUC.Scripts.Arena.Menus
 
         void SetTexts(List<int> counts = null)
         {
-            int index = 0;
+            int index = 1;
             foreach (var team in TeamMode.ActiveTODef.Teams)
             {
                 if (index >= items.Count - 1)

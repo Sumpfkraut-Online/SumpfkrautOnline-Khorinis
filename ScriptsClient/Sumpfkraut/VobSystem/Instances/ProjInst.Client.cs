@@ -47,7 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             using (zVec3 start = zVec3.Create(startPos.X, startPos.Y, startPos.Z))
             using (zVec3 end = zVec3.Create(endPos.X, endPos.Y, endPos.Z))
             {
-                var gWorld = oCGame.GetWorld();
+                var gWorld = GothicGlobals.Game.GetWorld();
 
                 zCWorld.zTraceRay parm = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Test_Water | zCWorld.zTraceRay.Return_POLY | zCWorld.zTraceRay.Ignore_NPC | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision;
                 if (gWorld.TraceRayNearestHit(start, end, parm) != 0 && gWorld.Raytrace_FoundHit != 0 && currentPos.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection) < 80)

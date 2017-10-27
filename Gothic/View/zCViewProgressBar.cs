@@ -47,14 +47,20 @@ namespace Gothic.View
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ResetRange);
         }
 
+        public void SetPercent(int value, string message = "")
+        {
+            using (zString z = zString.Create(message))
+                SetPercent(value, z);
+        }
+
         public void SetPercent(int value, zString message)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetPercent, new IntArg(value), message);
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetPercent, new IntArg(value), (IntArg)message.VTBL, (IntArg)message.ALLOCATER, (IntArg)message.PTR, (IntArg)message.Length, (IntArg)message.Res);
         }
 
         public void SetRange(int min, int max)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetPercent, new IntArg(min), new IntArg(max));
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetRange, new IntArg(min), new IntArg(max));
         }
     }
 }

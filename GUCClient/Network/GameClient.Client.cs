@@ -73,8 +73,7 @@ namespace GUC.Network
             {
                 int id = stream.ReadUShort();
 
-                BaseVob vob;
-                if (World.Current.TryGetVob(id, out vob))
+                if (World.Current.TryGetVob(id, out BaseVob vob))
                 {
                     Client.ScriptObject.ReadScriptVobMessage(stream, vob);
                 }
@@ -92,6 +91,16 @@ namespace GUC.Network
 
         static readonly GUCVisual abortInfo;
         static readonly GUCVisual devInfo;
+        public static bool ShowInfo
+        {
+            get { return devInfo.Shown; }
+            set
+            {
+                if (value) devInfo.Show();
+                else devInfo.Hide();
+            }
+        }
+
 
         #region Connection
 
@@ -119,12 +128,12 @@ namespace GUC.Network
             visText.SetColor(ColorRGBA.Red);
 
             devInfo = new GUCVisual();
-
             for (int pos = 0; pos < 0x2000; pos += devInfo.zView.FontY() + 5)
             {
                 var t = devInfo.CreateText("", 0x2000, pos, true);
                 t.Format = GUCVisualText.TextFormat.Right;
             }
+            devInfo.Show();
         }
 
 
@@ -289,7 +298,6 @@ namespace GUC.Network
                     }
                 }*/
             }
-            devInfo.Show();
 
             #endregion
         }
@@ -550,7 +558,7 @@ namespace GUC.Network
 
         partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
         {
-            var cam = oCGame.GetCameraVob();
+            var cam = GothicGlobals.Game.GetCameraVob();
             cam.SetAI(specCam);
 
             cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
@@ -558,6 +566,7 @@ namespace GUC.Network
                 cam.SetHeadingAtWorld(vec);
             this.isSpectating = true;
             this.character = null;
+            GothicGlobals.Game.SetShowPlayerStatus(false);
         }
 
         oCAICamera specCam = oCAICamera.Create();
@@ -577,7 +586,7 @@ namespace GUC.Network
             if (now < specNextUpdate)
                 return;
 
-            var cam = oCGame.GetCameraVob();
+            var cam = GothicGlobals.Game.GetCameraVob();
             var pos = new Vec3f(cam.Position).CorrectPosition();
             cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
 
@@ -615,8 +624,9 @@ namespace GUC.Network
         {
             this.character = npc;
             Character.gVob.SetAsPlayer();
-            oCGame.GetCameraVob().SetAI(oCGame.GetCameraAI());
+            GothicGlobals.Game.GetCameraVob().SetAI(GothicGlobals.Game.GetCameraAI());
             this.isSpectating = false;
+            GothicGlobals.Game.SetShowPlayerStatus(true);
         }
 
         #endregion

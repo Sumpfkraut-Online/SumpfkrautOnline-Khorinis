@@ -8,6 +8,7 @@ using Gothic.Sound;
 using GUC.WorldObjects;
 using GUC.Types;
 using Gothic.Objects;
+using Gothic.Session;
 
 namespace GUC
 {
@@ -150,7 +151,7 @@ namespace GUC
                 sndVobs.RemoveAt(index);
             }
 
-            Gothic.oCGame.GetWorld().AddVob(vob);
+            GothicGlobals.Game.GetWorld().AddVob(vob);
             vob.TrafoObjToWorld.Position = location.ToArray();
             vob.SetPositionWorld(location.X, location.Y, location.Z);
 

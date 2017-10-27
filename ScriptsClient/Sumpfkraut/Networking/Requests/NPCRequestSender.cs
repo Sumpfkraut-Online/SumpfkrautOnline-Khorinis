@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 {
@@ -79,8 +80,12 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             NPC.SendScriptCommand(stream, NetPriority.Immediate);
         }
 
+        LockTimer jumpTimer = new LockTimer(800);
         public void Jump(NPCInst npc)
         {
+            if (!jumpTimer.IsReady)
+                return;
+
             JumpMoves move;
             if (npc.Movement == Types.NPCMovement.Forward)
             {

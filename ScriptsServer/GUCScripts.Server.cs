@@ -161,42 +161,41 @@ namespace GUC.Scripts
         void CreateTestWorld()
         {
             var world = new WorldInst(null);
-            world.Path = "G1\\OLDWORLD.ZEN";
+            world.Path = "G1-OLDCAMP.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 8), 10.0f);
+            world.Clock.SetTime(new WorldTime(0, 8), 20.0f);
             world.Clock.Start();
             WorldInst.List.Add(world);
             
             world = new WorldInst(null);
-            world.Path = "G1\\OLDMINE.ZEN";
+            world.Path = "G1-OLDMINE.ZEN";
             world.Create();
             world.Clock.Stop();
             world.Barrier.StopTimer();
             world.Weather.StopRainTimer();
             WorldInst.List.Add(world);
 
-            /* for (int i = 0; i < WorldObjects.Instances.BaseVobInstance.GetCount(); i++)
-             {
-                 BaseVobInst inst;
-                 BaseVobDef def;
-                 if (BaseVobDef.TryGetDef(i, out def))
-                 {
-                     if (def is ItemDef)
-                         inst = new ItemInst((ItemDef)def);
-                     else if (def is NPCDef)
-                         inst = new NPCInst((NPCDef)def);
-                     else continue;
+            world = new WorldInst(null);
+            world.Path = "G2-PASS.ZEN";
+            world.Create();
+            world.Clock.SetTime(new WorldTime(0, 20), 20.0f);
+            world.Clock.Start();
+            world.Barrier.StopTimer();
+            WorldInst.List.Add(world);
 
-                     ((WorldObjects.VobGuiding.GuidedVob)inst.BaseInst).SetNeedsClientGuide(true);
-                     inst.Spawn(WorldInst.Current, Randomizer.GetVec3fRad(new Types.Vec3f(0, 1500, 0), 30000), Randomizer.GetVec3fRad(new Types.Vec3f(0, 0, 0), 1).Normalise());
-                 }
-             }*/
+            world = new WorldInst(null);
+            world.Path = "ADDON-TEMPLE.ZEN";
+            world.Create();
+            world.Clock.SetTime(new WorldTime(0, 20), 20.0f);
+            world.Clock.Start();
+            world.Barrier.StopTimer();
+            WorldInst.List.Add(world);
         }
 
         void AddSomeDefs()
         {
             // HUMAN MODEL
-            ModelDef m = new ModelDef("humans", "humans.mds");
+            ModelDef m = new ModelDef("humans", "HUMANS.MDS");
             m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
             AddFistAnis(m);
             Add1HAnis(m);
@@ -228,16 +227,63 @@ namespace GUC.Scripts
             npcDef.Create();
 
             AddItems();
+
+            AddCrawlers();
+            AddOrcs();
         }
 
         #region Items
 
         void AddItems()
         {
-            //ZWEIHANDER
-            ModelDef m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
+            ModelDef m = new ModelDef("leichter_zweihaender", "ItMw_032_2h_sword_light_01.3DS");
             m.Create();
-            ItemDef itemDef = new ItemDef("2hschwert");
+            ItemDef itemDef = new ItemDef("leichter_zweihaender");
+            itemDef.Name = "Leichter Zweihänder";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Range = 110;
+            itemDef.Damage = 42;
+            itemDef.Create();
+
+            m = new ModelDef("ITAR_templer", "ARMOR_TPLM.3DS");
+            m.Create();
+            itemDef = new ItemDef("ITAR_templer");
+            itemDef.Name = "Templerrüstung";
+            itemDef.Material = ItemMaterials.Leather;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.Protection = 30;
+            itemDef.VisualChange = "ARMOR_TPLM.ASC";
+            itemDef.Model = m;
+            itemDef.Create();
+
+            m = new ModelDef("grobes_schwert", "ItMw_025_1h_sld_sword_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("grobes_schwert");
+            itemDef.Name = "Grobes Schwert";
+            itemDef.ItemType = ItemTypes.Wep1H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 40;
+            itemDef.Range = 90;
+            itemDef.Create();
+
+            m = new ModelDef("ITAR_garde_l", "ARMOR_GRDL.3DS");
+            m.Create();
+            itemDef = new ItemDef("ITAR_garde_l");
+            itemDef.Name = "Leichte Garderüstung";
+            itemDef.Material = ItemMaterials.Leather;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.Protection = 30;
+            itemDef.VisualChange = "ARMOR_GRDL.ASC";
+            itemDef.Model = m;
+            itemDef.Create();
+
+            //ZWEIHANDER
+            m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("2hschwert");
             itemDef.Name = "Zweihänder";
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
@@ -407,6 +453,53 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Damage = 10;
             itemDef.Range = 40;
+            itemDef.Create();
+            
+            // ORK WAFFEN
+            m = new ModelDef("krush_pach", "ItMw_2H_OrcAxe_02.3DS");
+            m.Create();
+            itemDef = new ItemDef("krush_pach");
+            itemDef.Name = "Krush Pach";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 40;
+            itemDef.Range = 80;
+            itemDef.Create();
+
+            m = new ModelDef("orc_sword", "ItMw_2H_OrcSword_02.3DS");
+            m.Create();
+            itemDef = new ItemDef("orc_sword");
+            itemDef.Name = "Orkisches Kriegsschwert";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 60;
+            itemDef.Range = 80;
+            itemDef.Create();
+
+            // Miliz
+            m = new ModelDef("ITAR_miliz_s", "ItAr_MIL_M.3DS");
+            m.Create();
+            itemDef = new ItemDef("ITAR_miliz_s");
+            itemDef.Name = "Schwere Milizrüstung";
+            itemDef.Material = ItemMaterials.Leather;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_MIL_M.asc";
+            itemDef.Protection = 27;
+            itemDef.Model = m;
+            itemDef.Create();
+
+            // Ritter
+            m = new ModelDef("ITAR_ritter", "ItAr_Pal_M.3ds");
+            m.Create();
+            itemDef = new ItemDef("ITAR_ritter");
+            itemDef.Name = "Ritterrüstung";
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_Pal_M.asc";
+            itemDef.Protection = 27;
+            itemDef.Model = m;
             itemDef.Create();
         }
 
@@ -767,6 +860,175 @@ namespace GUC.Scripts
             job.SetDefaultAni(new ScriptAni(0, 24));
 
             #endregion
+        }
+
+        #endregion
+
+        #region Minecrawler
+
+        public void AddCrawlers()
+        {
+            // HUMAN MODEL
+            ModelDef m = new ModelDef("crawler", "crawler.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 20));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 180;
+            m.Height = 180;
+            m.FistRange = 80;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("minecrawler");
+            npcDef.Name = "Minecrawler";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Crw_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            npcDef = new NPCDef("minecrawler_warrior");
+            npcDef.Name = "Minecrawler-Krieger";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Cr2_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+        }
+
+        #endregion
+        
+        #region Orcs
+
+        public void AddOrcs()
+        {
+            ModelDef m = new ModelDef("orc", "orc.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            #region Draw
+
+            // Draw 2h
+            ScriptAniJob aniJob1 = new ScriptAniJob("draw2h_part0", "t_Run_2_2h");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 5) { { SpecialFrame.Draw, 5 } });
+
+            ScriptAniJob aniJob2 = new ScriptAniJob("draw2h_part1", "s_2h");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob1.NextAni = aniJob2;
+
+            ScriptAniJob aniJob3 = new ScriptAniJob("draw2h_part2", "t_2h_2_2hRun");
+            m.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 12));
+            aniJob2.NextAni = aniJob3;
+
+            // Draw 2h running
+            ScriptAniJob aniJob = new ScriptAniJob("draw2h_running", "t_Move_2_2hMove", new ScriptAni(0, 20));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 7);
+            m.AddAniJob(aniJob);
+
+            // Undraw 2h
+            aniJob1 = new ScriptAniJob("undraw2h_part0", "t_2hRun_2_2h");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 12) { { SpecialFrame.Draw, 12 } });
+
+            aniJob2 = new ScriptAniJob("undraw2h_part1", "s_2h");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("undraw2h_part2", "t_2h_2_Run");
+            m.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 5));
+            aniJob2.NextAni = aniJob3;
+
+            // Undraw 2h running
+            aniJob = new ScriptAniJob("undraw2h_running", "t_2hMove_2_Move", new ScriptAni(0, 20));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 13);
+            m.AddAniJob(aniJob);
+
+            #endregion
+
+            #region Fighting
+
+            // Fwd attack 1
+            ScriptAniJob job = new ScriptAniJob("2hattack_fwd0", "s_2hattack");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 11 } });
+
+            // fwd combo 2
+            job = new ScriptAniJob("2hattack_fwd1", "s_2hattack");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(25, 70) { { SpecialFrame.Hit, 20 } });
+
+            // left attack
+            job = new ScriptAniJob("2hattack_left", "t_2hAttackL");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 8 } });
+
+            // right attack
+            job = new ScriptAniJob("2hattack_right", "t_2hAttackR");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 8 } });
+
+            // run attack
+            job = new ScriptAniJob("2hattack_run", "t_2hAttackMove");
+            job.Layer = 2;
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 19) { { SpecialFrame.Hit, 13 } });
+
+            // parades
+            job = new ScriptAniJob("2h_parade0", "t_2hParade_0");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 30));
+
+            // dodge
+            job = new ScriptAniJob("2h_dodge", "t_2hParadeJumpB");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 14));
+
+            #endregion
+
+            m.Radius = 100;
+            m.Height = 200;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("orc_warrior");
+            npcDef.Name = "Ork-Krieger";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Orc_BodyWarrior";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "Orc_HeadWarrior";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            npcDef = new NPCDef("orc_elite");
+            npcDef.Name = "Ork-Elite";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Orc_BodyElite";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "Orc_HeadWarrior";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
         }
 
         #endregion

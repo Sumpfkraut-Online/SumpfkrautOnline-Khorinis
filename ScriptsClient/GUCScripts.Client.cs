@@ -9,6 +9,7 @@ using System.Reflection;
 using System.IO;
 using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Scripts.Sumpfkraut.Controls;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts
 {
@@ -17,10 +18,10 @@ namespace GUC.Scripts
         public static bool Ingame = false;
 
         partial void pConstruct()
-        { 
+        {
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
             InputControl.Active = new Arena.Controls.ArenaControl();
-            
+
             Logger.Log("SumpfkrautOnline ClientScripts loaded!");
         }
 
@@ -42,7 +43,8 @@ namespace GUC.Scripts
             GUCMenu.UpdateMenus(ticks);
             InputControl.UpdateControls(ticks);
             OnUpdate?.Invoke(ticks);
-            //CheckMusic();
+            CheckMusic();
+            CheckPosition();
         }
 
         public void StartOutgame()
@@ -52,7 +54,7 @@ namespace GUC.Scripts
             // WinApi.Process.Write(0x0067836C, 0xE9, 0x99, 0x04, 0x00, 0x00);
 
             Arena.Menus.MainMenu.Menu.Open();
-                  
+
             Logger.Log("Outgame started.");
         }
 
@@ -68,20 +70,75 @@ namespace GUC.Scripts
             Logger.Log("Ingame started.");
         }
 
-        /*const long FightMusicTime = 50 * TimeSpan.TicksPerSecond;
         static void CheckMusic()
         {
-            if (!Ingame || TFFA.TFFAClient.Info == null)
-                return;
+            var client = Arena.ArenaClient.Client;
+            if (Ingame && client.IsCharacter && !client.Character.IsDead)
+            {
+                if (Arena.DuelMode.Enemy != null)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
+                    return;
+                }
+                else if (Arena.TeamMode.TeamDef != null && Arena.TeamMode.Phase == Arena.TOPhases.Battle)
+                {
+                    bool enemyCloseBy = false;
+                    var heroPos = client.Character.GetPosition();
+                    int distance = SoundHandler.CurrentMusicType == SoundHandler.MusicType.Fight ? 3000 : 1000;
+                    WorldObjects.World.Current.ForEachVobPredicate(v =>
+                    {
+                        if (Cast.Try(v.ScriptObject, out NPCInst npc) && !npc.IsDead
+                            && npc.TeamID != -1 && npc.TeamID != client.Character.TeamID)
+                        {
+                            if (heroPos.GetDistance(npc.GetPosition()) < distance)
+                            {
+                                enemyCloseBy = true;
+                                return false;
+                            }
+                        }
+                        return true;
+                    });
 
-            if (TFFA.TFFAClient.Status == TFFA.TFFAPhase.Fight && TFFA.TFFAClient.PhaseEndTime > 0 && TFFA.TFFAClient.PhaseEndTime - GameTime.Ticks < FightMusicTime)
-            {
-                SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
+                    SoundHandler.CurrentMusicType = enemyCloseBy ? SoundHandler.MusicType.Fight : SoundHandler.MusicType.Normal;
+                    return;
+                }
             }
-            else
+            SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
+        }
+
+        void CheckPosition()
+        {
+            var hero = Arena.ArenaClient.Client.Character;
+            if (hero != null && !hero.IsDead)
             {
-                SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
+                if (Arena.TeamMode.TeamDef == null)
+                {
+                    if (hero.GetPosition().GetDistancePlanar(Types.Vec3f.Null) > 10000)
+                        if (Randomizer.GetInt(2) == 0)
+                        {
+                            hero.SetPosition(new Types.Vec3f(-1969.563f, -120.6398f, 2707.328f));
+                            hero.SetDirection(new Types.Vec3f(-0.2647138f, 0f, 0.964327f));
+                        }
+                        else
+                        {
+                            hero.SetPosition(new Types.Vec3f(-4550.162f, -98.70279f, 1392.133f));
+                            hero.SetDirection(new Types.Vec3f(-0.7259743f, 0f, 0.6877218f));
+                        }
+                }
+                else if (hero.TeamID != -1)
+                {
+                    var pos = hero.GetPosition();
+                    if (pos.GetDistancePlanar(Types.Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
+                        || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
+                        || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
+                    {
+                        int count = Arena.TeamMode.TeamDef.SpawnPoints.Count();
+                        var posdir = Arena.TeamMode.TeamDef.SpawnPoints.ElementAt(Randomizer.GetInt(count));
+                        hero.SetPosition(posdir.Item1);
+                        hero.SetDirection(posdir.Item2);
+                    }
+                }
             }
-        }*/
+        }
     }
 }

@@ -31,40 +31,8 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.P, PrintPosition },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
             { VirtualKeys.F3, ToggleG1Camera },
-            { VirtualKeys.N1, d => GUC.GUI.GUCView.DebugText.Text = NPCInst.Hero.DrawnWeapon.BaseInst.gVob.BBox3D.Height + " " + NPCInst.Hero.DrawnWeapon.BaseInst.gVob.LastTimeDrawn }
+            { VirtualKeys.F5, ToggleScreenInfo },
         };
-
-        static bool g1 = false;
-        static void ToggleG1Camera(bool down)
-        {
-            if (down && zCCamera.ActiveCamera.Address != 0)
-            {
-                var screen = GUI.GUCView.GetScreenSize();
-                if (screen.X != 0 && screen.Y != 0)
-                {
-                    const float FOV = 90.0f;
-                    if (g1)
-                    {
-                        if (Gothic.System.zCParser.GetCameraParser().LoadDat("CAMERA.DAT"))
-                        {
-                            zCAICamera.CurrentCam.CreateInstance(zCAICamera.CurrentCam.CurrentMode);
-                            zCCamera.ActiveCamera.SetFOV(FOV, (float)(FOV * 0.75d));
-                            g1 = false;
-                        }
-                    }
-                    else
-                    {
-                        if (Gothic.System.zCParser.GetCameraParser().LoadDat("CAMERA.DAT.G1"))
-                        {
-                            zCAICamera.CurrentCam.CreateInstance(zCAICamera.CurrentCam.CurrentMode);
-                            double ratio = (double)screen.Y / screen.X;
-                            zCCamera.ActiveCamera.SetFOV(FOV, (float)(FOV * ratio));
-                            g1 = true;
-                        }
-                    }
-                }
-            }
-        }
 
         static void PrintPosition(bool down)
         {
@@ -123,6 +91,14 @@ namespace GUC.Scripts.Arena.Controls
             var hero = ScriptClient.Client.Character;
             if (hero.IsInFightMode)
             {
+                if (hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
+                {
+                    if (toWarmupTimer.IsReady)
+                        Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
+
+                    return;
+                }
+
                 NPCInst.Requests.Attack(hero, move);
             }
         }
@@ -149,9 +125,9 @@ namespace GUC.Scripts.Arena.Controls
                         enemy = null;
                     }
                     if (enemy == null)
-                        Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+                        oCNpcFocus.StopHighlightingFX();
                     else
-                        Gothic.Objects.oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
+                        oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
                 }
                 else if (down)
                 {
@@ -161,6 +137,8 @@ namespace GUC.Scripts.Arena.Controls
                 }
             }
         }
+
+        static LockTimer toWarmupTimer = new LockTimer(1000);
 
         long nextDodgeTime = 0;
         LockTimer strafeLock = new LockTimer(150);
@@ -223,23 +201,30 @@ namespace GUC.Scripts.Arena.Controls
 
             if (state == NPCMovement.Forward)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(false))
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(true))
                     state = NPCMovement.Stand;
             }
             else if (state == NPCMovement.Backward)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveBackward(false))
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveBackward(true))
                     state = NPCMovement.Stand;
             }
             else if (state == NPCMovement.Left)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveLeft(false))
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveLeft(true))
                     state = NPCMovement.Stand;
             }
             else if (state == NPCMovement.Right)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveRight(false))
+                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveRight(true))
                     state = NPCMovement.Stand;
+            }
+
+            if (hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
+            {
+                if (state != NPCMovement.Stand && toWarmupTimer.IsReady)
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
+                state = NPCMovement.Stand;
             }
 
             hero.SetMovement(state);

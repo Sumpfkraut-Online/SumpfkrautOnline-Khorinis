@@ -362,17 +362,28 @@ namespace GUC.WorldObjects
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
 
-            gVob.Guild = 1;
+            if (this.ModelInstance.Visual == "CRAWLER.MDS")
+            {
+                gVob.Guild = 29;
+                gVob.TrueGuild = 29;
+            }
+            else if (this.ModelInstance.Visual == "ORC.MDS")
+            {
+                gVob.Guild = 59;
+                gVob.TrueGuild = 59;
+            }
+            else
+            {
+                gVob.Guild = 1;
+                gVob.TrueGuild = 1;
+            }
+
             gVob.InitHumanAI();
             this.humanAI = gVob.HumanAI;
             this.gmodel = gVob.GetModel();
 
-            // for monsters, because they only have fist animations
-            if (string.Compare(this.ModelInstance.Visual, "humans.mds", true) != 0)
-                gVob.SetToFistMode();
-
             gVob.Name.Set(this.Name);
-
+            
             humanAI.Bitfield0 &= ~4; // some shitty flag which makes npcs always check their ground
 
             if (this.hp <= 0)

@@ -44,7 +44,7 @@ namespace GUC.WorldObjects
                 if (hero.Address != 0)
                 {
                     hero.Disable();
-                    oCGame.GetWorld().RemoveVob(hero);
+                    GothicGlobals.Game.GetWorld().RemoveVob(hero);
                 }
 
                 PacketWriter confirmation = GameClient.SetupStream(ClientMessages.WorldLoadedMessage);
@@ -125,7 +125,7 @@ namespace GUC.WorldObjects
         #region Properties
 
         /// <summary> The correlating gothic-object of this world. </summary>
-        public zCWorld gWorld { get { return oCGame.GetWorld(); } }
+        public zCWorld gWorld { get { return GothicGlobals.Game.GetWorld(); } }
 
         #endregion
 

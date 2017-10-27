@@ -67,6 +67,9 @@ namespace GUC.Network
 
         #region Control
 
+        bool loading;
+        public bool Loading { get { return this.loading; } internal set { this.loading = value; } }
+
         partial void pSetControl(NPC npc);
         /// <summary> Lets this client take control of the given NPC. Can be null. </summary>
         public void SetControl(NPC npc)
@@ -141,7 +144,7 @@ namespace GUC.Network
                 throw new Exception("World is null!");
             if (!world.IsCreated)
                 throw new Exception("World is not created!");
-
+            
             if (this.isSpectating && specWorld == world)
             {
                 SpecSetPosDir(position, direction);
