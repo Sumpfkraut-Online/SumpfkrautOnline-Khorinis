@@ -8,17 +8,31 @@ using Gothic.Sound;
 using GUC.WorldObjects;
 using GUC.Types;
 using Gothic.Objects;
-using Gothic.Session;
 
 namespace GUC
 {
+    public class SoundDefinition
+    {
+        public zCSndFX_MSS zSFX { get; private set; }
+
+        public SoundDefinition(string sfxName)
+        {
+            this.zSFX = zCSndSys_MSS.LoadSoundFX(sfxName);
+        }
+    }
+
     public class SoundInstance
     {
-        public zCSndFX_MSS sfx { get; private set; }
+        int id;
+        internal int ID { get { return this.id; } }
 
-        public SoundInstance(string sfxName)
+        SoundDefinition def;
+        public SoundDefinition Definition { get { return this.def; } }
+
+        internal SoundInstance(SoundDefinition def, int id)
         {
-            this.sfx = zCSndSys_MSS.LoadSoundFX(sfxName);
+            this.id = id;
+            this.def = def;
         }
     }
 
@@ -54,11 +68,11 @@ namespace GUC
             set { zCSndSys_MSS.SetMasterVolume(value); }
         }
 
-        public static void PlaySound(SoundInstance sound, float volume = 1.0f)
+        public static SoundInstance PlaySound(SoundDefinition sound, float volume = 1.0f)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");
-            zCSndSys_MSS.PlaySound(sound.sfx, false, 0, volume, 0);
+            return new SoundInstance(sound, zCSndSys_MSS.PlaySound(sound.zSFX, false, 0, volume, 0));
         }
 
         struct ActiveSound
@@ -66,10 +80,10 @@ namespace GUC
             public long startTime;
             public int idPtr;
             public zTSound3DParams sndParams;
-            public SoundInstance sfx;
+            public SoundDefinition sfx;
             public zCVob sndVob;
 
-            public ActiveSound(int id, zTSound3DParams sndParams, SoundInstance sfx, zCVob sndVob = null)
+            public ActiveSound(int id, zTSound3DParams sndParams, SoundDefinition sfx, zCVob sndVob = null)
             {
                 this.startTime = GameTime.Ticks;
                 this.idPtr = id;
@@ -79,11 +93,11 @@ namespace GUC
             }
         }
 
-        static bool CanPlay(SoundInstance sound)
+        static bool CanPlay(SoundDefinition sound)
         {
             for (int i = 0; i < vobSounds.Count; i++)
             {
-                if (vobSounds[i].sfx == sound || vobSounds[i].sfx.sfx.Address == sound.sfx.Address)
+                if (vobSounds[i].sfx == sound || vobSounds[i].sfx.zSFX.Address == sound.zSFX.Address)
                 {
                     if (GameTime.Ticks - vobSounds[i].startTime < 50 * TimeSpan.TicksPerMillisecond)
                         return false;
@@ -92,7 +106,7 @@ namespace GUC
 
             for (int i = 0; i < locSounds.Count; i++)
             {
-                if (locSounds[i].sfx == sound || locSounds[i].sfx.sfx.Address == sound.sfx.Address)
+                if (locSounds[i].sfx == sound || locSounds[i].sfx.zSFX.Address == sound.zSFX.Address)
                 {
                     if (GameTime.Ticks - locSounds[i].startTime < 50 * TimeSpan.TicksPerMillisecond)
                         return false;
@@ -102,11 +116,16 @@ namespace GUC
             return true;
         }
 
+        public static void StopSound(SoundInstance snd)
+        {
+            zCSndSys_MSS.StopSound(snd.ID);
+        }
+
         static readonly List<ActiveSound> vobSounds = new List<ActiveSound>();
         static readonly List<ActiveSound> locSounds = new List<ActiveSound>();
         static readonly List<zCVob> sndVobs = new List<zCVob>();
 
-        public static void PlaySound3D(SoundInstance sound, BaseVob vob, float range = -1.0f, float volume = 1.0f)
+        public static void PlaySound3D(SoundDefinition sound, BaseVob vob, float range = -1.0f, float volume = 1.0f)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");
@@ -119,14 +138,15 @@ namespace GUC
             var param = zTSound3DParams.Create();
             param.Volume = volume;
             param.Radius = range;
+            param.Reverb = 0.15f;
             param.IsAmbient = true;
             int idPtr = Process.Alloc(4).ToInt32();
-            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.sfx, vob.gVob, 0, param));
+            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.zSFX, vob.gVob, 0, param));
 
             vobSounds.Add(new ActiveSound(idPtr, param, sound));
         }
 
-        public static void PlaySound3D(SoundInstance sound, Vec3f location, float range = -1.0f, float volume = 1.0f)
+        public static void PlaySound3D(SoundDefinition sound, Vec3f location, float range = -1.0f, float volume = 1.0f)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");
@@ -137,6 +157,7 @@ namespace GUC
             var param = zTSound3DParams.Create();
             param.Volume = volume;
             param.Radius = range;
+            param.Reverb = 0.15f;
             param.IsAmbient = true;
 
             zCVob vob;
@@ -156,7 +177,7 @@ namespace GUC
             vob.SetPositionWorld(location.X, location.Y, location.Z);
 
             int idPtr = Process.Alloc(4).ToInt32();
-            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.sfx, vob, 0, param));
+            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.zSFX, vob, 0, param));
 
             locSounds.Add(new ActiveSound(idPtr, param, sound, vob));
         }

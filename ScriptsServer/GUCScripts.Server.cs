@@ -178,7 +178,7 @@ namespace GUC.Scripts
             world = new WorldInst(null);
             world.Path = "G2-PASS.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 20), 20.0f);
+            world.Clock.SetTime(new WorldTime(0, 18), 20.0f);
             world.Clock.Start();
             world.Barrier.StopTimer();
             WorldInst.List.Add(world);
@@ -186,7 +186,7 @@ namespace GUC.Scripts
             world = new WorldInst(null);
             world.Path = "ADDON-TEMPLE.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 20), 20.0f);
+            world.Clock.SetTime(new WorldTime(0, 12), 20.0f);
             world.Clock.Start();
             world.Barrier.StopTimer();
             WorldInst.List.Add(world);

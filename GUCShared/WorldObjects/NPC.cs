@@ -400,8 +400,20 @@ namespace GUC.WorldObjects
         internal override void OnTick(long now)
         {
             base.OnTick(now);
-            pOnTick(now);
+            
+            var ani1 = this.Model.GetActiveAniFromLayerID(1);
+            if (ani1 != null)
+            {
+                var env = this.GetEnvironment();
+                if (env.InAir)
+                {
+                    ani1.Stop();
+                }
+            }
+
             this.Model.OnTick(now); // update animations
+
+            pOnTick(now);
         }
     }
     

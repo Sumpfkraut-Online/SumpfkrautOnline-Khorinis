@@ -16,7 +16,7 @@ namespace GUC.Scripts.Arena.Controls
     {
         KeyDictionary playerControls = new KeyDictionary()
         {
-            { KeyBind.Jump, d => { if (d) NPCInst.Requests.Jump(ScriptClient.Client.Character); } },
+            { KeyBind.Jump, Jump },
             { KeyBind.DrawFists, d => { if (d) NPCInst.Requests.DrawFists(ScriptClient.Client.Character); } },
             { KeyBind.MoveForward, d => CheckFightMove(d, FightMoves.Fwd) },
             { KeyBind.TurnLeft, d => CheckFightMove(d, FightMoves.Left) },
@@ -33,6 +33,14 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.F3, ToggleG1Camera },
             { VirtualKeys.F5, ToggleScreenInfo },
         };
+
+        static void Jump(bool d)
+        {
+            if (!d) return;
+
+            if (!CheckWarmup())
+                NPCInst.Requests.Jump(ScriptClient.Client.Character);
+        }
 
         static void PrintPosition(bool down)
         {
@@ -91,13 +99,8 @@ namespace GUC.Scripts.Arena.Controls
             var hero = ScriptClient.Client.Character;
             if (hero.IsInFightMode)
             {
-                if (hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
-                {
-                    if (toWarmupTimer.IsReady)
-                        Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
-
+                if (CheckWarmup())
                     return;
-                }
 
                 NPCInst.Requests.Attack(hero, move);
             }
@@ -131,14 +134,29 @@ namespace GUC.Scripts.Arena.Controls
                 }
                 else if (down)
                 {
-                    var focusVob = hero.GetFocusVob();
-                    if (focusVob is NPCInst)
-                        DuelMode.SendRequest((NPCInst)focusVob);
+                    if (hero.TeamID == -1)
+                    {
+                        var focusVob = hero.GetFocusVob();
+                        if (focusVob is NPCInst)
+                            DuelMode.SendRequest((NPCInst)focusVob);
+                    }
                 }
             }
         }
 
         static LockTimer toWarmupTimer = new LockTimer(1000);
+        static bool CheckWarmup()
+        {
+            var hero = NPCInst.Hero;
+            if (hero != null && hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
+            {
+                if (toWarmupTimer.IsReady)
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
+
+                return true;
+            }
+            return false;
+        }
 
         long nextDodgeTime = 0;
         LockTimer strafeLock = new LockTimer(150);
@@ -183,6 +201,9 @@ namespace GUC.Scripts.Arena.Controls
                     {
                         if (nextDodgeTime < GameTime.Ticks) // don't spam
                         {
+                            if (CheckWarmup())
+                                return;
+
                             NPCInst.Requests.Attack(hero, FightMoves.Dodge);
                             nextDodgeTime = GameTime.Ticks + 50 * TimeSpan.TicksPerMillisecond;
                         }
@@ -220,12 +241,8 @@ namespace GUC.Scripts.Arena.Controls
                     state = NPCMovement.Stand;
             }
 
-            if (hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
-            {
-                if (state != NPCMovement.Stand && toWarmupTimer.IsReady)
-                    Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
+            if (state != NPCMovement.Stand && CheckWarmup())
                 state = NPCMovement.Stand;
-            }
 
             hero.SetMovement(state);
         }

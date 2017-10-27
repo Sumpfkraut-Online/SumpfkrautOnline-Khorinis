@@ -399,44 +399,48 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             }
             else
             {
+                List<GUCVisualText> texts = descrBack.Texts;
+                var def = selItem.Definition;
+
                 //set description name
-                descrBack.Texts[0].Text = selItem.Definition.Name;
+                texts[0].Text = def.Name;
 
-                //standard description
-                /*for (int i = 0; i < 4; i++)
+                if (def.Damage != 0)
                 {
-                    descrBack.Texts[2 * i + 3].Text = selItem.text[i];
-
-                    if (selItem.count[i] > 0)
-                    {
-                        descrBack.Texts[2 * i + 4].Text = selItem.count[i].ToString();
-                    }
-                    else
-                    {
-                        descrBack.Texts[2 * i + 4].Text = "";
-                    }
+                    texts[3].Text = "Schaden";
+                    texts[4].Text = def.Damage.ToString();
+                }
+                else
+                {
+                    texts[3].Text = texts[4].Text = "";
                 }
 
-                //special line directly on top
-                for (int i = 3; i >= 0; i--)
+                if (def.Range != 0)
                 {
-                    if (selectedItem.text[i].Length == 0)
-                    {
-                        descrBack.Texts[2 * i + 3].Text = selectedItem.specialLine;
-                        break;
-                    }
+                    texts[5].Text = "Reichweite";
+                    texts[6].Text = def.Range.ToString();
+                }
+                else
+                {
+                    texts[5].Text = texts[6].Text = "";
                 }
 
-                //weight on bottom
-                descrBack.Texts[11].Text = "Gewicht:";
-                descrBack.Texts[12].Text = selectedItem.weight.ToString();*/
+                if (def.Protection != 0)
+                {
+                    texts[7].Text = "Schutz vor Waffen";
+                    texts[8].Text = def.Protection.ToString();
+                }
+                else
+                {
+                    texts[7].Text = texts[8].Text = "";
+                }
 
                 //visual vob
                 descrVis.SetVisual(selItem.ModelDef.Visual);
 
                 //show
-                descrVis.Show();
                 descrBack.Show();
+                descrVis.Show();
             }
         }
 

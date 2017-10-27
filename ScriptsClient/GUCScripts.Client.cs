@@ -47,11 +47,14 @@ namespace GUC.Scripts
             CheckPosition();
         }
 
+        SoundInstance menuTheme = null;
         public void StartOutgame()
         {
-            // not needed anymore, we do the hit feedback ourselves
-            // always do T_GOTHIT instead of T_STUMBLE/B when getting hit, so animation don't interrupt too much
-            // WinApi.Process.Write(0x0067836C, 0xE9, 0x99, 0x04, 0x00, 0x00);
+            var theme = new SoundDefinition("INSTALLER_LOOP.WAV");
+            theme.zSFX.IsFixed = true;
+            theme.zSFX.Volume = 0.5f;
+            theme.zSFX.SetLooping(true);
+            menuTheme = SoundHandler.PlaySound(theme, 0.5f);
 
             Arena.Menus.MainMenu.Menu.Open();
 
@@ -66,6 +69,13 @@ namespace GUC.Scripts
 
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             GUCMenu.CloseActiveMenus();
+
+            if (menuTheme != null)
+            {
+                SoundHandler.StopSound(menuTheme);
+                menuTheme = null;
+            }
+
             Ingame = true;
             Logger.Log("Ingame started.");
         }
@@ -124,19 +134,6 @@ namespace GUC.Scripts
                             hero.SetPosition(new Types.Vec3f(-4550.162f, -98.70279f, 1392.133f));
                             hero.SetDirection(new Types.Vec3f(-0.7259743f, 0f, 0.6877218f));
                         }
-                }
-                else if (hero.TeamID != -1)
-                {
-                    var pos = hero.GetPosition();
-                    if (pos.GetDistancePlanar(Types.Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
-                        || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
-                        || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
-                    {
-                        int count = Arena.TeamMode.TeamDef.SpawnPoints.Count();
-                        var posdir = Arena.TeamMode.TeamDef.SpawnPoints.ElementAt(Randomizer.GetInt(count));
-                        hero.SetPosition(posdir.Item1);
-                        hero.SetDirection(posdir.Item2);
-                    }
                 }
             }
         }

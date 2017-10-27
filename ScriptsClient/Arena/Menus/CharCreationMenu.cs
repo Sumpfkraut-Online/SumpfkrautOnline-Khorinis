@@ -104,7 +104,7 @@ namespace GUC.Scripts.Arena
         void PlayVoice()
         {
             string soundName = String.Format("SVM_{0}_SMALLTALK{1:00}.WAV", voice.Choice, Randomizer.GetInt(1, 31));
-            SoundHandler.PlaySound(new SoundInstance(soundName), 2.0f);
+            SoundHandler.PlaySound(new SoundDefinition(soundName), 2.0f);
         }
 
         void ChangedVisual() //FIXME: Fleischzoepfe verhindern!
@@ -180,7 +180,7 @@ namespace GUC.Scripts.Arena
             { 0, "blass" },
             { 2, "latino" },
             { 3, "dunkelhäutig" },
-            { 8, "Kettenhemd" }, 
+            { 8, "graue Kleidung" }, 
             { 9, "zerfetzte Kleidung" },
             { 10, "tätowiert" } 
         };

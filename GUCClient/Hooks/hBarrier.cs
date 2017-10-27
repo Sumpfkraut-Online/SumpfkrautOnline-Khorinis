@@ -109,7 +109,7 @@ namespace GUC.Hooks
         }
 
         public static bool PlaySound = true;
-        static readonly SoundInstance sound = new SoundInstance("MFX_BARRIERE_AMBIENT.WAV");
+        static readonly SoundDefinition sound = new SoundDefinition("MFX_BARRIERE_AMBIENT.WAV");
         static long nextSoundTime = 0;
 
         static readonly int ptrArg = Process.Alloc(4).ToInt32();

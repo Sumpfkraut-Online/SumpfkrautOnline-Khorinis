@@ -29,16 +29,27 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         Vec3f lastRegPos;
         void ChangePosDir(Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement)
         {
-            Vec3f newPos = GetPosition();
-            if (lastRegPos.GetDistance(newPos) > 30.0f)
+            Vec3f pos = GetPosition();
+            if (lastRegPos.GetDistance(pos) > 30.0f)
             {
                 lastHitMoveTime = GameTime.Ticks;
-                lastRegPos = newPos;
+                lastRegPos = pos;
             }
 
             if (this.FightAnimation != null && this.CanCombo && this.Movement != NPCMovement.Stand)
             { // so the npc can instantly stop the attack and run into a direction
                 this.ModelInst.StopAnimation(this.fightAni, false);
+            }
+
+
+            if (this.TeamID != -1 && this.Client != null)
+            {
+                if (pos.GetDistancePlanar(Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
+                    || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
+                    || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
+                {
+                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                }
             }
         }
 

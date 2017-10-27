@@ -60,6 +60,14 @@ namespace Gothic.Sound
             return Process.THISCALL<IntArg>(GetZSound(), 0x004EF7B0, snd, new BoolArg(arg));
         }
 
+        public static void StopSound(int snd)
+        {
+            int ptr = Process.Alloc(4).ToInt32();
+            Process.Write(ptr, snd);
+            Process.THISCALL<IntArg>(GetZSound(), 0x004F2300, (IntArg)ptr);
+            Process.Free(ptr, 4);
+        }
+
         /// <summary>
         /// 
         /// </summary>

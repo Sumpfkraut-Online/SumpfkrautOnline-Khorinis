@@ -43,7 +43,7 @@ namespace Gothic.Sound
         /// <summary>
         /// Default = 0
         /// </summary>
-        public int Int0
+        public int Obstruction
         {
             get { return Process.ReadInt(this.Address); }
             set { Process.Write(this.Address, value); }
@@ -70,7 +70,7 @@ namespace Gothic.Sound
         /// <summary>
         /// Default = 0
         /// </summary>
-        public int Int3
+        public int LoopType
         {
             get { return Process.ReadInt(this.Address + 12); }
             set { Process.Write(this.Address + 12, value); }
@@ -79,16 +79,16 @@ namespace Gothic.Sound
         /// <summary>
         /// Default = 0
         /// </summary>
-        public int Int4
+        public float Angle
         {
-            get { return Process.ReadInt(this.Address + 16); }
+            get { return Process.ReadFloat(this.Address + 16); }
             set { Process.Write(this.Address + 16, value); }
         }
 
         /// <summary>
         /// Default = 1
         /// </summary>
-        public float Flt5
+        public float Reverb
         {
             get { return Process.ReadFloat(this.Address + 20); }
             set { Process.Write(this.Address + 20, value); }
@@ -106,7 +106,7 @@ namespace Gothic.Sound
         /// <summary>
         /// Default = -999999
         /// </summary>
-        public float Flt7
+        public float Pitch
         {
             get { return Process.ReadFloat(this.Address + 28); }
             set { Process.Write(this.Address + 28, value); }

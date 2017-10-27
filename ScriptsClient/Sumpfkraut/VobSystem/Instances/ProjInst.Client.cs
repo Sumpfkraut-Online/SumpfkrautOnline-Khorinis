@@ -12,13 +12,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ProjInst
     {
-        static readonly SoundInstance sfx_shoot = new SoundInstance("BOWSHOOT");
-        static readonly SoundInstance sfx_wo_wo = new SoundInstance("CS_IHL_WO_WO");
-        static readonly SoundInstance sfx_wo_me = new SoundInstance("CS_IHL_WO_ME");
-        static readonly SoundInstance sfx_wo_st = new SoundInstance("CS_IHL_WO_ST");
-        static readonly SoundInstance sfx_wo_wa = new SoundInstance("CS_IHL_WO_WA");
-        static readonly SoundInstance sfx_wo_ea = new SoundInstance("CS_IHL_WO_EA");
-        static readonly SoundInstance sfx_wo_sa = new SoundInstance("CS_IHL_WO_SA");
+        static readonly SoundDefinition sfx_shoot = new SoundDefinition("BOWSHOOT");
+        static readonly SoundDefinition sfx_wo_wo = new SoundDefinition("CS_IHL_WO_WO");
+        static readonly SoundDefinition sfx_wo_me = new SoundDefinition("CS_IHL_WO_ME");
+        static readonly SoundDefinition sfx_wo_st = new SoundDefinition("CS_IHL_WO_ST");
+        static readonly SoundDefinition sfx_wo_wa = new SoundDefinition("CS_IHL_WO_WA");
+        static readonly SoundDefinition sfx_wo_ea = new SoundDefinition("CS_IHL_WO_EA");
+        static readonly SoundDefinition sfx_wo_sa = new SoundDefinition("CS_IHL_WO_SA");
 
         partial void pSpawn(WorldInst world, Vec3f pos, Vec3f dir)
         {
@@ -54,7 +54,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 {
                     var poly = gWorld.Raytrace_FoundPoly;
 
-                    SoundInstance sfx;
+                    SoundDefinition sfx;
                     if (poly.Address == 0)
                     {
                         sfx = sfx_wo_wo; // wood

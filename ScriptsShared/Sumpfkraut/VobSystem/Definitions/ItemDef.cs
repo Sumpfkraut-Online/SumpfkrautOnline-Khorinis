@@ -81,10 +81,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public bool IsWepRanged { get { return this.ItemType >= ItemTypes.WepBow && this.ItemType <= ItemTypes.WepXBow; } }
         public bool IsWepMelee { get { return this.ItemType >= ItemTypes.Wep1H && this.ItemType <= ItemTypes.Wep2H; } }
 
+        public float Range = 0;
+        public int Damage = 0;
+        public int Protection = 0;
+
         #endregion
 
         #region Constructors
-        
+
         partial void pConstruct();
         public ItemDef()
         {
@@ -112,6 +116,36 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             stream.Write(this.name);
             stream.Write(this.visualChange);
             stream.Write((byte)this.Material);
+
+            if (Range != 0)
+            {
+                stream.Write(true);
+                stream.Write((ushort)Range);
+            }
+            else
+            {
+                stream.Write(false);
+            }
+
+            if (Damage != 0)
+            {
+                stream.Write(true);
+                stream.Write((ushort)Damage);
+            }
+            else
+            {
+                stream.Write(false);
+            }
+
+            if (Protection != 0)
+            {
+                stream.Write(true);
+                stream.Write((ushort)Protection);
+            }
+            else
+            {
+                stream.Write(false);
+            }
         }
 
         public override void OnReadProperties(PacketReader stream)
@@ -121,10 +155,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             this.name = stream.ReadString();
             this.visualChange = stream.ReadString();
             this.Material = (ItemMaterials)stream.ReadByte();
+
+            if (stream.ReadBit())
+                this.Range = stream.ReadUShort();
+            if (stream.ReadBit())
+                this.Damage = stream.ReadUShort();
+            if (stream.ReadBit())
+                this.Protection = stream.ReadUShort();
         }
 
         #endregion
-
 
         public static void ForEach(Action<ItemDef> action)
         {
