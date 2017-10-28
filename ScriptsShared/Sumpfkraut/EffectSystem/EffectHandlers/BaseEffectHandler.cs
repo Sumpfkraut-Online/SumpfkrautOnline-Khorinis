@@ -150,7 +150,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             List<ChangeDestination> destinations;
             if (!BaseDestInit.TryGetDestInitInfo(cd, out info))
             {
-                MakeLogErrorStatic(typeof(BaseEffectHandler), "Could not register ChangeDestination "
+                MakeLogWarningStatic(typeof(BaseEffectHandler), "Could not register ChangeDestination "
                     + cd + " because there are not entries for it.");
                 return false;
             }
