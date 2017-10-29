@@ -117,10 +117,27 @@ namespace GUC.Scripts.Arena
             StartTO(TODef.TryGet(name));
         }
 
-        public static void StartTO(TODef def)
+        public static void StartTO (TODef def)
         {
             if (def == null)
                 return;
+
+            if (activeTODef != null)
+            {
+                ArenaClient.ForEach(c =>
+                {
+                    ArenaClient client = (ArenaClient)c;
+                    if (client.Team != null || client.BaseClient.SpecWorld == world.BaseWorld)
+                        client.Spectate();
+
+                    client.TODeaths = client.TOKills = client.TOScore = 0;
+                });
+                teams.Clear();
+
+                var stream = ArenaClient.GetScriptMessageStream();
+                stream.Write((byte)ScriptMessages.TOEnd);
+                ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
+            }
 
             world = WorldInst.List.Find(w => w.Path == def.WorldPath);
             if (world == null)

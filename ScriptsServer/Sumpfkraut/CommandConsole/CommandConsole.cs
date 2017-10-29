@@ -23,6 +23,9 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "/SETTIME",               TestCommands.SetTime },
                 { "/SETWEATHERTYPE",        TestCommands.SetWeatherType },
                 { "/SETRAINWEIGHT",         TestCommands.SetRainWeight },
+                { "/TPTOPOS",               TestCommands.TeleportToPosition },
+
+                { "/SETTOMODE",             TestCommands.SetTeamObjectiveMode },
             };
 
         public CommandConsole ()

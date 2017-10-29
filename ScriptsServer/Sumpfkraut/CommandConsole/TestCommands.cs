@@ -128,28 +128,28 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static void BanPlayers (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            StringBuilder successMsgSB = new StringBuilder();
+            StringBuilder msgSB = new StringBuilder();
             List<Networking.ScriptClient> clients = PrepareClientList(param);
             int clientID = -1;
             string charName = "";
 
             if ((clients == null) || (clients.Count < 1))
             {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
+                msgSB.AppendFormat("Didn't use {0} on any players.", cmd);
             }
             else
             {
                 bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
+                msgSB.AppendFormat("Used {0} on players:", cmd);
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
                     if (clients[i].Character != null) { charName = clients[i].Character.CustomName; }
                     else { charName = "?"; }
                     clients[i].BaseClient.Ban();
-                    if (!first) { successMsgSB.Append(","); }
+                    if (!first) { msgSB.Append(","); }
                     else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
+                    msgSB.AppendFormat("[{0}, {1}]", clientID, charName);
                 }
             }
 
@@ -157,35 +157,35 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             {
                 { "type", WSProtocolType.chatData },
                 { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
+                { "rawText", msgSB.ToString() },
             };
         }
 
         public static void KickPlayers (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            StringBuilder successMsgSB = new StringBuilder();
+            StringBuilder msgSB = new StringBuilder();
             List<Networking.ScriptClient> clients = PrepareClientList(param);
             int clientID = -1;
             string charName = "";
 
             if ((clients == null) || (clients.Count < 1))
             {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
+                msgSB.AppendFormat("Didn't use {0} on any players.", cmd);
             }
             else
             {
                 bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
+                msgSB.AppendFormat("Used {0} on players:", cmd);
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
                     if (clients[i].Character != null) { charName = clients[i].Character.CustomName; }
                     else { charName = "?"; }
                     clients[i].BaseClient.Kick();
-                    if (!first) { successMsgSB.Append(","); }
+                    if (!first) { msgSB.Append(","); }
                     else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
+                    msgSB.AppendFormat("[{0}, {1}]", clientID, charName);
                 }
             }
 
@@ -193,24 +193,24 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             {
                 { "type", WSProtocolType.chatData },
                 { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
+                { "rawText", msgSB.ToString() },
             };
         }
 
         public static void KillPlayers (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            StringBuilder successMsgSB = new StringBuilder();
+            StringBuilder msgSB = new StringBuilder();
             List<Networking.ScriptClient> clients = PrepareClientList(param);
 
             if ((clients == null) || (clients.Count < 1))
             {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
+                msgSB.AppendFormat("Didn't use {0} on any players.", cmd);
             }
             else
             {
                 bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
+                msgSB.AppendFormat("Used {0} on players:", cmd);
                 for (var i = 0; i < clients.Count; i++)
                 {
                     if (clients[i].Character != null)
@@ -218,9 +218,9 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                         //clients[i].Character.SetHealth(0);
                         ((Arena.ArenaClient)clients[i]).KillCharacter();
 
-                        if (!first) { successMsgSB.Append(","); }
+                        if (!first) { msgSB.Append(","); }
                         else { first = false; }
-                        successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.CustomName);
+                        msgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.CustomName);
                     }
                 }
             }
@@ -229,14 +229,14 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             {
                 { "type", WSProtocolType.chatData },
                 { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
+                { "rawText", msgSB.ToString() },
             };
         }
 
         public static void SetTime (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            StringBuilder successMsgSB = new StringBuilder();
+            StringBuilder msgSB = new StringBuilder();
 
             WorldTime time = WorldTime.Zero;
             float rate = 0f;
@@ -248,21 +248,21 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 if (foundTime && foundRate) { break; }
             }
 
-            if (!(foundTime || foundRate)) { successMsgSB.Append("No valid WorldTime or rate provided!"); }
+            if (!(foundTime || foundRate)) { msgSB.Append("No valid WorldTime or rate provided!"); }
             else
             {
                 if (!foundTime) { time = WorldInst.List[0].Clock.Time; }
                 if (!foundRate) { rate = WorldInst.List[0].Clock.Rate; }
                 WorldInst.List[0].Clock.SetTime(time, rate);
-                successMsgSB.Append("Changed WorldTime to: ");
-                successMsgSB.AppendFormat("( time: {0}, rate: {1} )", time, rate);
+                msgSB.Append("Changed WorldTime to: ");
+                msgSB.AppendFormat("( time: {0}, rate: {1} )", time, rate);
             }
 
             returnVal = new Dictionary<string, object>
             {
                 { "type", WSProtocolType.chatData },
                 { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
+                { "rawText", msgSB.ToString() },
             };
         }
 
@@ -329,31 +329,49 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static void TeleportToPosition (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            StringBuilder successMsgSB = new StringBuilder();
-            List<Networking.ScriptClient> clients = PrepareClientList(param);
-            int clientID = -1;
-            string charName = "";
+            var msgSB = new StringBuilder();
 
-            if ((clients == null) || (clients.Count < 1))
+            if (param.Length < 2)
             {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
+                msgSB.Append("Provide at least 1 parameter for the position (i.e. 112:6677:84");
+                msgSB.Append(" and the character id.");
             }
             else
             {
-                bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
-
-                //Arena.ArenaClient.ForEach((Networking.ScriptClient c) => { c.Character. });
-
-                for (var i = 0; i < clients.Count; i++)
+                var posArr = param[0].Split(':');
+                var posCoords = new float[3];
+                float coord;
+                bool fail = false;
+                for (int i = 0; i < posArr.Length; i++)
                 {
-                    clientID = clients[i].ID;
-                    if (clients[i].Character != null) { charName = clients[i].Character.CustomName; }
-                    else { charName = "?"; }
-                    
-                    if (!first) { successMsgSB.Append(","); }
-                    else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
+                    if (float.TryParse(posArr[i], out coord))
+                    {
+                        posCoords[i] = coord;
+                    }
+                    else
+                    {
+                        fail = true;
+                        break;
+                    }
+                    if (i >= 2) { break; }
+                }
+                
+                if (fail) { msgSB.Append("No valid position (i.e. 112:6677:84)!"); }
+                else
+                {
+                    var pos = new Vec3f(posCoords);
+                    var clientParam = param.Skip(1).ToArray();
+                    var clients = PrepareClientList(clientParam);
+                    if (clients.Count < 1) { msgSB.Append("No valid clients found!"); }
+                    else
+                    {
+                        msgSB.Append("Teleported players with ids: ");
+                        foreach (var c in clients)
+                        {
+                            if (c.IsCharacter) { c.Character.SetPosition(pos); }
+                            else if (c.IsSpecating) { c.BaseClient.SpecSetPos(pos); }
+                        }
+                    }
                 }
             }
 
@@ -361,9 +379,32 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             {
                 { "type", WSProtocolType.chatData },
                 { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
+                { "rawText", msgSB.ToString() },
             };
         }
+
+
+        #region teamObjectiveControls
+        public static void SetTeamObjectiveMode (object sender, string cmd, string[] param,
+            out Dictionary<string, object> returnVal)
+        {
+            StringBuilder msgSB = new StringBuilder();
+
+            if (param.Length > 0)
+            {
+                Arena.TeamMode.StartTO(param[0]);
+                msgSB.AppendFormat("Activated team objective mode {0}.", Arena.TeamMode.ActiveTODef);
+            }
+            else { msgSB.Append("No name provided for the desired team objective mode!"); }
+
+            returnVal = new Dictionary<string, object>
+            {
+                { "type", WSProtocolType.chatData },
+                { "sender", "SERVER" },
+                { "rawText", msgSB.ToString() },
+            };
+        }
+        #endregion
 
     }
 }
