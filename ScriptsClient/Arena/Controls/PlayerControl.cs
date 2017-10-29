@@ -36,10 +36,21 @@ namespace GUC.Scripts.Arena.Controls
 
         static void Jump(bool d)
         {
-            if (!d) return;
+            var hero = NPCInst.Hero;
+            if (!d || hero == null) return;
 
-            if (!CheckWarmup())
-                NPCInst.Requests.Jump(ScriptClient.Client.Character);
+            if (hero.ModelInst.GetActiveAniFromLayer(1) == null && !CheckWarmup())
+            {
+                var ledge = hero.BaseInst.DetectClimbingLedge();
+                if (ledge == null)
+                {
+                    NPCInst.Requests.Jump(hero);
+                }
+                else
+                {
+                    NPCInst.Requests.Climb(hero, ledge);
+                }
+            }
         }
 
         static void PrintPosition(bool down)
@@ -162,8 +173,11 @@ namespace GUC.Scripts.Arena.Controls
         LockTimer strafeLock = new LockTimer(150);
         void PlayerUpdate()
         {
-            fwdTelHelper.Update(GameTime.Ticks);
-            upTelHelper.Update(GameTime.Ticks);
+            if (ArenaClient.DetectSchinken)
+            {
+                fwdTelHelper.Update(GameTime.Ticks);
+                upTelHelper.Update(GameTime.Ticks);
+            }
 
             NPCInst hero = ScriptClient.Client.Character;
             var gAI = hero.BaseInst.gAI;

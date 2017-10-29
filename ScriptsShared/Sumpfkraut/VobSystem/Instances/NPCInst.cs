@@ -22,6 +22,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         Up
     }
 
+    public enum ClimbMoves
+    {
+        Low,
+        Mid,
+        High
+    }
+
     public enum FightMoves
     {
         None,

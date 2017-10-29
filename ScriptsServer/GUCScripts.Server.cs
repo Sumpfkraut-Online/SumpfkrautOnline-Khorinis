@@ -133,6 +133,7 @@ namespace GUC.Scripts
             Sumpfkraut.Daedalus.InstanceParser.Free();*/
 
             NPCInst.Requests.OnJump += (npc, move) => npc.EffectHandler.TryJump(move);
+            NPCInst.Requests.OnClimb += (npc, move, ledge) => npc.EffectHandler.TryClimb(move, ledge);
             NPCInst.Requests.OnDrawFists += npc => npc.EffectHandler.TryDrawFists();
             NPCInst.Requests.OnDrawWeapon += (npc, item) => npc.EffectHandler.TryDrawWeapon(item);
             NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
@@ -204,6 +205,7 @@ namespace GUC.Scripts
             Add1HAnis(m);
             Add2hAnis(m);
             AddJumpAnis(m);
+            AddClimbAnis(m);
 
             m.Radius = 80;
             m.Height = 180;
@@ -228,6 +230,15 @@ namespace GUC.Scripts
             npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
             npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_N_Anne;
             npcDef.Create();
+            
+            npcDef = new NPCDef("skeleton");
+            npcDef.Name = "Skelett";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Ske_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
 
             AddItems();
 
@@ -248,8 +259,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Range = 110;
-            itemDef.Damage = 42;
+            itemDef.Range = 100;
+            itemDef.Damage = 50;
             itemDef.Create();
 
             m = new ModelDef("ITAR_templer", "ARMOR_TPLM.3DS");
@@ -272,8 +283,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 40;
-            itemDef.Range = 90;
+            itemDef.Damage = 45;
+            itemDef.Range = 65;
             itemDef.Create();
 
             m = new ModelDef("ITAR_garde_l", "ARMOR_GRDL.3DS");
@@ -282,7 +293,7 @@ namespace GUC.Scripts
             itemDef.Name = "Leichte Garderüstung";
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
-            itemDef.Protection = 30;
+            itemDef.Protection = 40;
             itemDef.VisualChange = "ARMOR_GRDL.ASC";
             itemDef.Model = m;
             itemDef.Create();
@@ -296,8 +307,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Range = 110;
-            itemDef.Damage = 42;
+            itemDef.Range = 100;
+            itemDef.Damage = 50;
             itemDef.Create();
             
             m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
@@ -306,7 +317,7 @@ namespace GUC.Scripts
             itemDef.Name = "Gardistenrüstung";
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
-            itemDef.Protection = 30;
+            itemDef.Protection = 40;
             itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
             itemDef.Model = m;
             itemDef.Create();
@@ -320,8 +331,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 40;
-            itemDef.Range = 90;
+            itemDef.Damage = 45;
+            itemDef.Range = 80;
             itemDef.Create();
             
             m = new ModelDef("ITAR_Schatten", "ItAr_Diego.3ds");
@@ -331,7 +342,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Diego.asc";
-            itemDef.Protection = 27;
+            itemDef.Protection = 30;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -344,8 +355,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 44;
-            itemDef.Range = 95;
+            itemDef.Damage = 50;
+            itemDef.Range = 100;
             itemDef.Create();
             
             m = new ModelDef("ITAR_Söldner", "ItAr_Sld_M.3ds");
@@ -355,7 +366,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Sld_M.asc";
-            itemDef.Protection = 30;
+            itemDef.Protection = 40;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -367,9 +378,9 @@ namespace GUC.Scripts
             itemDef.Name = "Grobes Kriegsbeil";
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = ItemMaterials.Wood;
-            itemDef.Damage = 42;
+            itemDef.Damage = 45;
             itemDef.Model = m;
-            itemDef.Range = 75;
+            itemDef.Range = 80;
             itemDef.Create();
             
             m = new ModelDef("ITAR_bandit", "ItAr_Bdt_H.3ds");
@@ -379,7 +390,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bdt_H.asc";
-            itemDef.Protection = 27;
+            itemDef.Protection = 40;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -470,7 +481,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 40;
+            itemDef.Damage = 50;
             itemDef.Range = 80;
             itemDef.Create();
 
@@ -481,8 +492,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 60;
-            itemDef.Range = 80;
+            itemDef.Damage = 45;
+            itemDef.Range = 100;
             itemDef.Create();
 
             // Miliz
@@ -493,7 +504,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_MIL_M.asc";
-            itemDef.Protection = 27;
+            itemDef.Protection = 30;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -505,7 +516,42 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Metal;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Pal_M.asc";
-            itemDef.Protection = 27;
+            itemDef.Protection = 40;
+            itemDef.Model = m;
+            itemDef.Create();
+
+
+            // Tempel
+            m = new ModelDef("ITAR_bandit_m", "ItAr_Bdt_M.3ds");
+            m.Create();
+            itemDef = new ItemDef("ITAR_bandit_m");
+            itemDef.Name = "mittlere Banditenrüstung";
+            itemDef.Material = ItemMaterials.Leather;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_Bdt_M.asc";
+            itemDef.Protection = 30;
+            itemDef.Model = m;
+            itemDef.Create();
+
+            m = new ModelDef("grober_2h", "ItMw_035_2h_sld_sword_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("grober_2h");
+            itemDef.Name = "Grober Zweihänder";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 50;
+            itemDef.Range = 100;
+            itemDef.Create();
+
+            m = new ModelDef("ITAR_pal_skel", "ItAr_Pal_H.3ds");
+            m.Create();
+            itemDef = new ItemDef("ITAR_pal_skel");
+            itemDef.Name = "Alte Paladinrüstung";
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_Pal_Skeleton.asc";
+            itemDef.Protection = 40;
             itemDef.Model = m;
             itemDef.Create();
         }
@@ -519,6 +565,46 @@ namespace GUC.Scripts
             model.AddAniJob(new ScriptAniJob("jump_fwd", "t_Stand_2_Jump"));
             model.AddAniJob(new ScriptAniJob("jump_run", "t_RunL_2_Jump"));
             model.AddAniJob(new ScriptAniJob("jump_up", "t_Stand_2_JumpUp"));
+        }
+
+        #endregion
+
+        #region Climb Anis
+
+        void AddClimbAnis(ModelDef model)
+        {
+            var ani1 = new ScriptAniJob("climb_low", "t_Stand_2_JumpUpLow", new ScriptAni(0, 4));
+            var ani2 = new ScriptAniJob("climb_low1", "s_JumpUpLow", new ScriptAni(0, 1));
+            var ani3 = new ScriptAniJob("climb_low2", "t_JumpUpLow_2_Stand", new ScriptAni(0, 9));
+            
+            model.AddAniJob(ani1);
+            model.AddAniJob(ani2);
+            model.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+
+            ani1 = new ScriptAniJob("climb_mid", "t_Stand_2_JumpUpMid", new ScriptAni(0, 9));
+            ani2 = new ScriptAniJob("climb_mid1", "s_JumpUpMid", new ScriptAni(0, 1));
+            ani3 = new ScriptAniJob("climb_mid2", "t_JumpUpMid_2_Stand", new ScriptAni(0, 20));
+
+            model.AddAniJob(ani1);
+            model.AddAniJob(ani2);
+            model.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+            
+            ani1 = new ScriptAniJob("climb_high", "t_Jump_2_Hang", new ScriptAni(0, 17));
+            ani2 = new ScriptAniJob("climb_high1", "s_hang", new ScriptAni(0, 1));
+            ani3 = new ScriptAniJob("climb_high2", "t_Hang_2_Stand", new ScriptAni(0, 25));
+
+            model.AddAniJob(ani1);
+            model.AddAniJob(ani2);
+            model.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
         }
 
         #endregion

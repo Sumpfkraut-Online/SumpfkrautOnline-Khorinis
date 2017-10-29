@@ -227,6 +227,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         this.BaseInst.gAI.StartParadeEffects(targetNPC.gVob);
                     }
                     break;
+                case ScriptVobMessageIDs.Climb:
+                    var ledge = new NPC.ClimbingLedge(stream);
+                    this.BaseInst.SetGClimbingLedge(ledge);
+                    break;
                 default:
                     break;
             }
@@ -318,19 +322,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             UpdateFightStance();
 
             DoFightStuff();
-
-            /*var activeJumpAni = GetJumpAni();
-            if (activeJumpAni != null && activeJumpAni.GetPercent() >= 0.2f)
+            
+            var gVob = BaseInst.gVob;
+            var gModel = BaseInst.gModel;
+            var gAI = BaseInst.gAI;
+            if (gModel.IsAnimationActive("T_STAND_2_JUMP") || gModel.IsAnimationActive("S_JUMP")
+                || gModel.IsAnimationActive("T_RUNL_2_JUMP"))
             {
-                var gVob = this.BaseInst.gVob;
-                var ai = BaseInst.HumanAI;
-                if (((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0) && ai.AboveFloor <= 0)
+                if ((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 && gAI.AboveFloor <= 0)
                 {
-                    // LAND
-                    int id = this.Movement == MoveState.Forward ? ai._t_jump_2_runl : ai._t_jump_2_stand;
-                    ai.LandAndStartAni(gModel.GetAniFromAniID(id));
+                    if (gAI.Velocity.Y <= 0)
+                    {
+                        // LAND
+                        int id = this.Movement == NPCMovement.Forward ? gAI._t_jump_2_runl : gAI._t_jump_2_stand;
+                        gAI.LandAndStartAni(gModel.GetAniFromAniID(id));
+                    }
                 }
-            }*/
+            }
 
             /*if (this.drawnWeapon != null)
             {

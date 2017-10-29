@@ -300,7 +300,7 @@ namespace GUC.WorldObjects
         public void SetGClimbingLedge(ClimbingLedge ledge)
         {
             int ai = Process.Alloc(4).ToInt32();
-            Process.Write(humanAI.Address, ai);
+            Process.Write(ai, humanAI.Address);
 
             Process.THISCALL<NullReturnCall>(0x8D44E0, 0x512310, (IntArg)ai);
             if (Process.THISCALL<BoolArg>(0x8D44E0, 0x5123E0, (IntArg)ai))
@@ -625,8 +625,8 @@ namespace GUC.WorldObjects
 
         public override void Throw(Vec3f velocity)
         {
-            var aiVel = new zVec3(gAI.Address + 0x90);
-            base.Throw((Vec3f)aiVel + velocity);
+            velocity.SetGVec(gAI.Velocity);
+            base.Throw(velocity);
         }
 
         public BaseVob GetFocusVob()

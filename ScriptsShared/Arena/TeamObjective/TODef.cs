@@ -106,8 +106,7 @@ namespace GUC.Scripts.Arena
                     new TOClassDef("Gardist", null, new List<string, int>()
                     {
                         { "2hschwert", 1 }, { "itar_garde", 1}
-                    },
-                    new List<string>() { "2HST1"}),
+                    }),
                     new TOClassDef("Schatten", null, new List<string, int>()
                     {
                         { "1hschwert", 1 }, { "itar_schatten", 1}
@@ -130,13 +129,12 @@ namespace GUC.Scripts.Arena
                     new TOClassDef("Söldner", null, new List<string, int>()
                     {
                         { "2haxt", 1 }, { "itar_söldner", 1}
-                    },
-                    new List<string>() { "2HST2"}),
+                    }),
                     new TOClassDef("Bandit", null, new List<string, int>()
                     {
                         { "1haxt", 1 }, { "itar_bandit", 1}
                     },
-                    new List<string>() { "1HST2"}),
+                    new List<string>() { "1HST1"}),
                 };
                 to.AddTeam("Tetriandoch", spawnPoints, npcDefs, ColorRGBA.Blue);
 
@@ -170,8 +168,7 @@ namespace GUC.Scripts.Arena
                     new TOClassDef("Templer", null, new List<string, int>()
                     {
                         { "leichter_zweihaender", 1 }, { "itar_templer", 1}
-                    },
-                    new List<string>() { "2HST2"}),
+                    }),
 
                     new TOClassDef("Gardist", null, new List<string, int>()
                     {
@@ -193,8 +190,8 @@ namespace GUC.Scripts.Arena
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Minecrawler-Krieger", "minecrawler_warrior"),
-                    new TOClassDef("Minecrawler", "minecrawler"),
+                    new TOClassDef("Panzer-Minecrawler", "minecrawler_warrior", null, null, 40, 45),
+                    new TOClassDef("Minecrawler", "minecrawler", null, null, 30, 55),
                 };
                 to.AddTeam("Schachtcrew", spawnPoints, npcDefs, ColorRGBA.Orange);
 
@@ -227,12 +224,12 @@ namespace GUC.Scripts.Arena
                     {
                         { "2hschwert", 1 }, { "itar_ritter", 1}
                     },
-                    new List<string>() { "2HST1"}),
+                    new List<string>() { "2HST2"}),
                     new TOClassDef("Miliz", null, new List<string, int>()
                     {
                         { "1hschwert", 1 }, { "itar_miliz_s", 1}
                     },
-                    new List<string>() { "1HST1"}),
+                    new List<string>() { "1HST2"}),
                 };
                 to.AddTeam("Paladintrupp", spawnPoints, npcDefs, ColorRGBA.Red);
                 
@@ -250,11 +247,11 @@ namespace GUC.Scripts.Arena
                     new TOClassDef("Ork-Elite", "orc_elite", new List<string, int>()
                     {
                         { "orc_sword", 1 }
-                    }),
+                    }, prot:40),
                     new TOClassDef("Ork-Krieger", "orc_warrior", new List<string, int>()
                     {
                         { "krush_pach", 1 }
-                    }),
+                    }, prot:30),
                 };
                 to.AddTeam("Grünfellwacht", spawnPoints, npcDefs, ColorRGBA.Green);
 
@@ -268,7 +265,8 @@ namespace GUC.Scripts.Arena
                 to.worldPath = "ADDON-TEMPLE.ZEN";
                 to.duration = 1; // 5 min
                 to.scoreToWin = 100;
-                to.maxDepth = -1800;
+                to.maxDepth = -2100;
+                to.maxHeight = 400;
                 to.maxWorldDistance = 7400;
                 to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(2012.767f, -195.6564f, 4388.974f), new Vec3f(-0.3345688f, -0.1564352f, -0.9292989f));
 
@@ -283,12 +281,12 @@ namespace GUC.Scripts.Arena
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Bandit2", null, new List<string, int>()
+                    new TOClassDef("Bandit mit Zweihänder", null, new List<string, int>()
                     {
-                        { "2hschwert", 1 }, { "itar_bandit", 1}
+                        { "2hschwert", 1 }, { "itar_bandit_m", 1}
                     },
                     new List<string>() { "2HST1"}),
-                    new TOClassDef("Bandit", null, new List<string, int>()
+                    new TOClassDef("Bandit mit Einhänder", null, new List<string, int>()
                     {
                         { "1hschwert", 1 }, { "itar_bandit", 1}
                     },
@@ -307,14 +305,15 @@ namespace GUC.Scripts.Arena
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Skelett-Krieger", null, new List<string, int>()
+                    new TOClassDef("Skelett-Krieger", "skeleton", new List<string, int>()
                     {
-                        { "orc_sword", 1 }
-                    }),
-                    new TOClassDef("Schattenlord", null, new List<string, int>()
+                        { "grober_2h", 1 }
+                    },
+                    new List<string>() { "2HST1"}, prot:30),
+                    new TOClassDef("Schattenlord", "skeleton", new List<string, int>()
                     {
-                        { "krush_pach", 1 }
-                    }),
+                        { "grobes_schwert", 1 }, { "itar_pal_skel", 1 }
+                    }, new List<string>() { "1HST1"}),
                 };
                 to.AddTeam("Armee der Untoten", spawnPoints, npcDefs, ColorRGBA.Blue);
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Utilities;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
@@ -26,7 +27,21 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             if (!jumpLockTimer.IsReady) // don't spam
                 return;
 
-            Host.DoJump(move, Host.GetDirection() * 200f + new Types.Vec3f(0, 1000, 0));
+            Host.DoJump(move, new Vec3f(0, move == JumpMoves.Fwd ? 300 : 250, 0));
+        }
+
+        internal void TryClimb(ClimbMoves move, WorldObjects.NPC.ClimbingLedge ledge)
+        {
+            if (Host.IsDead || Host.Environment.InAir)
+                return;
+
+            if (Host.ModelInst.IsInAnimation())
+                return;
+
+            if (!jumpLockTimer.IsReady) // don't spam
+                return;
+
+            Host.DoClimb(move, ledge);
         }
 
         public void TryDrawFists()
@@ -62,7 +77,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
-            
+
             if (this.Host.IsInFightMode)
             {
                 if (this.Host.DrawnWeapon != null)
@@ -84,11 +99,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             if (Host.IsDead || (Host.Environment.InAir && move != FightMoves.Run) || Host.ModelInst.GetActiveAniFromLayer(2) != null)
                 return;
-            
+
             var otherAni = Host.ModelInst.GetActiveAniFromLayer(1);
             if (otherAni != null && otherAni != Host.FightAnimation)
                 return;
-            
+
             if (Host.FightAnimation != null)
             {
                 if (Host.CanCombo)
@@ -110,7 +125,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryEquipItem(ItemInst item)
         {
-            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation() 
+            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation()
                 || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
                 || this.Host.IsInFightMode)
                 return;

@@ -66,6 +66,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "jump_run", "Jumps.Run" },
             { "jump_up", "Jumps.Up" },
 
+            // jumps
+            { "climb_high", "Climbs.High" },
+            { "climb_mid", "Climbs.Mid" },
+            { "climb_low", "Climbs.Low" },
+
             // item handling
             { "t_IGet_2_Stand", "ItemHandling.TakeItem" },
             { "t_IDrop_2_Stand", "ItemHandling.DropItem" },
@@ -149,6 +154,16 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob UseTorch { get; private set; }
         }
         public ItemHandlingAnis ItemHandling { get; private set; }
+        #endregion
+
+        #region Climbing
+        public class ClimbAnis : AniCatalog
+        {
+            public ScriptAniJob High { get; private set; }
+            public ScriptAniJob Mid { get; private set; }
+            public ScriptAniJob Low { get; private set; }
+        }
+        public ClimbAnis Climbs { get; private set; }
         #endregion
     }
 }

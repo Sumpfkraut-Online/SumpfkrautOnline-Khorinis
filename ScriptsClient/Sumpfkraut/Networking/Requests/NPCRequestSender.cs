@@ -112,7 +112,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                 default:
                     return;
             }
-            NPC.SendScriptCommand(stream, NetPriority.High);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
         }
 
         public void DrawWeapon(NPCInst npc, ItemInst item)
@@ -127,6 +127,52 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
         {
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)ScriptRequestMessageIDs.DrawFists);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
+        }
+        
+        public void Climb(NPCInst npc, NPC.ClimbingLedge ledge)
+        {
+            if (!jumpTimer.IsReady)
+                return;
+
+            ClimbMoves move;
+            var gAI = npc.BaseInst.gAI;
+            float dist = ledge.Location.Y - gAI.FeetY;
+            if (dist < gAI.StepHeight)
+            {
+                return;
+            }
+            else if (dist < gAI.YMaxJumpLow)
+            {
+                move = ClimbMoves.Low;
+            }
+            else if (dist < gAI.YMaxJumpMid)
+            {
+                move = ClimbMoves.Mid;
+            }
+            else
+            {
+                move = ClimbMoves.High;
+            }
+
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            switch (move)
+            {
+                case ClimbMoves.High:
+                    stream.Write((byte)ScriptRequestMessageIDs.ClimbHigh);
+                    break;
+                case ClimbMoves.Mid:
+                    stream.Write((byte)ScriptRequestMessageIDs.ClimbMid);
+                    break;
+                case ClimbMoves.Low:
+                    stream.Write((byte)ScriptRequestMessageIDs.ClimbLow);
+                    break;
+                default:
+                    return;
+            }
+
+            ledge.WriteStream(stream);
+
             NPC.SendScriptCommand(stream, NetPriority.Medium);
         }
     }

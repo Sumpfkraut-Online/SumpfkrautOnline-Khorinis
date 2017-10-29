@@ -214,7 +214,19 @@ namespace GUC.Hooks
             Process.AddHook(File_FindNext, 0x7D25E3, 0xA);
             Process.AddHook(File_FindClose, 0x7D269B, 0xA);
 
+            Process.AddHook(DirectFileConvert, 0x442390, 0x6);
+
             Logger.Log("Added new file system hooks.");
+        }
+
+        static void DirectFileConvert(Hook hook, RegisterMemory mem)
+        {
+            zString fileName = new zString(mem[0]);
+            string projPath = GetProjectFilePath(fileName.ToString());
+            if (Directory.Exists(projPath))
+            {
+                fileName.Set(projPath);
+            }
         }
 
 

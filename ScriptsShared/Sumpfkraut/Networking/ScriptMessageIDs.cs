@@ -18,7 +18,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         JumpFwd,
         JumpRun,
         JumpUp,
-        Climb,
+
+        ClimbLow,
+        ClimbMid,
+        ClimbHigh,
 
         MaxGuidedMessages, // everything above can be used by guided vobs & the hero, everything below is hero exclusive
 
@@ -46,6 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     public enum ScriptVobMessageIDs : byte
     {
         HitMessage,
-        ParryMessage
+        ParryMessage,
+        Climb,
     }
 }

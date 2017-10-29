@@ -227,7 +227,10 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, 0x50C740, new BoolArg(true));
         }
 
-
+        public zVec3 Velocity
+        {
+            get { return new zVec3(Address + 0x90); }
+        }
 
         public void CalcForceModelHalt()
         {

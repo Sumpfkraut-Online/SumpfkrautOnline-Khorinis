@@ -62,7 +62,7 @@
                     <ImageBrush ImageSource="Resources/progressbar.png"/>
                 </ProgressBar.Foreground>
             </ProgressBar>
-            <TextBox x:Name="textBlock" HorizontalAlignment="Left" Height="290" Margin="246,106,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="369" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Background="{x:Null}" FontFamily="Resources/#G2Font" SelectionBrush="{x:Null}" Foreground="#FFFFF8DE"/>
+            <TextBox x:Name="textBlock" HorizontalAlignment="Left" Height="290" Margin="246,106,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="369" VerticalScrollBarVisibility="Auto" IsReadOnly="True" Background="#66000000" FontFamily="Resources/#G2Font" SelectionBrush="{x:Null}" Foreground="#FFFFF8DE"/>
             <Button x:Name="bStart" Content="Start" Style="{StaticResource MainButton}" HorizontalAlignment="Left" Height="49" Margin="42,149,0,0" VerticalAlignment="Top" Width="156"/>
             <Button x:Name="bWebsite" Content="Website" Style="{StaticResource MainButton}" HorizontalAlignment="Left" Height="48" Margin="42,203,0,0" VerticalAlignment="Top" Width="156" Click="bWebsite_Click"/>
             <Button x:Name="bBack1" Content="Zurück" Style="{StaticResource MainButton}" HorizontalAlignment="Left" Height="43" Margin="42,310,0,0" VerticalAlignment="Top" Width="156" Click="bBack_Click"/>

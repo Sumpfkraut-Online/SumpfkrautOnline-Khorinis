@@ -134,6 +134,14 @@ namespace GUC.Scripts.Arena
             string message = textBox.Input.Trim();
             if (message.Length == 0)
                 return;
+
+            if (message == "/detectschinken")
+            {
+                ArenaClient.DetectSchinken = true;
+                textBox.Input = "";
+                return;
+            }
+
             switch (openChatMode)
             {
                 case ChatMode.Team:

@@ -5,12 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.WorldObjects;
 
 namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 {
     public class NPCRequestReceiver
     {
         public event Action<NPCInst, JumpMoves> OnJump;
+        public event Action<NPCInst, ClimbMoves, NPC.ClimbingLedge> OnClimb;
         public event Action<NPCInst> OnDrawFists;
         public event Action<NPCInst, ItemInst> OnDrawWeapon;
         public event Action<NPCInst, FightMoves> OnFightMove;
@@ -35,6 +37,19 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                 case ScriptRequestMessageIDs.JumpUp:
                     if (OnJump != null)
                         OnJump(npc, JumpMoves.Up);
+                    break;
+
+                case ScriptRequestMessageIDs.ClimbHigh:
+                    if (OnClimb != null)
+                        OnClimb(npc, ClimbMoves.High, new NPC.ClimbingLedge(stream));
+                    break;
+                case ScriptRequestMessageIDs.ClimbMid:
+                    if (OnClimb != null)
+                        OnClimb(npc, ClimbMoves.Mid, new NPC.ClimbingLedge(stream));
+                    break;
+                case ScriptRequestMessageIDs.ClimbLow:
+                    if (OnClimb != null)
+                        OnClimb(npc, ClimbMoves.Low, new NPC.ClimbingLedge(stream));
                     break;
 
                 case ScriptRequestMessageIDs.DrawFists:

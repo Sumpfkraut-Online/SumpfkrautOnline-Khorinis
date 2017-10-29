@@ -40,8 +40,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             { // so the npc can instantly stop the attack and run into a direction
                 this.ModelInst.StopAnimation(this.fightAni, false);
             }
-
-
+            
             if (this.TeamID != -1 && this.Client != null)
             {
                 if (pos.GetDistancePlanar(Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
@@ -51,6 +50,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     ((Arena.ArenaClient)this.Client).KillCharacter();
                 }
             }
+
+            var env = this.BaseInst.GetEnvironment();
+            if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
+                ((Arena.ArenaClient)this.Client).KillCharacter();
+
         }
 
         #region Constructors
@@ -103,6 +107,42 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             this.ModelInst.StartAniJobUncontrolled(job);
             this.Throw(velocity);
+        }
+
+        #endregion
+
+        #region Climbing
+
+
+        public void DoClimb(ClimbMoves move, WorldObjects.NPC.ClimbingLedge ledge)
+        {
+            ScriptAniJob job;
+            switch (move)
+            {
+                case ClimbMoves.High:
+                    job = AniCatalog.Climbs.High;
+                    break;
+                case ClimbMoves.Mid:
+                    job = AniCatalog.Climbs.Mid;
+                    break;
+                case ClimbMoves.Low:
+                    job = AniCatalog.Climbs.Low;
+                    break;
+                default:
+                    Logger.Log("Not existing climb move: " + move);
+                    return;
+            }
+
+            if (job == null)
+                return;
+
+
+            var stream = this.BaseInst.GetScriptVobStream();
+            stream.Write((byte)ScriptVobMessageIDs.Climb);
+            ledge.WriteStream(stream);
+            this.BaseInst.SendScriptVobStream(stream);
+
+            this.ModelInst.StartAniJob(job);
         }
 
         #endregion
@@ -629,6 +669,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             strm.Write((ushort)this.ID);
             this.BaseInst.SendScriptVobStream(strm);
 
+            if (attacker.TeamID != -1 && Cast.Try(attacker.Client, out Arena.ArenaClient att) && att.ClassDef != null)
+                damage += att.ClassDef.Damage;
+
+            int protection = this.Armor.Protection;
+            if (this.TeamID != -1 && Cast.Try(this.Client, out Arena.ArenaClient tar) && tar.ClassDef != null)
+                protection += tar.ClassDef.Protection;
+                
             if (this.Armor != null)
                 damage -= this.Armor.Protection;
 
