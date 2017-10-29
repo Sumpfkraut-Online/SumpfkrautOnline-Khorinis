@@ -12,49 +12,52 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
     public class TestCommands : GUC.Utilities.ExtendedObject
     {
 
-        public TestCommands ()
+        protected TestCommands ()
+        { }
+
+
+
+        private static List<Networking.ScriptClient> GetAllClients ()
         {
-        }
-
-
-
-        private static List<Network.GameClient> GetAllClients ()
-        {
-            List<Network.GameClient> clients = new List<Network.GameClient>();
-            Network.GameClient.ForEach(c => clients.Add(c));
+            var clients = new List<Networking.ScriptClient>();
+            Networking.ScriptClient.ForEach(c => clients.Add(c));
             return clients;
         }
 
-        private static List<Network.GameClient> GetClientsByID (List<int> ids)
+        private static List<Networking.ScriptClient> GetClientsByID (List<int> ids)
         {
-            List<Network.GameClient> clients = new List<Network.GameClient>();
-            Network.GameClient client;
-            int prevID = -1;
-
             ids.Sort();
-            for (int i = 0; i < ids.Count; i++)
+            var clients = new List<Networking.ScriptClient>();
+            var allClients = GetAllClients();
+            var prevIDs = new List<int>();
+
+            allClients.ForEach((Networking.ScriptClient c) =>
             {
-                if (ids[i] == prevID) { continue; }
-                if (Network.GameClient.TryGetClient(ids[i], out client))
+                var cID = c.ID;
+                if ((!prevIDs.Contains(cID)) && ids.Contains(cID))
                 {
-                    clients.Add(client);
+                    clients.Add(c);
+                    prevIDs.Add(cID);
                 }
-            }
+            });
 
             return clients;
         }
 
-        private static List<Network.GameClient> GetClientsByCharName (List<string> charNames)
+        private static List<Networking.ScriptClient> GetClientsByCharName (List<string> charNames)
         {
-            List<Network.GameClient> clients = new List<Network.GameClient>();
-            int index = -1;
+            charNames.Sort();
+            var clients = new List<Networking.ScriptClient>();
+            var allClients = GetAllClients();
+            var prevNames = new List<string>();
 
-            Network.GameClient.ForEach(client => 
+            allClients.ForEach((Networking.ScriptClient c) =>
             {
-                if (client.Character != null)
+                var cName = c.Character.CustomName;
+                if ((!prevNames.Contains(cName)) && charNames.Contains(cName))
                 {
-                    index = charNames.IndexOf(client.Character.Name);
-                    if (index > -1) { clients.Add(client); }
+                    clients.Add(c);
+                    prevNames.Add(cName);
                 }
             });
 
@@ -68,36 +71,6 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             {
                 { "rawText", "Failed to retrieve player list!" },
             };
-
-            //List<object> playerInfo = new List<object>();
-            //Network.GameClient.ForEach(client =>
-            //{
-            //    PlayerInfo info = new PlayerInfo();
-
-            //    info.ClientID = client.ID;
-            //    //info.DriveHash = client.DriveHash;
-            //    //info.MacHash = client.MacHash;
-            //    //info.Ping = client.GetLastPing();
-
-            //    if (client.Character == null) { return; }
-
-            //    info.VobID = client.Character.ID;
-            //    //info.VobType = client.Character.VobType;
-            //    info.NPCName = client.Character.Name;
-            //    //info.MapName = "TESTWORLD";
-            //    info.Position = client.Character.GetPosition();
-            //    //info.Direction = client.Character.GetDirection();
-
-            //    playerInfo.Add(info);
-            //});
-
-            //returnVal = new Dictionary<string, object>
-            //{
-            //    { "type", WSProtocolType.chatData },
-            //    { "sender", "SERVER" },
-            //    { "rawText", "List of players: " },
-            //    { "data", playerInfo },
-            //};
 
             StringBuilder infoSB = new StringBuilder();
             infoSB.Append("List of players: ");
@@ -124,11 +97,11 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             };
         }
 
-        protected static List<Network.GameClient> PrepareClientList (string[] param)
+        protected static List<Networking.ScriptClient> PrepareClientList (string[] param)
         {
             List<int> ids = new List<int>(); int id;
             List<string> charNames = new List<string>();
-            List<Network.GameClient> clients = null;
+            List<Networking.ScriptClient> clients = null;
             bool getAll = false;
 
             for (int i = 0; i < param.Length; i++)
@@ -156,7 +129,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             out Dictionary<string, object> returnVal)
         {
             StringBuilder successMsgSB = new StringBuilder();
-            List<Network.GameClient> clients = PrepareClientList(param);
+            List<Networking.ScriptClient> clients = PrepareClientList(param);
             int clientID = -1;
             string charName = "";
 
@@ -171,9 +144,9 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
-                    if (clients[i].Character != null) { charName = clients[i].Character.Name; }
+                    if (clients[i].Character != null) { charName = clients[i].Character.CustomName; }
                     else { charName = "?"; }
-                    clients[i].Ban();
+                    clients[i].BaseClient.Ban();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
                     successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
@@ -192,7 +165,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             out Dictionary<string, object> returnVal)
         {
             StringBuilder successMsgSB = new StringBuilder();
-            List<Network.GameClient> clients = PrepareClientList(param);
+            List<Networking.ScriptClient> clients = PrepareClientList(param);
             int clientID = -1;
             string charName = "";
 
@@ -207,9 +180,9 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 for (var i = 0; i < clients.Count; i++)
                 {
                     clientID = clients[i].ID;
-                    if (clients[i].Character != null) { charName = clients[i].Character.Name; }
+                    if (clients[i].Character != null) { charName = clients[i].Character.CustomName; }
                     else { charName = "?"; }
-                    clients[i].Kick();
+                    clients[i].BaseClient.Kick();
                     if (!first) { successMsgSB.Append(","); }
                     else { first = false; }
                     successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
@@ -228,176 +201,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             out Dictionary<string, object> returnVal)
         {
             StringBuilder successMsgSB = new StringBuilder();
-            List<Network.GameClient> clients = PrepareClientList(param);
-
-            if ((clients == null) || (clients.Count < 1))
-            {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
-            }
-            else
-            {
-                bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
-                for (var i = 0; i < clients.Count; i++)
-                {
-                    if (clients[i].Character != null)
-                    {
-                        clients[i].Character.SetHealth(0);
-                        if (!first) { successMsgSB.Append(","); }
-                        else { first = false; }
-                        successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.Name);
-                    }
-                }
-            }
-
-            returnVal = new Dictionary<string, object>
-            {
-                { "type", WSProtocolType.chatData },
-                { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
-            };
-        }
-        
-
-        /*
-        private static List<TFFA.TFFAClient> GetAllClientsTFFA ()
-        {
-            List<TFFA.TFFAClient> clients = new List<TFFA.TFFAClient>();
-            TFFA.TFFAClient.ForEach(c => clients.Add(c));
-            return clients;
-        }
-
-        protected static List<TFFA.TFFAClient> PrepareClientListTFFA (string[] param)
-        {
-            List<int> ids = new List<int>(); int id;
-            List<string> charNames = new List<string>();
-            List<TFFA.TFFAClient> clients = new List<TFFA.TFFAClient>();
-            bool getAll = false;
-
-            for (int i = 0; i < param.Length; i++)
-            {
-                if (param[i] == "all") { getAll = true; }
-                if (int.TryParse(param[i], out id)) { ids.Add(id); }
-                else { charNames.Add(param[i]); }
-            }
-
-            int j = 0;
-            TFFA.TFFAClient.ForEach(client =>
-            {
-                if (j >= param.Length) { return; }
-                if (getAll) { clients.Add(client); }
-                else
-                {
-                    if (ids.Contains(client.ID)) { clients.Add(client); }
-                    else if (charNames.Contains(client.Name)) { clients.Add(client); }
-                }
-                j++;
-            });
-
-            return clients;
-        }
-
-        public static void GetPlayerListTFFA (object sender, string cmd, string[] param,
-            out Dictionary<string, object> returnVal)
-        {
-            returnVal = new Dictionary<string, object>()
-            {
-                { "rawText", "Failed to retrieve player list!" },
-            };
-            
-            StringBuilder infoSB = new StringBuilder();
-            infoSB.Append("List of players: ");
-            bool first = true;
-            TFFA.TFFAClient.ForEach(client =>
-            {
-                if (!first) { infoSB.Append(", "); }
-                infoSB.AppendFormat("[clientID: {0}, clientName: {1}]", client.ID,
-                    client.Name);
-            });
-
-            returnVal = new Dictionary<string, object>
-            {
-                { "type", WSProtocolType.chatData },
-                { "sender", "SERVER" },
-                { "rawText", infoSB.ToString() },
-            };
-        }
-
-        public static void BanPlayersTFFA (object sender, string cmd, string[] param,
-            out Dictionary<string, object> returnVal)
-        {
-            StringBuilder successMsgSB = new StringBuilder();
-            List<TFFA.TFFAClient> clients = PrepareClientListTFFA(param);
-            int clientID = -1;
-            string charName = "";
-
-            if ((clients == null) || (clients.Count < 1))
-            {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
-            }
-            else
-            {
-                bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
-                for (var i = 0; i < clients.Count; i++)
-                {
-                    clientID = clients[i].ID;
-                    charName = clients[i].Name;
-                    clients[i].BaseClient.Ban();
-                    if (!first) { successMsgSB.Append(","); }
-                    else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
-                }
-            }
-
-            returnVal = new Dictionary<string, object>
-            {
-                { "type", WSProtocolType.chatData },
-                { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
-            };
-        }
-
-        public static void KickPlayersTFFA (object sender, string cmd, string[] param,
-            out Dictionary<string, object> returnVal)
-        {
-            StringBuilder successMsgSB = new StringBuilder();
-            List<TFFA.TFFAClient> clients = PrepareClientListTFFA(param);
-            int clientID = -1;
-            string charName = "";
-
-            if ((clients == null) || (clients.Count < 1))
-            {
-                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
-            }
-            else
-            {
-                bool first = true;
-                successMsgSB.AppendFormat("Used {0} on players:", cmd);
-                for (var i = 0; i < clients.Count; i++)
-                {
-                    clientID = clients[i].ID;
-                    charName = clients[i].Name;
-                    clients[i].BaseClient.Kick();
-                    if (!first) { successMsgSB.Append(","); }
-                    else { first = false; }
-                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
-                }
-            }
-
-            returnVal = new Dictionary<string, object>
-            {
-                { "type", WSProtocolType.chatData },
-                { "sender", "SERVER" },
-                { "rawText", successMsgSB.ToString() },
-            };
-        }
-
-        public static void KillPlayersTFFA (object sender, string cmd, string[] param,
-            out Dictionary<string, object> returnVal)
-        {
-            StringBuilder successMsgSB = new StringBuilder();
-            List<TFFA.TFFAClient> clients = PrepareClientListTFFA(param);
+            List<Networking.ScriptClient> clients = PrepareClientList(param);
 
             if ((clients == null) || (clients.Count < 1))
             {
@@ -412,10 +216,11 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                     if (clients[i].Character != null)
                     {
                         //clients[i].Character.SetHealth(0);
-                        Scripts.TFFA.TFFAGame.Kill(clients[i], false);
+                        ((Arena.ArenaClient)clients[i]).KillCharacter();
+
                         if (!first) { successMsgSB.Append(","); }
                         else { first = false; }
-                        successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Name);
+                        successMsgSB.AppendFormat("[{0}, {1}]", clients[i].ID, clients[i].Character.CustomName);
                     }
                 }
             }
@@ -428,194 +233,137 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             };
         }
 
-
-
-        public static void SwitchTeamTFFA (object sender, string cmd, string[] param,
+        public static void SetTime (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            returnVal = new Dictionary<string, object>()
-            {
-                { "rawText", "Wasn't able to switch teams" },
-            };
+            StringBuilder successMsgSB = new StringBuilder();
 
-            if (param.Length < 2)
-            {
-                returnVal["rawText"] += ": Provide at least 2 command arguments!";
-                return;
-            }
-
-            List<TFFA.TFFAClient> clients = PrepareClientListTFFA(new string[] { param[0] });
-            if (clients.Count < 1)
-            {
-                returnVal["rawText"] += string.Format(": {0} is no valid client!", param[0]);
-            }
-
-            TFFA.Team newTeam = TFFA.Team.Spec;
-            bool changeTeam = true;
-            switch (param[1].ToUpper())
-            {
-                case "AL":
-                    newTeam = TFFA.Team.AL;
-                    break;
-                case "NL":
-                    newTeam = TFFA.Team.NL;
-                    break;
-                case "SPEC":
-                    newTeam = TFFA.Team.Spec;
-                    break;
-                default:
-                    changeTeam = false;
-                    break;
-            }
-
-            if (changeTeam)
-            {
-                Scripts.TFFA.TFFAGame.AddToTeam(clients[0], newTeam);
-            }
-        }
-
-        public static void SetPhaseTFFA (object sender, string cmd, string[] param,
-            out Dictionary<string, object> returnVal)
-        {
-            returnVal = new Dictionary<string, object>()
-            {
-                { "rawText", "Wasn't able to change gamephase" },
-            };
-
-            if (param.Length < 1)
-            {
-                returnVal["rawText"] += ": Provide at least 1 command argument!";
-                return;
-            }
-
-            switch (param[0].ToUpper())
-            {
-                case "WAIT":
-                    Scripts.TFFA.TFFAGame.PhaseWait();
-                    returnVal["rawText"] = "Changed gamephase to waiting phase";
-                    break;
-                case "FIGHT":
-                    Scripts.TFFA.TFFAGame.PhaseFight();
-                    returnVal["rawText"] = "Changed gamephase to fighting phase";
-                    break;
-                case "END":
-                    Scripts.TFFA.TFFAGame.PhaseEnd();
-                    returnVal["rawText"] = "Changed gamephase to ending phase";
-                    break;
-                default:
-                    returnVal["rawText"] += string.Format(":{0} is an invalid command argument!", 
-                        param[0]);
-                    break;
-            }
-        }
-
-
-
-        public static void SetIGTimeTFFA (object sender, string cmd, string[] param,
-            out Dictionary<string, object> returnVal)
-        {
-            returnVal = new Dictionary<string, object>()
-            {
-                { "rawText", "Failed to set ig-time!" },
-            };
-
-            if (param.Length < 1)
-            {
-                returnVal["rawText"] += " Provide at least 1 command argument.";
-                return;
-            }
-
-            WorldTime time = WorldInst.Current.Clock.Time;
-            float rate = WorldInst.Current.Clock.Rate;
-            bool timeReady = false, rateReady = false;
+            WorldTime time = WorldTime.Zero;
+            float rate = 0f;
+            bool foundTime = false, foundRate = false;
             for (int i = 0; i < param.Length; i++)
             {
-                if ((!rateReady) && (float.TryParse(param[i], out rate))) { rateReady = true; }
-                if ((!timeReady) && (WorldTime.TryParseDayHourMin(param[i], out time))) { timeReady = true; }
-                if (timeReady && rateReady) { break; }
+                if ((!foundRate) && (float.TryParse(param[i], out rate))) { foundRate = true; }
+                if ((!foundTime) && (WorldTime.TryParseDayHourMin(param[i], out time))) { foundTime = true; }
+                if (foundTime && foundRate) { break; }
             }
 
-            if (!(timeReady || rateReady)) { return; }
-            WorldInst.Current.Clock.SetTime(time, rate);
-            returnVal = new Dictionary<string, object>()
+            if (!(foundTime || foundRate)) { successMsgSB.Append("No valid WorldTime or rate provided!"); }
+            else
             {
-                { "rawText", string.Format("Set ig-time to {0} and ig-time-rate to {1}", time, rate) },
+                if (!foundTime) { time = WorldInst.List[0].Clock.Time; }
+                if (!foundRate) { rate = WorldInst.List[0].Clock.Rate; }
+                WorldInst.List[0].Clock.SetTime(time, rate);
+                successMsgSB.Append("Changed WorldTime to: ");
+                successMsgSB.AppendFormat("( time: {0}, rate: {1} )", time, rate);
+            }
+
+            returnVal = new Dictionary<string, object>
+            {
+                { "type", WSProtocolType.chatData },
+                { "sender", "SERVER" },
+                { "rawText", successMsgSB.ToString() },
             };
         }
 
-        public static void SetIGWeatherTypeTFFA (object sender, string cmd, string[] param,
+        public static void SetWeatherType (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            returnVal = new Dictionary<string, object>()
-            {
-                { "rawText", "Failed to set ig-weathertype!" },
-            };
+            StringBuilder msgSB = new StringBuilder();
 
-            if (param.Length < 1)
+            WeatherTypes wt = WeatherTypes.Rain;
+            var foundWT = false;
+            for (int i = 0; i < param.Length; i++)
             {
-                returnVal["rawText"] += " Provide at least 1 command argument.";
-                return;
-            }
-
-            WeatherTypes weatherType = default(WeatherTypes);
-            int weatherInt = -1;
-            bool success = false;
-            if (int.TryParse(param[0], out weatherInt))
-            {
-                if (Enum.IsDefined(typeof(WeatherTypes), weatherInt))
+                if (Enum.TryParse(param[i], out wt))
                 {
-                    weatherType = (WeatherTypes) weatherInt;
-                    success = true;
+                    foundWT = true;
+                    break;
                 }
             }
-            else if (Enum.TryParse(param[0], out weatherType))
+            if (foundWT)
             {
-                success = true;
+                WorldInst.List[0].Weather.SetWeatherType(wt);
+                msgSB.AppendFormat("Applied WeatherType: {0}", wt);
             }
+            else { msgSB.Append("No valid WeatherType found!"); }
 
-            if (success)
+            returnVal = new Dictionary<string, object>
             {
-                WorldInst.Current.Weather.SetWeatherType(weatherType);
-                returnVal = new Dictionary<string, object>()
-                {
-                    { "rawText", string.Format("Set ig-weathertype to {0}.", weatherType) },
-                };
-            }
+                { "type", WSProtocolType.chatData },
+                { "sender", "SERVER" },
+                { "rawText", msgSB.ToString() },
+            };
         }
 
-        public static void SetIGRainTimeTFFA (object sender, string cmd, string[] param,
+        public static void SetRainWeight (object sender, string cmd, string[] param,
             out Dictionary<string, object> returnVal)
         {
-            returnVal = new Dictionary<string, object>()
-            {
-                { "rawText", "Failed to set ig-raintime!" },
-            };
+            StringBuilder msgSB = new StringBuilder();
 
-            if (param.Length < 1)
-            {
-                returnVal["rawText"] += " Provide at least 2 command arguments.";
-                return;
-            }
-
-            WorldTime rainTime = default(WorldTime);
-            float weight = 0f;
-            bool rainTimeReady = false, weightReady = false;
-
+            var weight = 0f;
+            var foundWeight = false;
             for (int i = 0; i < param.Length; i++)
             {
-                if ((!weightReady) && float.TryParse(param[i], out weight)) { weightReady = true; }
-                if ((!rainTimeReady) && WorldTime.TryParseDayHourMin(param[i], out rainTime)) { rainTimeReady = true; }
+                if (float.TryParse(param[i], out weight))
+                {
+                    foundWeight = true;
+                    break;
+                }
+            }
+            if (foundWeight)
+            {
+                WorldInst.List[0].Weather.SetNextWeight(WorldInst.List[0].Clock.Time, weight);
+                msgSB.AppendFormat("Applied rain / precipitation weight: {0}", weight);
+            }
+            else { msgSB.Append("No valid rain / precipitation weight found!"); }
+
+            returnVal = new Dictionary<string, object>
+            {
+                { "type", WSProtocolType.chatData },
+                { "sender", "SERVER" },
+                { "rawText", msgSB.ToString() },
+            };
+        }
+
+        public static void TeleportToPosition (object sender, string cmd, string[] param,
+            out Dictionary<string, object> returnVal)
+        {
+            StringBuilder successMsgSB = new StringBuilder();
+            List<Networking.ScriptClient> clients = PrepareClientList(param);
+            int clientID = -1;
+            string charName = "";
+
+            if ((clients == null) || (clients.Count < 1))
+            {
+                successMsgSB.AppendFormat("Didn't use {0} on any players.", cmd);
+            }
+            else
+            {
+                bool first = true;
+                successMsgSB.AppendFormat("Used {0} on players:", cmd);
+
+                //Arena.ArenaClient.ForEach((Networking.ScriptClient c) => { c.Character. });
+
+                for (var i = 0; i < clients.Count; i++)
+                {
+                    clientID = clients[i].ID;
+                    if (clients[i].Character != null) { charName = clients[i].Character.CustomName; }
+                    else { charName = "?"; }
+                    
+                    if (!first) { successMsgSB.Append(","); }
+                    else { first = false; }
+                    successMsgSB.AppendFormat("[{0}, {1}]", clientID, charName);
+                }
             }
 
-            if (rainTimeReady && weightReady)
+            returnVal = new Dictionary<string, object>
             {
-                WorldInst.Current.Weather.SetNextWeight(rainTime, weight);
-                returnVal = new Dictionary<string, object>()
-                {
-                    { "rawText", string.Format("Set rain at time {0} to weight {1}.", rainTime, weight) },
-                };
-            }
-        }*/
-        
+                { "type", WSProtocolType.chatData },
+                { "sender", "SERVER" },
+                { "rawText", successMsgSB.ToString() },
+            };
+        }
+
     }
 }
