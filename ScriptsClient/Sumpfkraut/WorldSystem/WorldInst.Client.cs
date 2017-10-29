@@ -12,11 +12,15 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     {
         public static WorldInst Current { get { return (WorldInst)WorldObjects.World.Current.ScriptObject; } }
 
+        public static bool Test = false;
+
         public void Load()
         {
+            Test = true;
             GUCMenu.CloseActiveMenus();
 
             var ogame = GothicGlobals.Game;
+
             ogame.OpenLoadscreen(false, zString.Create(Path));
 
             zCViewProgressBar progBar = ogame.ProgressBar;
@@ -41,7 +45,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
             progBar = ogame.ProgressBar;
             if (progBar.Address != 0) progBar.SetPercent(100);
-            ogame.CloseLoadscreen();
+
+            ogame.SetTime(Clock.Time.GetDay(), Clock.Time.GetHour(), Clock.Time.GetMinute());
+            
+            GothicGlobals.Game.CloseLoadscreen();
+            Gothic.CGameManager.InitScreen_Close();
         }
     }
 }

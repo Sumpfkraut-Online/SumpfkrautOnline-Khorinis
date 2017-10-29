@@ -190,7 +190,7 @@ namespace GUC.Scripts.Arena
                 if (!winIndices.Contains(i))
                     teams[i].Players.ForEach(c =>
                     {
-                        if (!c.Character.IsDead && c.Character.TeamID != -1)
+                        if (c.Character != null && !c.Character.IsDead && c.Character.TeamID != -1)
                         {
                             var inv = c.Character.Inventory;
                             inv.ForEachItem(item =>
@@ -225,6 +225,8 @@ namespace GUC.Scripts.Arena
                 ArenaClient client = (ArenaClient)c;
                 if (client.Team != null || client.BaseClient.SpecWorld == world.BaseWorld)
                     client.Spectate();
+
+                client.TODeaths = client.TOKills = client.TOScore = 0;
             });
             teams.Clear();
 

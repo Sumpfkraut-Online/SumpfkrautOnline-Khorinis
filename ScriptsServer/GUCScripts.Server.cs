@@ -163,13 +163,14 @@ namespace GUC.Scripts
             var world = new WorldInst(null);
             world.Path = "G1-OLDCAMP.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 8), 20.0f);
+            world.Clock.SetTime(new WorldTime(0, 8), 15.0f);
             world.Clock.Start();
             WorldInst.List.Add(world);
             
             world = new WorldInst(null);
             world.Path = "G1-OLDMINE.ZEN";
             world.Create();
+            world.Clock.SetTime(new WorldTime(0, 12), 1.0f);
             world.Clock.Stop();
             world.Barrier.StopTimer();
             world.Weather.StopRainTimer();
@@ -178,15 +179,17 @@ namespace GUC.Scripts
             world = new WorldInst(null);
             world.Path = "G2-PASS.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 18), 20.0f);
-            world.Clock.Start();
+            world.Clock.SetTime(new WorldTime(0, 20), 1.0f);
+            world.Clock.Stop();
             world.Barrier.StopTimer();
+            world.Weather.StopRainTimer();
+            world.Weather.SetNextWeight(world.Clock.Time, 1.0f);
             WorldInst.List.Add(world);
 
             world = new WorldInst(null);
             world.Path = "ADDON-TEMPLE.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 12), 20.0f);
+            world.Clock.SetTime(new WorldTime(0, 12), 15.0f);
             world.Clock.Start();
             world.Barrier.StopTimer();
             WorldInst.List.Add(world);
@@ -236,6 +239,8 @@ namespace GUC.Scripts
 
         void AddItems()
         {
+            // TEMPLER MINE
+
             ModelDef m = new ModelDef("leichter_zweihaender", "ItMw_032_2h_sword_light_01.3DS");
             m.Create();
             ItemDef itemDef = new ItemDef("leichter_zweihaender");
@@ -257,6 +262,8 @@ namespace GUC.Scripts
             itemDef.VisualChange = "ARMOR_TPLM.ASC";
             itemDef.Model = m;
             itemDef.Create();
+
+            // GARDIST MINE
 
             m = new ModelDef("grobes_schwert", "ItMw_025_1h_sld_sword_01.3DS");
             m.Create();
@@ -280,7 +287,8 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            //ZWEIHANDER
+            // GARDIST BURG
+
             m = new ModelDef("2hschwert", "ItMw_060_2h_sword_01.3DS");
             m.Create();
             itemDef = new ItemDef("2hschwert");
@@ -291,8 +299,7 @@ namespace GUC.Scripts
             itemDef.Range = 110;
             itemDef.Damage = 42;
             itemDef.Create();
-
-            // GARDERÜSTUNG
+            
             m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_Garde");
@@ -304,7 +311,8 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            //EINHANDER
+            // SCHATTEN BURG
+
             m = new ModelDef("1hschwert", "Itmw_025_1h_Mil_Sword_broad_01.3DS");
             m.Create();
             itemDef = new ItemDef("1hschwert");
@@ -315,8 +323,7 @@ namespace GUC.Scripts
             itemDef.Damage = 40;
             itemDef.Range = 90;
             itemDef.Create();
-
-            // SCHATTENRÜSTUNG
+            
             m = new ModelDef("ITAR_Schatten", "ItAr_Diego.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_Schatten");
@@ -328,7 +335,8 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            //ZWEIHAND AXT
+            // SÖLDNER BURG
+
             m = new ModelDef("2haxt", "ItMw_060_2h_axe_heavy_01.3DS");
             m.Create();
             itemDef = new ItemDef("2haxt");
@@ -339,8 +347,7 @@ namespace GUC.Scripts
             itemDef.Damage = 44;
             itemDef.Range = 95;
             itemDef.Create();
-
-            // SÖLDNERRÜSTUNG
+            
             m = new ModelDef("ITAR_Söldner", "ItAr_Sld_M.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_Söldner");
@@ -352,7 +359,8 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            //EINHAND AXT
+            // BANDIT BURG
+
             m = new ModelDef("1haxt", "ItMw_025_1h_sld_axe_01.3DS");
             m.Create();
             itemDef = new ItemDef("1haxt");
@@ -363,8 +371,7 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Range = 75;
             itemDef.Create();
-
-            // BANDITENRÜSTUNG
+            
             m = new ModelDef("ITAR_bandit", "ItAr_Bdt_H.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_bandit");

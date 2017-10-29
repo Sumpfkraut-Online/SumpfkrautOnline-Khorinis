@@ -142,7 +142,9 @@ namespace GUC
                 Process.Write(0x004D5700, 0xC3, 0xE8, 0x8B, 0xE6, 0xFF, 0xFF, 0xC3);
                 Process.Nop(0x006C8A71, 5); // remove freeLook controls
 
-                Process.Write(0x006C873D, 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
+                //Process.Write(0x006C873D, 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
+                Process.Write(0x006C8720, 0xEB, 0x2C); // skip precache time completely
+
 
                 Process.Write(0x008BACD0, 18000.0f); // spawnManager : insertrange
                 Process.Write(0x008BACD4, 20000.0f); // spawnManager : removerange

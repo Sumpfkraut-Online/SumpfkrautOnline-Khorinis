@@ -248,9 +248,12 @@ namespace GUC.Scripts.Arena
 
             if (this.Team != null)
             {
-                this.TODeaths++;
-                this.TOScore--;
-                this.Team.Score--;
+                if (TeamMode.Phase == TOPhases.Battle)
+                {
+                    this.TODeaths++;
+                    this.TOScore--;
+                    this.Team.Score--;
+                }
             }
             else if (this.DuelEnemy != null)
             {

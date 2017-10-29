@@ -141,6 +141,8 @@ namespace GUC.Scripts.Arena
                 phaseEndTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
             }
             Menus.TOInfoScreen.Shown = true;
+
+            OnPhaseChange?.Invoke();
         }
 
         static void TOMessage(string text)

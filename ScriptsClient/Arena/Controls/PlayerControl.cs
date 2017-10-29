@@ -166,6 +166,7 @@ namespace GUC.Scripts.Arena.Controls
             upTelHelper.Update(GameTime.Ticks);
 
             NPCInst hero = ScriptClient.Client.Character;
+            var gAI = hero.BaseInst.gAI;
             if (hero.IsDead)
                 return;
 
@@ -190,7 +191,7 @@ namespace GUC.Scripts.Arena.Controls
                     enemy = null;
                 }
 
-                hero.BaseInst.gAI.CheckFocusVob(1);
+                gAI.CheckFocusVob(1);
                 if (KeyBind.MoveForward.IsPressed()) // move forward
                 {
                     state = NPCMovement.Forward;
@@ -221,23 +222,34 @@ namespace GUC.Scripts.Arena.Controls
             }
 
             if (state == NPCMovement.Forward)
-            {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(true))
+            {   // FIXME: use only a better CheckEnoughSpaceMoveForward
+                if (hero.Movement == NPCMovement.Stand && !gAI.CheckEnoughSpaceMoveForward(true))
+                {
                     state = NPCMovement.Stand;
+                }
+                else
+                {
+                    gAI.CalcForceModelHalt();
+                    if ((gAI.Bitfield0 & zCAIPlayer.Flags.ForceModelHalt) != 0)
+                    {
+                        gAI.Bitfield0 &= ~zCAIPlayer.Flags.ForceModelHalt;
+                        state = NPCMovement.Stand;
+                    }
+                }
             }
             else if (state == NPCMovement.Backward)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveBackward(true))
+                if (!gAI.CheckEnoughSpaceMoveBackward(true))
                     state = NPCMovement.Stand;
             }
             else if (state == NPCMovement.Left)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveLeft(true))
+                if (!gAI.CheckEnoughSpaceMoveLeft(true))
                     state = NPCMovement.Stand;
             }
             else if (state == NPCMovement.Right)
             {
-                if (!hero.BaseInst.gAI.CheckEnoughSpaceMoveRight(true))
+                if (!gAI.CheckEnoughSpaceMoveRight(true))
                     state = NPCMovement.Stand;
             }
 
@@ -288,7 +300,7 @@ namespace GUC.Scripts.Arena.Controls
                     turn = maxTurnSpeed;
                 else if (Math.Abs(InputHandler.MouseDistX) > ((rotSpeed > 0.5f && hero.Movement == NPCMovement.Stand) ? 18 : 2))
                 {
-                    turn = InputHandler.MouseDistX * 0.075f;
+                    turn = InputHandler.MouseDistX * 0.15f;
                     if (turn > maxTurnSpeed) turn = maxTurnSpeed;
                     else if (turn < -maxTurnSpeed) turn = -maxTurnSpeed;
                 }

@@ -88,7 +88,7 @@ namespace GUC.Scripts.Arena
                 to.duration = 1; // 5 min
                 to.scoreToWin = 100;
                 to.maxDepth = -400;
-                to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
+                to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(-2442.949f, 676.9498f, 412.3001f), new Vec3f(0.8977975f, -0.2387571f, -0.3700744f));
 
                 // TEAM ALTES LAGER
                 var spawnPoints = new List<Vec3f, Vec3f>()
@@ -151,11 +151,19 @@ namespace GUC.Scripts.Arena
                 to.duration = 1; // 5 min
                 to.scoreToWin = 100;
                 to.maxHeight = -6800;
+                to.maxWorldDistance = 8635;
+                to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(1478.838f, -9251.064f, -6242.642f), new Vec3f(0.9542055f, 0.128796f, 0.2700137f));
+
 
                 // TEAM ALTES LAGER
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
-                    { new Vec3f(1960.628f, -8533.601f, -703.8072f), new Vec3f(0.8753238f, 0f, -0.4835372f) },
+                    { new Vec3f(1647.881f, -7898.143f, -2613.269f), new Vec3f(-0.6195504f, 0f, 0.7849569f) },
+                    { new Vec3f(1805.787f, -7897.12f, -2394.196f), new Vec3f(-0.9250993f, 0f, 0.3797255f) },
+                    { new Vec3f(1588.374f, -7897.783f, -2407.296f), new Vec3f(-0.6727971f, 0f, 0.739827f) },
+                    { new Vec3f(3293.175f, -7472.599f, -2125.258f), new Vec3f(-0.9746961f, 0f, 0.2235342f) },
+                    { new Vec3f(3005.945f, -7445.056f, -2313.669f), new Vec3f(-0.8597034f, 0f, 0.5107936f) },
+                    { new Vec3f(2663.932f, -7429.853f, -2337.578f), new Vec3f(-0.2195615f, 0f, 0.9755987f) },
                 };
                 npcDefs = new List<TOClassDef>()
                 {
@@ -171,19 +179,24 @@ namespace GUC.Scripts.Arena
                     }, 
                     new List<string>() { "2HST1"}),
                 };
-                to.AddTeam("Team Gomez", spawnPoints, npcDefs, ColorRGBA.Red);
+                to.AddTeam("Team Alte Mine", spawnPoints, npcDefs, ColorRGBA.Red);
 
                 // TEAM MINECRAWLER
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
-                    { new Vec3f(5185.921f, -8559.107f, -5453.461f), new Vec3f(-0.9968022f, 0f, 0.07990983f) },
+                    { new Vec3f(4240.522f, -8093.314f, 5473.961f), new Vec3f(0.949815f, -0.09644543f, -0.2975734f) },
+                    { new Vec3f(4307.686f, -8118.625f, 4750.24f), new Vec3f(0.9710852f, -0.2105983f, 0.1124366f) },
+                    { new Vec3f(-467.942f, -8289.517f, 5695.204f), new Vec3f(0.7430767f, 0.01833591f, -0.668955f) },
+                    { new Vec3f(-337.7988f, -8315.676f, 5922.874f), new Vec3f(0.5503281f, 0.02844109f, -0.834464f) },
+                    { new Vec3f(5252.079f, -8558.768f, -5922.848f), new Vec3f(-0.6680197f, -0.1467312f, 0.729534f) },
+                    { new Vec3f(5301.65f, -8578.755f, -5195.669f), new Vec3f(-0.8782461f, -0.04097912f, -0.47645f) },
                 };
                 npcDefs = new List<TOClassDef>()
                 {
                     new TOClassDef("Minecrawler-Krieger", "minecrawler_warrior"),
                     new TOClassDef("Minecrawler", "minecrawler"),
                 };
-                to.AddTeam("Schachtcrew", spawnPoints, npcDefs, ColorRGBA.White);
+                to.AddTeam("Schachtcrew", spawnPoints, npcDefs, ColorRGBA.Orange);
 
                 objectives.Add(to.name, to);
                 #endregion
@@ -195,14 +208,18 @@ namespace GUC.Scripts.Arena
                 to.worldPath = "G2-PASS.ZEN";
                 to.duration = 1; // 5 min
                 to.scoreToWin = 100;
+                to.maxWorldDistance = 10650;
+                to.maxHeight = 950;
+                to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(3725.298f, -735.0935f, 2743.517f), new Vec3f(-0.8221546f, -0.04884968f, 0.567166f));
                 
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
-                    { new Vec3f(4083.011f, 6138.141f, 30684.28f), new Vec3f(-0.3092942f, 0f, 0.9509664f) },
-                    { new Vec3f(4432.577f, 6145.912f, 30784.88f), new Vec3f(-0.7146769f, 0f, 0.6994548f) },
-                    { new Vec3f(4515.723f, 6214.495f, 31135.37f), new Vec3f(-0.733928f, 0f, 0.6792273f) },
-                    { new Vec3f(4226.368f, 6138.119f, 30956.85f), new Vec3f(-0.4133703f, 0f, 0.910563f) },
-                    { new Vec3f(3931.663f, 6138.209f, 30855.82f), new Vec3f(-0.4323492f, 0f, 0.9017063f) },
+                    { new Vec3f(3069.88f, 148.3073f, 9595.466f), new Vec3f(-0.8589599f, 0f, -0.512043f) },
+                    { new Vec3f(2793.139f, -30.78938f, 9802.241f), new Vec3f(-0.6293203f, 0f, -0.777146f) },
+                    { new Vec3f(2574.253f, -17.34783f, 9796.998f), new Vec3f(-0.6347303f, 0f, -0.7727338f) },
+                    { new Vec3f(2677.734f, 2.666633f, 9594.524f), new Vec3f(-0.8625137f, 0f, -0.5060338f) },
+                    { new Vec3f(2777.245f, 87.26538f, 9485.686f), new Vec3f(-0.9149597f, 0f, -0.4035454f) },
+                    { new Vec3f(2927.429f, 166.2642f, 9413.211f), new Vec3f(-0.9177547f, 0f, -0.3971479f) },
                 };
                 npcDefs = new List<TOClassDef>()
                 {
@@ -217,15 +234,16 @@ namespace GUC.Scripts.Arena
                     },
                     new List<string>() { "1HST1"}),
                 };
-                to.AddTeam("Paladine", spawnPoints, npcDefs, ColorRGBA.White);
+                to.AddTeam("Paladintrupp", spawnPoints, npcDefs, ColorRGBA.Red);
                 
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
-                    { new Vec3f(8183.059f, 6707.462f, 42760.34f), new Vec3f(-0.9383943f, 0f, -0.3455663f) },
-                    { new Vec3f(7968.539f, 6534.874f, 43064.72f), new Vec3f(-0.7239747f, 0f, -0.6898266f) },
-                    { new Vec3f(7353.229f, 6600.91f, 42973.42f), new Vec3f(-0.3515739f, 0f, -0.9361602f) },
-                    { new Vec3f(7752.142f, 6716.781f, 43286.46f), new Vec3f(-0.4845557f, 0f, -0.8747605f) },
-                    { new Vec3f(7539.996f, 6562.836f, 42778.45f), new Vec3f(-0.6868766f, 0f, -0.726774f) },
+                    { new Vec3f(-1181.993f, -437.1606f, -2589.357f), new Vec3f(-0.4277521f, 0f, 0.9038962f) },
+                    { new Vec3f(-914.4005f, -438.5191f, -2535.535f), new Vec3f(-0.6987274f, 0f, 0.7153881f) },
+                    { new Vec3f(-731.5646f, -383.0498f, -2338.793f), new Vec3f(-0.7674448f, 0f, 0.6411151f) },
+                    { new Vec3f(-989.1671f, -439.3947f, -2398.904f), new Vec3f(-0.6444571f, 0f, 0.7646406f) },
+                    { new Vec3f(-1247.077f, -438.1329f, -2482.61f), new Vec3f(-0.4836642f, 0f, 0.8752537f) },
+                    { new Vec3f(-579.5058f, -204.6773f, -2462.555f), new Vec3f(-0.8302556f, 0f, 0.5573828f) },
                 };
                 npcDefs = new List<TOClassDef>()
                 {
@@ -238,7 +256,7 @@ namespace GUC.Scripts.Arena
                         { "krush_pach", 1 }
                     }),
                 };
-                to.AddTeam("Passorks", spawnPoints, npcDefs, ColorRGBA.Blue);
+                to.AddTeam("Grünfellwacht", spawnPoints, npcDefs, ColorRGBA.Green);
 
                 objectives.Add(to.name, to);
                 #endregion
@@ -250,10 +268,18 @@ namespace GUC.Scripts.Arena
                 to.worldPath = "ADDON-TEMPLE.ZEN";
                 to.duration = 1; // 5 min
                 to.scoreToWin = 100;
+                to.maxDepth = -1800;
+                to.maxWorldDistance = 7400;
+                to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(2012.767f, -195.6564f, 4388.974f), new Vec3f(-0.3345688f, -0.1564352f, -0.9292989f));
 
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
-                    { new Vec3f(-19961.6875f, -2855.99927f, -15386.585f), new Vec3f(0f, 0f, 1f) },
+                    { new Vec3f(1816.431f, -305.0804f, 6607.576f), new Vec3f(-0.2385892f, 0f, -0.9711206f) },
+                    { new Vec3f(2036.342f, -332.478f, 6549.103f), new Vec3f(-0.3387918f, 0f, -0.9408614f) },
+                    { new Vec3f(2007.473f, -287.4689f, 6722.368f), new Vec3f(-0.2611216f, 0f, -0.9653059f) },
+                    { new Vec3f(1922.155f, -365.8554f, 6435.443f), new Vec3f(-0.297985f, 0f, -0.9545705f) },
+                    { new Vec3f(1708.69f, -320.4089f, 6512.574f), new Vec3f(-0.1691195f, 0f, -0.9855956f) },
+                    { new Vec3f(2119.849f, -360.1476f, 6362.776f), new Vec3f(-0.4310881f, 0f, -0.9023099f) },
                 };
                 npcDefs = new List<TOClassDef>()
                 {
@@ -268,19 +294,24 @@ namespace GUC.Scripts.Arena
                     },
                     new List<string>() { "1HST1"}),
                 };
-                to.AddTeam("Ravens Banditen", spawnPoints, npcDefs, ColorRGBA.White);
+                to.AddTeam("Ravens Späher", spawnPoints, npcDefs, ColorRGBA.White);
 
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
-                    { new Vec3f(-22149.0176f, -3007.20508f, -26048.7871f), new Vec3f(0f, 0f, 1f) },
+                    { new Vec3f(528.394f, -361.0391f, -2002.128f), new Vec3f(-0.328812f, 0f, 0.9443954f) },
+                    { new Vec3f(264.5747f, -359.7288f, -1962.031f), new Vec3f(0.06981393f, 0f, 0.9975601f) },
+                    { new Vec3f(-3.248788f, -358.9183f, -1906.212f), new Vec3f(0.1564911f, 0f, 0.9876794f) },
+                    { new Vec3f(-261.0937f, -358.1917f, -1858.025f), new Vec3f(0.3939945f, 0f, 0.9191129f) },
+                    { new Vec3f(-536.3656f, -359.1673f, -1847.327f), new Vec3f(0.6997041f, 0f, 0.7144328f) },
+                    { new Vec3f(-821.115f, -364.3337f, -1905.385f), new Vec3f(0.7727699f, 0f, 0.6346863f) },
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Skelett", null, new List<string, int>()
+                    new TOClassDef("Skelett-Krieger", null, new List<string, int>()
                     {
                         { "orc_sword", 1 }
                     }),
-                    new TOClassDef("Zombie", null, new List<string, int>()
+                    new TOClassDef("Schattenlord", null, new List<string, int>()
                     {
                         { "krush_pach", 1 }
                     }),

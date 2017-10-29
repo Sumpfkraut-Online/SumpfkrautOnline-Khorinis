@@ -383,8 +383,9 @@ namespace GUC.WorldObjects
             this.gmodel = gVob.GetModel();
 
             gVob.Name.Set(this.Name);
-            
-            humanAI.Bitfield0 &= ~4; // some shitty flag which makes npcs always check their ground
+
+            // do detect walk stop chasm
+            humanAI.Bitfield0 &= ~zCAIPlayer.Flags.DetectWalkChasm; // some shitty flag which makes npcs always check their ground
 
             if (this.hp <= 0)
             {

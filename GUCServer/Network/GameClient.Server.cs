@@ -514,6 +514,9 @@ namespace GUC.Network
                 {
                     this.specWorld.RemoveClient(this);
                     this.specWorld.RemoveSpectatorFromCells(this);
+
+                    this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                    this.visibleVobs.Clear();
                 }
                 World.Messages.WriteLoadWorld(this, world);
             }
@@ -527,6 +530,7 @@ namespace GUC.Network
                 {
                     // set old character to npc
                     this.character.client = null;
+
                     if (this.character.IsSpawned)
                     {
                         if (!this.loading)
@@ -537,8 +541,11 @@ namespace GUC.Network
 
                         if (this.character.World != world)
                         {
-                            this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
-                            this.visibleVobs.Clear();
+                            if (!this.loading)
+                            {
+                                this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                                this.visibleVobs.Clear();
+                            }
                             World.Messages.WriteLoadWorld(this, world);
                         }
                         else
@@ -553,6 +560,11 @@ namespace GUC.Network
                     }
                     else
                     {
+                        if (!this.loading)
+                        {
+                            this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                            this.visibleVobs.Clear();
+                        }
                         World.Messages.WriteLoadWorld(this, world);
                     }
                     this.character = null;
@@ -612,7 +624,7 @@ namespace GUC.Network
                             this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
                             this.visibleVobs.Clear();
                         }
-                        
+
                         World.Messages.WriteLoadWorld(this, npc.World);
                     }
                     else // same world
@@ -626,7 +638,7 @@ namespace GUC.Network
                         UpdateVobList(npc.World, npc.GetPosition());
                         Messages.WritePlayerControl(this, npc);
                     }
-                    
+
                     this.specWorld = null;
                     this.isSpectating = false;
                 }
