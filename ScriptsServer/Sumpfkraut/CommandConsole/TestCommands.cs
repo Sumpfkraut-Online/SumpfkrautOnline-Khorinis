@@ -72,22 +72,46 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 { "rawText", "Failed to retrieve player list!" },
             };
 
-            StringBuilder infoSB = new StringBuilder();
+            var infoSB = new StringBuilder();
             infoSB.Append("List of players: ");
-            string sep = "";
-            Network.GameClient.ForEach(client =>
-            {
-                infoSB.AppendFormat("{0}[clientID: {1}", sep, client.ID);
+            var sep = "<br>";
 
-                if (client.Character != null)
+            var clients = GetAllClients();
+            foreach (var c in clients)
+            {
+                infoSB.AppendFormat("{0}[id: {1}", sep, c.ID);
+                if (c.IsCharacter)
                 {
-                    infoSB.AppendFormat(", charID: {0}, charName: {1}, charPos: {2}], ", client.Character.ID,
-                        client.Character.Name, client.Character.GetPosition());
+                    infoSB.AppendFormat(", name: {0}", c.Character.CustomName);
+                    infoSB.AppendFormat(", pos: {0}", c.Character.GetPosition());
+                }
+                else if (c.IsSpecating)
+                {
+                    infoSB.AppendFormat(", pos: {0}", c.BaseClient.SpecGetPos());
                 }
 
+                var ac = (Arena.ArenaClient) c;
+                if (ac.Team != null) { infoSB.AppendFormat(", toTeam: {0}", ac.Team.Def.Name); }
+                infoSB.AppendFormat(", toKills: {0}", ac.TOKills);
+                infoSB.AppendFormat(", toDeaths: {0}", ac.TODeaths);
+                infoSB.AppendFormat(", toScore: {0}", ac.TOScore);
+
                 infoSB.Append("]");
-                sep = ", ";
-            });
+            }
+
+            //Network.GameClient.ForEach(client =>
+            //{
+            //    infoSB.AppendFormat("{0}[clientID: {1}", sep, client.ID);
+
+            //    if (client.Character != null)
+            //    {
+            //        infoSB.AppendFormat(", charID: {0}, charName: {1}, charPos: {2}], ", client.Character.ID,
+            //            client.Character.Name, client.Character.GetPosition());
+            //    }
+
+            //    infoSB.Append("]");
+            //    sep = ", ";
+            //});
 
             returnVal = new Dictionary<string, object>
             {
