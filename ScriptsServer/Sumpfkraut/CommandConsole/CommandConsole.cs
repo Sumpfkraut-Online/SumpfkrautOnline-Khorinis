@@ -16,23 +16,16 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
         public static readonly Dictionary<string, ProcessCommand> CmdToProcessFunc =
             new Dictionary<string, ProcessCommand>()
             {
-                /*{ "/GETPLAYERS", TFFA.TFFACommands.GetPlayerListTFFA },
-                { "/BAN", TFFA.TFFACommands.BanPlayersTFFA },
-                { "/KICK", TFFA.TFFACommands.KickPlayersTFFA },
-                { "/KILL", TFFA.TFFACommands.KillPlayersTFFA },
-                { "/SETTIME", TFFA.TFFACommands.SetIGTimeTFFA },
-                { "/SETWT", TFFA.TFFACommands.SetIGWeatherTypeTFFA },
-                { "/SETRAIN", TFFA.TFFACommands.SetIGRainTimeTFFA },
-                { "/SWITCHTEAM", TFFA.TFFACommands.SwitchTeamTFFA },
-                { "/SETPHASE", TFFA.TFFACommands.SetPhaseTFFA },*/
-                //{ "/G", TestCommands.SetIgTime }, // send global text-message (TO DO)
-                //{ "/GETPOS", TestCommands.SetIgTime }, // get pos. of youself or another player/vob? (TO DO)
-                //{ "/KILL", TestCommands.SetIgTime }, // kill vob in focus (TO DO)
-                //{ "/PLAYERLIST", TestCommands.GetPlayerList }, // get list of players
-                //{ "/SETTIME", TestCommands.SetIgTime }, // set ig-time
-                //{ "/SETWEATHER", TestCommands.SetIgWeather }, // set ig-weather
-                //{ "/SPAWNITEM", TestCommands.SetIgTime }, // spawns item of (type + amount) at position (TO DO)
-                //{ "/TPTO", TestCommands.TeleportVobTo }, // teleport vob (to pos.) (TO DO)
+                { "/BAN",                   TestCommands.BanPlayers },
+                { "/KICK",                  TestCommands.KickPlayers },
+                { "/KILL",                  TestCommands.KillPlayers },
+                { "/GET",                   TestCommands.GetPlayerList },
+                { "/SETTIME",               TestCommands.SetTime },
+                { "/SETWEATHERTYPE",        TestCommands.SetWeatherType },
+                { "/SETRAINWEIGHT",         TestCommands.SetRainWeight },
+                { "/TPTOPOS",               TestCommands.TeleportToPosition },
+
+                { "/SETTOMODE",             TestCommands.SetTeamObjectiveMode },
             };
 
         public CommandConsole ()

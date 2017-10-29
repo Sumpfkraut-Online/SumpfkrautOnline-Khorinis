@@ -240,7 +240,10 @@ namespace GUC.Types
             }
 
             timeStringArr = timeString.Split(':');
-            if ((timeStringArr == null) || (timeStringArr.Length < 1))
+            Console.WriteLine("GOTCHA --> " + timeString.Contains(":"));
+            Console.WriteLine("GOTCHA --> " + (timeStringArr == null));
+            Console.WriteLine("GOTCHA --> " + timeStringArr.Length);
+            if ((!timeString.Contains(":")) || (timeStringArr == null) || (timeStringArr.Length < 1))
             {
                 igTime = default(WorldTime);
                 return false;
@@ -250,8 +253,9 @@ namespace GUC.Types
             int tempInt = -1;
             for (int t = 0; t < timeStringArr.Length; t++)
             {
-                if(!int.TryParse(timeStringArr[t], out tempInt))
+                if (!int.TryParse(timeStringArr[t], out tempInt))
                 {
+                    Console.WriteLine("BOOOOOOOM! --> " + timeStringArr[t]);
                     igTime = default(WorldTime);
                     return false;
                 }

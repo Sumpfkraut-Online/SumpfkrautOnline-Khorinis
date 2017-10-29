@@ -117,7 +117,7 @@ namespace GUC.Scripts.Arena
             StartTO(TODef.TryGet(name));
         }
 
-        public static void StartTO(TODef def)
+        public static void StartTO (TODef def)
         {
             if (def == null)
                 return;

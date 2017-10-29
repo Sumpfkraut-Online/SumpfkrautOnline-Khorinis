@@ -67,6 +67,9 @@ namespace GUC.Scripts.Arena
             };
         }
 
+        public static void Init()
+        { /* trigger the static constructor */ }
+
         public static void ReadRequest(ArenaClient requester, PacketReader stream)
         {
             if (requester.Character == null || requester.IsDueling || requester.Character.IsDead || requester.Team != null)

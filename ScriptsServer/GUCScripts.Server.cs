@@ -154,6 +154,7 @@ namespace GUC.Scripts
             //Sumpfkraut.AI.TestingAI.Test();
 
             CreateTestWorld();
+            Arena.DuelMode.Init();
             Arena.Regeneration.Init();
 
             Logger.Log("######################## Finished #########################");
