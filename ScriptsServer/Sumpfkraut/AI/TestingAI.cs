@@ -357,7 +357,7 @@ namespace GUC.Scripts.Sumpfkraut.AI
 
             if (overlayExists) { npcInst.ModelInst.ApplyOverlay(overlay); }
 
-            npcInst.Spawn(WorldSystem.WorldInst.Current, 
+            npcInst.Spawn(WorldSystem.WorldInst.List[0], 
                 spawnPosition, new Types.Vec3f(1f, 0f, 0f));
 
             return npcInst;

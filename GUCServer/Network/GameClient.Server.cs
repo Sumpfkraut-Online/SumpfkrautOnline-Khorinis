@@ -120,6 +120,7 @@ namespace GUC.Network
 
             public static void ReadLoadWorldMessage(PacketReader stream, GameClient client)
             {
+                client.loading = false;
                 if (client.character != null)
                 {
                     client.character.client = client;
@@ -136,7 +137,7 @@ namespace GUC.Network
                 }
                 else
                 {
-                    throw new Exception("Unallowed LoadWorldMessage");
+                    //throw new Exception("Unallowed LoadWorldMessage");
                 }
             }
 
@@ -203,17 +204,20 @@ namespace GUC.Network
 
             if (this.character != null)
             {
-                this.character.client = null;
-                if (this.character.IsSpawned)
+                if (this.character.IsSpawned && !loading)
                 {
                     this.character.World.RemoveClient(this);
                     this.Character.Cell.RemoveClient(this);
                 }
+                this.character.client = null;
             }
             else if (this.isSpectating)
             {
-                this.specWorld.RemoveClient(this);
-                this.specWorld.RemoveSpectatorFromCells(this);
+                if (!loading) // still loading
+                {
+                    this.specWorld.RemoveClient(this);
+                    this.specWorld.RemoveSpectatorFromCells(this);
+                }
                 this.specWorld = null;
             }
 
@@ -226,7 +230,6 @@ namespace GUC.Network
             idColl.Remove(this);
             clients.Remove(ref this.collID);
 
-          
             this.ScriptObject.OnDisconnection(id);
 
             this.character = null;
@@ -465,8 +468,6 @@ namespace GUC.Network
                 stream.CurrentByte = countBytePos;
                 stream.Write((ushort)visibleVobs.Count);
                 stream.CurrentByte = currentByte;
-
-
                 this.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
             }
         }
@@ -509,8 +510,14 @@ namespace GUC.Network
             if (this.isSpectating) // is spectating, but in a different world
             {
                 this.isSpectating = false;
-                this.specWorld.RemoveClient(this);
-                this.specWorld.RemoveSpectatorFromCells(this);
+                if (!this.loading)
+                {
+                    this.specWorld.RemoveClient(this);
+                    this.specWorld.RemoveSpectatorFromCells(this);
+
+                    this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                    this.visibleVobs.Clear();
+                }
                 World.Messages.WriteLoadWorld(this, world);
             }
             else
@@ -523,13 +530,22 @@ namespace GUC.Network
                 {
                     // set old character to npc
                     this.character.client = null;
+
                     if (this.character.IsSpawned)
                     {
-                        this.character.World.RemoveClient(this);
-                        this.character.Cell.RemoveClient(this);
+                        if (!this.loading)
+                        {
+                            this.character.World.RemoveClient(this);
+                            this.character.Cell.RemoveClient(this);
+                        }
 
                         if (this.character.World != world)
                         {
+                            if (!this.loading)
+                            {
+                                this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                                this.visibleVobs.Clear();
+                            }
                             World.Messages.WriteLoadWorld(this, world);
                         }
                         else
@@ -544,6 +560,11 @@ namespace GUC.Network
                     }
                     else
                     {
+                        if (!this.loading)
+                        {
+                            this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                            this.visibleVobs.Clear();
+                        }
                         World.Messages.WriteLoadWorld(this, world);
                     }
                     this.character = null;
@@ -561,7 +582,7 @@ namespace GUC.Network
 
         partial void pSetControl(NPC npc)
         {
-            if (npc == null)
+            if (npc == null) // take control of nothing
             {
                 if (this.isSpectating)
                 {
@@ -570,7 +591,7 @@ namespace GUC.Network
                 }
                 else if (this.character != null)
                 {
-                    if (this.character.IsSpawned)
+                    if (this.character.IsSpawned && !this.loading)
                     {
                         this.character.World.RemoveClient(this);
                         this.character.Cell.RemoveClient(this);
@@ -578,104 +599,108 @@ namespace GUC.Network
                     this.character.client = null;
                 }
                 this.LeaveWorld();
+                this.character = null;
+                return;
             }
-            else
-            {
-                if (npc.IsPlayer)
-                {
-                    Logger.LogWarning("Rejected SetControl of Player {0} by Client {1}!", npc.ID, this.ID);
-                    return;
-                }
 
-                // npc is already in the world, set to player
-                if (npc.IsSpawned)
+            if (npc.IsPlayer)
+            {
+                Logger.LogWarning("Rejected SetControl of Player {0} by Client {1}!", npc.ID, this.ID);
+                return;
+            }
+
+            // npc is already in the world, set to player
+            if (npc.IsSpawned)
+            {
+                if (this.isSpectating)
                 {
-                    if (this.isSpectating)
+                    if (this.specWorld != npc.World)
                     {
-                        if (this.specWorld != npc.World)
+                        if (!this.loading)
                         {
                             this.specWorld.RemoveClient(this);
                             this.specWorld.RemoveSpectatorFromCells(this);
 
                             this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
                             this.visibleVobs.Clear();
-
-                            World.Messages.WriteLoadWorld(this, npc.World);
-                        }
-                        else // same world
-                        {
-                            if (npc.Cell != this.SpecCell)
-                            {
-                                this.specWorld.RemoveSpectatorFromCells(this);
-                                npc.Cell.AddClient(this);
-                            }
-
-                            npc.client = this;
-                            UpdateVobList(npc.World, npc.GetPosition());
-
-                            Messages.WritePlayerControl(this, npc);
                         }
 
-                        this.specWorld = null;
-                        this.isSpectating = false;
+                        World.Messages.WriteLoadWorld(this, npc.World);
                     }
-                    else
+                    else // same world
                     {
-                        if (this.character == null) // has been in the main menu probably
+                        if (npc.Cell != this.SpecCell)
                         {
-                            World.Messages.WriteLoadWorld(this, npc.World);
+                            this.specWorld.RemoveSpectatorFromCells(this);
+                            npc.Cell.AddClient(this);
                         }
-                        else if (this.character.World != npc.World) // different world
+
+                        UpdateVobList(npc.World, npc.GetPosition());
+                        Messages.WritePlayerControl(this, npc);
+                    }
+
+                    this.specWorld = null;
+                    this.isSpectating = false;
+                }
+                else // not spectating
+                {
+                    if (this.character == null) // has been in the main menu probably
+                    {
+                        World.Messages.WriteLoadWorld(this, npc.World);
+                    }
+                    else if (this.character.World != npc.World) // different world
+                    {
+                        if (this.character.IsSpawned && !this.loading)
                         {
-                            if (this.character.IsSpawned) // just to be sure
-                            {
-                                this.character.World.RemoveClient(this);
-                                this.character.Cell.RemoveClient(this);
+                            this.character.World.RemoveClient(this);
+                            this.character.Cell.RemoveClient(this);
 
-                                this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
-                                this.visibleVobs.Clear();
-                            }
-                            this.character.client = null;
-                            npc.client = this;
-                            World.Messages.WriteLoadWorld(this, npc.World);
+                            this.visibleVobs.ForEach(v => v.RemoveVisibleClient(this));
+                            this.visibleVobs.Clear();
                         }
-                        else // same world
+
+                        this.character.client = null;
+                        World.Messages.WriteLoadWorld(this, npc.World);
+                    }
+                    else // same world
+                    {
+                        if (this.character.Cell != npc.Cell)
                         {
-                            if (this.character.Cell != npc.Cell)
-                            {
-                                this.character.Cell.RemoveClient(this);
-                                npc.Cell.AddClient(this);
-                            }
-
-                            this.character.client = null;
-                            npc.client = this;
-                            UpdateVobList(npc.World, npc.GetPosition());
-
-                            Messages.WritePlayerControl(this, npc);
+                            this.character.Cell.RemoveClient(this);
+                            npc.Cell.AddClient(this);
                         }
+
+                        this.character.client = null;
+                        UpdateVobList(npc.World, npc.GetPosition());
+
+                        Messages.WritePlayerControl(this, npc);
                     }
                 }
-                else // npc is not spawned remove all old vobs
+            }
+            else // npc is not spawned remove all old vobs
+            {
+                if (this.isSpectating)
                 {
-                    if (this.isSpectating)
-                    {
-                        this.specWorld.RemoveClient(this);
-                        this.specWorld.RemoveSpectatorFromCells(this);
-                        this.specWorld = null;
-                        this.isSpectating = false;
-                        LeaveWorld();
-                    }
-                    else if (this.character != null)
+                    this.specWorld.RemoveClient(this);
+                    this.specWorld.RemoveSpectatorFromCells(this);
+                    this.specWorld = null;
+                    this.isSpectating = false;
+                    LeaveWorld();
+                }
+                else if (this.character != null)
+                {
+                    if (this.character.IsSpawned && !this.loading)
                     {
                         this.character.Cell.RemoveClient(this);
                         this.character.World.RemoveClient(this);
-                        this.character.client = null;
-                        LeaveWorld();
                     }
-                    npc.client = this;
+                    this.character.client = null;
+                    LeaveWorld();
                 }
             }
+
             this.character = npc;
+            npc.client = this;
         }
 
         #endregion

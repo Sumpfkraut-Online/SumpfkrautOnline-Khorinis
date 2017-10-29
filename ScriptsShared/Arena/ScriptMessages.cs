@@ -26,6 +26,7 @@ namespace GUC.Scripts.Arena
 
         TOJoinTeam,
         TOSelectClass,
+        SpectateTeam,
 
         TOTeamCount,
 

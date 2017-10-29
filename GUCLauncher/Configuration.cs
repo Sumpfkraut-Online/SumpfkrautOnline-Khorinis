@@ -124,7 +124,7 @@ namespace GUCLauncher
                 {
                     if (path != null)
                     {
-                        MessageBox.Show("Could not find Gothic2.exe, browse pls", "broooowse", MessageBoxButton.OK);
+                        MessageBox.Show("Gothic 2 konnte nicht gefunden werden. Bitte wähle dein Gothic 2 DNDR - Verzeichnis aus.", "Gothic 2 Ordner suchen", MessageBoxButton.OK);
                     }
 
                     if (dlg == null)

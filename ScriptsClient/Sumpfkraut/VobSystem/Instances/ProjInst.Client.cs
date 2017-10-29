@@ -12,13 +12,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ProjInst
     {
-        static readonly SoundInstance sfx_shoot = new SoundInstance("BOWSHOOT");
-        static readonly SoundInstance sfx_wo_wo = new SoundInstance("CS_IHL_WO_WO");
-        static readonly SoundInstance sfx_wo_me = new SoundInstance("CS_IHL_WO_ME");
-        static readonly SoundInstance sfx_wo_st = new SoundInstance("CS_IHL_WO_ST");
-        static readonly SoundInstance sfx_wo_wa = new SoundInstance("CS_IHL_WO_WA");
-        static readonly SoundInstance sfx_wo_ea = new SoundInstance("CS_IHL_WO_EA");
-        static readonly SoundInstance sfx_wo_sa = new SoundInstance("CS_IHL_WO_SA");
+        static readonly SoundDefinition sfx_shoot = new SoundDefinition("BOWSHOOT");
+        static readonly SoundDefinition sfx_wo_wo = new SoundDefinition("CS_IHL_WO_WO");
+        static readonly SoundDefinition sfx_wo_me = new SoundDefinition("CS_IHL_WO_ME");
+        static readonly SoundDefinition sfx_wo_st = new SoundDefinition("CS_IHL_WO_ST");
+        static readonly SoundDefinition sfx_wo_wa = new SoundDefinition("CS_IHL_WO_WA");
+        static readonly SoundDefinition sfx_wo_ea = new SoundDefinition("CS_IHL_WO_EA");
+        static readonly SoundDefinition sfx_wo_sa = new SoundDefinition("CS_IHL_WO_SA");
 
         partial void pSpawn(WorldInst world, Vec3f pos, Vec3f dir)
         {
@@ -47,14 +47,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             using (zVec3 start = zVec3.Create(startPos.X, startPos.Y, startPos.Z))
             using (zVec3 end = zVec3.Create(endPos.X, endPos.Y, endPos.Z))
             {
-                var gWorld = oCGame.GetWorld();
+                var gWorld = GothicGlobals.Game.GetWorld();
 
                 zCWorld.zTraceRay parm = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Test_Water | zCWorld.zTraceRay.Return_POLY | zCWorld.zTraceRay.Ignore_NPC | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision;
                 if (gWorld.TraceRayNearestHit(start, end, parm) != 0 && gWorld.Raytrace_FoundHit != 0 && currentPos.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection) < 80)
                 {
                     var poly = gWorld.Raytrace_FoundPoly;
 
-                    SoundInstance sfx;
+                    SoundDefinition sfx;
                     if (poly.Address == 0)
                     {
                         sfx = sfx_wo_wo; // wood

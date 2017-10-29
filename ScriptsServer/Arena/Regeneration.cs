@@ -35,7 +35,7 @@ namespace GUC.Scripts.Arena
             if (diff <= 0 || npc.IsDead || (GameTime.Ticks - npc.LastHitMove) < RegenerationOffset)
                 return;
 
-            int add = npc.TeamPlayer ? 2 : 8;
+            int add = npc.TeamID == -1 ? 8 : 2;
             if (add > diff)
                 add = diff;
 

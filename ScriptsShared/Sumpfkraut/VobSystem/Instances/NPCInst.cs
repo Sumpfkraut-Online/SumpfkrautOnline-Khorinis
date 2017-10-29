@@ -11,6 +11,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using GUC.WorldObjects.ItemContainers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -339,11 +340,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 CustomName = stream.ReadString();
             }
 
-            this.TeamPlayer = stream.ReadBit();
+            this.TeamID = stream.ReadSByte();
         }
 
         // ARENA
-        public bool TeamPlayer;
+        public int TeamID = -1;
 
         public override void OnWriteProperties(PacketWriter stream)
         {
@@ -364,7 +365,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write(false);
             }
 
-            stream.Write(TeamPlayer);
+            stream.Write((sbyte)TeamID);
         }
 
         #region FightMode
@@ -383,6 +384,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             pDespawn();
             base.Despawn();
+        }
+
+        partial void pBeforeSpawn();
+        partial void pAfterSpawn();
+        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        {
+            pBeforeSpawn();
+            base.Spawn(world, pos, dir);
+            pAfterSpawn();
         }
     }
 }

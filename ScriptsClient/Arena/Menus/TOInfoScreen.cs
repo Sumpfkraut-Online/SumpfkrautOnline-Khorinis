@@ -28,26 +28,39 @@ namespace GUC.Scripts.Arena.Menus
             toTime.Format = GUCVisualText.TextFormat.Right;
         }
 
-        public static void Show()
+        static bool shown = false;
+        public static bool Shown
         {
-            if (TeamMode.ActiveTODef == null)
-                return;
+            get { return shown; }
+            set
+            {
+                if (shown == value)
+                    return;
 
-            //toName.Text = TeamMode.ActiveTODef.Name;
-            vis.Show();
-
-            GUCScripts.OnUpdate += Update;
-        }
-
-        public static void Hide()
-        {
-            vis.Hide();
-
-            GUCScripts.OnUpdate -= Update;
+                shown = value;
+                if (shown)
+                {
+                    GUCScripts.OnUpdate += Update;
+                }
+                else
+                {
+                    GUCScripts.OnUpdate -= Update;
+                    vis.Hide();
+                }
+            }
         }
 
         static void Update(long now)
         {
+            if (TeamMode.ActiveTODef == null)
+            {
+                vis.Hide();
+                return;
+            }
+
+            if (!vis.Shown)
+                vis.Show();
+
             long timeLeft = TeamMode.PhaseEndTime - now;
             if (timeLeft < 0) timeLeft = 0;
             long mins = timeLeft / TimeSpan.TicksPerMinute;

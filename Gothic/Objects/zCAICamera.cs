@@ -30,5 +30,17 @@ namespace Gothic.Objects
         {
             get { return new zString(Address + 0x26C); }
         }
+
+        public float BestRotX
+        {
+            get { return Process.ReadFloat(Address + 0x38); }
+            set { Process.Write(Address + 0x38, value); }
+        }
+
+        public float BestRotY
+        {
+            get { return Process.ReadFloat(Address + 0x44); }
+            set { Process.Write(Address + 0x44, value); }
+        }
     }
 }

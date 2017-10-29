@@ -61,9 +61,6 @@
     <Compile Include="Arena\TeamObjective\TODef.cs" />
     <Compile Include="Arena\TeamObjective\TOTeamDef.cs" />
     <Compile Include="GUCScripts.cs" />
-    <Compile Include="Left4Gothic\CharacterInfo.cs" />
-    <Compile Include="Left4Gothic\L4Client.cs" />
-    <Compile Include="Left4Gothic\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\CommandType.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs" />

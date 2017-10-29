@@ -7,15 +7,9 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
     public partial class WorldInst
     {
-        public static WorldInst Current;
+        public static readonly List<WorldInst> List = new List<WorldInst>();
 
         public WorldInst(WorldDef def) : this()
-        {
-            this.definition = def;
-        }
-
-        public WorldInst(WorldDef def, string objName)
-           : this(objName)
         {
             this.definition = def;
         }

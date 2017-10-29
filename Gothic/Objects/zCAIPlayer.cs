@@ -204,15 +204,34 @@ namespace Gothic.Objects
             set { Process.Write(Address + 0x54, value); }
         }
 
-        public int Bitfield0
+        [Flags]
+        public enum Flags
         {
-            get { return Process.ReadInt(Address + VarOffsets.bitfield); }
-            set { Process.Write(Address + VarOffsets.bitfield, value); }
+            DetectWalkChasm = 1 << 2,
+            WallSliding = 1 << 3,
+            CorrectHeight = 1 << 4,
+            CDStatOriginal = 1 << 5,
+            CDStatCurrent = 1 << 6,
+            LandDust = 1 << 7,
+            ForceModelHalt = 1 << 8,
+        }
+
+        public Flags Bitfield0
+        {
+            get { return (Flags)Process.ReadInt(Address + VarOffsets.bitfield); }
+            set { Process.Write(Address + VarOffsets.bitfield, (int)value); }
         }
 
         public override void Dispose()
         {
             Process.THISCALL<NullReturnCall>(Address, 0x50C740, new BoolArg(true));
+        }
+
+
+
+        public void CalcForceModelHalt()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x50E390);
         }
     }
 }

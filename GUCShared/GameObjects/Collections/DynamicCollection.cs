@@ -72,7 +72,7 @@ namespace GUC.GameObjects.Collections
             //    throw new ArgumentNullException("Object is null!");
 
             if (id < 0 || id >= arr.Length)
-                throw new ArgumentOutOfRangeException("Object id is out of range!");
+                throw new ArgumentOutOfRangeException("Object id is out of range! " + id);
 
             //if (arr[id] != obj)
             //    throw new ArgumentException("Object is not in this collection!");

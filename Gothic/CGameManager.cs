@@ -25,7 +25,9 @@ namespace Gothic
             public const int ExitGame = 0x00425780,
             Done = 0x004254E0,
             ApplySomeSettings = 0x4276B0,
-            PlayVideo = 0x0042B940;
+            PlayVideo = 0x0042B940,
+            InitScreen_Close = 0x426330,
+            GameSessionDone = 0x426F70;
         }
 
         /*public enum HookSize : uint
@@ -67,6 +69,11 @@ namespace Gothic
         public static void ApplySomeSettings()
         {
             Process.THISCALL<NullReturnCall>(Process.ReadInt(gameMan), FuncAddresses.ApplySomeSettings);
+        }
+
+        public static void InitScreen_Close()
+        {
+            Process.THISCALL<NullReturnCall>(Process.ReadInt(gameMan), FuncAddresses.InitScreen_Close);
         }
     }
 }

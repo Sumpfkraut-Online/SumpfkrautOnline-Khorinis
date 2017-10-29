@@ -15,26 +15,39 @@ namespace GUC.Scripts.Arena.Menus
     {
         public readonly static TOTeamsMenu Menu = new TOTeamsMenu();
 
+        GUCVisualText tdmName;
+
         protected override void OnCreate()
         {
-            Back.CreateTextCenterX("Team auswählen", 50);
+            tdmName = Back.CreateTextCenterX("", 20);
+            Back.CreateTextCenterX("Team auswählen", 100);
 
-            const int offset = 100;
-            const int distance = 50;
-            const int backButtonOffset = 350;
+            const int offset = 150;
+            const int distance = 40;
+            const int backButtonOffset = 400;
 
             int y, i = 0;
-            while ((y = offset + i * distance) < backButtonOffset - distance)
+            while ((y = offset + i * distance) < 340 - distance)
             {
                 int index = i;
                 AddButton("TEAM", "", y, () => SelectTeam(index));
                 i++;
             }
+
+            AddButton("Zuschauen", "TeamObjective zuschauen.", 340, Spectate);
             AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, MainMenu.Menu.Open);
             OnEscape = MainMenu.Menu.Open;
 
             arrow = new GUCVisual(0, 0, 20, 20);
             arrow.SetBackTexture("R.tga");
+        }
+
+        void Spectate()
+        {
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.SpectateTeam);
+            ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
+            Close();
         }
 
         public override void Open()
@@ -45,6 +58,8 @@ namespace GUC.Scripts.Arena.Menus
             base.Open();
 
             SetTexts();
+
+            tdmName.Text = TeamMode.ActiveTODef.Name.ToUpper();
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOTeamCount);
@@ -122,7 +137,7 @@ namespace GUC.Scripts.Arena.Menus
             int index = 0;
             foreach (var team in TeamMode.ActiveTODef.Teams)
             {
-                if (index >= items.Count - 1)
+                if (index >= items.Count - 2)
                 {
                     Logger.LogWarning("Too many teams to show in the menu!");
                     break;
@@ -139,7 +154,7 @@ namespace GUC.Scripts.Arena.Menus
                 index++;
             }
 
-            for (; index < items.Count - 1; index++)
+            for (; index < items.Count - 2; index++)
             {
                 items[index].Enabled = false;
                 items[index].Hide();

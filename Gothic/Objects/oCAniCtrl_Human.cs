@@ -140,6 +140,28 @@ namespace Gothic.Objects
             set { Process.Write(Address + VarOffsets.Bitfield, value); }
         }
 
+        public float LookTargetX
+        {
+            get { return Process.ReadFloat(Address + 0x17C); }
+            set { Process.Write(Address + 0x17C, value); }
+        }
+
+        public float LookTargetY
+        {
+            get { return Process.ReadFloat(Address + 0x180); }
+            set { Process.Write(Address + 0x180, value); }
+        }
+
+        public void LookAtTarget()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6B62F0);
+        }
+
+        public void SetLookAtTarget(float x, float y)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6B6310, (FloatArg)x, (FloatArg)y);
+        }
+
         public int RemoveWeapon2()
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.RemoveWeapon2);
@@ -253,6 +275,11 @@ namespace Gothic.Objects
         public void StartFallDownAni()
         {
             Process.THISCALL<NullReturnCall>(Address, 0x6B5220);
+        }
+
+        public void StopLookAtTarget()
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x6B6640);
         }
 
         public void StartStandAni()

@@ -68,13 +68,10 @@ namespace GUC.Models
 
             public static void ReadAniStop(PacketReader stream, bool fadeOut)
             {
-                Vob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out Vob vob))
                 {
                     Model model = vob.Model;
-
-                    AniJob job;
-                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
+                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
                     {
                         ActiveAni aa = model.GetActiveAniFromAniJob(job);
                         if (aa != null)

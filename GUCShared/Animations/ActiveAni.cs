@@ -131,12 +131,6 @@ namespace GUC.Animations
 
         internal void OnTick(long now)
         {
-            if (this.AniJob.Layer == 1 && this.Model.Vob.GetEnvironment().InAir)
-            {
-                this.Model.EndAni(this.ani);
-                this.Stop();
-            }
-
             if (!this.IsIdleAni)
             {
                 if (now < endTime) // still playing

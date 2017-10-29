@@ -21,7 +21,9 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
-            { VirtualKeys.P, PrintSpectatorPosition}
+            { VirtualKeys.P, PrintSpectatorPosition},
+            { VirtualKeys.F3, ToggleG1Camera },
+            { VirtualKeys.F5, ToggleScreenInfo },
         };
 
         static void PrintSpectatorPosition(bool down)
@@ -29,7 +31,7 @@ namespace GUC.Scripts.Arena.Controls
             if (!down || !ArenaClient.Client.IsSpecating)
                 return;
 
-            var vob = Gothic.oCGame.GetCameraVob();
+            var vob = GothicGlobals.Game.GetCameraVob();
             var pos = (Vec3f)vob.Position;
             var dir = (Vec3f)vob.Direction;
 
@@ -43,12 +45,12 @@ namespace GUC.Scripts.Arena.Controls
             if (InputHandler.MouseDistY != 0)
             {
                 float angle = InputHandler.MouseDistY * 0.2f;
-                Gothic.oCGame.GetCameraVob().RotateLocalX(angle > 20 ? 20 : angle);
+                GothicGlobals.Game.GetCameraVob().RotateLocalX(angle > 20 ? 20 : angle);
             }
             if (InputHandler.MouseDistX != 0)
             {
                 float angle = InputHandler.MouseDistX * 0.2f;
-                Gothic.oCGame.GetCameraVob().RotateWorldY(angle > 20 ? 20 : angle);
+                GothicGlobals.Game.GetCameraVob().RotateWorldY(angle > 20 ? 20 : angle);
             }
 
             long diff = GameTime.Ticks - lastUpdate;
@@ -59,27 +61,27 @@ namespace GUC.Scripts.Arena.Controls
             float speed = (float)diff / 18000.0f * speedMultiplier;
             if (InputHandler.IsPressed(VirtualKeys.Up) || InputHandler.IsPressed(VirtualKeys.W))
             {
-                var cam = Gothic.oCGame.GetCameraVob();
+                var cam = GothicGlobals.Game.GetCameraVob();
                 var dir = new Vec3f(cam.Direction) * speed;
                 cam.MoveWorld(dir.X, dir.Y, dir.Z);
             }
             else if (InputHandler.IsPressed(VirtualKeys.Down) || InputHandler.IsPressed(VirtualKeys.S))
             {
-                var cam = Gothic.oCGame.GetCameraVob();
+                var cam = GothicGlobals.Game.GetCameraVob();
                 var dir = new Vec3f(cam.Direction) * -speed;
                 cam.MoveWorld(dir.X, dir.Y, dir.Z);
             }
 
             if (InputHandler.IsPressed(VirtualKeys.A))
             {
-                var cam = Gothic.oCGame.GetCameraVob();
+                var cam = GothicGlobals.Game.GetCameraVob();
                 var dir = new Vec3f(cam.Direction).Cross(new Vec3f(0, 1, 0));
                 dir *= speed;
                 cam.MoveWorld(dir.X, dir.Y, dir.Z);
             }
             else if (InputHandler.IsPressed(VirtualKeys.D))
             {
-                var cam = Gothic.oCGame.GetCameraVob();
+                var cam = GothicGlobals.Game.GetCameraVob();
                 var dir = new Vec3f(cam.Direction).Cross(new Vec3f(0, 1, 0));
                 dir *= -speed;
                 cam.MoveWorld(dir.X, dir.Y, dir.Z);
@@ -87,14 +89,14 @@ namespace GUC.Scripts.Arena.Controls
 
             if (InputHandler.IsPressed(VirtualKeys.Space))
             {
-                var cam = Gothic.oCGame.GetCameraVob();
+                var cam = GothicGlobals.Game.GetCameraVob();
                 var dir = new Vec3f(0, 1, 0);
                 dir *= speed;
                 cam.MoveWorld(dir.X, dir.Y, dir.Z);
             }
             else if (InputHandler.IsPressed(VirtualKeys.Control))
             {
-                var cam = Gothic.oCGame.GetCameraVob();
+                var cam = GothicGlobals.Game.GetCameraVob();
                 var dir = new Vec3f(0, 1, 0);
                 dir *= -speed;
                 cam.MoveWorld(dir.X, dir.Y, dir.Z);

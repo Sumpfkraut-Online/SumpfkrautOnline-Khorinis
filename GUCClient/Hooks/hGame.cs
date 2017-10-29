@@ -13,6 +13,7 @@ using Gothic.Sound;
 using System.Threading;
 using GUC.GUI;
 using GUC.WorldObjects;
+using Gothic;
 
 namespace GUC.Hooks
 {
@@ -23,6 +24,10 @@ namespace GUC.Hooks
         {
             if (inited) return;
             inited = true;
+            
+            // should never be called anyway, but just to be sure
+            Process.AddHook((k,m) => GothicGlobals.UpdateGameAddress(), 0x426F5E, 0xB); // GameSessionInit
+            Process.AddHook((k, m) => GothicGlobals.UpdateGameAddress(), 0x0042705B, 0xB); // GameSessionDone
 
             // hook outgame loop and kick out the original menus
             var h = Process.AddHook(RunOutgame, 0x004292D0, 7);

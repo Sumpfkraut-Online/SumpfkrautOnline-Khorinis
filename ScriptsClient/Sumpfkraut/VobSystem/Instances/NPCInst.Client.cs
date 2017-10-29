@@ -32,9 +32,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             BaseInst.SetMovement(state);
         }
 
-        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        partial void pAfterSpawn()
         {
-            base.Spawn(world, pos, dir);
             if (UseCustoms)
             {
                 using (var vec = Gothic.Types.zVec3.Create(CustomScale.X, 1, CustomScale.Z))
@@ -50,6 +49,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (this.HP <= 0)
                 this.BaseInst.gVob.Name.Clear();
+            else
+            {
+                // because monsters were looking at some weird angle
+                this.BaseInst.gAI.SetLookAtTarget(1.0f, 1.0f); // need to change the value or it's not updated
+                this.BaseInst.gAI.LookAtTarget(); // update
+                this.BaseInst.gAI.StopLookAtTarget(); // change back to default
+            }
         }
 
         #region Equipment
@@ -172,16 +178,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        static readonly List<SoundInstance> hitSounds = new List<SoundInstance>()
+        static readonly List<SoundDefinition> hitSounds = new List<SoundDefinition>()
         {
-            new SoundInstance("CS_IAM_ME_FL"),
-            new SoundInstance("CS_IAM_ME_FL_A1"),
-            new SoundInstance("CS_IAM_ME_FL_A2"),
-            new SoundInstance("CS_IAM_ME_FL_A3"),
-            new SoundInstance("CS_IAM_ME_FL_A4")
+            new SoundDefinition("CS_IAM_ME_FL"),
+            new SoundDefinition("CS_IAM_ME_FL_A1"),
+            new SoundDefinition("CS_IAM_ME_FL_A2"),
+            new SoundDefinition("CS_IAM_ME_FL_A3"),
+            new SoundDefinition("CS_IAM_ME_FL_A4")
         };
 
-        static readonly Dictionary<string, SoundInstance> hitScreams = new Dictionary<string, SoundInstance>();
+        static readonly Dictionary<string, SoundDefinition> hitScreams = new Dictionary<string, SoundDefinition>();
 
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
@@ -200,9 +206,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         if (index > 0)
                         {
                             string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
-                            if (!hitScreams.TryGetValue(str, out SoundInstance scream))
+                            if (!hitScreams.TryGetValue(str, out SoundDefinition scream))
                             {
-                                scream = new SoundInstance(str);
+                                scream = new SoundDefinition(str);
                                 hitScreams.Add(str, scream);
                             }
                             SoundHandler.PlaySound3D(scream, target);
@@ -418,17 +424,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.StartAnimation(ani);*/
         }
 
-        static SoundInstance sfx_DrawGeneric = new SoundInstance("wurschtel.wav");
+        static SoundDefinition sfx_DrawGeneric = new SoundDefinition("wurschtel.wav");
 
-        static SoundInstance sfx_DrawMetal = new SoundInstance("Drawsound_ME.wav");
-        static SoundInstance sfx_DrawWood = new SoundInstance("Drawsound_WO.wav");
+        static SoundDefinition sfx_DrawMetal = new SoundDefinition("Drawsound_ME.wav");
+        static SoundDefinition sfx_DrawWood = new SoundDefinition("Drawsound_WO.wav");
 
-        static SoundInstance sfx_UndrawMetal = new SoundInstance("Undrawsound_ME.wav");
-        static SoundInstance sfx_UndrawWood = new SoundInstance("Undrawsound_WO.wav");
+        static SoundDefinition sfx_UndrawMetal = new SoundDefinition("Undrawsound_ME.wav");
+        static SoundDefinition sfx_UndrawWood = new SoundDefinition("Undrawsound_WO.wav");
 
         void PlayDrawItemSound(ItemInst item, bool undraw)
         {
-            SoundInstance sound;
+            SoundDefinition sound;
             switch (item.Definition.Material)
             {
                 case ItemMaterials.Metal:

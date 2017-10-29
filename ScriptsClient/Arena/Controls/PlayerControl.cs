@@ -16,7 +16,7 @@ namespace GUC.Scripts.Arena.Controls
     {
         KeyDictionary playerControls = new KeyDictionary()
         {
-            { KeyBind.Jump, d => { if (d) NPCInst.Requests.Jump(ScriptClient.Client.Character); } },
+            { KeyBind.Jump, Jump },
             { KeyBind.DrawFists, d => { if (d) NPCInst.Requests.DrawFists(ScriptClient.Client.Character); } },
             { KeyBind.MoveForward, d => CheckFightMove(d, FightMoves.Fwd) },
             { KeyBind.TurnLeft, d => CheckFightMove(d, FightMoves.Left) },
@@ -31,39 +31,15 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.P, PrintPosition },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
             { VirtualKeys.F3, ToggleG1Camera },
-            { VirtualKeys.N1, d => GUC.GUI.GUCView.DebugText.Text = NPCInst.Hero.DrawnWeapon.BaseInst.gVob.BBox3D.Height + " " + NPCInst.Hero.DrawnWeapon.BaseInst.gVob.LastTimeDrawn }
+            { VirtualKeys.F5, ToggleScreenInfo },
         };
 
-        static bool g1 = false;
-        static void ToggleG1Camera(bool down)
+        static void Jump(bool d)
         {
-            if (down && zCCamera.ActiveCamera.Address != 0)
-            {
-                var screen = GUI.GUCView.GetScreenSize();
-                if (screen.X != 0 && screen.Y != 0)
-                {
-                    const float FOV = 90.0f;
-                    if (g1)
-                    {
-                        if (Gothic.System.zCParser.GetCameraParser().LoadDat("CAMERA.DAT"))
-                        {
-                            zCAICamera.CurrentCam.CreateInstance(zCAICamera.CurrentCam.CurrentMode);
-                            zCCamera.ActiveCamera.SetFOV(FOV, (float)(FOV * 0.75d));
-                            g1 = false;
-                        }
-                    }
-                    else
-                    {
-                        if (Gothic.System.zCParser.GetCameraParser().LoadDat("CAMERA.DAT.G1"))
-                        {
-                            zCAICamera.CurrentCam.CreateInstance(zCAICamera.CurrentCam.CurrentMode);
-                            double ratio = (double)screen.Y / screen.X;
-                            zCCamera.ActiveCamera.SetFOV(FOV, (float)(FOV * ratio));
-                            g1 = true;
-                        }
-                    }
-                }
-            }
+            if (!d) return;
+
+            if (!CheckWarmup())
+                NPCInst.Requests.Jump(ScriptClient.Client.Character);
         }
 
         static void PrintPosition(bool down)
@@ -123,6 +99,9 @@ namespace GUC.Scripts.Arena.Controls
             var hero = ScriptClient.Client.Character;
             if (hero.IsInFightMode)
             {
+                if (CheckWarmup())
+                    return;
+
                 NPCInst.Requests.Attack(hero, move);
             }
         }
@@ -149,17 +128,34 @@ namespace GUC.Scripts.Arena.Controls
                         enemy = null;
                     }
                     if (enemy == null)
-                        Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+                        oCNpcFocus.StopHighlightingFX();
                     else
-                        Gothic.Objects.oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
+                        oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
                 }
                 else if (down)
                 {
-                    var focusVob = hero.GetFocusVob();
-                    if (focusVob is NPCInst)
-                        DuelMode.SendRequest((NPCInst)focusVob);
+                    if (hero.TeamID == -1)
+                    {
+                        var focusVob = hero.GetFocusVob();
+                        if (focusVob is NPCInst)
+                            DuelMode.SendRequest((NPCInst)focusVob);
+                    }
                 }
             }
+        }
+
+        static LockTimer toWarmupTimer = new LockTimer(1000);
+        static bool CheckWarmup()
+        {
+            var hero = NPCInst.Hero;
+            if (hero != null && hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
+            {
+                if (toWarmupTimer.IsReady)
+                    Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
+
+                return true;
+            }
+            return false;
         }
 
         long nextDodgeTime = 0;
@@ -170,6 +166,7 @@ namespace GUC.Scripts.Arena.Controls
             upTelHelper.Update(GameTime.Ticks);
 
             NPCInst hero = ScriptClient.Client.Character;
+            var gAI = hero.BaseInst.gAI;
             if (hero.IsDead)
                 return;
 
@@ -190,11 +187,11 @@ namespace GUC.Scripts.Arena.Controls
             {
                 if (enemy != null)
                 {
-                    Gothic.Objects.oCNpcFocus.StopHighlightingFX();
+                    oCNpcFocus.StopHighlightingFX();
                     enemy = null;
                 }
 
-                hero.BaseInst.gAI.CheckFocusVob(1);
+                gAI.CheckFocusVob(1);
                 if (KeyBind.MoveForward.IsPressed()) // move forward
                 {
                     state = NPCMovement.Forward;
@@ -205,6 +202,9 @@ namespace GUC.Scripts.Arena.Controls
                     {
                         if (nextDodgeTime < GameTime.Ticks) // don't spam
                         {
+                            if (CheckWarmup())
+                                return;
+
                             NPCInst.Requests.Attack(hero, FightMoves.Dodge);
                             nextDodgeTime = GameTime.Ticks + 50 * TimeSpan.TicksPerMillisecond;
                         }
@@ -220,12 +220,49 @@ namespace GUC.Scripts.Arena.Controls
                     state = NPCMovement.Stand;
                 }
             }
+
+            if (state == NPCMovement.Forward)
+            {   // FIXME: use only a better CheckEnoughSpaceMoveForward
+                if (hero.Movement == NPCMovement.Stand && !gAI.CheckEnoughSpaceMoveForward(true))
+                {
+                    state = NPCMovement.Stand;
+                }
+                else
+                {
+                    gAI.CalcForceModelHalt();
+                    if ((gAI.Bitfield0 & zCAIPlayer.Flags.ForceModelHalt) != 0)
+                    {
+                        gAI.Bitfield0 &= ~zCAIPlayer.Flags.ForceModelHalt;
+                        state = NPCMovement.Stand;
+                    }
+                }
+            }
+            else if (state == NPCMovement.Backward)
+            {
+                if (!gAI.CheckEnoughSpaceMoveBackward(true))
+                    state = NPCMovement.Stand;
+            }
+            else if (state == NPCMovement.Left)
+            {
+                if (!gAI.CheckEnoughSpaceMoveLeft(true))
+                    state = NPCMovement.Stand;
+            }
+            else if (state == NPCMovement.Right)
+            {
+                if (!gAI.CheckEnoughSpaceMoveRight(true))
+                    state = NPCMovement.Stand;
+            }
+
+            if (state != NPCMovement.Stand && CheckWarmup())
+                state = NPCMovement.Stand;
+
             hero.SetMovement(state);
         }
 
         static NPCInst enemy;
         static void DoTurning(NPCInst hero)
         {
+            const float maxTurnFightSpeed = 0.075f;
             if (enemy != null)
             {
                 Vec3f heroPos = hero.GetPosition();
@@ -235,25 +272,42 @@ namespace GUC.Scripts.Arena.Controls
                 Vec3f dir = (new Vec3f(enemyPos.X, 0, enemyPos.Z) - new Vec3f(heroPos.X, 0, heroPos.Z)).Normalise();
                 Vec3f diff = new Vec3f(heroDir.X, 0, heroDir.Z) - dir;
                 float len = diff.GetLength();
-                const float maxSpeed = 0.075f;
-                if (len > maxSpeed)
-                    diff = new Vec3f(diff.X / len * maxSpeed, 0, diff.Z / len * maxSpeed);
+                if (len > maxTurnFightSpeed)
+                    diff = new Vec3f(diff.X / len * maxTurnFightSpeed, 0, diff.Z / len * maxTurnFightSpeed);
 
                 hero.SetDirection(heroDir - diff);
                 return;
             }
 
+            const float maxLookupSpeed = 2f;
+            float rotSpeed = 0;
+            if (InputHandler.MouseDistY != 0)
+            {
+                rotSpeed = InputHandler.MouseDistY * 0.1f;
+                if (rotSpeed > maxLookupSpeed) rotSpeed = maxLookupSpeed;
+                else if (rotSpeed < -maxLookupSpeed) rotSpeed = -maxLookupSpeed;
+                zCAICamera.CurrentCam.BestRotX += rotSpeed;
+            }
+
             // Fixme: do own turning
+            const float maxTurnSpeed = 2f;
             if (!KeyBind.Action.IsPressed())
             {
+                float turn = 0;
                 if (KeyBind.TurnLeft.IsPressed())
-                {
-                    hero.BaseInst.gVob.AniCtrl.Turn(-2f, !hero.ModelInst.IsInAnimation());
-                    return;
-                }
+                    turn = -maxTurnSpeed;
                 else if (KeyBind.TurnRight.IsPressed())
+                    turn = maxTurnSpeed;
+                else if (Math.Abs(InputHandler.MouseDistX) > ((rotSpeed > 0.5f && hero.Movement == NPCMovement.Stand) ? 18 : 2))
                 {
-                    hero.BaseInst.gVob.AniCtrl.Turn(2f, !hero.ModelInst.IsInAnimation());
+                    turn = InputHandler.MouseDistX * 0.15f;
+                    if (turn > maxTurnSpeed) turn = maxTurnSpeed;
+                    else if (turn < -maxTurnSpeed) turn = -maxTurnSpeed;
+                }
+
+                if (turn != 0)
+                {
+                    hero.BaseInst.gAI.Turn(turn, !hero.ModelInst.IsInAnimation());
                     return;
                 }
             }

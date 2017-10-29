@@ -292,6 +292,10 @@ namespace GUC.Hooks
         static void VDFS_Open(Hook hook, RegisterMemory mem)
         {
             zString path = new zString(mem[Registers.EAX]);
+            string pathStr = path.ToString();
+
+            if (pathStr.EndsWith("CAMERA.DAT")) // fuck this
+                path.Set(@"_WORK\DATA\SCRIPTS\_COMPILED\CAMERA.DAT");
 
             // check if it exists in vdfs
             int filePtr = mem[Registers.ESI];
@@ -299,7 +303,7 @@ namespace GUC.Hooks
                 return;
 
             // check if it's in the project's folder
-            string projectPath = GetProjectFilePath(path.ToString());
+            string projectPath = GetProjectFilePath(pathStr);
             if (File.Exists(projectPath))
                 path.Set(projectPath);
         }

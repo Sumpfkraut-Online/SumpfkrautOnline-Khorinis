@@ -100,8 +100,6 @@ namespace GUC.Scripts.Arena
         {
             SendGameInfo(this);
             SendPlayerInfoMessage();
-            Spectate();
-
             TeamMode.CheckStartTO();
         }
 
@@ -163,6 +161,9 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.TOTeamCount:
                     TeamMenu.Toggle(this);
                     break;
+                case ScriptMessages.SpectateTeam:
+                    Spectate(true);
+                    break;
             }
         }
 
@@ -218,23 +219,26 @@ namespace GUC.Scripts.Arena
                 npc.ModelInst.ApplyOverlay(ov);
 
             var pair = spawnPositions.GetRandom();
-            npc.Spawn(WorldInst.Current, pair.Item1, pair.Item2);
+            npc.Spawn(WorldInst.List[0], pair.Item1, pair.Item2);
             this.SetControl(npc);
         }
 
-        public void Spectate()
+        public void Spectate(bool team = false)
         {
+            if (team && (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.None))
+                return;
+
             KillCharacter();
             TeamMode.JoinTeam(this, null);
-            if (this.IsCharacter)
+            
+            if (!team)
             {
-                var npc = this.Character;
-                this.SetToSpectator(npc.World, npc.GetPosition(), npc.GetDirection());
+                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
             }
-            else if (!this.IsSpecating)
+            else
             {
-                this.SetToSpectator(WorldInst.Current, new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
-            }
+                this.SetToSpectator(TeamMode.World, TeamMode.ActiveTODef.SpecPos.Item1, TeamMode.ActiveTODef.SpecPos.Item2);
+            }  
         }
 
         public void KillCharacter()
@@ -244,9 +248,12 @@ namespace GUC.Scripts.Arena
 
             if (this.Team != null)
             {
-                this.TODeaths++;
-                this.TOScore--;
-                this.Team.Score--;
+                if (TeamMode.Phase == TOPhases.Battle)
+                {
+                    this.TODeaths++;
+                    this.TOScore--;
+                    this.Team.Score--;
+                }
             }
             else if (this.DuelEnemy != null)
             {

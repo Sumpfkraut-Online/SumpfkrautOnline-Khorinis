@@ -49,7 +49,7 @@ namespace GUC.Scripts.Arena
 
             chatInactivityTimer = new GUCTimer();
             chatInactivityTimer.SetCallback(() => { if (!textBox.Enabled) chatBackground.Hide(); chatInactivityTimer.Stop(); });
-            chatInactivityTimer.SetInterval(8 * TimeSpan.TicksPerSecond);
+            chatInactivityTimer.SetInterval(6 * TimeSpan.TicksPerSecond);
         }
 
         public void ToggleBackground()

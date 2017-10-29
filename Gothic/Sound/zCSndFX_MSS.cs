@@ -19,7 +19,7 @@ namespace Gothic.Sound
         {
         }
 
-        public bool isFixed
+        public bool IsFixed
         {
             get { return Process.ReadBool(Address + 104); }
             set { Process.Write(Address + 104, value); }
@@ -29,6 +29,11 @@ namespace Gothic.Sound
         {
             get { return Process.ReadFloat(Address + 84); }
             set { Process.Write(Address + 84, value); }
+        }
+
+        public void SetLooping(bool loop)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x4F6610, (BoolArg)loop);
         }
     }
 }

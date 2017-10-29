@@ -77,7 +77,7 @@ namespace GUC.Scripts.Arena
             bodywidth = AddChoice("Breite", "Wähle die Körperbreite deines Charakters.", offsetX, offsetY + dist * 6, c_BodyWidth, false, MoveCursor, ChangedVisual);
             voice = AddChoice("Stimme", "Wähle die Stimme deines Charakters.", offsetX, offsetY + dist * 7, c_Voices_M, true, PlayVoice, PlayVoice);
 
-            OnEscape = Menus.ExitMenu.Menu.Open;
+            OnEscape = Menus.MainMenu.Menu.Open;
             
             ChangedVisual();
         }
@@ -95,13 +95,16 @@ namespace GUC.Scripts.Arena
             info.Voice = (HumVoices)voice.Choice;
 
             ArenaClient.SendCharEditMessage(info);
-            this.Close();
+            if (GUCScripts.Ingame)
+                Close();
+            else
+                Arena.Menus.MainMenu.Menu.Open();
         }
 
         void PlayVoice()
         {
             string soundName = String.Format("SVM_{0}_SMALLTALK{1:00}.WAV", voice.Choice, Randomizer.GetInt(1, 31));
-            SoundHandler.PlaySound(new SoundInstance(soundName), 2.0f);
+            SoundHandler.PlaySound(new SoundDefinition(soundName), 2.0f);
         }
 
         void ChangedVisual() //FIXME: Fleischzoepfe verhindern!
@@ -177,7 +180,7 @@ namespace GUC.Scripts.Arena
             { 0, "blass" },
             { 2, "latino" },
             { 3, "dunkelhäutig" },
-            { 8, "Kettenhemd" }, 
+            { 8, "graue Kleidung" }, 
             { 9, "zerfetzte Kleidung" },
             { 10, "tätowiert" } 
         };

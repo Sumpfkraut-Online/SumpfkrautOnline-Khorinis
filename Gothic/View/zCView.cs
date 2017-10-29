@@ -326,7 +326,7 @@ namespace Gothic.View
 
         public static void Printwin(zString text)
         {
-            int textViewAddr = Process.THISCALL<IntArg>(Process.ReadInt(oCGame.ogame), 0x6C2C70);
+            int textViewAddr = Process.THISCALL<IntArg>(Session.oCGame.GameAddress, 0x6C2C70);
             Process.THISCALL<NullReturnCall>(textViewAddr, 0x7AA8D0, text);
         }
 

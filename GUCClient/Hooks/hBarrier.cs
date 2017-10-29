@@ -7,7 +7,7 @@ using WinApi;
 using Gothic.Objects.Sky;
 using Gothic.System;
 using Gothic.Objects;
-using Gothic;
+using Gothic.Session;
 
 namespace GUC.Hooks
 {
@@ -100,7 +100,7 @@ namespace GUC.Hooks
                 barrierAlpha = value;
                 if (inited)
                 {
-                    oCGame.GetWorld().SkyControlerOutdoor.Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
+                    GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier.FrontierMesh.GetSomethingMaterial().Color.A = value;
                 }
 
                 if (!hooked)
@@ -109,7 +109,7 @@ namespace GUC.Hooks
         }
 
         public static bool PlaySound = true;
-        static readonly SoundInstance sound = new SoundInstance("MFX_BARRIERE_AMBIENT.WAV");
+        static readonly SoundDefinition sound = new SoundDefinition("MFX_BARRIERE_AMBIENT.WAV");
         static long nextSoundTime = 0;
 
         static readonly int ptrArg = Process.Alloc(4).ToInt32();
@@ -120,7 +120,7 @@ namespace GUC.Hooks
                 if (!inited)
                     Init();
 
-                var barrier = oCGame.GetWorld().SkyControlerOutdoor.Barrier;
+                var barrier = GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier;
 
                 if (barrierAlpha > 0)
                 {

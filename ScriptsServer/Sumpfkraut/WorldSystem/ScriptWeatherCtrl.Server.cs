@@ -19,7 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         
         void OnRainChange()
         {
-            if (Randomizer.GetInt(0, 3) == 0)
+            if (Randomizer.GetInt(0, 5) == 0)
             {
                 SetNextWeight(this.World.Clock.Time + Randomizer.GetInt(60, 360), (float)Randomizer.GetDouble()); // rain
             }

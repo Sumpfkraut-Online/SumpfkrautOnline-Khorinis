@@ -120,6 +120,11 @@ namespace WinApi
             return ptr;
         }
 
+        public static bool Free(int ptr, uint size)
+        {
+            return Free(new IntPtr(ptr), size);
+        }
+
         public static bool Free(IntPtr ptr, uint size)
         {
             if (ptr == IntPtr.Zero || size == 0)
