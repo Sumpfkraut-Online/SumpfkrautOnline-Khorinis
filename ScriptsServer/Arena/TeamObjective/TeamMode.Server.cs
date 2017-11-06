@@ -85,6 +85,7 @@ namespace GUC.Scripts.Arena
             npc.TeamID = teams.IndexOf(player.Team);
 
             var spawnPoint = player.Team.GetSpawnPoint();
+            npc.SetHealth(100, 100);
             npc.Spawn(world, spawnPoint.Item1, spawnPoint.Item2);
             player.SetControl(npc);
         }
@@ -336,16 +337,24 @@ namespace GUC.Scripts.Arena
             if (Phase != TOPhases.Battle)
                 return;
 
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.PointsMessage);
-            attacker.SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
-
-            attacker.TOScore++;
-            attacker.TOKills++;
             target.TODeaths++;
-            attacker.Team.Score++;
-            if (attacker.Team.Score >= activeTODef.ScoreToWin)
-                PhaseFinish();
+            if (attacker.Team == target.Team)
+            {
+                attacker.TOScore--;
+                attacker.Team.Score--;
+                attacker.SendPointsMessage(-1);
+            }
+            else
+            {
+                attacker.TOScore++;
+                attacker.TOKills++;
+                attacker.Team.Score++;
+                attacker.SendPointsMessage(+1);
+                if (attacker.Team.Score >= activeTODef.ScoreToWin)
+                    PhaseFinish();
+
+            }
+
         }
     }
 }

@@ -1,25 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
+using System.IO;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.IO;
-using System.Net.Sockets;
-using System.ComponentModel;
-using System.Threading;
-using System.Net.NetworkInformation;
-using System.Security.Cryptography;
 using System.Windows.Threading;
-using System.Diagnostics;
 
 namespace GUCLauncher
 {
@@ -28,15 +21,37 @@ namespace GUCLauncher
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Window handle stuff
+
+        static MainWindow self;
+        public static MainWindow Self { get { return self; } }
+
+        public System.Windows.Forms.IWin32Window GetIWin32Window()
+        {
+            return new OldWindow(this);
+        }
+
+        class OldWindow : System.Windows.Forms.IWin32Window
+        {
+            IntPtr handle;
+            IntPtr System.Windows.Forms.IWin32Window.Handle { get { return handle; } }
+
+            public OldWindow(Visual vis)
+            {
+                this.handle = ((System.Windows.Interop.HwndSource)PresentationSource.FromVisual(vis)).Handle;
+            }
+        }
+
+        #endregion
+
+        #region  Initialization
+
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
-
-                Configuration.Init(lvServerList.Items);
-                if (Configuration.ActiveProject != null)
-                    TryOpenProjectPage(Configuration.ActiveProject, Configuration.ActiveProject.Password);
+                self = this;
             }
             catch (Exception e)
             {
@@ -44,6 +59,26 @@ namespace GUCLauncher
                 Application.Current.Shutdown();
             }
         }
+
+        void Window_ContentRendered(object sender, EventArgs args)
+        {
+            try
+            {
+                Configuration.Init(lvServerList.Items);
+                overshadow.Visibility = Visibility.Hidden;
+                Dispatcher.Invoke(() => { }, DispatcherPriority.Render);
+
+                if (Configuration.ActiveProject != null)
+                    TryOpenProjectPage(Configuration.ActiveProject, Configuration.ActiveProject.Password, true);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(string.Format("{0}: {1}\r\n{2}", e.Source, e.Message, e.StackTrace), e.GetType().ToString(), MessageBoxButton.OK);
+                Application.Current.Shutdown();
+            }
+        }
+
+        #endregion
 
         string ShowInputBox(string title, string input = "")
         {
@@ -179,9 +214,6 @@ namespace GUCLauncher
 
         void ShowPasswordPage(ServerListItem item, bool wrongPW = false)
         {
-            if (!this.IsLoaded)
-                return;
-
             var pw = ShowInputBox("Passwort benötigt!");
             if (pw == null)
                 return;
@@ -200,29 +232,33 @@ namespace GUCLauncher
         #region Project page
 
         string dlLink = null;
-        void TryOpenProjectPage(ServerListItem item, byte[] password)
+        void TryOpenProjectPage(ServerListItem item, byte[] password, bool initload = false)
         {
             if (item.HasPW && password == null)
             {
+                if (initload)
+                    return;
+
                 ShowPasswordPage(item);
                 return;
             }
 
             TcpClient client = new TcpClient();
-            if (client.ConnectAsync(item.IP, item.Port).Wait(1000))
+            int waitTime = initload ? 400 : 1000;
+            if (client.ConnectAsync(item.IP, item.Port).Wait(waitTime))
             {
                 var stream = client.GetStream();
                 byte[] buf = new byte[byte.MaxValue];
                 buf[0] = 1;
 
-                if (password != null)
+                if (item.HasPW && password != null)
                 {
                     Array.Copy(password, 0, buf, 1, 16);
                 }
 
-                if (stream.WriteAsync(buf, 0, 17).Wait(1000))
+                if (stream.WriteAsync(buf, 0, 17).Wait(waitTime))
                 {
-                    if (stream.ReadAsync(buf, 0, 1).Wait(1000))
+                    if (stream.ReadAsync(buf, 0, 1).Wait(waitTime))
                     {
                         if (buf[0] == 0)
                         {
@@ -231,14 +267,14 @@ namespace GUCLauncher
                             ShowPasswordPage(item, true);
                             return;
                         }
-                        else if (stream.ReadAsync(buf, 0, 1).Wait(1000))
+                        else if (stream.ReadAsync(buf, 0, 1).Wait(waitTime))
                         {
                             // correct password!
                             item.Password = password;
                             Configuration.Save();
 
                             int byteLen = buf[0];
-                            if (stream.ReadAsync(buf, 0, byteLen).Wait(1000))
+                            if (stream.ReadAsync(buf, 0, byteLen).Wait(waitTime))
                             {
                                 dlLink = Encoding.UTF8.GetString(buf, 0, byteLen);
                                 client.Close();
@@ -249,10 +285,11 @@ namespace GUCLauncher
                     }
                 }
             }
-            //Could not connect
-            if (this.IsLoaded)
-                ShowInfoBox("Verbindung konnte nicht hergestellt werden.");
             client.Close();
+
+            //Could not connect
+            if (!initload)
+                ShowInfoBox("Verbindung konnte nicht hergestellt werden.");
         }
 
         void ShowProjectPage(ServerListItem item)
@@ -370,14 +407,14 @@ namespace GUCLauncher
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        lUpdate.Content = "Server disabled automatic updates.";
+                        lUpdate.Content = "Der Server hat automatische Updates deaktiviert.";
                         SetStartButton(StartButtonSetting.Start);
                         progressBar.Value = 100;
                     });
                     return;
                 }
 
-                Dispatcher.Invoke(() => lUpdate.Content = "Connecting to update server...");
+                Dispatcher.Invoke(() => lUpdate.Content = "Verbinde zum Update-Host...");
                 // load the information file
                 float percent = 0;
                 using (var response = Download.GetResponse(dlLink, value =>
@@ -389,7 +426,7 @@ namespace GUCLauncher
                     Stream stream;
                     if (response != null && (stream = response.GetResponseStream()) != null)
                     {
-                        Dispatcher.Invoke(() => lUpdate.Content = "Loading update infos...");
+                        Dispatcher.Invoke(() => lUpdate.Content = "Lade Update-Infos...");
                         current = new InfoPack();
                         current.Read(stream, Configuration.ActiveProject.GetFolder(), UpdateUI,
                         value =>
@@ -406,12 +443,12 @@ namespace GUCLauncher
                             if (current.NeedsUpdate())
                             {
                                 SetStartButton(StartButtonSetting.Update);
-                                lUpdate.Content = "Update needed.";
+                                lUpdate.Content = "Update benötigt.";
                             }
                             else
                             {
                                 SetStartButton(StartButtonSetting.Start);
-                                lUpdate.Content = "Finished.";
+                                lUpdate.Content = "Fertig.";
                             }
                         });
                     }
@@ -419,7 +456,7 @@ namespace GUCLauncher
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            lUpdate.Content = "Could not connect to update server.";
+                            lUpdate.Content = "Update-Host konnte nicht erreicht werden.";
                             progressBar.Value = 100;
                         });
                     }
@@ -476,7 +513,7 @@ namespace GUCLauncher
         {
             SetStartButton(StartButtonSetting.Disabled);
             progressBar.Value = 0;
-            lUpdate.Content = "Preparing update...";
+            lUpdate.Content = "Update vorbereiten...";
 
             updateThread = new Thread(() =>
             {

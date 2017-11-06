@@ -9,7 +9,7 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
-        public static bool DetectSchinken = false;
+        public static bool DetectSchinken = true;
 
         new public static ArenaClient Client { get { return (ArenaClient)ScriptClient.Client; } }
 
@@ -105,7 +105,8 @@ namespace GUC.Scripts.Arena
                     Menus.TOTeamsMenu.Menu.ReadCountMessage(stream);
                     break;
                 case ScriptMessages.PointsMessage:
-                    Sumpfkraut.Menus.ScreenScrollText.AddText("Punkte +1");
+                    int points = stream.ReadSByte();
+                    Sumpfkraut.Menus.ScreenScrollText.AddText((points > 0 ? "Punkte +" : "Punkte ") + points);
                     break;
             }
         }

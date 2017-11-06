@@ -50,7 +50,7 @@ namespace GUC.WorldObjects.WorldGlobals
                     }
                     else
                     {
-                        throw new Exception("Wtf");
+                        return; 
                     }
                 }
 

@@ -85,7 +85,7 @@ namespace GUC.Scripts.Arena
                 var to = new TODef();
                 to.name = "tdm_burg";
                 to.worldPath = "G1-OLDCAMP.ZEN";
-                to.duration = 1; // 5 min
+                to.duration = 8; // 5 min
                 to.scoreToWin = 100;
                 to.maxDepth = -400;
                 to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(-2442.949f, 676.9498f, 412.3001f), new Vec3f(0.8977975f, -0.2387571f, -0.3700744f));
@@ -146,7 +146,7 @@ namespace GUC.Scripts.Arena
                 to = new TODef();
                 to.name = "tdm_mine";
                 to.worldPath = "G1-OLDMINE.ZEN";
-                to.duration = 1; // 5 min
+                to.duration = 8; // 5 min
                 to.scoreToWin = 100;
                 to.maxHeight = -6800;
                 to.maxWorldDistance = 8635;
@@ -203,7 +203,7 @@ namespace GUC.Scripts.Arena
                 to = new TODef();
                 to.name = "tdm_pass";
                 to.worldPath = "G2-PASS.ZEN";
-                to.duration = 1; // 5 min
+                to.duration = 8; // 5 min
                 to.scoreToWin = 100;
                 to.maxWorldDistance = 10650;
                 to.maxHeight = 950;
@@ -263,7 +263,7 @@ namespace GUC.Scripts.Arena
                 to = new TODef();
                 to.name = "tdm_temple";
                 to.worldPath = "ADDON-TEMPLE.ZEN";
-                to.duration = 1; // 5 min
+                to.duration = 8; // 5 min
                 to.scoreToWin = 100;
                 to.maxDepth = -2100;
                 to.maxHeight = 400;

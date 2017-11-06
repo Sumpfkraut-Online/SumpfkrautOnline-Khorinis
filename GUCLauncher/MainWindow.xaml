@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:GUCLauncher"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="GUCLauncher.MainWindow"
         mc:Ignorable="d"
-        Title="Gothic: Untold Chapters - Launcher" Height="480" Width="640" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp" KeyDown="Window_KeyDown" >
+        Title="Gothic: Untold Chapters - Launcher" Height="480" Width="640" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp" KeyDown="Window_KeyDown" ContentRendered="Window_ContentRendered" >
     <Window.Background>
         <ImageBrush ImageSource="Resources/empty_menu_back.png"/>
     </Window.Background>
@@ -71,6 +71,6 @@
         <Button x:Name="mini_settings" Style="{StaticResource SmallButton}" Content="?" HorizontalAlignment="Right" Height="20" Margin="0,7,77,0" Width="35" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial Black" FontWeight="Bold" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="1,0,1,1"/>
         <Button x:Name="mini_minimize" Style="{StaticResource SmallButton}" Content="_" HorizontalAlignment="Right" Height="20" Margin="0,7,42,0" Width="35" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial Black" FontWeight="Bold" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="1,0,1,1" Click="Click_Minimize"/>
         <Button x:Name="mini_close" Style="{StaticResource SmallButton}" Content="x" Height="20" Margin="0,7,7,0" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1,1.4,1,1" FontWeight="Bold" Click="Click_Close" HorizontalAlignment="Right" Width="35"/>
-        <Rectangle x:Name="overshadow" Fill="#99000000" Visibility="Hidden"/>
+        <Rectangle x:Name="overshadow" Fill="#99000000" Visibility="Visible"/>
     </Grid>
 </Window>

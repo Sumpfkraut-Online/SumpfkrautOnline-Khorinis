@@ -40,7 +40,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             { // so the npc can instantly stop the attack and run into a direction
                 this.ModelInst.StopAnimation(this.fightAni, false);
             }
-            
+
             if (this.TeamID != -1 && this.Client != null)
             {
                 if (pos.GetDistancePlanar(Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
@@ -672,12 +672,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (attacker.TeamID != -1 && Cast.Try(attacker.Client, out Arena.ArenaClient att) && att.ClassDef != null)
                 damage += att.ClassDef.Damage;
 
-            int protection = this.Armor.Protection;
+            int protection = 0;
+            if (this.Armor != null)
+                protection += this.Armor.Protection;
+
             if (this.TeamID != -1 && Cast.Try(this.Client, out Arena.ArenaClient tar) && tar.ClassDef != null)
                 protection += tar.ClassDef.Protection;
-                
-            if (this.Armor != null)
-                damage -= this.Armor.Protection;
+
+            damage -= protection;
 
             // ARENA
             if (this.TeamID != -1 && attacker.TeamID == this.TeamID) // same team

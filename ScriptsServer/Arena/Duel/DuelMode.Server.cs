@@ -141,7 +141,10 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.DuelWin);
             stream.Write((ushort)winner.Character.ID);
             winner.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-            winner.DuelEnemy.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+            if (winner.DuelEnemy.ID != -1)
+            {
+                winner.DuelEnemy.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+            }
 
             winner.DuelEnemy.DuelDeaths++;
             winner.DuelEnemy.DuelScore--;

@@ -38,5 +38,10 @@ namespace GUC.Utilities
                 return rdy;
             }
         }
+
+        public long GetRemainingMsecs()
+        {
+            return (this.nextTime - GameTime.Ticks) / TimeSpan.TicksPerMillisecond;
+        }
     }
 }

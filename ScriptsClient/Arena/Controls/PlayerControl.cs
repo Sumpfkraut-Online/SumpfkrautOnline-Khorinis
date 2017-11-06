@@ -22,6 +22,8 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.TurnLeft, d => CheckFightMove(d, FightMoves.Left) },
             { KeyBind.TurnRight, d => CheckFightMove(d, FightMoves.Right) },
             { KeyBind.MoveBack, d => CheckFightMove(d, FightMoves.Parry) },
+            { KeyBind.MoveLeft, d => CheckFightMove(d, FightMoves.Left) },
+            { KeyBind.MoveRight, d => CheckFightMove(d, FightMoves.Right) },
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
@@ -44,6 +46,7 @@ namespace GUC.Scripts.Arena.Controls
                 var ledge = hero.BaseInst.DetectClimbingLedge();
                 if (ledge == null)
                 {
+                    if (hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(true))
                     NPCInst.Requests.Jump(hero);
                 }
                 else
@@ -108,7 +111,7 @@ namespace GUC.Scripts.Arena.Controls
                 return;
 
             var hero = ScriptClient.Client.Character;
-            if (hero.IsInFightMode)
+            if (hero.Movement == NPCMovement.Stand && hero.IsInFightMode)
             {
                 if (CheckWarmup())
                     return;
@@ -119,38 +122,25 @@ namespace GUC.Scripts.Arena.Controls
 
         static void PlayerActionButton(bool down)
         {
+            if (!down) return;
+
             var hero = ScriptClient.Client.Character;
-            if (KeyBind.MoveForward.IsPressed())
+            if (hero.IsDead) return;
+
+            if (hero.IsInFightMode)
             {
-                if (down)
-                    CheckFightMove(down, FightMoves.Run);
-            }
-            else if (!hero.IsDead)
-            {
-                if (hero.IsInFightMode)
+                if (KeyBind.MoveForward.IsPressed() && !CheckWarmup())
                 {
-                    if (down)
-                    {
-                        var focus = hero.GetFocusVob();
-                        enemy = focus is NPCInst ? (NPCInst)focus : null;
-                    }
-                    else
-                    {
-                        enemy = null;
-                    }
-                    if (enemy == null)
-                        oCNpcFocus.StopHighlightingFX();
-                    else
-                        oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
+                    NPCInst.Requests.Attack(hero, FightMoves.Run);
                 }
-                else if (down)
+            }
+            else
+            {
+                if (hero.TeamID == -1)
                 {
-                    if (hero.TeamID == -1)
-                    {
-                        var focusVob = hero.GetFocusVob();
-                        if (focusVob is NPCInst)
-                            DuelMode.SendRequest((NPCInst)focusVob);
-                    }
+                    var focusVob = hero.GetFocusVob();
+                    if (focusVob is NPCInst)
+                        DuelMode.SendRequest((NPCInst)focusVob);
                 }
             }
         }
@@ -169,8 +159,9 @@ namespace GUC.Scripts.Arena.Controls
             return false;
         }
 
-        long nextDodgeTime = 0;
-        LockTimer strafeLock = new LockTimer(150);
+        LockTimer dodgeLock = new LockTimer(200);
+        const long StrafeInterval = 200 * TimeSpan.TicksPerMillisecond;
+        long nextStrafeChange = 0;
         void PlayerUpdate()
         {
             if (ArenaClient.DetectSchinken)
@@ -186,26 +177,39 @@ namespace GUC.Scripts.Arena.Controls
 
             DoTurning(hero);
 
-            NPCMovement state = hero.Movement;
-            if (KeyBind.MoveLeft.IsPressed()) // strafe left
+            if (KeyBind.Action.IsPressed())
             {
-                if (strafeLock.IsReady)
-                    state = NPCMovement.Left;
+                if (hero.IsInFightMode)
+                {
+                    if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
+                    {
+                        var focus = hero.GetFocusVob();
+                        enemy = focus is NPCInst ? (NPCInst)focus : null;
+                        if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
+                        {
+                            oCNpcFocus.StopHighlightingFX();
+                            enemy = null;
+                        }
+                        else
+                        {
+                            oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
+                        }
+                    }
+                }
             }
-            else if (KeyBind.MoveRight.IsPressed()) // strafe right
-            {
-                if (strafeLock.IsReady)
-                    state = NPCMovement.Right;
-            }
-            else if (!KeyBind.Action.IsPressed())
+            else
             {
                 if (enemy != null)
                 {
                     oCNpcFocus.StopHighlightingFX();
                     enemy = null;
                 }
-
                 gAI.CheckFocusVob(1);
+            }
+
+            NPCMovement state = NPCMovement.Stand;
+            if (!KeyBind.Action.IsPressed() || hero.Movement != NPCMovement.Stand)
+            {
                 if (KeyBind.MoveForward.IsPressed()) // move forward
                 {
                     state = NPCMovement.Forward;
@@ -214,13 +218,12 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     if (hero.IsInFightMode)
                     {
-                        if (nextDodgeTime < GameTime.Ticks) // don't spam
+                        if (dodgeLock.IsReady) // don't spam
                         {
                             if (CheckWarmup())
                                 return;
 
                             NPCInst.Requests.Attack(hero, FightMoves.Dodge);
-                            nextDodgeTime = GameTime.Ticks + 50 * TimeSpan.TicksPerMillisecond;
                         }
                         return;
                     }
@@ -229,10 +232,23 @@ namespace GUC.Scripts.Arena.Controls
                         state = NPCMovement.Backward;
                     }
                 }
+                else if (KeyBind.MoveLeft.IsPressed()) // strafe left
+                {
+                    state = NPCMovement.Left;
+                }
+                else if (KeyBind.MoveRight.IsPressed()) // strafe right
+                {
+                    state = NPCMovement.Right;
+                }
                 else
                 {
                     state = NPCMovement.Stand;
                 }
+            }
+
+            if (nextStrafeChange > GameTime.Ticks)
+            {
+                state = hero.Movement;
             }
 
             if (state == NPCMovement.Forward)
@@ -269,6 +285,14 @@ namespace GUC.Scripts.Arena.Controls
 
             if (state != NPCMovement.Stand && CheckWarmup())
                 state = NPCMovement.Stand;
+
+            if (state == NPCMovement.Left || state == NPCMovement.Right || (state == NPCMovement.Forward && hero.IsInFightMode))
+            {
+                if (hero.Movement != state)
+                    nextStrafeChange = GameTime.Ticks + StrafeInterval;
+            }
+            else
+                nextStrafeChange = 0;
 
             hero.SetMovement(state);
         }

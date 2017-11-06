@@ -28,7 +28,7 @@ namespace GUCLauncher
                 throw new FileNotFoundException(g2App + " not found!");
             }
 
-            if (!Configuration.IsGothic2(g2App))
+            if (!Configuration.ValidateFileHash(g2App, Configuration.HashFile.Gothic2))
             {
                 throw new Exception(g2App + " is wrong version!");
             }

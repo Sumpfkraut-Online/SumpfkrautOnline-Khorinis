@@ -96,6 +96,14 @@ namespace GUC.Scripts.Arena
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
 
+        public void SendPointsMessage(sbyte points)
+        {
+            var stream = ArenaClient.GetScriptMessageStream();
+            stream.Write((byte)ScriptMessages.PointsMessage);
+            stream.Write(points);
+            this.SendScriptMessage(stream, NetPriority.Low, NetReliability.Unreliable);
+        }
+
         partial void pOnConnect()
         {
             SendGameInfo(this);

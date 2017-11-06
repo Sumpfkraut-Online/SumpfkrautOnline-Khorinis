@@ -80,7 +80,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             NPC.SendScriptCommand(stream, NetPriority.Immediate);
         }
 
-        LockTimer jumpTimer = new LockTimer(500);
+        LockTimer jumpTimer = new LockTimer(200);
         public void Jump(NPCInst npc)
         {
             if (!jumpTimer.IsReady)
