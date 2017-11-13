@@ -59,6 +59,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Vec3f realDir = dir.Cross(new Vec3f(0, -1, 0)).Normalise();
 
             ItemInst inst = new ItemInst(arrow);
+            
             inst.Spawn(this.World, realPos, realDir); 
         }
     }

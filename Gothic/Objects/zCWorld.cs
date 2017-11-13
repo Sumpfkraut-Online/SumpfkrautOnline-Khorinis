@@ -204,9 +204,9 @@ namespace Gothic.Objects
             set { Process.Write(Address + 0x204, value); }
         }
 
-        public int Raytrace_FoundHit
+        public bool Raytrace_FoundHit
         {
-            get { return Process.ReadInt(Address + VarOffsets.raytrace_foundHit); }
+            get { return Process.ReadBool(Address + VarOffsets.raytrace_foundHit); }
         }
 
         public zCPolygon Raytrace_FoundPoly
@@ -331,14 +331,14 @@ namespace Gothic.Objects
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetSkyControlerOutdoor, vob);
         }
 
-        public int TraceRayNearestHit(zVec3 start, zVec3 end, zTraceRay rayType)
+        public bool TraceRayNearestHit(zVec3 start, zVec3 ray, zTraceRay rayType)
         {
-            return Process.FASTCALL<IntArg>(Address, start.Address, FuncAddresses.TraceRayNearestHit, end, new IntArg(0), new IntArg((int)rayType));
+            return Process.FASTCALL<BoolArg>(Address, start.Address, FuncAddresses.TraceRayNearestHit, ray, new IntArg(0), new IntArg((int)rayType));
         }
 
-        public int TraceRayFirstHit(zVec3 start, zVec3 end, zTraceRay rayType)
+        public bool TraceRayFirstHit(zVec3 start, zVec3 ray, zTraceRay rayType)
         {
-            return Process.FASTCALL<IntArg>(Address, start.Address, FuncAddresses.TraceRayFirstHit, end, new IntArg(0), new IntArg((int)rayType));
+            return Process.FASTCALL<BoolArg>(Address, start.Address, FuncAddresses.TraceRayFirstHit, ray, new IntArg(0), new IntArg((int)rayType));
         }
         
         public int GetBspTree()

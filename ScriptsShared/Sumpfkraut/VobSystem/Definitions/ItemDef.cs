@@ -23,10 +23,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public enum ItemTypes : byte
     {
         Misc,
+
+        // Weapons
+
+        // melee
         Wep1H,
         Wep2H,
+
+        // ranged
         WepBow,
         WepXBow,
+
         MAXWEAPON,
 
         Armor,

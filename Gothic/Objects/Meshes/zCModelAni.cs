@@ -63,6 +63,18 @@ namespace Gothic.Objects.Meshes
             get { return new zString(Address + VarOffsets.asc); }
         }
 
+        public float BlendInSpeed
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.blendInSpeed); }
+            set { Process.Write(Address + VarOffsets.blendInSpeed, value); }
+        }
+
+        public float BlendOutSpeed
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.blendOutSpeed); }
+            set { Process.Write(Address + VarOffsets.blendOutSpeed, value); }
+        }
+
         public int Layer
         {
             get { return Process.ReadInt(Address + VarOffsets.layer); }

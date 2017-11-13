@@ -266,11 +266,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     var ai = this.BaseInst.gAI;
                     ai.ShowWeaponTrail();
                     ai.CorrectFightPosition();
-                    if (this.DrawnWeapon != null && collisionFXTimer.IsReady)
+                    /*if (this.DrawnWeapon != null && collisionFXTimer.IsReady)
                     {
                         ai.GetFightLimbs();
                         ai.CheckMeleeWeaponHitsLevel(this.DrawnWeapon.BaseInst.gVob);
-                    }
+                    }*/
                     return;
                 }
             }

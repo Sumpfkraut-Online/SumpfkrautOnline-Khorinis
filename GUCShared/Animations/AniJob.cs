@@ -86,7 +86,7 @@ namespace GUC.Animations
         {
             this.modelInstance = modelInstance;
             this.isCreated = modelInstance != null;
-            this.NextAni = null;
+            this.nextAni = null;
         }
 
         int nextAniID = -1;
@@ -154,6 +154,7 @@ namespace GUC.Animations
                 else
                 {
                     this.nextAniID = -1;
+                    throw new NotSupportedException();
                 }
 
                 this.nextAni = value;
@@ -361,6 +362,7 @@ namespace GUC.Animations
             base.ReadProperties(stream);
             this.Name = stream.ReadString();
             this.Layer = stream.ReadByte();
+           
             if (stream.ReadBit())
             {
                 this.NextAniID = stream.ReadUShort();
@@ -382,8 +384,7 @@ namespace GUC.Animations
                 {
                     int overlayID = stream.ReadByte();
 
-                    Overlay ov;
-                    if (this.modelInstance.TryGetOverlay(overlayID, out ov))
+                    if (this.modelInstance.TryGetOverlay(overlayID, out Overlay ov))
                     {
                         var ani = ScriptManager.Interface.CreateAnimation();
                         this.ScriptObject.AddOverlayAni(ani, ov);

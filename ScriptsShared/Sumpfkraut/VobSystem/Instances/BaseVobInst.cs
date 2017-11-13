@@ -19,7 +19,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         // Effect Handler
         BaseEffectHandler effectHandler;
-        public BaseEffectHandler EffectHandler { get { return effectHandler; } }
+        public BaseEffectHandler EffectHandler
+        {
+            get
+            {
+                if (this.effectHandler == null)
+                    this.effectHandler = CreateHandler();
+
+                return effectHandler;
+            }
+        }
         protected abstract BaseEffectHandler CreateHandler();
 
         // GUC - Base - Object
@@ -57,10 +66,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.baseInst = CreateVob();
             if (this.baseInst == null)
                 throw new NullReferenceException("BaseInst is null!");
-
-            this.effectHandler = CreateHandler();
-            if (this.effectHandler == null)
-               throw new NullReferenceException("Effect Handler is null!");
 
             pConstruct();
         }

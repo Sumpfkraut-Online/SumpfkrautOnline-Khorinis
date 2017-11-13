@@ -102,7 +102,7 @@ namespace Gothic.Objects
 
         public abstract class BitFlag0
         {
-            public const int showVisual = 1,
+            public const int showVisual = 1 << 0,
             drawBBox3D = 1 << 1,
             visualAlphaEnabled = 1 << 2,
             physicsEnabled = 1 << 3,
@@ -110,9 +110,37 @@ namespace Gothic.Objects
             ignoredByTraceRay = 1 << 5,
             collDetectionStatic = 1 << 6,
             collDetectionDynamic = 1 << 7,
-            castDynShadow = 1 << 8,
-            lightColorStatDirty = 1 << 9,
-            lightColorDynDirty = 1 << 10;
+            castDynShadow = 1 << 8, // 2 bits
+            lightColorStatDirty = 1 << 10,
+            lightColorDynDirty = 1 << 11,
+            movementMode = 1 << 12; // 2 bits
+        }
+
+       /* public enum zTMovementMode
+        {
+            None,
+            /// <summary> Vob's movement is currently being calculated. </summary>
+            InMovement,
+            InMovementNOCD,
+        }
+
+        /// <summary>
+        /// Whether the vob's movement is being calculated
+        /// </summary>
+        public zTMovementMode MovementMode
+        {
+            get { return (zTMovementMode)((BitField1 & 0x3000) >> 12); }
+
+            // use BeginMovement & EndMovement instead
+            //set { BitField1 = (BitField1 & ~0x3000) | (((int)value << 12) & 0x3000); }
+        }*/
+
+        /// <summary>
+        /// Whether the vob's movement is being calculated
+        /// </summary>
+        public bool IsInMovement
+        {
+            get { return (BitField1 & 0x3000) != 0; }
         }
 
         public int BitField1

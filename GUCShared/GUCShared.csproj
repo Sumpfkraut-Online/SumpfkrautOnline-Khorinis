@@ -49,6 +49,7 @@
     <Compile Include="Animations\Overlay.cs" />
     <Compile Include="Network\ClientMessages.cs" />
     <Compile Include="Network\PacketEnums.cs" />
+    <Compile Include="Types\Angles.cs" />
     <Compile Include="Types\NPCMovement.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\LockTimer.cs" />

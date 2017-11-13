@@ -10,6 +10,8 @@ namespace Gothic
     {
         public int Address { get; protected set; }
 
+        public bool IsNull { get { return Address == 0; } }
+
         public zClass()
         {
         }

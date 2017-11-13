@@ -135,6 +135,9 @@
     <Compile Include="..\GUCShared\Scripting\Timer.cs">
       <Link>Scripting\Timer.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Types\Angles.cs">
+      <Link>Types\Angles.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
     </Compile>

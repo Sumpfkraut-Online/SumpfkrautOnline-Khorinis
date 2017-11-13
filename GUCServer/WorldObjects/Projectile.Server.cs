@@ -18,19 +18,15 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        int lifeDistance = ushort.MaxValue;
-        public int LifeDistance
-        {
-            get { return this.lifeDistance; }
-            set { this.lifeDistance = value; }
-        }
+        Vec3f destination;
+        public Vec3f Destination { set { this.destination = value; } get { return this.destination; } }
 
         partial void pOnTick(long now)
         {
             Vec3f curPos = GetTimedPosition(now - startTime);
-            if (curPos.GetDistance(startPos) >= lifeDistance)
+            if (curPos.GetDistance(startPos) >= destination.GetDistance(startPos))
             {
-                this.ScriptObject.OnEndPos(startPos + dir * lifeDistance, dir);
+                this.ScriptObject.OnEndPos(destination, startDir);
                 this.ScriptObject.Despawn();
             }
             else

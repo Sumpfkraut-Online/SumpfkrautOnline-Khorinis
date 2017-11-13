@@ -20,10 +20,22 @@ namespace GUC.WorldObjects
             else
             {
                 Vec3f curPos = GetTimedPosition(flyTime);
-                Vec3f curDir = (lastPos - curPos).Cross(new Vec3f(0, 1, 0)).Normalise();
+                Vec3f curDir = (lastPos - curPos).Normalise();
+                
 
                 this.SetPosition(curPos);
-                this.SetDirection(curDir);
+                //this.SetDirection(curDir);
+                //this.gVob.TrafoObjToWorld.PostRotateY(-90);
+
+                float l = curDir.GetLength();
+                float arg = (float)(Math.Atan(curDir.X / curDir.Z) + Math.Asin(curDir.Y / l));
+
+                curDir.X = (float)(l * Math.Sin(arg));
+                curDir.Y = 0;
+                curDir.Z = (float)(l * Math.Cos(arg));
+
+
+                this.SetDirection(curDir.Normalise());
 
                 this.lastPos = curPos;
             }

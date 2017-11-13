@@ -22,10 +22,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             this.baseDef = CreateVobInstance();
             if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");
-            
-            this.effectHandler = CreateHandler();
-            if (this.effectHandler == null)
-                throw new NullReferenceException("Effect Handler is null!");
 
             pConstruct();
         }
@@ -36,7 +32,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         // Effect Handler
         BaseEffectHandler effectHandler;
-        public BaseEffectHandler EffectHandler { get { return effectHandler; } }
+        public BaseEffectHandler EffectHandler
+        {
+            get
+            {
+                if (this.effectHandler == null)
+                    this.effectHandler = CreateHandler();
+
+                return effectHandler;
+            }
+        }
         protected abstract BaseEffectHandler CreateHandler();
 
         // Definition

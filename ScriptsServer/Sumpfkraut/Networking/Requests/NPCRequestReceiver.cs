@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 {
@@ -20,90 +21,86 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
         public event Action<NPCInst, ItemInst> OnEquipItem;
         public event Action<NPCInst, ItemInst> OnUnequipItem;
         public event Action<NPCInst, ItemInst> OnUseItem;
+        public event Action<NPCInst> OnAim;
+        public event Action<NPCInst> OnUnaim;
+        public event Action<NPCInst, Vec3f, Vec3f> OnShoot;
 
 
-        public void ReadRequest(ScriptRequestMessageIDs id, PacketReader stream, NPCInst npc)
+        public void ReadRequest(RequestMessageIDs id, PacketReader stream, NPCInst npc)
         {
             switch (id)
             {
-                case ScriptRequestMessageIDs.JumpFwd:
-                    if (OnJump != null)
-                        OnJump(npc, JumpMoves.Fwd);
+                case RequestMessageIDs.JumpFwd:
+                    OnJump?.Invoke(npc, JumpMoves.Fwd);
                     break;
-                case ScriptRequestMessageIDs.JumpRun:
-                    if (OnJump != null)
-                        OnJump(npc, JumpMoves.Run);
+                case RequestMessageIDs.JumpRun:
+                    OnJump?.Invoke(npc, JumpMoves.Run);
                     break;
-                case ScriptRequestMessageIDs.JumpUp:
-                    if (OnJump != null)
-                        OnJump(npc, JumpMoves.Up);
+                case RequestMessageIDs.JumpUp:
+                    OnJump?.Invoke(npc, JumpMoves.Up);
                     break;
 
-                case ScriptRequestMessageIDs.ClimbHigh:
-                    if (OnClimb != null)
-                        OnClimb(npc, ClimbMoves.High, new NPC.ClimbingLedge(stream));
+                case RequestMessageIDs.ClimbHigh:
+                    OnClimb?.Invoke(npc, ClimbMoves.High, new NPC.ClimbingLedge(stream));
                     break;
-                case ScriptRequestMessageIDs.ClimbMid:
-                    if (OnClimb != null)
-                        OnClimb(npc, ClimbMoves.Mid, new NPC.ClimbingLedge(stream));
+                case RequestMessageIDs.ClimbMid:
+                    OnClimb?.Invoke(npc, ClimbMoves.Mid, new NPC.ClimbingLedge(stream));
                     break;
-                case ScriptRequestMessageIDs.ClimbLow:
-                    if (OnClimb != null)
-                        OnClimb(npc, ClimbMoves.Low, new NPC.ClimbingLedge(stream));
+                case RequestMessageIDs.ClimbLow:
+                    OnClimb?.Invoke(npc, ClimbMoves.Low, new NPC.ClimbingLedge(stream));
                     break;
 
-                case ScriptRequestMessageIDs.DrawFists:
-                    if (OnDrawFists != null)
-                        OnDrawFists(npc);
+                case RequestMessageIDs.DrawFists:
+                    OnDrawFists?.Invoke(npc);
                     break;
-                case ScriptRequestMessageIDs.DrawWeapon:
-                    if (OnDrawWeapon != null)
-                        OnDrawWeapon(npc, npc.Inventory.GetItem(stream.ReadByte()));
+                case RequestMessageIDs.DrawWeapon:
+                    OnDrawWeapon?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()));
                     break;
 
-                case ScriptRequestMessageIDs.AttackForward:
-                    if (OnFightMove != null)
-                        OnFightMove(npc, FightMoves.Fwd);
+                case RequestMessageIDs.AttackForward:
+                    OnFightMove?.Invoke(npc, FightMoves.Fwd);
                     break;
-                case ScriptRequestMessageIDs.AttackLeft:
-                    if (OnFightMove != null)
-                        OnFightMove(npc, FightMoves.Left);
+                case RequestMessageIDs.AttackLeft:
+                    OnFightMove?.Invoke(npc, FightMoves.Left);
                     break;
-                case ScriptRequestMessageIDs.AttackRight:
-                    if (OnFightMove != null)
-                        OnFightMove(npc, FightMoves.Right);
+                case RequestMessageIDs.AttackRight:
+                    OnFightMove?.Invoke(npc, FightMoves.Right);
                     break;
-                case ScriptRequestMessageIDs.AttackRun:
-                    if (OnFightMove != null)
-                        OnFightMove(npc, FightMoves.Run);
+                case RequestMessageIDs.AttackRun:
+                    OnFightMove?.Invoke(npc, FightMoves.Run);
                     break;
-                case ScriptRequestMessageIDs.Parry:
-                    if (OnFightMove != null)
-                        OnFightMove(npc, FightMoves.Parry);
+                case RequestMessageIDs.Parry:
+                    OnFightMove?.Invoke(npc, FightMoves.Parry);
                     break;
-                case ScriptRequestMessageIDs.Dodge:
-                    if (OnFightMove != null)
-                        OnFightMove(npc, FightMoves.Dodge);
+                case RequestMessageIDs.Dodge:
+                    OnFightMove?.Invoke(npc, FightMoves.Dodge);
                     break;
 
-                case ScriptRequestMessageIDs.DropItem:
-                    if (OnDropItem != null)
-                        OnDropItem(npc, npc.Inventory.GetItem(stream.ReadByte()), stream.ReadUShort());
+                case RequestMessageIDs.DropItem:
+                    OnDropItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()), stream.ReadUShort());
                     break;
 
-                case ScriptRequestMessageIDs.EquipItem:
-                    if (OnEquipItem != null)
-                        OnEquipItem(npc, npc.Inventory.GetItem(stream.ReadByte()));
+                case RequestMessageIDs.EquipItem:
+                    OnEquipItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()));
                     break;
-                case ScriptRequestMessageIDs.UnequipItem:
-                    if (OnUnequipItem != null)
-                        OnUnequipItem(npc, npc.Inventory.GetItem(stream.ReadByte()));
+                case RequestMessageIDs.UnequipItem:
+                    OnUnequipItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()));
                     break;
 
-                case ScriptRequestMessageIDs.UseItem:
-                    if (OnUseItem != null)
-                        OnUseItem(npc, npc.Inventory.GetItem(stream.ReadByte()));
+                case RequestMessageIDs.UseItem:
+                    OnUseItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()));
                     break;
+
+                case RequestMessageIDs.Aim:
+                    OnAim?.Invoke(npc);
+                    break;
+                case RequestMessageIDs.Unaim:
+                    OnUnaim?.Invoke(npc);
+                    break;
+                case RequestMessageIDs.Shoot:
+                    OnShoot?.Invoke(npc, stream.ReadVec3f(), stream.ReadVec3f());
+                    break;
+
                 default:
                     Log.Logger.Log("Received Script RequestMessage with invalid ID: " + id.ToString());
                     break;

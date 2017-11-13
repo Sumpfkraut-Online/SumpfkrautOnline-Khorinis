@@ -37,6 +37,7 @@ namespace GUC.Scripts
             return asm;
         }
 
+        static Gothic.Objects.zCVob arrow;
         public static event Action<long> OnUpdate;
         public void Update(long ticks)
         {
@@ -45,6 +46,12 @@ namespace GUC.Scripts
             OnUpdate?.Invoke(ticks);
             CheckMusic();
             CheckPosition();
+
+            if (WorldObjects.NPC.Hero != null)
+            {
+                var angles = new Types.Angles(GothicGlobals.Game.GetCameraVob().TrafoObjToWorld);
+                GUI.GUCView.DebugText.Text = String.Format("({0:0.00} / {1:0.00} / {2:0.00})", Types.Angles.Rad2Deg(angles.Pitch), Types.Angles.Rad2Deg(angles.Yaw), Types.Angles.Rad2Deg(angles.Roll));
+            }
         }
 
         SoundInstance menuTheme = null;
@@ -63,9 +70,9 @@ namespace GUC.Scripts
 
         public void StartIngame()
         {
-            // make checkmeleehitslevel always available
-            WinApi.Process.Write(0x006B0CF8, 0xEB, 0x1C);
-            WinApi.Process.Write(0x006B0D65, (byte)0xEB);
+            // stop oCAniCtrl_Human::_Stand from canceling the s_bowaim animation
+            WinApi.Process.Write(0x006B7772, 0xEB, 0x69);
+
 
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
             GUCMenu.CloseActiveMenus();

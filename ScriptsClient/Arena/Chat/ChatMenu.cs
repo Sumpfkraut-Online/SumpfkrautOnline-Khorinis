@@ -25,7 +25,7 @@ namespace GUC.Scripts.Arena
         ViewPoint screenSize;
         int chatHeigth, chatWidth;
         GUCTimer chatInactivityTimer;
-        
+
         public ChatMenu()
         {
             screenSize = GUCView.GetScreenSize();
@@ -95,7 +95,7 @@ namespace GUC.Scripts.Arena
             if (TeamMode.TeamDef == null)
             {
                 //AddMessage(ChatMode.All, "Du musst erst einem Team beitreten bevor du den Teamchat verwenden kannst!");
-               // OpenAllChat();
+                // OpenAllChat();
                 return;
             }
             openChatMode = ChatMode.Team;
@@ -128,6 +128,66 @@ namespace GUC.Scripts.Arena
             }
             base.KeyDown(key);
         }
+        
+        static void SA(string msg, bool g = false)
+        {
+            Angles angles = new Angles();
+            angles.SetByAtVector((Vec3f)GothicGlobals.Game.GetCameraVob().Direction);
+            Log.Logger.Log(angles.ToString("deg"));
+
+            /*string[] strs = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            if (strs.Length != 3)
+                return;
+
+            if (!float.TryParse(strs[0], out float x) || !float.TryParse(strs[1], out float y) || !float.TryParse(strs[2], out float z))
+                return;
+
+            var vob = ArenaClient.Client.Character.BaseInst.gVob;
+            using (var vec = Gothic.Types.zVec3.Create())
+            {
+                vob.TrafoObjToWorld.GetRightVector(vec);
+                Log.Logger.Log("Right: " + vec.X + " " + vec.Y + " " + vec.Z);
+
+                vob.TrafoObjToWorld.GetUpVector(vec);
+                Log.Logger.Log("Up: " + vec.X + " " + vec.Y + " " + vec.Z);
+
+                vob.TrafoObjToWorld.GetAtVector(vec);
+                Log.Logger.Log("At: " + vec.X + " " + vec.Y + " " + vec.Z);
+
+                Log.Logger.Log("-------------------");
+            }
+
+             Angles angles = new Angles(vob.TrafoObjToWorld);
+            
+             angles.Pitch += Angles.Deg2Rad(x);
+             angles.Yaw += Angles.Deg2Rad(y);
+             angles.Roll += Angles.Deg2Rad(z);
+
+             bool movement = vob.IsInMovement;
+             if (!movement)
+                 vob.BeginMovement();
+
+             var obj = vob.CollObj;
+             angles.SetMatrix(obj.NewTrafo);
+             obj.TrafoHintRotation = true;
+
+             if (!movement)
+                vob.EndMovement();
+
+            using (var vec = Gothic.Types.zVec3.Create())
+            {
+                vob.TrafoObjToWorld.GetRightVector(vec);
+                Log.Logger.Log("Right: " + vec.X + " " + vec.Y + " " + vec.Z);
+
+                vob.TrafoObjToWorld.GetUpVector(vec);
+                Log.Logger.Log("Up: " + vec.X + " " + vec.Y + " " + vec.Z);
+
+                vob.TrafoObjToWorld.GetAtVector(vec);
+                Log.Logger.Log("At: " + vec.X + " " + vec.Y + " " + vec.Z);
+
+                Log.Logger.Log("============");
+            }*/
+        }
 
         public void SendInput()
         {
@@ -138,6 +198,18 @@ namespace GUC.Scripts.Arena
             if (message == "/detectschinken")
             {
                 ArenaClient.DetectSchinken = true;
+                textBox.Input = "";
+                return;
+            }
+            else if (message.StartsWith("/sa "))
+            {
+                SA(message.Substring(4));
+                textBox.Input = "";
+                return;
+            }
+            else if (message.StartsWith("/sb "))
+            {
+                SA(message.Substring(4), true);
                 textBox.Input = "";
                 return;
             }
@@ -230,7 +302,7 @@ namespace GUC.Scripts.Arena
                 }
                 index++;
             }
-            
+
             if (chatMode == ChatMode.Team && TeamMode.TeamDef != null)
             {
                 chatBackground.Texts[index].SetColor(TeamMode.TeamDef.Color);

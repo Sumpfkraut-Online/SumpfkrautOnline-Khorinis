@@ -33,14 +33,14 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         public virtual void ReadScriptRequestMessage(PacketReader stream, WorldObjects.VobGuiding.GuidedVob vob)
         {
-            ScriptRequestMessageIDs id = (ScriptRequestMessageIDs)stream.ReadByte();
+            RequestMessageIDs id = (RequestMessageIDs)stream.ReadByte();
 
-            if (id > ScriptRequestMessageIDs.MaxGuidedMessages && vob != this.Character.BaseInst)
+            if (id > RequestMessageIDs.MaxGuidedMessages && vob != this.Character.BaseInst)
             {
                 return; // client sent a request for a bot which is only allowed for players
             }
 
-            if (id < ScriptRequestMessageIDs.MaxNPCRequests)
+            if (id < RequestMessageIDs.MaxNPCRequests)
             {
                 if (vob is WorldObjects.NPC)
                     NPCInst.Requests.ReadRequest(id, stream, ((NPCInst)vob.ScriptObject));

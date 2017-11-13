@@ -109,8 +109,8 @@ namespace GUC.Animations
             {
                 // fire all callbacks which should happen when or after the last nextAni ends
                 float lastFrame = this.totalFinishedFrames;
-                Animation nextAni;  AniJob nextAniJob = this.AniJob;
-                while (nextAniJob != null && this.model.TryGetAniFromJob(nextAniJob, out nextAni))
+                AniJob nextAniJob = this.AniJob;
+                while (nextAniJob != null && this.model.TryGetAniFromJob(nextAniJob, out Animation nextAni))
                 {
                     lastFrame += nextAni.GetFrameNum();
                     nextAniJob = nextAniJob.NextAni;
@@ -152,8 +152,7 @@ namespace GUC.Animations
                     AniJob nextAniJob = this.AniJob.NextAni;
                     if (nextAniJob != null)
                     {
-                        Animation nextAni;
-                        if (model.TryGetAniFromJob(nextAniJob, out nextAni))
+                        if (model.TryGetAniFromJob(nextAniJob, out Animation nextAni))
                         {
                             Continue(nextAni); // there is a nextAni, continue playing it
                             return;

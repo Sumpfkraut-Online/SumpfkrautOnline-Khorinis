@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
+using Gothic.Types;
 
 namespace Gothic.Objects
 {
@@ -30,6 +31,23 @@ namespace Gothic.Objects
         public float WaterLevel
         {
             get { return Process.ReadFloat(Address + 196); }
+        }
+
+        public zMat4 NewTrafo
+        {
+            get { return new zMat4(Address + 0x44); }
+        }
+
+        public bool TrafoHintLocation
+        {
+            get { return Process.ReadBit(Address + 0x88, 0); }
+            set { Process.WriteBit(Address + 0x88, 0, value); }
+        }
+
+        public bool TrafoHintRotation
+        {
+            get { return Process.ReadBit(Address + 0x88, 1); }
+            set { Process.WriteBit(Address + 0x88, 1, value); }
         }
     }
 }

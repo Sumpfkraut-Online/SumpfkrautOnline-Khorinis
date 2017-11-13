@@ -14,6 +14,10 @@ namespace Gothic.Objects
             HitTarget = 0x1C4,
             Bitfield = 0x1B0,
 
+            _t_walk_2_aim = 0x10E8,
+            _s_aim = 0x10EC,
+            _t_aim_2_walk = 0x10F0,
+
             _t_hitl = 0x10F4,
             _t_hitr = 0x10F8,
             _t_hitf = 0x1100,

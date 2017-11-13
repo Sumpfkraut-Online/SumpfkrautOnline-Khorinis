@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Utilities;
 using GUC.Types;
 
@@ -97,7 +98,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryFightMove(FightMoves move)
         {
-            if (Host.IsDead || (Host.Environment.InAir && move != FightMoves.Run) || Host.ModelInst.GetActiveAniFromLayer(2) != null)
+            if (Host.IsDead || !Host.IsInFightMode
+                || (Host.Environment.InAir && move != FightMoves.Run)
+                || Host.ModelInst.GetActiveAniFromLayer(2) != null
+                || (Host.DrawnWeapon != null && !Host.DrawnWeapon.IsWeapon))
                 return;
 
             var otherAni = Host.ModelInst.GetActiveAniFromLayer(1);
@@ -140,8 +144,79 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
                 || this.Host.IsInFightMode)
                 return;
-
+            
             this.Host.UnequipItem(item);
+        }
+
+        public void TryAim()
+        {
+            if (Host.IsDead || Host.IsAiming() || Host.ModelInst.IsInAnimation()
+                || Host.Environment.InAir || Host.DrawnWeapon == null
+                || !Host.IsInFightMode || !Host.DrawnWeapon.IsWepRanged)
+                return;
+
+            Host.DoAim();
+        }
+
+        public void TryUnaim()
+        {
+            if (Host.IsDead || !Host.ModelInst.IsInAnimation())
+                return;
+
+            Host.DoUnaim();
+        }
+
+        public void TryShoot(Vec3f start, Vec3f end)
+        {
+            if (Host.IsDead || !Host.IsAiming())
+                return;
+
+            if (start.GetDistance(end) > 500000) // just in case
+                end = start + 500000 * (start - end).Normalise();
+
+            ItemInst projItem = null;
+            if (Host.DrawnWeapon.ItemType == ItemTypes.WepBow)
+            {
+                Host.Inventory.ForEachItemPredicate(i =>
+                {
+                    if (i.ItemType == ItemTypes.AmmoBow)
+                    {
+                        projItem = i;
+                        return false;
+                    }
+                    return true;
+                });
+            }
+            else if (Host.DrawnWeapon.ItemType == ItemTypes.WepXBow)
+            {
+                Host.Inventory.ForEachItemPredicate(i =>
+                {
+                    if (i.ItemType == ItemTypes.AmmoXBow)
+                    {
+                        projItem = i;
+                        return false;
+                    }
+                    return true;
+                });
+            }
+
+            if (projItem == null)
+                return;
+
+            if (projItem.Amount == 1)
+            {
+                //Host.Inventory.RemoveItem(projItem);
+            }
+            else
+            {
+               // projItem = projItem.Split(1);
+            }
+
+            // heh fixme und so
+
+            ProjInst proj = new ProjInst(ProjDef.Get<ProjDef>(projItem.ItemType == ItemTypes.AmmoBow ? "arrow" : "bolt"));
+
+            Host.DoShoot(start, end, proj);
         }
     }
 }

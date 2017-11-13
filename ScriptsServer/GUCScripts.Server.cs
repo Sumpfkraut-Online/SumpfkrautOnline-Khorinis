@@ -139,6 +139,9 @@ namespace GUC.Scripts
             NPCInst.Requests.OnFightMove += (npc, move) => npc.EffectHandler.TryFightMove(move);
             NPCInst.Requests.OnEquipItem += (npc, item) => npc.EffectHandler.TryEquipItem(item);
             NPCInst.Requests.OnUnequipItem += (npc, item) => npc.EffectHandler.TryUnequipItem(item);
+            NPCInst.Requests.OnAim += npc => npc.EffectHandler.TryAim();
+            NPCInst.Requests.OnUnaim += npc => npc.EffectHandler.TryUnaim();
+            NPCInst.Requests.OnShoot += (npc, s, e) => npc.EffectHandler.TryShoot(s, e);
 
             AddSomeDefs();
 
@@ -168,7 +171,7 @@ namespace GUC.Scripts
             world.Clock.SetTime(new WorldTime(0, 8), 15.0f);
             world.Clock.Start();
             WorldInst.List.Add(world);
-            
+
             world = new WorldInst(null);
             world.Path = "G1-OLDMINE.ZEN";
             world.Create();
@@ -207,6 +210,8 @@ namespace GUC.Scripts
             Add2hAnis(m);
             AddJumpAnis(m);
             AddClimbAnis(m);
+            AddBowAnis(m);
+            AddXBowAnis(m);
 
             m.Radius = 80;
             m.Height = 180;
@@ -231,7 +236,7 @@ namespace GUC.Scripts
             npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
             npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_N_Anne;
             npcDef.Create();
-            
+
             npcDef = new NPCDef("skeleton");
             npcDef.Name = "Skelett";
             npcDef.Model = m;
@@ -311,7 +316,7 @@ namespace GUC.Scripts
             itemDef.Range = 100;
             itemDef.Damage = 50;
             itemDef.Create();
-            
+
             m = new ModelDef("ITAR_Garde", "ItAr_Bloodwyn_ADDON.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_Garde");
@@ -335,7 +340,7 @@ namespace GUC.Scripts
             itemDef.Damage = 45;
             itemDef.Range = 80;
             itemDef.Create();
-            
+
             m = new ModelDef("ITAR_Schatten", "ItAr_Diego.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_Schatten");
@@ -359,7 +364,7 @@ namespace GUC.Scripts
             itemDef.Damage = 50;
             itemDef.Range = 100;
             itemDef.Create();
-            
+
             m = new ModelDef("ITAR_Söldner", "ItAr_Sld_M.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_Söldner");
@@ -383,7 +388,7 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Range = 80;
             itemDef.Create();
-            
+
             m = new ModelDef("ITAR_bandit", "ItAr_Bdt_H.3ds");
             m.Create();
             itemDef = new ItemDef("ITAR_bandit");
@@ -406,10 +411,10 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            /*var projDef = new ProjDef("arrow");
+            var projDef = new ProjDef("arrow");
             projDef.Model = m;
-            projDef.Velocity = 0.0003f;
-            projDef.Create();*/
+            projDef.Velocity = 0.00003f;
+            projDef.Create();
 
             // LANGBOGEN
             m = new ModelDef("itrw_longbow", "ItRw_Bow_M_01.mms");
@@ -433,10 +438,10 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
-            /*projDef = new ProjDef("bolt");
+            projDef = new ProjDef("bolt");
             projDef.Model = m;
             projDef.Velocity = 0.0003f;
-            projDef.Create();*/
+            projDef.Create();
 
             // ARMBRUST
             m = new ModelDef("itrw_crossbow", "ItRw_Crossbow_L_01.mms");
@@ -473,7 +478,7 @@ namespace GUC.Scripts
             itemDef.Damage = 10;
             itemDef.Range = 40;
             itemDef.Create();
-            
+
             // ORK WAFFEN
             m = new ModelDef("krush_pach", "ItMw_2H_OrcAxe_02.3DS");
             m.Create();
@@ -577,7 +582,7 @@ namespace GUC.Scripts
             var ani1 = new ScriptAniJob("climb_low", "t_Stand_2_JumpUpLow", new ScriptAni(0, 4));
             var ani2 = new ScriptAniJob("climb_low1", "s_JumpUpLow", new ScriptAni(0, 1));
             var ani3 = new ScriptAniJob("climb_low2", "t_JumpUpLow_2_Stand", new ScriptAni(0, 9));
-            
+
             model.AddAniJob(ani1);
             model.AddAniJob(ani2);
             model.AddAniJob(ani3);
@@ -595,7 +600,7 @@ namespace GUC.Scripts
 
             ani1.NextAni = ani2;
             ani2.NextAni = ani3;
-            
+
             ani1 = new ScriptAniJob("climb_high", "t_Jump_2_Hang", new ScriptAni(0, 17));
             ani2 = new ScriptAniJob("climb_high1", "s_hang", new ScriptAni(0, 1));
             ani3 = new ScriptAniJob("climb_high2", "t_Hang_2_Stand", new ScriptAni(0, 25));
@@ -1007,7 +1012,7 @@ namespace GUC.Scripts
         }
 
         #endregion
-        
+
         #region Orcs
 
         public void AddOrcs()
@@ -1127,148 +1132,164 @@ namespace GUC.Scripts
 
         #endregion
 
+        #region Bow Anis
+
         void AddBowAnis(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("BowT1", "Humans_BowT1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("BowT1", "Humans_BowT1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("BowT2", "Humans_BowT2"); model.AddOverlay(ov2);
 
-            // Weapon drawing
+            #region Draw
 
-            ScriptAniJob aniJob = new ScriptAniJob("drawbow");
-            aniJob.BaseAniJob.ID = (int)SetAnis.DrawBow;
-            aniJob.AniName = "drawBow";
-            model.AddAniJob(aniJob);
+            ScriptAniJob aniJob1 = new ScriptAniJob("drawbow_part0", "t_Run_2_bow");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 5) { { SpecialFrame.Draw, 5 } });
+            aniJob1.AddOverlayAni(new ScriptAni(0, 5) { { SpecialFrame.Draw, 5 } }, ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 5) { { SpecialFrame.Draw, 5 } }, ov2);
 
-            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(7000000, 2600000));
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(6000000, 2330000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(5300000, 2310000), ov2);
+            ScriptAniJob aniJob2 = new ScriptAniJob("drawbow_part1", "s_bow");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
+            aniJob1.NextAni = aniJob2;
 
-            aniJob = new ScriptAniJob("drawbowrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.DrawBowRun;
-            aniJob.AniName = "T_MOVE_2_BOWMOVE";
-            model.AddAniJob(aniJob);
-            var ani = ScriptAni.NewDrawAni(7200000, 2650000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
-
-            aniJob = new ScriptAniJob("undrawbow");
-            aniJob.BaseAniJob.ID = (int)SetAnis.UndrawBow;
-            aniJob.AniName = "undrawBow";
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(6500000, 4400000));
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(5500000, 3670000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(4800000, 2990000), ov2);
-
-            aniJob = new ScriptAniJob("undrawbowrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.UndrawBowRun;
-            aniJob.AniName = "T_BOWMOVE_2_MOVE";
-            model.AddAniJob(aniJob);
-            ani = ScriptAni.NewDrawAni(7200000, 4550000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
-
-
-            // AIMING
-
-            aniJob = new ScriptAniJob("bowaim");
-            aniJob.BaseAniJob.ID = (int)SetAnis.BowAim;
-            aniJob.AniName = "t_BowWalk_2_BowAim";
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(new ScriptAni(4000000));
-            aniJob.AddOverlayAni(new ScriptAni(4000000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(4000000), ov2);
+            ScriptAniJob aniJob3 = new ScriptAniJob("drawbow_part2", "t_bow_2_bowRun");
+            model.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 12));
+            aniJob3.AddOverlayAni(new ScriptAni(0, 10), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 8), ov2);
+            aniJob2.NextAni = aniJob3;
             
-            // RELOADING
+            ScriptAniJob aniJob = new ScriptAniJob("drawbow_running", "t_Move_2_BowMove", new ScriptAni(0, 19));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 7);
+            model.AddAniJob(aniJob);
+            
+            aniJob1 = new ScriptAniJob("undrawbow_part0", "t_BowRun_2_Bow");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 12) { { SpecialFrame.Draw, 12 } });
+            aniJob1.AddOverlayAni(new ScriptAni(0, 10) { { SpecialFrame.Draw, 10 } }, ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 8) { { SpecialFrame.Draw, 8 } }, ov2);
 
-            aniJob = new ScriptAniJob("bowreload");
-            aniJob.BaseAniJob.ID = (int)SetAnis.BowReload;
-            aniJob.AniName = "t_BowReload";
+            aniJob2 = new ScriptAniJob("undrawbow_part1", "s_Bow");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("undrawbow_part2", "t_bow_2_Run");
+            model.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 5));
+            aniJob3.AddOverlayAni(new ScriptAni(0, 5), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 5), ov2);
+            aniJob2.NextAni = aniJob3;
+            
+            aniJob = new ScriptAniJob("undrawbow_running", "t_BowMove_2_Move", new ScriptAni(0, 19));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 12);
             model.AddAniJob(aniJob);
 
-            aniJob.SetDefaultAni(new ScriptAni(11200000));
-            aniJob.AddOverlayAni(new ScriptAni(10400000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(8800000), ov2);
+            #endregion
 
-            // LOWERING
+            #region Fight
 
-            aniJob = new ScriptAniJob("bowlower");
-            aniJob.BaseAniJob.ID = (int)SetAnis.BowLower;
-            aniJob.AniName = "t_BowAim_2_BowWalk";
-            model.AddAniJob(aniJob);
+            aniJob1 = new ScriptAniJob("aim_bow", "t_bowwalk_2_bowaim");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 11));
+            aniJob1.AddOverlayAni(new ScriptAni(0, 11), ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 11), ov2);
 
-            aniJob.SetDefaultAni(new ScriptAni(4000000));
-            aniJob.AddOverlayAni(new ScriptAni(4000000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(4000000), ov2);*/
+            aniJob2 = new ScriptAniJob("aiming_bow", "s_BowAim");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni());
+            aniJob2.AddOverlayAni(new ScriptAni(), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(), ov2);
+            aniJob1.NextAni = aniJob2;
+            
+            // fixme: add s_bowshoot too?
+            aniJob1 = new ScriptAniJob("reload_bow", "t_BowReload");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 28));
+            aniJob1.AddOverlayAni(new ScriptAni(0, 26), ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 22), ov2);
+            aniJob1.NextAni = aniJob2;
+
+            aniJob1 = new ScriptAniJob("unaim_bow", "t_BowAim_2_Bowwalk");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 11));
+            aniJob1.AddOverlayAni(new ScriptAni(0, 11), ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 11), ov2);
+
+            #endregion
         }
+
+        #endregion
+
+        #region XBow anis
 
         void AddXBowAnis(ModelDef model)
         {
-            /*var ov1 = new ScriptOverlay("XBowT1", "Humans_CBowT1"); model.AddOverlay(ov1);
+            var ov1 = new ScriptOverlay("XBowT1", "Humans_CBowT1"); model.AddOverlay(ov1);
             var ov2 = new ScriptOverlay("XBowT2", "Humans_CBowT2"); model.AddOverlay(ov2);
 
-            // Weapon drawing
+            #region Draw
 
-            ScriptAniJob aniJob = new ScriptAniJob("drawxbow");
-            aniJob.BaseAniJob.ID = (int)SetAnis.DrawXBow;
-            aniJob.AniName = "drawXBow";
+            ScriptAniJob aniJob1 = new ScriptAniJob("drawXbow_part0", "t_Run_2_Cbow");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 4) { { SpecialFrame.Draw, 4 } });
+            aniJob1.AddOverlayAni(new ScriptAni(0, 4) { { SpecialFrame.Draw, 4 } }, ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 4) { { SpecialFrame.Draw, 4 } }, ov2);
+
+            ScriptAniJob aniJob2 = new ScriptAniJob("drawXbow_part1", "s_Cbow");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
+            aniJob1.NextAni = aniJob2;
+
+            ScriptAniJob aniJob3 = new ScriptAniJob("drawXbow_part2", "t_Cbow_2_CbowRun");
+            model.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 33));
+            aniJob3.AddOverlayAni(new ScriptAni(0, 29), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 25), ov2);
+            aniJob2.NextAni = aniJob3;
+
+            ScriptAniJob aniJob = new ScriptAniJob("drawXbow_running", "t_Move_2_CBowMove", new ScriptAni(0, 39));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 7);
             model.AddAniJob(aniJob);
 
-            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(15000000, 2700000));
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(13300000, 2660000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(11700000, 2260000), ov2);
+            aniJob1 = new ScriptAniJob("undrawXbow_part0", "t_CBowRun_2_CBow");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 33) { { SpecialFrame.Draw, 33 } });
+            aniJob1.AddOverlayAni(new ScriptAni(0, 29) { { SpecialFrame.Draw, 29 } }, ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 25) { { SpecialFrame.Draw, 25 } }, ov2);
 
-            aniJob = new ScriptAniJob("drawxbowrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.DrawXBowRun;
-            aniJob.AniName = "T_MOVE_2_CBOWMOVE";
-            model.AddAniJob(aniJob);
-            var ani = ScriptAni.NewDrawAni(15200000, 2660000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
+            aniJob2 = new ScriptAniJob("undrawXbow_part1", "s_CBow");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 1), ov2);
+            aniJob1.NextAni = aniJob2;
 
-            aniJob = new ScriptAniJob("undrawxbow");
-            aniJob.BaseAniJob.ID = (int)SetAnis.UndrawXBow;
-            aniJob.AniName = "undrawXBow";
-            model.AddAniJob(aniJob);
+            aniJob3 = new ScriptAniJob("undrawXbow_part2", "t_Cbow_2_Run");
+            model.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 4));
+            aniJob3.AddOverlayAni(new ScriptAni(0, 4), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(0, 4), ov2);
+            aniJob2.NextAni = aniJob3;
 
-            aniJob.SetDefaultAni(ScriptAni.NewDrawAni(14500000, 12300000));
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(12800000, 10140000), ov1);
-            aniJob.AddOverlayAni(ScriptAni.NewDrawAni(11200000, 8940000), ov2);
-
-            aniJob = new ScriptAniJob("undrawxbowrun");
-            aniJob.BaseAniJob.ID = (int)SetAnis.UndrawXBowRun;
-            aniJob.AniName = "T_CBOWMOVE_2_MOVE";
-            model.AddAniJob(aniJob);
-            ani = ScriptAni.NewDrawAni(15200000, 12540000); ani.Layer = 2; aniJob.SetDefaultAni(ani);
-
-
-            // AIMING
-
-            aniJob = new ScriptAniJob("xbowaim");
-            aniJob.BaseAniJob.ID = (int)SetAnis.XBowAim;
-            aniJob.AniName = "t_CBowWalk_2_CBowAim";
+            aniJob = new ScriptAniJob("undrawXbow_running", "t_CBowMove_2_Move", new ScriptAni(0, 39));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 32);
             model.AddAniJob(aniJob);
 
-            aniJob.SetDefaultAni(new ScriptAni(1600000));
-            aniJob.AddOverlayAni(new ScriptAni(2000000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(2000000), ov2);
-            
-            // RELOADING
+            #endregion
 
-            aniJob = new ScriptAniJob("Xbowreload");
-            aniJob.BaseAniJob.ID = (int)SetAnis.XBowReload;
-            aniJob.AniName = "t_CBowReload";
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(new ScriptAni(12800000));
-            aniJob.AddOverlayAni(new ScriptAni(11600000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(9200000), ov2);
-
-            // LOWERING
-
-            aniJob = new ScriptAniJob("xbowlower");
-            aniJob.BaseAniJob.ID = (int)SetAnis.XBowLower;
-            aniJob.AniName = "t_CBowAim_2_CBowWalk";
-            model.AddAniJob(aniJob);
-
-            aniJob.SetDefaultAni(new ScriptAni(1600000));
-            aniJob.AddOverlayAni(new ScriptAni(2000000), ov1);
-            aniJob.AddOverlayAni(new ScriptAni(2000000), ov2);*/
         }
+
+        #endregion
     }
 }

@@ -139,6 +139,21 @@ namespace WinApi
 
         #region Write
 
+        public static void WriteBit(int address, int bitNum, bool value)
+        {
+            int bitValue = 1 << bitNum;
+            int read = ReadInt(address);
+            if (((read & bitValue) != 0) != value)
+            {
+                Write(address, read ^ bitValue);
+            }
+        }
+
+        public static bool ReadBit(int address, int bitNum)
+        {
+            return (ReadInt(address) & (1 << bitNum)) != 0;
+        }
+
         public static uint Write(int address, bool value)
         {
             return Write(address, value ? 1 : 0);

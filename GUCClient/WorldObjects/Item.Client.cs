@@ -29,7 +29,7 @@ namespace GUC.WorldObjects
 
         new public oCItem gVob { get { return (oCItem)base.gVob; } }
 
-        bool dropped = false;
+        bool dropped = true;
         internal override void OnTick(long now)
         {
             base.OnTick(now);

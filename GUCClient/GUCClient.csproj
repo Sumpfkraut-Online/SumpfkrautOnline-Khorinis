@@ -124,6 +124,9 @@
     <Compile Include="..\GUCShared\Scripting\Timer.cs">
       <Link>Scripting\Timer.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Types\Angles.cs">
+      <Link>Types\Angles.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Types\ColorRGBA.cs">
       <Link>Types\ColorRGBA.cs</Link>
     </Compile>
@@ -327,6 +330,7 @@
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Types\Angles.Client.cs" />
     <Compile Include="Types\Vec3f.Client.cs" />
     <Compile Include="Utilities\ExtendedObject.Client.cs" />
     <Compile Include="WorldObjects\BaseVob.Client.cs" />

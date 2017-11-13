@@ -14,7 +14,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const long CorpseRemoveTime = 3 * TimeSpan.TicksPerMinute;
+        const long CorpseRemoveTime = 5 * TimeSpan.TicksPerMinute;
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
@@ -47,13 +47,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
                     || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
                 {
-                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                   // ((Arena.ArenaClient)this.Client).KillCharacter();
                 }
             }
 
-            var env = this.BaseInst.GetEnvironment();
-            if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
-                ((Arena.ArenaClient)this.Client).KillCharacter();
+            //var env = this.BaseInst.GetEnvironment();
+            //if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
+             //   ((Arena.ArenaClient)this.Client).KillCharacter();
 
         }
 
@@ -461,15 +461,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             else
             {
                 ScriptAniJob job = (this.Movement == NPCMovement.Stand && !this.Environment.InAir) ? catalog.Draw : catalog.DrawWhileRunning;
-                ScriptAni ani;
-                if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
+                if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ScriptAni ani)) // no animation
                 {
                     DrawWeapon(item);
                 }
                 else
                 {
-                    float drawFrame;
-                    if (!ani.TryGetSpecialFrame(SpecialFrame.Draw, out drawFrame))
+                    if (!ani.TryGetSpecialFrame(SpecialFrame.Draw, out float drawFrame))
                         drawFrame = 0;
 
                     this.ModelInst.StartAniJob(job, new Animations.FrameActionPair(drawFrame, () => DrawWeapon(item)));
@@ -483,7 +481,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         void DrawWeapon(ItemInst item)
         {
             this.UnequipItem(item); // take weapon from parking slot
-            this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
+            
+            if (item.ItemType == ItemTypes.WepBow)
+            {
+                this.EquipItem((int)SlotNums.Lefthand, item); // put weapon into hand
+                if (this.Ammo != null)
+                    this.EquipItem((int)SlotNums.Righthand, this.Ammo);
+            }
+            else if (item.ItemType == ItemTypes.WepXBow)
+            {
+                this.EquipItem((int)SlotNums.Righthand, item);
+                if (this.Ammo != null)
+                    this.EquipItem((int)SlotNums.Lefthand, this.Ammo);
+            }
+            else
+            {
+                this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
+            }
             this.drawnWeapon = item;
             this.SetFightMode(true); // look angry
         }
@@ -525,8 +539,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
                 else
                 {
-                    float drawFrame;
-                    if (!ani.TryGetSpecialFrame(SpecialFrame.Draw, out drawFrame))
+                    if (!ani.TryGetSpecialFrame(SpecialFrame.Draw, out float drawFrame))
                         drawFrame = 0;
 
                     this.ModelInst.StartAniJob(job, new Animations.FrameActionPair(drawFrame, () => UndrawWeapon(item)));
@@ -539,7 +552,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         /// </summary>
         void UndrawWeapon(ItemInst item)
         {
-            this.UnequipItem(item); // take weapon from right hand
+            this.UnequipItem(item); // take weapon from hand
             this.EquipItem(item); // put weapon into parking slot
             this.drawnWeapon = null;
             this.SetFightMode(false);
@@ -633,6 +646,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 StartCorpseTimer();
             }
         }
+
         #region Corpse Removal
 
         public void StartCorpseTimer()
@@ -658,6 +672,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         #endregion
+
+        #region Hit Detection
 
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
@@ -767,11 +783,68 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
+        #endregion
+
         partial void pBeforeSpawn()
         {
             if (this.ModelDef.Visual != "HUMANS.MDS" && this.ModelDef.Visual != "ORC.MDS")
                 this.SetFightMode(true);
         }
 
+        #region Ranged Fighting
+        
+        public bool IsAiming()
+        {
+            if (this.DrawnWeapon != null && this.DrawnWeapon.IsWepRanged)
+            {
+                var aa = ModelInst.GetActiveAniFromLayer(1);
+                if (aa != null)
+                {
+                    var scriptJob = aa.AniJob.ScriptObject;
+                    return scriptJob == AniCatalog.FightBow.Aiming || scriptJob == AniCatalog.FightXBow.Aiming;
+                }
+            }
+            return false;
+        }
+
+        public void DoAim()
+        {
+            ScriptAniJob job = (DrawnWeapon != null && DrawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Aim : AniCatalog.FightBow.Aim;
+            if (job == null || !ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                return;
+            }
+            else
+            {
+                this.ModelInst.StartAniJob(job);
+            }
+        }
+
+        public void DoUnaim()
+        {
+            ScriptAniJob job = (DrawnWeapon != null && DrawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Unaim : AniCatalog.FightBow.Unaim;
+            if (job == null || !ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                return;
+            }
+            else
+            {
+                this.ModelInst.StartAniJob(job);
+            }
+        }
+
+        public void DoShoot(Vec3f start, Vec3f end, ProjInst item)
+        {
+            item.BaseInst.Destination = end;
+            item.Spawn(this.World, start, (end - start).Normalise());
+
+            ScriptAniJob job = (DrawnWeapon != null && DrawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Reload : AniCatalog.FightBow.Reload;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                this.ModelInst.StartAniJob(job);
+            }
+        }
+
+        #endregion
     }
 }

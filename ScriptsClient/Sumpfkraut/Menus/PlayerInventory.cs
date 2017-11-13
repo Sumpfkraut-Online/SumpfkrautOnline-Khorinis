@@ -54,9 +54,8 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public override void Open()
         {
-
             player = ScriptClient.Client.Character;
-            if (player == null)
+            if (player == null || player.IsDead || player.IsInFightMode)
                 return;
 
             var env = player.Environment;

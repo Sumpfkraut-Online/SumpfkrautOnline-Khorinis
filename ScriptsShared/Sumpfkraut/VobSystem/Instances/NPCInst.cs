@@ -110,6 +110,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public Vec3f CustomScale = new Vec3f(1, 1, 1);
         public string CustomName;
 
+
+
         #endregion
 
         public void OnWriteTakeControl(PacketWriter stream)
@@ -142,7 +144,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public enum SlotNums
         {
-
             Sword,
             Bow,
             RuneSlot3,

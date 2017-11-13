@@ -67,6 +67,16 @@ namespace GUC.Types
             this.Z = 0;
         }
 
+        #region Constructors
+
+        public Vec3f(int x, int y, int z)
+        {
+            this.X = x;
+            this.Y = y;
+            this.Z = z;
+        }
+
+
         public Vec3f(float x, float y, float z)
         {
             this.X = x;
@@ -74,12 +84,14 @@ namespace GUC.Types
             this.Z = z;
         }
 
-        public Vec3f(Vec3f vec)
+        public Vec3f(double x, double y, double z)
         {
-            this.X = vec.X;
-            this.Y = vec.Y;
-            this.Z = vec.Z;
+            this.X = (float)x;
+            this.Y = (float)y;
+            this.Z = (float)z;
         }
+
+        #endregion
 
         public void Reset()
         {
@@ -120,7 +132,7 @@ namespace GUC.Types
 
         public float GetDistancePlanar(Vec3f value)
         {
-            return (float)Math.Sqrt((this.X - value.X) * (this.X - value.X) + (this.Z - value.Z)*(this.Z - value.Z));
+            return (float)Math.Sqrt((this.X - value.X) * (this.X - value.X) + (this.Z - value.Z) * (this.Z - value.Z));
         }
 
         public Vec3f Cross(Vec3f vec)
@@ -240,7 +252,7 @@ namespace GUC.Types
         }
 
         #endregion
-        
+
         internal Vec3f CorrectPosition()
         {
             Vec3f ret;

@@ -66,10 +66,32 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "jump_run", "Jumps.Run" },
             { "jump_up", "Jumps.Up" },
 
-            // jumps
+            // climbing
             { "climb_high", "Climbs.High" },
             { "climb_mid", "Climbs.Mid" },
             { "climb_low", "Climbs.Low" },
+
+            // bows
+            { "drawbow_part0", "DrawBow.Draw" },
+            { "undrawbow_part0", "DrawBow.Undraw" },
+            { "drawbow_running", "DrawBow.DrawWhileRunning" },
+            { "undrawbow_running", "DrawBow.UndrawWhileRunning" },
+
+            { "aim_bow", "FightBow.Aim" },
+            { "aiming_bow", "FightBow.Aiming" },
+            { "reload_bow", "FightBow.Reload" },
+            { "unaim_bow", "FightBow.Unaim" },
+            
+            // xbows
+            { "drawXbow_part0", "DrawXBow.Draw" },
+            { "undrawXbow_part0", "DrawXBow.Undraw" },
+            { "drawXbow_running", "DrawXBow.DrawWhileRunning" },
+            { "undrawXbow_running", "DrawXBow.UndrawWhileRunning" },
+
+            { "aim_xbow", "FightXBow.Aim" },
+            { "aiming_xbow", "FightXBow.Aiming" },
+            { "reload_xbow", "FightXBow.Reload" },
+            { "unaim_xbow", "FightXBow.Unaim" },
 
             // item handling
             { "t_IGet_2_Stand", "ItemHandling.TakeItem" },
@@ -134,6 +156,21 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         public DrawWeaponAnis DrawBow { get; private set; }
         public DrawWeaponAnis DrawXBow { get; private set; }
         public DrawWeaponAnis DrawMagic { get; private set; }
+        #endregion
+
+        #region Ranged Weapons
+
+        public class RangedAnis : AniCatalog
+        {
+            public ScriptAniJob Aim { get; private set; }
+            public ScriptAniJob Aiming { get; private set; }
+            public ScriptAniJob Reload { get; private set; }
+            public ScriptAniJob Unaim { get; private set; }
+        }
+
+        public RangedAnis FightBow { get; private set; }
+        public RangedAnis FightXBow { get; private set; }
+
         #endregion
 
         #region Itemhandling

@@ -94,6 +94,11 @@ namespace Gothic.Objects
             return Process.THISCALL<BoolArg>(Address, 0x50FD90, resultPos, (BoolArg)arg);
         }
 
+        public bool GetFoundLedge()
+        {
+            return Process.THISCALL<BoolArg>(Address, 0x50FD00);
+        }
+
         public zTLedgeInfo GetLedgeInfo()
         {
             return Process.THISCALL<zTLedgeInfo>(Address, 0x50FCC0);
@@ -112,6 +117,15 @@ namespace Gothic.Objects
         public void End()
         {
             Process.THISCALL<NullReturnCall>(Address, 0x50E8F0);
+        }
+
+        public void DiveRotateX(float angle)
+        {
+            var ptr = Process.Alloc(4).ToInt32();
+            Process.Write(ptr, angle);
+
+            Process.THISCALL<NullReturnCall>(Address, 0x511970, (IntArg)ptr);
+            Process.Free(ptr, 4);
         }
 
         public bool CheckEnoughSpaceMoveForward(bool arg)

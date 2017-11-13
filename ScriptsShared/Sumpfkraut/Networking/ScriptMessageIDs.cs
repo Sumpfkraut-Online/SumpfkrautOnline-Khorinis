@@ -13,7 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
     }
 
     // commands the client can send
-    public enum ScriptRequestMessageIDs : byte
+    public enum RequestMessageIDs : byte
     {
         JumpFwd,
         JumpRun,
@@ -35,6 +35,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         Parry,
         Dodge,
+
+        Aim,
+        Unaim,
+        Shoot,
 
         TakeItem,
         DropItem,

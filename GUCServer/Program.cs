@@ -112,7 +112,7 @@ namespace GUC
                     timeAll.Start();
 
                     GameTime.Update();
-                    if (OnTick != null) { OnTick(); }
+                    OnTick?.Invoke();
 
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
                     GameServer.Update(); //process received packets
@@ -121,7 +121,7 @@ namespace GUC
 
                     if (nextInfoUpdateTime < GameTime.Ticks)
                     {
-                        Logger.Log("Performance info: {0:0.00}ms average, {1:0.00}ms max. Allocated RAM: {2:0.0}MB", timeAll.Average, timeAll.Maximum, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
+                        Logger.Log("Performance: {0:0.00}ms avg, {1:0.00}ms max. RAM: {2:0.0}MB", timeAll.Average, timeAll.Maximum, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
                         timeAll.Reset();
                         nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }

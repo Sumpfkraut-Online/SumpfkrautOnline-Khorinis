@@ -23,17 +23,46 @@ namespace Gothic.Types
             Process.THISCALL<NullReturnCall>(Address, 0x0056B960, vec);
         }
 
+        public void SetUpVector(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x004B9D90, vec);
+        }
+
+        public void SetRightVector(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x004B9DB0, vec);
+        }
+
+        public void GetAtVector(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x431D20, vec);
+        }
+
+        public void GetUpVector(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x490DD0, vec);
+        }
+
+        public void GetRightVector(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x490DF0, vec);
+        }
+
+        public void PostRotateY(float angle)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x00517780, (FloatArg)angle);
+        }
 
         public static zVec3 operator *(zMat4 a, zVec3 v)
         {
-            float x = a.get(0).X * v.X + a.get(0).Y * v.Y + a.get(0).Z * v.Z + a.get(0).W;
-            float y = a.get(1).X * v.X + a.get(1).Y * v.Y + a.get(1).Z * v.Z + a.get(1).W;
-            float z = a.get(2).X * v.X + a.get(2).Y * v.Y + a.get(2).Z * v.Z + a.get(2).W;
+            float x = a.Get(0).X * v.X + a.Get(0).Y * v.Y + a.Get(0).Z * v.Z + a.Get(0).W;
+            float y = a.Get(1).X * v.X + a.Get(1).Y * v.Y + a.Get(1).Z * v.Z + a.Get(1).W;
+            float z = a.Get(2).X * v.X + a.Get(2).Y * v.Y + a.Get(2).Z * v.Z + a.Get(2).W;
 
             return zVec3.Create(x, y, z);
         }
 
-        public zVec4 get(int index)
+        public zVec4 Get(int index)
         {
             if (index > 3)
                 throw new ArgumentException("the index can not be larger than 3.");
@@ -63,6 +92,7 @@ namespace Gothic.Types
             }
         }
 
+        // improve me
         public float[] Position
         {
             get
@@ -115,6 +145,23 @@ namespace Gothic.Types
                     throw new ArgumentException("zMat4 set direction array is null or has wrong length!");
                 }
             }
+        }
+
+       
+        public void GetEulerAngles(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x516390, vec);
+        }
+
+        public void SetByEulerAngles(float x, float y, float z)
+        {
+            using (zVec3 zVec = zVec3.Create(x, y, z))
+                SetByEulerAngles(zVec);
+        }
+
+        public void SetByEulerAngles(zVec3 angles)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x5163D0, angles);
         }
     }
 }

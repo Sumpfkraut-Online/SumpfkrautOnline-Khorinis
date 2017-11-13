@@ -214,7 +214,7 @@ namespace GUCLauncher
 
         void ShowPasswordPage(ServerListItem item, bool wrongPW = false)
         {
-            var pw = ShowInputBox("Passwort benötigt!");
+            var pw = ShowInputBox(wrongPW ? "Falsches Passwort!" : "Passwort benötigt!");
             if (pw == null)
                 return;
 
@@ -224,7 +224,7 @@ namespace GUCLauncher
                 hash = md5.ComputeHash(Encoding.Unicode.GetBytes(pw));
             }
 
-            TryOpenProjectPage((ServerListItem)lvServerList.SelectedItem, hash);
+            TryOpenProjectPage(item, hash);
         }
 
         #endregion
@@ -251,7 +251,7 @@ namespace GUCLauncher
                 byte[] buf = new byte[byte.MaxValue];
                 buf[0] = 1;
 
-                if (item.HasPW && password != null)
+                if (password != null)
                 {
                     Array.Copy(password, 0, buf, 1, 16);
                 }

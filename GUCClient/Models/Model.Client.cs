@@ -267,7 +267,7 @@ namespace GUC.Models
             if (!(this.vob is NPC))
                 return;
 
-            var gModel = ((NPC)vob).gVob.GetModel();
+            var gModel = ((NPC)vob).gModel;
 
             for (int i = 0; i < activeAnis.Count; i++)
             {
@@ -278,7 +278,9 @@ namespace GUC.Models
                 int gAniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
 
                 if (gModel.GetActiveAni(gAniID).Address == 0)
+                {
                     gModel.StartAni(gAniID, 0);
+                }
 
                 /* moved to hModel.cs
                 

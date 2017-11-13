@@ -71,8 +71,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public bool TryGetAniFromJob(ScriptAniJob aniJob, out ScriptAni ani)
         {
-            Animation baseAni;
-            if (this.BaseInst.TryGetAniFromJob(aniJob.BaseAniJob, out baseAni))
+            if (this.BaseInst.TryGetAniFromJob(aniJob.BaseAniJob, out Animation baseAni))
             {
                 ani = (ScriptAni)baseAni.ScriptObject;
                 return true;

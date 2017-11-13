@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using WinApi.User.Enumeration;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.Networking;
@@ -34,25 +35,71 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
             { VirtualKeys.F3, ToggleG1Camera },
             { VirtualKeys.F5, ToggleScreenInfo },
+            { VirtualKeys.N1, DrawMeleeWeapon },
+            { VirtualKeys.N2, DrawRangedWeapon }
         };
+
+        static void DrawMeleeWeapon(bool down)
+        {
+            if (!down) return;
+
+            var hero = ScriptClient.Client.Character;
+            if (hero.ModelInst.IsInAnimation() || hero.IsDead)
+                return;
+
+            if (hero.MeleeWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
+            else if (hero.DrawnWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+        }
+
+        static void DrawRangedWeapon(bool down)
+        {
+            if (!down) return;
+
+            var hero = ScriptClient.Client.Character;
+            if (hero.ModelInst.IsInAnimation() || hero.IsDead)
+                return;
+
+            if (hero.RangedWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.RangedWeapon);
+            else if (hero.DrawnWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+        }
+
+        static void DrawWeapon(bool down)
+        {
+            if (!down) return;
+
+            var hero = ScriptClient.Client.Character;
+            if (hero.ModelInst.IsInAnimation() || hero.IsDead)
+                return;
+
+            if (hero.MeleeWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
+            else if (hero.DrawnWeapon != null)
+                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+            else
+                NPCInst.Requests.DrawFists(hero);
+        }
 
         static void Jump(bool d)
         {
             var hero = NPCInst.Hero;
             if (!d || hero == null) return;
 
-            if (hero.ModelInst.GetActiveAniFromLayer(1) == null && !CheckWarmup())
+            if (hero.ModelInst.GetActiveAniFromLayer(1) != null || hero.BaseInst.gAI.GetFoundLedge() || CheckWarmup())
+                return;
+
+            var ledge = hero.BaseInst.DetectClimbingLedge();
+            if (ledge == null)
             {
-                var ledge = hero.BaseInst.DetectClimbingLedge();
-                if (ledge == null)
-                {
-                    if (hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(true))
+                if (hero.BaseInst.gAI.CheckEnoughSpaceMoveForward(true))
                     NPCInst.Requests.Jump(hero);
-                }
-                else
-                {
-                    NPCInst.Requests.Climb(hero, ledge);
-                }
+            }
+            else
+            {
+                NPCInst.Requests.Climb(hero, ledge);
             }
         }
 
@@ -89,21 +136,6 @@ namespace GUC.Scripts.Arena.Controls
             }
         }
 
-        static void DrawWeapon(bool down)
-        {
-            if (!down) return;
-
-            var hero = ScriptClient.Client.Character;
-            if (hero.ModelInst.IsInAnimation())
-                return;
-
-            if (hero.MeleeWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
-            else if (hero.DrawnWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
-            else
-                NPCInst.Requests.DrawFists(hero);
-        }
 
         static void CheckFightMove(bool down, FightMoves move)
         {
@@ -116,25 +148,34 @@ namespace GUC.Scripts.Arena.Controls
                 if (CheckWarmup())
                     return;
 
-                NPCInst.Requests.Attack(hero, move);
+                if (hero.DrawnWeapon != null && hero.DrawnWeapon.IsWepRanged)
+                {
+                    RequestShoot(hero);
+                }
+                else
+                {
+                    NPCInst.Requests.Attack(hero, move);
+                }
             }
         }
 
         static void PlayerActionButton(bool down)
         {
-            if (!down) return;
-
             var hero = ScriptClient.Client.Character;
             if (hero.IsDead) return;
 
             if (hero.IsInFightMode)
             {
-                if (KeyBind.MoveForward.IsPressed() && !CheckWarmup())
+                if (hero.DrawnWeapon != null && hero.DrawnWeapon.IsWepRanged)
+                {
+                    NPCInst.Requests.Aim(hero, down);
+                }
+                else if (down && KeyBind.MoveForward.IsPressed() && !CheckWarmup())
                 {
                     NPCInst.Requests.Attack(hero, FightMoves.Run);
                 }
             }
-            else
+            else if (down)
             {
                 if (hero.TeamID == -1)
                 {
@@ -300,6 +341,9 @@ namespace GUC.Scripts.Arena.Controls
         static NPCInst enemy;
         static void DoTurning(NPCInst hero)
         {
+            if (hero.BaseInst.gAI.GetFoundLedge())
+                return;
+
             const float maxTurnFightSpeed = 0.075f;
             if (enemy != null)
             {
@@ -324,7 +368,14 @@ namespace GUC.Scripts.Arena.Controls
                 rotSpeed = InputHandler.MouseDistY * 0.1f;
                 if (rotSpeed > maxLookupSpeed) rotSpeed = maxLookupSpeed;
                 else if (rotSpeed < -maxLookupSpeed) rotSpeed = -maxLookupSpeed;
-                zCAICamera.CurrentCam.BestRotX += rotSpeed;
+                if (hero.Environment.WaterLevel >= 1)
+                {
+                    hero.BaseInst.gAI.DiveRotateX(rotSpeed);
+                }
+                else
+                {
+                    zCAICamera.CurrentCam.BestRotX += rotSpeed;
+                }
             }
 
             // Fixme: do own turning
@@ -377,6 +428,43 @@ namespace GUC.Scripts.Arena.Controls
                 }, VirtualKeys.F8
             }
         };
-    }
 
+        static void RequestShoot(NPCInst hero)
+        {
+            const zCWorld.zTraceRay traceType = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision | zCWorld.zTraceRay.Ignore_NPC;
+
+            var camVob = GothicGlobals.Game.GetCameraVob();
+            Vec3f start = (Vec3f)camVob.Position;
+            Vec3f ray = 500000 * (Vec3f)camVob.Direction;
+            Vec3f end = start + ray;
+
+            bool result;
+            using (var zStart = Gothic.Types.zVec3.Create(start.X, start.Y, start.Z))
+            using (var zRay = Gothic.Types.zVec3.Create(ray.X, ray.Y, ray.Z))
+            {
+                var gWorld = GothicGlobals.Game.GetWorld();
+
+                result = gWorld.TraceRayNearestHit(zStart, zRay, traceType);
+                if (result)
+                {
+                    end = (Vec3f)gWorld.Raytrace_FoundIntersection;
+
+                    start = hero.GetPosition();
+                    start.Y += 30;
+                    ray = end - start;
+
+                    start.SetGVec(zStart);
+                    ray.SetGVec(zRay);
+
+                    result = gWorld.TraceRayNearestHit(zStart, zRay, traceType);
+                    if (result)
+                    {
+                        end = (Vec3f)gWorld.Raytrace_FoundIntersection;
+                    }
+                }
+            }
+
+            NPCInst.Requests.Shoot(hero, start, end);
+        }
+    }
 }
