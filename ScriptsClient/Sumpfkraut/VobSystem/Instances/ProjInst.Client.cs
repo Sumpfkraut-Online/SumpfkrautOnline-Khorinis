@@ -20,7 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         static readonly SoundDefinition sfx_wo_ea = new SoundDefinition("CS_IHL_WO_EA");
         static readonly SoundDefinition sfx_wo_sa = new SoundDefinition("CS_IHL_WO_SA");
 
-        partial void pSpawn(WorldInst world, Vec3f pos, Vec3f dir)
+        partial void pSpawn(WorldInst world, Vec3f pos, Angles ang)
         {
             // create arrow trail
             var ai = oCAIArrow.Create();
@@ -38,19 +38,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             // check the level for hits
             Vec3f currentPos = this.GetPosition();
+            Vec3f direction = (this.Destination - currentPos).Normalise();
 
-            Vec3f startDir = this.BaseInst.GetStartDir().Normalise();
-
-            Vec3f startPos = currentPos + startDir * -50;
-            Vec3f ray = startDir * 5000;
+            Vec3f startPos = currentPos + direction * -50;
+            Vec3f ray = direction * 5000;
 
             using (zVec3 zStart = zVec3.Create(startPos.X, startPos.Y, startPos.Z))
             using (zVec3 zRay = zVec3.Create(ray.X, ray.Y, ray.Z))
             {
                 var gWorld = GothicGlobals.Game.GetWorld();
 
-                zCWorld.zTraceRay parm = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Test_Water | zCWorld.zTraceRay.Return_POLY | zCWorld.zTraceRay.Ignore_NPC | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision;
-                if (gWorld.TraceRayNearestHit(zStart, zRay, parm) && currentPos.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection) < 40)
+                const zCWorld.zTraceRay parm = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Test_Water | zCWorld.zTraceRay.Return_POLY | zCWorld.zTraceRay.Ignore_NPC | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision;
+                if (gWorld.TraceRayNearestHit(zStart, zRay, parm) && Destination.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection) < 40)
                 {
                     var poly = gWorld.Raytrace_FoundPoly;
 

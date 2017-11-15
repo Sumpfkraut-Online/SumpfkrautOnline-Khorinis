@@ -194,7 +194,7 @@ const int IMMUNE										= -1 		;
 
 // ------ Wie weit werden Npcs im Kampf voneinander weggeschoben -------
 // ------ Faktor zu W-Distanz (BASE + Waffe, bzw. BASE + FIST) ------
-const float NPC_COLLISION_CORRECTION_SCALER				= 0.75;		//Default = 0.75
+const float NPC_COLLISION_CORRECTION_SCALER				= 1.50;		//Default = 0.75
 
 
 //

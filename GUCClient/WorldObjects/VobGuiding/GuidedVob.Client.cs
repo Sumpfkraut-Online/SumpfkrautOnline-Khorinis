@@ -19,12 +19,12 @@ namespace GUC.WorldObjects.VobGuiding
         {
             #region Positions
 
-            public static void WritePosDirMessage(GuidedVob vob, Vec3f pos, Vec3f dir, Environment env)
+            public static void WritePosDirMessage(GuidedVob vob, Vec3f pos, Angles ang, Environment env)
             {
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedVobMessage);
                 stream.Write((ushort)vob.ID);
                 stream.WriteCompressedPosition(pos);
-                stream.WriteCompressedDirection(dir);
+                stream.WriteCompressedAngles(ang);
 
                 // compress environment
                 int bitfield = env.InAir ? 0x8000 : 0;
@@ -140,10 +140,10 @@ namespace GUC.WorldObjects.VobGuiding
         }
 
         const float MinPositionDistance = 18.0f;
-        const float MinDirectionDifference = 0.06f;
+        const float MinAnglesDifference = 0.04f;
 
         protected Vec3f guidedLastPos;
-        protected Vec3f guidedLastDir;
+        protected Angles guidedLastAng;
         protected Environment guidedLastEnv;
         protected long guidedNextUpdate;
 
@@ -153,14 +153,14 @@ namespace GUC.WorldObjects.VobGuiding
                 return;
 
             Vec3f pos = this.GetPosition();
-            Vec3f dir = this.GetDirection();
+            Angles ang = this.GetAngles();
             Environment env = this.GetEnvironment();
 
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
             {
                 // nothing really changed, only update every second
                 if (pos.GetDistance(guidedLastPos) < MinPositionDistance
-                    && dir.GetDistance(guidedLastDir) < MinDirectionDifference
+                    && !ang.DifferenceIsBigger(guidedLastAng, MinAnglesDifference)
                     && env == guidedLastEnv)
                 {
                     return;
@@ -168,10 +168,10 @@ namespace GUC.WorldObjects.VobGuiding
             }
 
             guidedLastPos = pos;
-            guidedLastDir = dir;
+            guidedLastAng = ang;
             guidedLastEnv = env;
 
-            Messages.WritePosDirMessage(this, pos, dir, env);
+            Messages.WritePosDirMessage(this, pos, ang, env);
 
             guidedNextUpdate = now + PosUpdateInterval;
 
@@ -194,10 +194,9 @@ namespace GUC.WorldObjects.VobGuiding
 
         #region Spawn & Despawn
 
-        partial void pSpawn(World world, Vec3f position, Vec3f direction)
+        partial void pSpawn(World world, Vec3f position, Angles anges)
         {
-            GuideCmd cmd;
-            if (GameClient.Client.guidedIDs.TryGetValue(this.ID, out cmd))
+            if (GameClient.Client.guidedIDs.TryGetValue(this.ID, out GuideCmd cmd))
             {
                 this.SetGuideCommand(cmd);
                 this.guide = GameClient.Client;

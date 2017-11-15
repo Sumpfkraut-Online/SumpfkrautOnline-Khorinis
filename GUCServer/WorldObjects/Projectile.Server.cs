@@ -12,27 +12,49 @@ namespace GUC.WorldObjects
 
         public partial interface IScriptProjectile : IScriptBaseVob
         {
-            void UpdatePos(Vec3f newPos, Vec3f oldPos);
-            void OnEndPos(Vec3f pos, Vec3f dir);
+            void UpdatePos();
+            void OnEndPos();
         }
 
         #endregion
 
-        Vec3f destination;
-        public Vec3f Destination { set { this.destination = value; } get { return this.destination; } }
+        Item item;
+        public Item Item
+        {
+            get { return this.item; }
+            set
+            {
+                if (this.IsSpawned)
+                    throw new NotSupportedException();
+                this.item = value;
+            }
+        }
 
         partial void pOnTick(long now)
         {
-            Vec3f curPos = GetTimedPosition(now - startTime);
-            if (curPos.GetDistance(startPos) >= destination.GetDistance(startPos))
+            this.lastPos = pos;
+            this.pos = GetTimedPosition(now - startTime).ClampToWorldLimits();
+
+            if (pos.GetDistance(startPos) >= destination.GetDistance(startPos))
             {
-                this.ScriptObject.OnEndPos(destination, startDir);
+                // projectile reached its destination
+                this.ScriptObject.OnEndPos();
                 this.ScriptObject.Despawn();
             }
             else
             {
-                this.ScriptObject.UpdatePos(curPos, lastPos);
-                this.lastPos = curPos;
+                // Update networking
+                this.world.UpdateVobCell(this, pos);
+
+                if (lastUpdatePos.GetDistancePlanar(this.pos) > 100)
+                {
+                    lastUpdatePos = this.pos;
+                    CleanClientList();
+                    UpdateClientList();
+                }
+
+                // tell server scripts
+                this.ScriptObject.UpdatePos();
             }
         }
     }

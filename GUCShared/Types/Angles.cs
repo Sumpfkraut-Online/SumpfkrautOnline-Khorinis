@@ -12,17 +12,61 @@ namespace GUC.Types
             get { return new Angles(0, 0, 0); }
         }
 
-        public const float PI = 3.1415926535897931f;
-        public static float Deg2Rad(float degree)
+        public const float PI    = 3.1415926535897931f;
+        public const float TwoPI = 6.2831853071795865f;
+
+        public static float Deg2Rad(float degrees)
         {
-            return degree * PI / 180f;
+            return degrees * PI / 180f;
         }
 
-        public static float Rad2Deg(float radian)
+        public static float Rad2Deg(float radians)
         {
-            return radian * 180f / PI;
+            return radians * 180f / PI;
         }
-        
+
+        /// <summary> Clamps to 0, 360 </summary>
+        public static float ClampTo360(float degrees)
+        {
+            degrees %= 360;
+            if (degrees < 0)
+                degrees += 360;
+            return degrees;
+        }
+
+        /// <summary> Clamps to 0, pi </summary>
+        public static float ClampTo2PI(float radians)
+        {
+            radians %= TwoPI;
+            if (radians < 0)
+                radians += TwoPI;
+            return radians;
+        }
+
+        /// <summary> Clamps to -180, +180 </summary>
+        public static float ClampTo180(float degrees)
+        {
+            degrees = (degrees + 180) % 360;
+            if (degrees < 0)
+                degrees += 360;
+            return degrees - 180;
+        }
+
+        /// <summary> Clamps to [-pi, +pi] </summary>
+        public static float ClampToPI(float radians)
+        {
+            radians = (radians + PI) % (2 * PI);
+            if (radians < 0)
+                radians += 2 * PI;
+            return radians - PI;
+        }
+
+        /// <summary> Clamps all three angles to [-pi, +pi]</summary>
+        public Angles Clamp()
+        {
+            return new Angles(ClampToPI(Pitch), ClampToPI(Yaw), ClampToPI(Roll));
+        }
+
         public float Pitch;
         public float Yaw;
         public float Roll;
@@ -105,10 +149,26 @@ namespace GUC.Types
 
         #region Direction Vectors
 
+        public static float GetYawFromAtVector(Vec3f at)
+        {
+            at = at.Normalise();
+            return (float)Math.Atan2(-at.X, at.Z);
+        }
+
+        public static Angles FromAtVector(Vec3f at)
+        {
+            var angles = new Angles();
+            angles.SetByAtVector(at);
+            return angles;
+        }
+
+        /// <summary> Sets the Pitch and Yaw angles by a heading-at vector. Roll is 0. </summary>
         public void SetByAtVector(Vec3f at)
         {
             at = at.Normalise();
-            Pitch = -(float)Math.Acos(at.Y);
+            Pitch = -(float)Math.Acos(at.Y) + PI / 2; // +PI/2 so the default value is 0 and not -90
+            Pitch = ClampToPI(Pitch);
+
             Yaw = (float)Math.Atan2(-at.X, at.Z);
             Roll = 0;
         }
@@ -132,8 +192,8 @@ namespace GUC.Types
             float yawSin = (float)Math.Sin(Yaw);
             float yawCos = (float)Math.Cos(Yaw);
 
-            float pitchSin = (float)Math.Sin(Pitch);
-            float pitchCos = (float)Math.Cos(Pitch);
+            float pitchSin = -(float)Math.Cos(Pitch);// (float)Math.Sin(Pitch - PI/2); // -PI/2 so the default value can be 0 and not -90
+            float pitchCos = (float)Math.Sin(Pitch); // (float)Math.Cos(Pitch - PI/2);
 
             return new Vec3f(pitchSin * rollSin * yawCos - pitchCos * yawSin,
                              pitchSin * rollSin * yawSin + pitchCos * yawCos,
@@ -148,8 +208,8 @@ namespace GUC.Types
             float yawSin = (float)Math.Sin(Yaw);
             float yawCos = (float)Math.Cos(Yaw);
 
-            float pitchSin = (float)Math.Sin(Pitch);
-            float pitchCos = (float)Math.Cos(Pitch);
+            float pitchSin = -(float)Math.Cos(Pitch);// (float)Math.Sin(Pitch - PI/2); // -PI/2 so the default value can be 0 and not -90
+            float pitchCos = (float)Math.Sin(Pitch); // (float)Math.Cos(Pitch - PI/2);
 
             return new Vec3f(pitchCos * rollSin * yawCos + pitchSin * yawSin,
                              pitchCos * rollSin * yawSin - pitchSin * yawCos,
@@ -267,5 +327,54 @@ namespace GUC.Types
         }
 
         #endregion
+
+        /// <summary>
+        /// Converts signed two byte integer to [-pi, pi] float.
+        /// </summary>
+        public static float Short2Angle(short value)
+        {
+            return value * PI / short.MaxValue;
+        }
+
+        /// <summary>
+        /// Converts [-pi, pi] float to signed two byte integer.
+        /// </summary>
+        public static short Angle2Short(float angle)
+        {
+            return (short)(angle * short.MaxValue / PI);
+        }
+
+        // for npc updates
+        public bool DifferenceIsBigger(Angles angles2, float maxDiff)
+        {
+            if (Math.Abs(Difference(Yaw, angles2.Yaw)) > maxDiff)
+                return true;
+            else if (Math.Abs(Difference(Pitch, angles2.Pitch)) > maxDiff)
+                return true;
+            else if (Math.Abs(Difference(Roll, angles2.Roll)) > maxDiff)
+                return true;
+            return false;
+        }
+
+        /// <summary> Returns the signed difference on a [-pi, pi] scale between two angles. </summary>
+        public static float Difference(float angle1, float angle2)
+        {
+            float a = (angle1 - angle2) % TwoPI;
+            if (a < 0) a += TwoPI;
+            if (a > PI) a -= TwoPI;
+            return a;
+
+        }
+
+        /// <summary> Returns the signed difference on a [-pi, pi] scale between two angles. </summary>
+        public static Angles Difference(Angles angles1, Angles angles2)
+        {
+            return new Angles()
+            {
+                Pitch = Difference(angles1.Pitch, angles2.Pitch),
+                Yaw = Difference(angles1.Yaw, angles2.Yaw),
+                Roll = Difference(angles1.Roll, angles2.Roll)
+            };
+        }
     }
 }

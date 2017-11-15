@@ -71,16 +71,16 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         #region Spectator
 
-        public void SetToSpectator(World world, Vec3f pos, Vec3f dir)
+        public void SetToSpectator(World world, Vec3f pos, Angles ang)
         {
-            this.SetToSpectator((WorldInst)world.ScriptObject, pos, dir);
+            this.SetToSpectator((WorldInst)world.ScriptObject, pos, ang);
         }
 
-        partial void pSetToSpectator(WorldInst world, Vec3f pos, Vec3f dir);
-        public void SetToSpectator(WorldInst world, Vec3f pos, Vec3f dir)
+        partial void pSetToSpectator(WorldInst world, Vec3f pos, Angles ang);
+        public void SetToSpectator(WorldInst world, Vec3f pos, Angles ang)
         {
-            this.baseClient.SetToSpectate(world.BaseWorld, pos, dir);
-            pSetToSpectator(world, pos, dir);
+            this.baseClient.SetToSpectate(world.BaseWorld, pos, ang);
+            pSetToSpectator(world, pos, ang);
         }
 
         #endregion

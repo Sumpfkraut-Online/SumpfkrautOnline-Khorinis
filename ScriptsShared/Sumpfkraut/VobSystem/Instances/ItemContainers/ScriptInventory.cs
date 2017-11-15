@@ -19,10 +19,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
         }
 
         public delegate void RemoveItemHandler(ItemInst item);
-        public static event RemoveItemHandler OnRemoveItem;
+        public event RemoveItemHandler OnRemoveItem;
 
         public delegate void AddItemHandler(ItemInst item);
-        public static event AddItemHandler OnAddItem;
+        public event AddItemHandler OnAddItem;
 
         #region Constructors
 
@@ -66,27 +66,33 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
         {
             RemoveItem((ItemInst)item.ScriptObject);
         }
-
+        
         public void AddItem(ItemInst item)
         {
             BaseInst.Add(item.BaseInst);
-            if (OnAddItem != null)
-                OnAddItem(item);
+            item.OnSetAmount += Item_OnSetAmount;
+            OnAddItem?.Invoke(item);
+        }
+
+        public delegate void OnItemAmountChangeHandler(ItemInst item);
+        public event OnItemAmountChangeHandler OnItemAmountChange;
+        void Item_OnSetAmount(ItemInst item)
+        {
+            OnItemAmountChange?.Invoke(item);
         }
 
         public void RemoveItem(ItemInst item)
         {
             BaseInst.Remove(item.BaseInst);
-            if (OnRemoveItem != null)
-                OnRemoveItem(item);
+            item.OnSetAmount -= Item_OnSetAmount;
+            OnRemoveItem?.Invoke(item);
         }
 
         public ItemInst GetItem(int id)
         {
-            Item item;
-            BaseInst.TryGetItem(id, out item);
-            ItemInst itemInst = (ItemInst)item.ScriptObject;
-            return itemInst;
+            if (BaseInst.TryGetItem(id, out Item item))
+                return (ItemInst)item.ScriptObject;
+            return null;
         }
 
         #endregion

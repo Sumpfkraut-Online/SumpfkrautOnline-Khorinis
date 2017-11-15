@@ -35,20 +35,10 @@ namespace Gothic.Types
             rV.X = x; rV.Y = y; rV.Z = z;
             return rV;
         }
-
-        private bool disposed = false;
+        
         public void Dispose()
         {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                Process.Free(new IntPtr(Address), zVec3.ByteSize);
-                disposed = true;
-            }
+            Process.Free(new IntPtr(Address), zVec3.ByteSize);
         }
 
         public float this[int index]

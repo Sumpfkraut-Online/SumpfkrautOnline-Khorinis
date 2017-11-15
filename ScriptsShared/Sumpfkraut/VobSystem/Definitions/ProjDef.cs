@@ -35,18 +35,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         new public ProjectileInstance BaseDef { get { return (ProjectileInstance)base.BaseDef; } }
 
-        public ModelDef Model
-        {
-            get { return (ModelDef)this.BaseDef.Model.ScriptObject; }
-            set { this.BaseDef.Model = value.BaseDef; }
-        }
-
-        public float Velocity
-        {
-            get { return this.BaseDef.Velocity; }
-            set { this.BaseDef.Velocity = value; }
-        }
-
         #endregion
 
     }

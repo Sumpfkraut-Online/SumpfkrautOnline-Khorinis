@@ -344,21 +344,20 @@ namespace GUC.Scripts.Sumpfkraut.AI
             ammo.BaseInst.SetAmount(ammoAmount);
 
             npcInst.Inventory.AddItem(weapon);
-            npcInst.EquipItem(weapon); // 1 = DrawnWeapon
+            npcInst.EffectHandler.TryEquipItem(weapon); // 1 = DrawnWeapon
 
             npcInst.Inventory.AddItem(rangeWeapon);
-            npcInst.EquipItem(rangeWeapon);
+            npcInst.EffectHandler.TryEquipItem(rangeWeapon);
 
             npcInst.Inventory.AddItem(ammo);
-            npcInst.EquipItem(ammo);
+            npcInst.EffectHandler.TryEquipItem(ammo);
 
             npcInst.Inventory.AddItem(armor);
-            npcInst.EquipItem(armor);
+            npcInst.EffectHandler.TryEquipItem(armor);
 
             if (overlayExists) { npcInst.ModelInst.ApplyOverlay(overlay); }
 
-            npcInst.Spawn(WorldSystem.WorldInst.List[0], 
-                spawnPosition, new Types.Vec3f(1f, 0f, 0f));
+            npcInst.Spawn(WorldSystem.WorldInst.List[0], spawnPosition, Types.Angles.Null);
 
             return npcInst;
         }

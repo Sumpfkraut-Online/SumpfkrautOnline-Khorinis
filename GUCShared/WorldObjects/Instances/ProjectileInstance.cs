@@ -32,14 +32,8 @@ namespace GUC.WorldObjects.Instances
 
         #region Properties
 
-        public ModelInstance Model;
-
-        float velocity = 0.01f;
-        public float Velocity
-        {
-            get { return this.velocity; }
-            set { this.velocity = value; }
-        }
+        // visual fx
+        public object VisualFX;
 
         #endregion
 
@@ -47,9 +41,6 @@ namespace GUC.WorldObjects.Instances
 
         public override void Create()
         {
-            if (this.Model == null)
-                throw new NullReferenceException("Model is null!");
-
             base.Create();
         }
 
@@ -60,21 +51,11 @@ namespace GUC.WorldObjects.Instances
         protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
-
-            stream.Write((ushort)this.Model.ID);
-            stream.Write(this.velocity);
         }
 
         protected override void ReadProperties(PacketReader stream)
         {
             base.ReadProperties(stream);
-
-            int modelID = stream.ReadUShort();
-            if (!ModelInstance.TryGet(modelID, out this.Model))
-            {
-                throw new Exception("Model not found! " + modelID);
-            }
-            this.velocity = stream.ReadFloat();
         }
 
         #endregion

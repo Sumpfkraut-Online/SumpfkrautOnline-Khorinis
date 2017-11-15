@@ -118,6 +118,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 
         public void DrawWeapon(NPCInst npc, ItemInst item)
         {
+            if (npc == null || item == null)
+                return;
+
             var stream = npc.BaseInst.GetScriptCommandStream();
             stream.Write((byte)RequestMessageIDs.DrawWeapon);
             stream.Write((byte)item.ID);

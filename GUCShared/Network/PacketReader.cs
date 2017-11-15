@@ -198,21 +198,23 @@ namespace GUC.Network
 
         public ColorRGBA ReadColorRGBA()
         {
-            ColorRGBA color = new ColorRGBA();
-            color.R = data[currentByte++];
-            color.G = data[currentByte++];
-            color.B = data[currentByte++];
-            color.A = data[currentByte++];
-            return color;
+            return new ColorRGBA
+            {
+                R = data[currentByte++],
+                G = data[currentByte++],
+                B = data[currentByte++],
+                A = data[currentByte++]
+            };
         }
 
         public Vec3f ReadCompressedPosition()
         {
-            Vec3f vec = new Vec3f();
-            vec.X = ReadInt24() / 10.0f;
-            vec.Y = ReadInt24() / 10.0f;
-            vec.Z = ReadInt24() / 10.0f;
-            return vec;
+            return new Vec3f
+            {
+                X = ReadInt24() / 10.0f,
+                Y = ReadInt24() / 10.0f,
+                Z = ReadInt24() / 10.0f
+            };
         }
 
         int ReadInt24()
@@ -223,11 +225,39 @@ namespace GUC.Network
 
         public Vec3f ReadCompressedDirection()
         {
-            Vec3f vec = new Vec3f();
-            vec.X = ReadSByte() / 127.0f;
-            vec.Y = ReadSByte() / 127.0f;
-            vec.Z = ReadSByte() / 127.0f;
-            return vec;
+            return new Vec3f
+            {
+                X = ReadSByte() / 127.0f,
+                Y = ReadSByte() / 127.0f,
+                Z = ReadSByte() / 127.0f
+            };
+        }
+
+        public Angles ReadAngles()
+        {
+            Angles angles = new Angles();
+            angles.Pitch = BitConverter.ToSingle(data, currentByte);
+            currentByte += 4;
+            angles.Yaw = BitConverter.ToSingle(data, currentByte);
+            currentByte += 4;
+            angles.Roll = BitConverter.ToSingle(data, currentByte);
+            currentByte += 4;
+            return angles;
+        }
+
+        public float ReadCompressedAngle()
+        {
+            return Angles.Short2Angle(ReadShort());
+        }
+
+        public Angles ReadCompressedAngles()
+        {
+            return new Angles()
+            {
+                Pitch = Angles.Short2Angle(ReadShort()),
+                Yaw = Angles.Short2Angle(ReadShort()),
+                Roll = Angles.Short2Angle(ReadShort()),
+            };
         }
 
         #endregion

@@ -55,7 +55,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             if (this.Host.IsInFightMode)
             {
-                if (this.Host.DrawnWeapon != null)
+                if (this.Host.GetDrawnWeapon() != null)
                 {
                     return;
                     //this.UnequipItem(this.DrawnWeapon);
@@ -79,16 +79,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
 
-            if (this.Host.IsInFightMode)
+            if (this.Host.IsInFightMode && Host.GetDrawnWeapon() != null)
             {
-                if (this.Host.DrawnWeapon != null)
-                {
-                    this.Host.DoUndrawWeapon(Host.DrawnWeapon);
-                }
-                else
-                {
-                    this.Host.DoUndrawFists();
-                }
+                Host.DoUndrawWeapon(Host.GetDrawnWeapon());
             }
             else
             {
@@ -96,12 +89,29 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
+        public void TryUndrawWeapon(ItemInst item)
+        {
+            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS")
+                return;
+
+            if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
+                return;
+
+            if (Host.GetRightHand() == item || Host.GetLeftHand() == item)
+            {
+                Host.DoUndrawWeapon(item);
+            }
+        }
+
         public void TryFightMove(FightMoves move)
         {
             if (Host.IsDead || !Host.IsInFightMode
                 || (Host.Environment.InAir && move != FightMoves.Run)
-                || Host.ModelInst.GetActiveAniFromLayer(2) != null
-                || (Host.DrawnWeapon != null && !Host.DrawnWeapon.IsWeapon))
+                || Host.ModelInst.GetActiveAniFromLayer(2) != null)
+                return;
+
+            var meleeWep = Host.GetDrawnWeapon();
+            if (meleeWep != null && !meleeWep.IsWepMelee)
                 return;
 
             var otherAni = Host.ModelInst.GetActiveAniFromLayer(1);
@@ -127,32 +137,90 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
+        /// <summary> Player equips item through inventory </summary>
         public void TryEquipItem(ItemInst item)
         {
-            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation()
-                || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
-                || this.Host.IsInFightMode)
+            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation() || this.Host.Environment.InAir 
+                || this.Host.IsInFightMode || this.Host.HasItemInHands())
                 return;
 
-            this.Host.EquipItem(item);
+            NPCSlots slot;
+            switch (item.ItemType)
+            {
+                case ItemTypes.AmmoBow:
+                case ItemTypes.AmmoXBow:
+                    slot = NPCSlots.Ammo;
+                    break;
+                case ItemTypes.Armor:
+                    slot = NPCSlots.Armor;
+                    break;
+                case ItemTypes.Wep1H: // FIXME: Let player choose the slots
+                    if (Host.GetEquipmentBySlot(NPCSlots.OneHanded1) == null || Host.GetEquipmentBySlot(NPCSlots.OneHanded2) != null)
+                        slot = NPCSlots.OneHanded1;
+                    else
+                        slot = NPCSlots.OneHanded2;
+
+                    Host.UnequipSlot(NPCSlots.TwoHanded);
+                    break;
+                case ItemTypes.Wep2H:
+                    slot = NPCSlots.TwoHanded;
+                    Host.UnequipSlot(NPCSlots.OneHanded1);
+                    Host.UnequipSlot(NPCSlots.OneHanded2);
+                    break;
+                case ItemTypes.WepBow:
+                case ItemTypes.WepXBow:
+                    slot = NPCSlots.Ranged;
+                    break;
+                default:
+                    return;
+            }
+
+            ItemInst otherItem = Host.GetEquipmentBySlot(slot);
+            if (otherItem != null)
+                Host.UnequipItem(otherItem);
+            
+            this.Host.EquipItem(slot, item);
+
+            if (item.IsWepRanged)
+            {
+                var curAmmo = Host.GetAmmo();
+                var ammoType = item.ItemType == ItemTypes.WepXBow ? ItemTypes.AmmoXBow : ItemTypes.AmmoBow;
+                if (curAmmo == null || curAmmo.ItemType != ammoType) // no ammo equipped or wrong type
+                    Host.Inventory.ForEachItemPredicate(i =>
+                    {
+                        if (i.ItemType == ammoType)
+                        {
+                            if (curAmmo != null)
+                                Host.UnequipItem(curAmmo);
+                            Host.EquipItem(NPCSlots.Ammo, i);
+                            return false;
+                        }
+                        return true;
+                    });
+            }
         }
 
 
         public void TryUnequipItem(ItemInst item)
         {
             if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation()
-                || this.Host.Environment.InAir || this.Host.DrawnWeapon != null
+                || this.Host.Environment.InAir || this.Host.HasItemInHands()
                 || this.Host.IsInFightMode)
                 return;
-            
-            this.Host.UnequipItem(item);
+
+            Host.UnequipItem(item);
+            if (item.ItemType == ItemTypes.Wep1H)
+                Host.UnequipSlot(NPCSlots.OneHanded2);
         }
 
         public void TryAim()
         {
             if (Host.IsDead || Host.IsAiming() || Host.ModelInst.IsInAnimation()
-                || Host.Environment.InAir || Host.DrawnWeapon == null
-                || !Host.IsInFightMode || !Host.DrawnWeapon.IsWepRanged)
+                || Host.Environment.InAir || !Host.IsInFightMode)
+                return;
+
+            var drawnWep = Host.GetDrawnWeapon();
+            if (drawnWep == null || !drawnWep.IsWepRanged)
                 return;
 
             Host.DoAim();
@@ -172,51 +240,33 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 return;
 
             if (start.GetDistance(end) > 500000) // just in case
-                end = start + 500000 * (start - end).Normalise();
+                end = start + 500000 * (end - start).Normalise();
 
-            ItemInst projItem = null;
-            if (Host.DrawnWeapon.ItemType == ItemTypes.WepBow)
-            {
-                Host.Inventory.ForEachItemPredicate(i =>
-                {
-                    if (i.ItemType == ItemTypes.AmmoBow)
-                    {
-                        projItem = i;
-                        return false;
-                    }
-                    return true;
-                });
-            }
-            else if (Host.DrawnWeapon.ItemType == ItemTypes.WepXBow)
-            {
-                Host.Inventory.ForEachItemPredicate(i =>
-                {
-                    if (i.ItemType == ItemTypes.AmmoXBow)
-                    {
-                        projItem = i;
-                        return false;
-                    }
-                    return true;
-                });
-            }
-
-            if (projItem == null)
+            var drawnWeapon = Host.GetDrawnWeapon();
+            if (drawnWeapon == null || !drawnWeapon.IsWepRanged)
                 return;
 
-            if (projItem.Amount == 1)
+            ItemInst ammo = drawnWeapon.ItemType == ItemTypes.WepBow ? Host.GetRightHand() : Host.GetLeftHand();
+            if (ammo == null || !ammo.IsAmmo)
+                return;
+
+            ProjInst inst = new ProjInst(ProjDef.Get<ProjDef>("arrow"));
+            inst.Radius = 10;
+            inst.Item = new ItemInst(ammo.Definition);
+            inst.Damage = drawnWeapon.Damage;
+            inst.Velocity = 0.00003f;
+            inst.Model = ammo.ModelDef;
+            
+            /*if (ammo.Amount == 1)
             {
-                //Host.Inventory.RemoveItem(projItem);
+                Host.Inventory.RemoveItem(projItem);
             }
             else
             {
-               // projItem = projItem.Split(1);
-            }
+                projItem = projItem.Split(1);
+            }*/
 
-            // heh fixme und so
-
-            ProjInst proj = new ProjInst(ProjDef.Get<ProjDef>(projItem.ItemType == ItemTypes.AmmoBow ? "arrow" : "bolt"));
-
-            Host.DoShoot(start, end, proj);
+            Host.DoShoot(start, end, inst);
         }
     }
 }

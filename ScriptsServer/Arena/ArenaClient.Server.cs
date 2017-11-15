@@ -217,7 +217,7 @@ namespace GUC.Scripts.Arena
                 if (string.Equals(itemDef.CodeName, "ItMw_1h_Bau_Mace", StringComparison.OrdinalIgnoreCase)
                  || string.Equals(itemDef.CodeName, "ITAR_Prisoner", StringComparison.OrdinalIgnoreCase))
                 {
-                    npc.EquipItem(item);
+                    npc.EffectHandler.TryEquipItem(item);
                 }
             });
 
@@ -227,7 +227,7 @@ namespace GUC.Scripts.Arena
                 npc.ModelInst.ApplyOverlay(ov);
 
             var pair = spawnPositions.GetRandom();
-            npc.Spawn(WorldInst.List[0], pair.Item1, pair.Item2);
+            npc.Spawn(WorldInst.List[0], pair.Item1, Angles.Null);
             this.SetControl(npc);
         }
 
@@ -241,11 +241,11 @@ namespace GUC.Scripts.Arena
             
             if (!team)
             {
-                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Vec3f(0.910f, -0.063f, -0.409f));
+                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), Angles.Null);
             }
             else
             {
-                this.SetToSpectator(TeamMode.World, TeamMode.ActiveTODef.SpecPos.Item1, TeamMode.ActiveTODef.SpecPos.Item2);
+                this.SetToSpectator(TeamMode.World, TeamMode.ActiveTODef.SpecPos.Item1, Angles.Null);
             }  
         }
 

@@ -38,6 +38,9 @@ namespace GUC.Scripts
         }
 
         static Gothic.Objects.zCVob arrow;
+
+        public static Types.Angles AddAngles = new Types.Angles(0, 0, 0);
+
         public static event Action<long> OnUpdate;
         public void Update(long ticks)
         {
@@ -47,10 +50,28 @@ namespace GUC.Scripts
             CheckMusic();
             CheckPosition();
 
-            if (WorldObjects.NPC.Hero != null)
+            var cam = GothicGlobals.Game.GetCameraVob();
+            if (!cam.IsNull && NPCInst.Hero != null)
             {
-                var angles = new Types.Angles(GothicGlobals.Game.GetCameraVob().TrafoObjToWorld);
-                GUI.GUCView.DebugText.Text = String.Format("({0:0.00} / {1:0.00} / {2:0.00})", Types.Angles.Rad2Deg(angles.Pitch), Types.Angles.Rad2Deg(angles.Yaw), Types.Angles.Rad2Deg(angles.Roll));
+                if (arrow == null)
+                {
+                    arrow = Gothic.Objects.zCVob.Create();
+                    arrow.SetVisual("ITRW_ARROW.3DS");
+                    GothicGlobals.Game.GetWorld().AddVob(arrow);
+                    arrow.SetPositionWorld(NPCInst.Hero.GetPosition().X, NPCInst.Hero.GetPosition().Y, NPCInst.Hero.GetPosition().Z);
+                }
+
+                var rotation = Types.Angles.FromAtVector((Types.Vec3f)cam.Direction);
+                var p = rotation.Pitch;
+                rotation.Pitch = rotation.Roll;
+                rotation.Roll = p;
+
+                rotation += AddAngles;
+
+
+                GUI.GUCView.DebugText.Text = string.Format("{0:0.00} {1:0.00} {2:0.00}", rotation.Pitch, rotation.Yaw, rotation.Roll);
+
+                rotation.SetMatrix(arrow);
             }
         }
 
@@ -134,12 +155,12 @@ namespace GUC.Scripts
                         if (Randomizer.GetInt(2) == 0)
                         {
                             hero.SetPosition(new Types.Vec3f(-1969.563f, -120.6398f, 2707.328f));
-                            hero.SetDirection(new Types.Vec3f(-0.2647138f, 0f, 0.964327f));
+                            hero.SetAngles(Types.Angles.Null);
                         }
                         else
                         {
                             hero.SetPosition(new Types.Vec3f(-4550.162f, -98.70279f, 1392.133f));
-                            hero.SetDirection(new Types.Vec3f(-0.7259743f, 0f, 0.6877218f));
+                            hero.SetAngles(Types.Angles.Null);
                         }
                 }
             }

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using WinApi.User.Enumeration;
-using GUC.Types;
-using GUC.Scripts.Sumpfkraut.Networking;
+﻿using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.Controls;
+using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Types;
 using GUC.Utilities;
-using Gothic.Objects;
+using System;
+using WinApi.User.Enumeration;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Arena.Controls
 {
@@ -47,10 +44,11 @@ namespace GUC.Scripts.Arena.Controls
             if (hero.ModelInst.IsInAnimation() || hero.IsDead)
                 return;
 
-            if (hero.MeleeWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
-            else if (hero.DrawnWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+            ItemInst weapon;
+            if (((weapon = hero.GetDrawnWeapon()) != null && weapon.IsWepMelee) || // undraw
+                 (weapon = hero.GetEquipmentBySlot(NPCSlots.OneHanded1)) != null || // draw
+                 (weapon = hero.GetEquipmentBySlot(NPCSlots.TwoHanded)) != null) // draw
+                NPCInst.Requests.DrawWeapon(hero, weapon);
         }
 
         static void DrawRangedWeapon(bool down)
@@ -61,10 +59,10 @@ namespace GUC.Scripts.Arena.Controls
             if (hero.ModelInst.IsInAnimation() || hero.IsDead)
                 return;
 
-            if (hero.RangedWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.RangedWeapon);
-            else if (hero.DrawnWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+            ItemInst weapon;
+            if (((weapon = hero.GetDrawnWeapon()) != null && weapon.IsWepRanged) ||  // undraw
+                 (weapon = hero.GetEquipmentBySlot(NPCSlots.Ranged)) != null) // draw
+                NPCInst.Requests.DrawWeapon(hero, weapon);
         }
 
         static void DrawWeapon(bool down)
@@ -75,12 +73,19 @@ namespace GUC.Scripts.Arena.Controls
             if (hero.ModelInst.IsInAnimation() || hero.IsDead)
                 return;
 
-            if (hero.MeleeWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.MeleeWeapon);
-            else if (hero.DrawnWeapon != null)
-                NPCInst.Requests.DrawWeapon(hero, hero.DrawnWeapon);
+            ItemInst weapon;
+            if ((weapon = hero.GetDrawnWeapon()) != null ||
+               ((weapon = hero.LastUsedWeapon) != null && weapon.Container == hero && weapon.IsEquipped) ||
+               (weapon = hero.GetEquipmentBySlot(NPCSlots.OneHanded1)) != null ||
+               (weapon = hero.GetEquipmentBySlot(NPCSlots.TwoHanded)) != null ||
+               (weapon = hero.GetEquipmentBySlot(NPCSlots.Ranged)) != null)
+            {
+                NPCInst.Requests.DrawWeapon(hero, weapon);
+            }
             else
+            {
                 NPCInst.Requests.DrawFists(hero);
+            }
         }
 
         static void Jump(bool d)
@@ -110,10 +115,10 @@ namespace GUC.Scripts.Arena.Controls
                 return;
 
             var pos = hero.GetPosition();
-            var dir = hero.GetDirection();
+            var ang = hero.GetAngles();
 
-            Log.Logger.Log(pos + " " + dir);
-            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Vec3f({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
+            Log.Logger.Log(pos + " " + ang);
+            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Angles({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, ang.Pitch, ang.Yaw, ang.Roll));
         }
 
         static void ToggleScoreBoard(bool down)
@@ -148,7 +153,8 @@ namespace GUC.Scripts.Arena.Controls
                 if (CheckWarmup())
                     return;
 
-                if (hero.DrawnWeapon != null && hero.DrawnWeapon.IsWepRanged)
+                var drawnWeapon = hero.GetDrawnWeapon();
+                if (drawnWeapon != null && drawnWeapon.IsWepRanged)
                 {
                     RequestShoot(hero);
                 }
@@ -166,7 +172,8 @@ namespace GUC.Scripts.Arena.Controls
 
             if (hero.IsInFightMode)
             {
-                if (hero.DrawnWeapon != null && hero.DrawnWeapon.IsWepRanged)
+                var drawnWeapon = hero.GetDrawnWeapon();
+                if (drawnWeapon != null && drawnWeapon.IsWepRanged)
                 {
                     NPCInst.Requests.Aim(hero, down);
                 }
@@ -344,20 +351,19 @@ namespace GUC.Scripts.Arena.Controls
             if (hero.BaseInst.gAI.GetFoundLedge())
                 return;
 
-            const float maxTurnFightSpeed = 0.075f;
+            const float maxTurnFightSpeed = 0.07f;
             if (enemy != null)
             {
                 Vec3f heroPos = hero.GetPosition();
-                Vec3f heroDir = hero.GetDirection();
                 Vec3f enemyPos = enemy.GetPosition();
 
-                Vec3f dir = (new Vec3f(enemyPos.X, 0, enemyPos.Z) - new Vec3f(heroPos.X, 0, heroPos.Z)).Normalise();
-                Vec3f diff = new Vec3f(heroDir.X, 0, heroDir.Z) - dir;
-                float len = diff.GetLength();
-                if (len > maxTurnFightSpeed)
-                    diff = new Vec3f(diff.X / len * maxTurnFightSpeed, 0, diff.Z / len * maxTurnFightSpeed);
+                float bestYaw = Angles.GetYawFromAtVector(enemyPos - heroPos);
+                Angles curAngles = hero.GetAngles();
 
-                hero.SetDirection(heroDir - diff);
+                float yawDiff = Angles.Difference(bestYaw, curAngles.Yaw);
+                curAngles.Yaw += Alg.Clamp(-maxTurnFightSpeed, yawDiff, maxTurnFightSpeed);
+
+                hero.SetAngles(curAngles);
                 return;
             }
 
@@ -409,8 +415,8 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     NPCInst hero = ScriptClient.Client.Character;
                     Vec3f pos = hero.GetPosition();
-                    Vec3f dir = hero.GetDirection();
-                    pos += dir * 125.0f;
+                    Vec3f dir = (Vec3f)hero.BaseInst.gVob.Direction;
+                    pos += dir * 150.0f;
                     hero.SetPosition(pos);
                 }, VirtualKeys.K
             }
@@ -431,11 +437,19 @@ namespace GUC.Scripts.Arena.Controls
 
         static void RequestShoot(NPCInst hero)
         {
+            Vec3f projStartPos;
+            using (var matrix = Gothic.Types.zMat4.Create())
+            {
+                var node = hero.GetDrawnWeapon().ItemType == ItemTypes.WepBow ? oCNpc.NPCNodes.RightHand : oCNpc.NPCNodes.LeftHand;
+                hero.BaseInst.gVob.GetTrafoModelNodeToWorld(node, matrix);
+                projStartPos = (Vec3f)matrix.Position;
+            }
+
             const zCWorld.zTraceRay traceType = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision | zCWorld.zTraceRay.Ignore_NPC;
 
             var camVob = GothicGlobals.Game.GetCameraVob();
             Vec3f start = (Vec3f)camVob.Position;
-            Vec3f ray = 500000 * (Vec3f)camVob.Direction;
+            Vec3f ray = 500000f * (Vec3f)camVob.Direction;
             Vec3f end = start + ray;
 
             bool result;
@@ -449,8 +463,7 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     end = (Vec3f)gWorld.Raytrace_FoundIntersection;
 
-                    start = hero.GetPosition();
-                    start.Y += 30;
+                    start = projStartPos;
                     ray = end - start;
 
                     start.SetGVec(zStart);

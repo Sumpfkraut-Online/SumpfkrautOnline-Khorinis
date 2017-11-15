@@ -21,7 +21,7 @@ namespace GUC.Network
             void OnDisconnection(int id);
 
             void SetControl(NPC npc);
-            void SetToSpectator(World world, Vec3f pos, Vec3f dir);
+            void SetToSpectator(World world, Vec3f pos, Angles ang);
         }
 
         /// <summary>
@@ -84,7 +84,8 @@ namespace GUC.Network
 
         #region Spectate
 
-        Vec3f specPos, specDir;
+        Vec3f specPos;
+        Angles specAng;
 
         World specWorld;
         public World SpecWorld { get { return this.specWorld; } }
@@ -92,7 +93,7 @@ namespace GUC.Network
         bool isSpectating = false;
         public bool IsSpectating { get { return this.isSpectating; } }
 
-        #region Position & Direction
+        #region Position & Angles
 
         partial void pSpecGetPos();
         public Vec3f SpecGetPos()
@@ -101,44 +102,44 @@ namespace GUC.Network
             return this.specPos;
         }
 
-        partial void pSpecGetDir();
-        public Vec3f SpecGetDir()
+        partial void pSpecGetAng();
+        public Angles SpecGetAng()
         {
-            pSpecGetDir();
-            return this.specDir;
+            pSpecGetAng();
+            return this.specAng;
         }
 
         partial void pSpecSetPos();
         public void SpecSetPos(Vec3f position)
         {
-            this.specPos = position.CorrectPosition();
+            this.specPos = position.ClampToWorldLimits();
             pSpecSetPos();
         }
 
-        partial void pSpecSetDir();
-        public void SpecSetDir(Vec3f direction)
+        partial void pSpecSetAng();
+        public void SpecSetDir(Angles angles)
         {
-            this.specDir = direction.CorrectDirection();
-            pSpecSetDir();
+            this.specAng = angles.Clamp();
+            pSpecSetAng();
         }
 
-        partial void pSpecSetPosDir();
-        public void SpecSetPosDir(Vec3f position, Vec3f direction)
+        partial void pSpecSetPosAng();
+        public void SpecSetPosAng(Vec3f position, Angles angles)
         {
-            this.specPos = position.CorrectPosition();
-            this.specDir = direction.CorrectDirection();
-            pSpecSetPosDir();
+            this.specPos = position.ClampToWorldLimits();
+            this.specAng = angles.Clamp();
+            pSpecSetPosAng();
         }
 
         #endregion
 
         #region Set to spectator mode
 
-        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir);
+        partial void pSetToSpectate(World world, Vec3f pos, Angles ang);
         /// <summary>
         /// The client will lose control of its current NPC and move into spectator mode (free view).
         /// </summary>
-        public void SetToSpectate(World world, Vec3f position, Vec3f direction)
+        public void SetToSpectate(World world, Vec3f position, Angles angles)
         {
             if (world == null)
                 throw new Exception("World is null!");
@@ -147,14 +148,14 @@ namespace GUC.Network
             
             if (this.isSpectating && specWorld == world)
             {
-                SpecSetPosDir(position, direction);
+                SpecSetPosAng(position, angles);
                 return;
             }
 
-            this.specPos = position.CorrectPosition();
-            this.specDir = direction.CorrectDirection();
+            this.specPos = position.ClampToWorldLimits();
+            this.specAng = angles.Clamp();
 
-            pSetToSpectate(world, specPos, specDir);
+            pSetToSpectate(world, specPos, specAng);
         }
 
         #endregion

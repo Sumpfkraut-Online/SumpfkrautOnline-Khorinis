@@ -3,11 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Gothic.Types;
+using Gothic.Objects;
 
 namespace GUC.Types
 {
     public partial struct Angles
     {
+        /// <summary> Sets the trafo of the given vob </summary>
+        public void SetMatrix(zCVob vob)
+        {
+            SetMatrix(vob.TrafoObjToWorld);
+            /*bool movement = vob.IsInMovement;
+            if (!movement) vob.BeginMovement();
+
+            var obj = vob.CollObj;
+            SetMatrix(obj.NewTrafo);
+            obj.TrafoHintRotation = true;
+
+            if (!movement) vob.EndMovement();*/
+        }
+
         public void SetMatrix(zMat4 matrix)
         {
             float rollSin = (float)Math.Sin(Roll);
@@ -16,8 +31,8 @@ namespace GUC.Types
             float yawSin = (float)Math.Sin(Yaw);
             float yawCos = (float)Math.Cos(Yaw);
 
-            float pitchSin = (float)Math.Sin(Pitch);
-            float pitchCos = (float)Math.Cos(Pitch);
+            float pitchSin = -(float)Math.Cos(Pitch);// (float)Math.Sin(Pitch - PI/2); // -PI/2 so the default value can be 0 and not -90
+            float pitchCos = (float)Math.Sin(Pitch); // (float)Math.Cos(Pitch - PI/2);
 
             matrix[0] = rollCos * yawCos;
             matrix[8] = rollCos * yawSin;
@@ -48,7 +63,13 @@ namespace GUC.Types
             Vec3f up = new Vec3f(matrix[1], matrix[9], matrix[5]).Normalise();
             Vec3f at = new Vec3f(matrix[2], matrix[10], matrix[6]).Normalise();
 
-            const float oneminusepsilon = 0.99999f;
+            Pitch = -(float)Math.Atan2(up.Z, at.Z) + PI / 2; // +PI/2 so the default value is 0 and not -90
+            Pitch = ClampToPI(Pitch);
+
+            Yaw = (float)Math.Atan2(right.Y, right.X);
+            Roll = -(float)Math.Asin(right.Z);
+
+            /*const float oneminusepsilon = 0.99999f;
             if (right.Z < -oneminusepsilon)
             { // singularity
                 Roll = PI / 2f;
@@ -67,8 +88,8 @@ namespace GUC.Types
                 float c = (float)Math.Cos(Roll);
 
                 Yaw = (float)Math.Atan2(right.Y / c, right.X / c);
-                Pitch = -(float)Math.Atan2(up.Z / c, at.Z / c);
-            }
+                Pitch = -(float)Math.Atan2(up.Z / c, at.Z / c) + PI/2; // +PI/2 so the default is 0 and not 90
+            }*/
         }
 
         /*            

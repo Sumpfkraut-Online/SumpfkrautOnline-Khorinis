@@ -18,7 +18,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
-        public delegate void NPCInstMoveHandler(NPCInst npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
+        public delegate void NPCInstMoveHandler(NPCInst npc, Vec3f oldPos, Angles oldAng, NPCMovement oldMovement);
         public static event NPCInstMoveHandler sOnNPCInstMove;
         static NPCInst()
         {
@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         Vec3f lastRegPos;
-        void ChangePosDir(Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement)
+        void ChangePosDir(Vec3f oldPos, Angles oldAng, NPCMovement oldMovement)
         {
             Vec3f pos = GetPosition();
             if (lastRegPos.GetDistance(pos) > 30.0f)
@@ -47,13 +47,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
                     || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
                 {
-                   // ((Arena.ArenaClient)this.Client).KillCharacter();
+                    ((Arena.ArenaClient)this.Client).KillCharacter();
                 }
             }
 
-            //var env = this.BaseInst.GetEnvironment();
-            //if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
-             //   ((Arena.ArenaClient)this.Client).KillCharacter();
+            var env = this.BaseInst.GetEnvironment();
+            if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
+                ((Arena.ArenaClient)this.Client).KillCharacter();
 
         }
 
@@ -165,38 +165,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             item = item.Split(amount);
 
             Vec3f spawnPos = this.GetPosition();
-            Vec3f spawnDir = this.GetDirection();
-            spawnPos += spawnDir * offset;
+            //Angles spawnAng = this.GetAngles();
+            //spawnPos += spawnDir * offset;
 
             // fixme: drop item at the item drop frame
-            ModelInst.StartAniJob(this.AniCatalog.ItemHandling.DropItem, () => item.Spawn(this.World, spawnPos, spawnDir));
-        }
-
-        public void EquipItem(byte itemID)
-        {
-            ItemInst item = Inventory.GetItem(itemID);
-            if (item == null)
-                return;
-
-            //if (this.ModelInst.BaseInst.IsInAnimation())
-            //    return;
-
-            if (!item.IsEquipped)
-                EquipItem(item);
-        }
-
-        public void UnequipItem(byte itemID)
-        {
-            ItemInst item = Inventory.GetItem(itemID);
-            if (item == null)
-                return;
-
-            // -> effectsystem
-            if (this.ModelInst.BaseInst.IsInAnimation())
-                return;
-
-            if (item.IsEquipped)
-                UnequipItem(item);
+            ModelInst.StartAniJob(this.AniCatalog.ItemHandling.DropItem, () => item.Spawn(this.World, spawnPos, Angles.Null));
         }
 
         public void UseItem(byte itemID)
@@ -219,31 +192,31 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case ItemTypes.SmallEatable:
                     // TODO: eat item zu bestimmtem frame aufrufen
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatSmall, () => { this.UnequipItem(item); this.EatItem(item); });
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
                 case ItemTypes.LargeEatable:
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatLarge, () => this.UnequipItem(item));
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
                 case ItemTypes.Mutton:
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatMutton, () => this.UnequipItem(item));
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
                 case ItemTypes.Rice:
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatRice, () => this.UnequipItem(item));
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
                 case ItemTypes.Drinkable:
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.DrinkPotion, () => this.UnequipItem(item));
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
                 case ItemTypes.Readable:
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.ReadScroll, () => this.UnequipItem(item));
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
                 case ItemTypes.Torch:
                     this.ModelInst.StartAniJob(AniCatalog.ItemHandling.UseTorch, () => this.UnequipItem(item));
-                    this.EquipItem((int)SlotNums.Lefthand, item);
+                    this.EquipItem(NPCSlots.LeftHand, item);
                     break;
             }
         }
@@ -271,13 +244,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void DoFightMove(FightMoves move, int combo = 0)
         {
             NPCCatalog.FightAnis fightCatalog;
-            if (this.DrawnWeapon == null)
+            var drawnWeapon = GetDrawnWeapon();
+            if (drawnWeapon == null)
             {
                 fightCatalog = AniCatalog.FightFist;
             }
             else
             {
-                switch (this.DrawnWeapon.ItemType)
+                switch (drawnWeapon.ItemType)
                 {
                     default:
                     case ItemTypes.Wep1H:
@@ -317,13 +291,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            ScriptAni ani;
-            if (!ModelInst.TryGetAniFromJob(job, out ani))
+            if (!ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
                 return;
 
             // combo window
-            float comboFrame;
-            if (!ani.TryGetSpecialFrame(SpecialFrame.Combo, out comboFrame))
+            if (!ani.TryGetSpecialFrame(SpecialFrame.Combo, out float comboFrame))
                 comboFrame = ani.EndFrame;
 
             var comboPair = new Animations.FrameActionPair(comboFrame, () => OpenCombo());
@@ -432,7 +404,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
             }
 
-            if (this.IsInFightMode || this.DrawnWeapon != null)
+            if (this.IsInFightMode || GetDrawnWeapon() != null)
             {
                 /*if (this.DrawnWeapon != null)
                 {
@@ -476,29 +448,31 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         /// <summary>
-        /// Instantly puts the item in the right hand and activates fight mode
+        /// Instantly puts the item in the hand and activates fight mode
         /// </summary>
         void DrawWeapon(ItemInst item)
         {
-            this.UnequipItem(item); // take weapon from parking slot
-            
             if (item.ItemType == ItemTypes.WepBow)
             {
-                this.EquipItem((int)SlotNums.Lefthand, item); // put weapon into hand
-                if (this.Ammo != null)
-                    this.EquipItem((int)SlotNums.Righthand, this.Ammo);
+                this.EquipItem(NPCSlots.LeftHand, item);
+                var ammo = GetAmmo();
+                if (ammo != null)
+                    this.EquipItem(NPCSlots.RightHand, ammo);
             }
             else if (item.ItemType == ItemTypes.WepXBow)
             {
-                this.EquipItem((int)SlotNums.Righthand, item);
-                if (this.Ammo != null)
-                    this.EquipItem((int)SlotNums.Lefthand, this.Ammo);
+                this.EquipItem(NPCSlots.RightHand, item);
+                var ammo = GetAmmo();
+                if (ammo != null)
+                    this.EquipItem(NPCSlots.LeftHand, ammo);
             }
             else
             {
-                this.EquipItem((int)SlotNums.Righthand, item); // put weapon into hand
+                this.EquipItem(NPCSlots.RightHand, item); // put weapon into hand
+                var melee2 = GetEquipmentBySlot(NPCSlots.OneHanded2);
+                if (melee2 != null)
+                    this.EquipItem(NPCSlots.LeftHand, melee2);
             }
-            this.drawnWeapon = item;
             this.SetFightMode(true); // look angry
         }
 
@@ -526,14 +500,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
             }
 
-            if (this.DrawnWeapon == null)
+            if (this.GetDrawnWeapon() == null)
             {
             }
             else
             {
                 ScriptAniJob job = (this.Movement == NPCMovement.Stand && !this.Environment.InAir) ? catalog.Undraw : catalog.UndrawWhileRunning;
-                ScriptAni ani;
-                if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ani)) // no animation
+                if (job == null || !this.ModelInst.TryGetAniFromJob(job, out ScriptAni ani)) // no animation
                 {
                     UndrawWeapon(item);
                 }
@@ -552,9 +525,31 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         /// </summary>
         void UndrawWeapon(ItemInst item)
         {
-            this.UnequipItem(item); // take weapon from hand
-            this.EquipItem(item); // put weapon into parking slot
-            this.drawnWeapon = null;
+            switch (item.ItemType)
+            {
+                case ItemTypes.Wep1H:
+                    EquipItem(NPCSlots.OneHanded1, item);
+                    var other1H = GetLeftHand();
+                    if (other1H != null && other1H.ItemType == ItemTypes.Wep1H)
+                        EquipItem(NPCSlots.OneHanded2, other1H);
+                    break;
+                case ItemTypes.Wep2H:
+                    EquipItem(NPCSlots.TwoHanded, item);
+                    break;
+                case ItemTypes.WepBow:
+                    EquipItem(NPCSlots.Ranged, item);
+                    var ammo = GetRightHand();
+                    if (ammo != null && ammo.ItemType == ItemTypes.AmmoBow)
+                        EquipItem(NPCSlots.Ammo, ammo);
+                    break;
+                case ItemTypes.WepXBow:
+                    EquipItem(NPCSlots.Ranged, item);
+                    ammo = GetLeftHand();
+                    if (ammo != null && ammo.ItemType == ItemTypes.AmmoXBow)
+                        EquipItem(NPCSlots.Ammo, ammo);
+                    break;
+            }
+
             this.SetFightMode(false);
         }
 
@@ -576,12 +571,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (drawAniJob == null)
                 return;
 
-            ScriptAni ani;
-            if (!this.ModelInst.TryGetAniFromJob(drawAniJob, out ani))
+            if (!this.ModelInst.TryGetAniFromJob(drawAniJob, out ScriptAni ani))
                 return;
 
-            float drawFrame;
-            if (!ani.TryGetSpecialFrame(0, out drawFrame))
+            if (!ani.TryGetSpecialFrame(0, out float drawFrame))
                 drawFrame = float.MaxValue;
 
             this.ModelInst.StartAniJob(drawAniJob, new Animations.FrameActionPair(drawFrame, () => this.SetFightMode(true)));
@@ -602,12 +595,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (undrawAniJob == null)
                 return;
 
-            ScriptAni ani;
-            if (!this.ModelInst.TryGetAniFromJob(undrawAniJob, out ani))
+            if (!this.ModelInst.TryGetAniFromJob(undrawAniJob, out ScriptAni ani))
                 return;
 
-            float undrawFrame;
-            if (!ani.TryGetSpecialFrame(0, out undrawFrame))
+            if (!ani.TryGetSpecialFrame(0, out float undrawFrame))
                 undrawFrame = float.MaxValue;
 
             this.ModelInst.StartAniJob(undrawAniJob, new Animations.FrameActionPair(undrawFrame, () => this.SetFightMode(false)));
@@ -689,8 +680,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 damage += att.ClassDef.Damage;
 
             int protection = 0;
-            if (this.Armor != null)
-                protection += this.Armor.Protection;
+            var armor = this.GetArmor();
+            if (armor != null)
+                protection += armor.Protection;
 
             if (this.TeamID != -1 && Cast.Try(this.Client, out Arena.ArenaClient tar) && tar.ClassDef != null)
                 protection += tar.ClassDef.Protection;
@@ -701,7 +693,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (this.TeamID != -1 && attacker.TeamID == this.TeamID) // same team
                 damage /= 2;
 
-            if (damage < 0)
+            if (damage <= 0)
                 damage = 1;
 
             this.SetHealth(this.GetHealth() - damage);
@@ -723,9 +715,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 if (this.IsDead || this.FightAnimation == null)
                     return;
 
-                Vec3f attPos = this.BaseInst.GetPosition();
-                Vec3f attDir = this.BaseInst.GetDirection();
-                float weaponRange = this.ModelDef.Radius + (this.DrawnWeapon == null ? this.ModelDef.FistRange : this.DrawnWeapon.Definition.Range);
+                Vec3f attPos = this.GetPosition();
+                Angles attAng = this.GetAngles();
+                ItemInst drawnWeapon = GetDrawnWeapon();
+                int baseDamage = drawnWeapon == null ? 10 : drawnWeapon.Damage;
+                
+
+                float weaponRange = this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
                 this.BaseInst.World.ForEachNPCRough(attPos, 2 * weaponRange, npc => // fixme: enemy model radius
                   {
                       NPCInst target = (NPCInst)npc.ScriptObject;
@@ -735,34 +731,37 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (sOnHitCheck != null && !sOnHitCheck(this, target))
                           return;
 
-                      Vec3f targetPos = npc.GetPosition();
-                      Vec3f targetDir = npc.GetDirection();
-
                       float realRange = weaponRange + target.ModelDef.Radius;
-                      if (target.CurrentFightMove == FightMoves.Dodge) realRange /= 3.0f; // extra radius if target is backing up
+                      if (target.CurrentFightMove == FightMoves.Dodge)
+                          realRange /= 3.0f; // decrease radius if target is backing up
 
+                      Vec3f targetPos = npc.GetPosition();
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
 
-                      if (targetPos.Y + target.ModelDef.Height / 2.0f < attPos.Y || targetPos.Y - target.ModelDef.Height / 2.0f > attPos.Y)
+
+                      float hitHeight;
+                      float hitYaw;
+                      if (CurrentFightMove == FightMoves.Left || CurrentFightMove == FightMoves.Right)
+                      {
+                          hitHeight = target.ModelDef.Height / 2f;
+                          hitYaw = Angles.PI * 0.9f;
+                      }
+                      else
+                      {
+                          hitHeight = (target.ModelDef.Height + this.ModelDef.Height) / 2f;
+                          hitYaw = Angles.PI / 4f;
+                      }
+
+                      if (Math.Abs(targetPos.Y - attPos.Y) > target.ModelDef.Height / 1.5f)
                           return; // not same height
 
-                      Vec3f dir = (attPos - targetPos).Normalise();
-                      float dot = attDir.Z * dir.Z + dir.X * attDir.X;
+                      float yaw = Angles.GetYawFromAtVector(targetPos - attPos);
+                      if (Math.Abs(Angles.Difference(yaw, attAng.Yaw)) > hitYaw)
+                          return; // target is not in front of attacker
 
-                      if (dot > -0.2f) // target is not in front of attacker
-                          return;
-
-                      float dist = attDir.X * (targetPos.Z - attPos.Z) - attDir.Z * (targetPos.X - attPos.X);
-                      dist = (float)Math.Sqrt(dist * dist / (attDir.X * attDir.X + attDir.Z * attDir.Z));
-
-                      if (dist > target.ModelDef.Radius + 10.0f) // distance to attack direction is greater than radius + 10
-                          return;
-
-                      dir = (targetPos - attPos).Normalise();
-                      dot = targetDir.Z * dir.Z + dir.X * targetDir.X;
-
-                      if (target.CurrentFightMove == FightMoves.Parry && dot <= -0.2f && target.DrawnWeapon != null) // PARRY
+                      float tdiff = Math.Abs(Angles.Difference(target.GetAngles().Yaw, yaw));
+                      if (target.CurrentFightMove == FightMoves.Parry && tdiff > Angles.PI / 2) // parry 180 degrees
                       {
                           var strm = this.BaseInst.GetScriptVobStream();
                           strm.Write((byte)ScriptVobMessageIDs.ParryMessage);
@@ -771,7 +770,32 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       }
                       else // HIT
                       {
-                          int damage = (this.DrawnWeapon == null ? 10 : this.DrawnWeapon.Damage);
+                          int damage = baseDamage;
+                          if (CurrentFightMove == FightMoves.Left || CurrentFightMove == FightMoves.Right)
+                          {
+                              damage -= 2;
+                          }
+                          else if (CurrentFightMove == FightMoves.Fwd)
+                          {
+                              damage += (comboNum - 1) * 2;
+                          }
+                          else if (CurrentFightMove == FightMoves.Run)
+                          {
+                              damage += 6;
+                              if (Environment.InAir) // super jump attack
+                              {
+                                  damage += 2; // not too much because you can always jump
+                              }
+                              if (target.Environment.InAir)
+                              {
+                                  damage += 2;
+                              }
+                          }
+
+                          if (tdiff < Angles.PI / 4) // backstab
+                          {
+                              damage += 4;
+                          }
 
                           target.Hit(this, damage);
                       }
@@ -792,10 +816,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         #region Ranged Fighting
-        
+
         public bool IsAiming()
         {
-            if (this.DrawnWeapon != null && this.DrawnWeapon.IsWepRanged)
+            var drawnWeapon = GetDrawnWeapon();
+            if (drawnWeapon != null && drawnWeapon.IsWepRanged)
             {
                 var aa = ModelInst.GetActiveAniFromLayer(1);
                 if (aa != null)
@@ -809,7 +834,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void DoAim()
         {
-            ScriptAniJob job = (DrawnWeapon != null && DrawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Aim : AniCatalog.FightBow.Aim;
+            var drawnWeapon = GetDrawnWeapon();
+            ScriptAniJob job = (drawnWeapon != null && drawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Aim : AniCatalog.FightBow.Aim;
             if (job == null || !ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
             {
                 return;
@@ -822,7 +848,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void DoUnaim()
         {
-            ScriptAniJob job = (DrawnWeapon != null && DrawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Unaim : AniCatalog.FightBow.Unaim;
+            var drawnWeapon = GetDrawnWeapon();
+            ScriptAniJob job = (drawnWeapon != null && drawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Unaim : AniCatalog.FightBow.Unaim;
             if (job == null || !ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
             {
                 return;
@@ -833,12 +860,22 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        public void DoShoot(Vec3f start, Vec3f end, ProjInst item)
+        public void DoShoot(Vec3f start, Vec3f end, ProjInst proj)
         {
-            item.BaseInst.Destination = end;
-            item.Spawn(this.World, start, (end - start).Normalise());
+            proj.Destination = end;
+            proj.Shooter = this;
 
-            ScriptAniJob job = (DrawnWeapon != null && DrawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Reload : AniCatalog.FightBow.Reload;
+            Angles rotation = Angles.FromAtVector(end - start);
+            var p = rotation.Pitch; // rotate arrow correctly
+            rotation.Pitch = rotation.Roll;
+            rotation.Yaw -= Angles.PI / 2;
+            rotation.Roll = p;
+
+            proj.Spawn(this.World, start, rotation);
+
+
+            var drawnWeapon = GetDrawnWeapon();
+            ScriptAniJob job = (drawnWeapon != null && drawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Reload : AniCatalog.FightBow.Reload;
             if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
             {
                 this.ModelInst.StartAniJob(job);

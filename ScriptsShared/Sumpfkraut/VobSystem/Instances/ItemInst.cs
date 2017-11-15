@@ -12,7 +12,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class ItemInst : NamedVobInst, WorldObjects.Item.IScriptItem
+    public partial class ItemInst : NamedVobInst, Item.IScriptItem
     {
         #region Constructors
 
@@ -49,6 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public ItemTypes ItemType { get { return this.Definition.ItemType; } }
 
+        public bool IsAmmo { get { return this.Definition.IsAmmo; } }
         public bool IsWeapon { get { return this.Definition.IsWeapon; } }
         public bool IsWepRanged { get { return this.Definition.IsWepRanged; } }
         public bool IsWepMelee { get { return this.Definition.IsWepMelee; } }
@@ -64,15 +65,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        public delegate void SetAmountHandler(ItemInst item, int amount);
-        public static event SetAmountHandler OnSetAmount;
+        public delegate void SetAmountHandler(ItemInst item);
+        public event SetAmountHandler OnSetAmount;
 
         public void SetAmount(int amount)
         {
             this.BaseInst.SetAmount(amount);
-            if (OnSetAmount != null)
-                OnSetAmount(this, amount);
-
+            OnSetAmount?.Invoke(this);
         }
 
         // Nur das Wichtigste was von aussen als Ausrüstung zu sehen ist!
@@ -94,9 +93,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         partial void pSpawn();
-        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        public override void Spawn(WorldInst world, Vec3f pos, Angles ang)
         {
-            base.Spawn(world, pos, dir);
+            base.Spawn(world, pos, ang);
             pSpawn();
         }
 

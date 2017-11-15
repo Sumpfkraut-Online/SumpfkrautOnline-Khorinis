@@ -28,11 +28,11 @@ namespace GUC.WorldObjects.VobGuiding
 
         #region Spawn & Despawn
 
-        partial void pSpawn(World world, Vec3f position, Vec3f direction);
-        public override void Spawn(World world, Vec3f position, Vec3f direction)
+        partial void pSpawn(World world, Vec3f position, Angles angles);
+        public override void Spawn(World world, Vec3f position, Angles angles)
         {
-            base.Spawn(world, position, direction);
-            pSpawn(world, position, direction);
+            base.Spawn(world, position, angles);
+            pSpawn(world, position, angles);
         }
 
         partial void pDespawn();

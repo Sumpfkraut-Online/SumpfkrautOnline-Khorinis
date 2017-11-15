@@ -247,7 +247,7 @@ namespace GUC.Models
 
         #region OnSpawn
 
-        void Vob_OnSpawn(BaseVob vob, World world, Types.Vec3f pos, Types.Vec3f dir)
+        void Vob_OnSpawn(BaseVob vob, World world, Vec3f pos, Angles ang)
         {
             if (vob is NPC)
             {

@@ -18,8 +18,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         new public Projectile BaseInst { get { return (Projectile)base.BaseInst; } }
         new public ProjDef Definition { get { return (ProjDef)base.Definition; } set { base.Definition = value; } }
 
-        public ModelDef Model { get { return this.Definition.Model; } }
-        public float Velocity { get { return this.Definition.Velocity; } }
+        public ModelDef Model { get { return (ModelDef)BaseInst.Model?.ScriptObject; } set { BaseInst.Model = value?.BaseDef; } }
+        public float Velocity { get { return BaseInst.Velocity; } set { BaseInst.Velocity = value; } }
+        public Vec3f Destination { get { return this.BaseInst.Destination; } set { this.BaseInst.Destination = value; } }
 
         #endregion
 
@@ -45,11 +46,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Spawn / Despawn
 
-        partial void pSpawn(WorldInst world, Vec3f pos, Vec3f dir);
-        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        partial void pSpawn(WorldInst world, Vec3f pos, Angles ang);
+        public override void Spawn(WorldInst world, Vec3f pos, Angles ang)
         {
-            base.Spawn(world, pos, dir);
-            pSpawn(world, pos, dir);
+            base.Spawn(world, pos, ang);
+            pSpawn(world, pos, ang);
         }
 
         partial void pDespawn();
@@ -60,5 +61,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         #endregion
+
+        partial void pUpdatePos();
+        public void UpdatePos()
+        {
+            pUpdatePos();
+        }
+
+        partial void pOnEndPos();
+        public void OnEndPos()
+        {
+            pOnEndPos();
+        }
     }
 }

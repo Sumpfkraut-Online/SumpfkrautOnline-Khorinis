@@ -226,7 +226,8 @@ namespace Gothic.Objects
 
         public abstract class NPCNodes
         {
-            public static readonly zString Bow = new zString(0xAB1F48),
+            public static readonly zString 
+                Bow = new zString(0xAB1F48),
                 Crossbow = new zString(0xAB2114),
                 Helmet = new zString(0xAB1F04),
                 Jaws = new zString(0xAB2070),
@@ -625,20 +626,20 @@ namespace Gothic.Objects
             return ret;
         }
 
-        public zCVob RemoveFromSlot(zString slot, bool arg0, bool arg1)
+        public zCVob RemoveFromSlot(zString slot, bool drop, bool removeEffect)
         {
-            return Process.THISCALL<zCVob>(Address, FuncAddresses.RemoveFromSlot_str, slot, (BoolArg)arg0, (BoolArg)arg1);
+            return Process.THISCALL<zCVob>(Address, FuncAddresses.RemoveFromSlot_str, slot, (BoolArg)drop, (BoolArg)removeEffect);
         }
 
-        public void PutInSlot(string slot, zCVob vob, bool arg)
+        public void PutInSlot(string slot, zCVob vob, bool inInv)
         {
             using (zString z = zString.Create(slot))
-                PutInSlot(z, vob, arg);
+                PutInSlot(z, vob, inInv);
         }
 
-        public void PutInSlot(zString slot, zCVob vob, bool arg)
+        public void PutInSlot(zString slot, zCVob vob, bool inInv)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot_str, slot, vob, (BoolArg)arg);
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot_str, slot, vob, (BoolArg)inInv);
         }
         
         public int GetInvSlot(string slot)
@@ -652,6 +653,11 @@ namespace Gothic.Objects
         public int GetInvSlot(zString slot)
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.GetInvSlot_str, slot);
+        }
+
+        public zCVob GetSlotVob(zString slot)
+        {
+            return Process.THISCALL<zCVob>(Address, 0x731EF0, slot);
         }
 
         public void PutInSlot(int slotAddr, zCVob vob, bool arg)

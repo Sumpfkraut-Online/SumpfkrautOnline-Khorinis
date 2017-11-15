@@ -84,6 +84,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public ItemTypes ItemType = ItemTypes.Misc;
 
+        public bool IsAmmo { get { return this.ItemType >= ItemTypes.AmmoBow && this.ItemType <= ItemTypes.AmmoXBow; } }
         public bool IsWeapon { get { return this.ItemType >= ItemTypes.Wep1H && this.ItemType <= ItemTypes.WepXBow; } }
         public bool IsWepRanged { get { return this.ItemType >= ItemTypes.WepBow && this.ItemType <= ItemTypes.WepXBow; } }
         public bool IsWepMelee { get { return this.ItemType >= ItemTypes.Wep1H && this.ItemType <= ItemTypes.Wep2H; } }

@@ -74,7 +74,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                             }
                         }
                     }
-                    
+
                 }
             }
 
@@ -270,13 +270,13 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     Left.Enabled = true;
                     this.Enabled = false;
                 }
-                else if(newY > 0)
+                else if (newY > 0)
                 {
                     // switch to the very right and 1 row up, like Gothic
                     newX = slots.GetLength(0) - 1;
                     newY--;
                 }
-                
+
             }
             else if (newX >= slots.GetLength(0) || (cursor.Y - newY == 0 && slots[newX, newY].Item == null)) // moved to border or empty slot(make sure it was move in X)
             {
@@ -287,7 +287,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                     Right.Enabled = true;
                     this.Enabled = false;
                 }
-                else if(newY < shownCount / slots.GetLength(0))
+                else if (newY < shownCount / slots.GetLength(0))
                 {
                     // switch to the very left and 1 row down, like Gothic
                     newY++;
@@ -299,7 +299,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             {
                 if (newY < 0)
                 {
-                   newY = 0;
+                    newY = 0;
                     if (startPos > 0)
                     {
                         startPos--; //scroll up
@@ -311,7 +311,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 }
                 else if (newY >= slots.GetLength(1))
                 {
-                   newY = slots.GetLength(1) - 1;
+                    newY = slots.GetLength(1) - 1;
                     if (contents.Count > (startPos + slots.GetLength(1)) * slots.GetLength(0))
                     {
                         startPos++; //there are more items outside our current view, scroll down

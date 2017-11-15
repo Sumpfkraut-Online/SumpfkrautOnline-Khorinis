@@ -15,6 +15,19 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
+    public enum NPCSlots
+    {
+        OneHanded1,
+        OneHanded2,
+        TwoHanded,
+        Ranged,
+        Ammo,
+        Armor,
+
+        LeftHand,
+        RightHand
+    }
+
     public enum JumpMoves
     {
         Fwd,
@@ -128,186 +141,72 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Equipment
 
-        ItemInst armor;
-        public ItemInst Armor { get { return this.armor; } }
-        ItemInst meleeWep;
-        public ItemInst MeleeWeapon { get { return this.meleeWep; } }
-        ItemInst rangedWep;
-        public ItemInst RangedWeapon { get { return this.rangedWep; } }
-        ItemInst lastUsedWep;
-        public ItemInst LastUsedWeapon { get { return this.lastUsedWep; } set { this.lastUsedWep = value; } }
-        ItemInst ammo;
-        public ItemInst Ammo { get { return this.ammo; } }
+        public ItemInst LastUsedWeapon;
 
-        ItemInst drawnWeapon;
-        public ItemInst DrawnWeapon { get { return this.drawnWeapon; } }
-
-        public enum SlotNums
+        public ItemInst GetEquipmentBySlot(NPCSlots slotNum)
         {
-            Sword,
-            Bow,
-            RuneSlot3,
-            RuneSlot4,
-            RuneSlot5,
-            RuneSlot6,
-            RuneSlot7,
-            RuneSlot8,
-            RuneSlot9,
-            RuneSlot0,
-            Longsword,
-            XBow,
-            AmmoBow,
-            AmmoXBow,
-            Torso,
-            Righthand,
-            Lefthand,
+            return this.BaseInst.TryGetEquippedItem((int)slotNum, out Item item) ? (ItemInst)item.ScriptObject : null;
+        }
+
+        public ItemInst GetArmor() { return GetEquipmentBySlot(NPCSlots.Armor); }
+        public ItemInst GetAmmo() { return GetEquipmentBySlot(NPCSlots.Ammo); }
+        public ItemInst GetRightHand() { return GetEquipmentBySlot(NPCSlots.RightHand); }
+        public ItemInst GetLeftHand() { return GetEquipmentBySlot(NPCSlots.LeftHand); }
+        public bool HasItemInHands() { return GetRightHand() != null || GetLeftHand() != null; }
+
+        public ItemInst GetDrawnWeapon()
+        {
+            ItemInst item;
+            if (((item = GetRightHand()) != null && item.IsWeapon)
+             || ((item = GetLeftHand()) != null && item.IsWeapon))
+                return item;
+            return null;
         }
 
         public void EquipItem(int slot, Item item)
         {
-            this.EquipItem(slot, (ItemInst)item.ScriptObject);
+            this.EquipItem((NPCSlots)slot, (ItemInst)item.ScriptObject);
         }
 
-        partial void pEquipItem(int slot, ItemInst item);
-        public void EquipItem(int slot, ItemInst item)
+        public delegate void OnEquipHandler(ItemInst item);
+        public event OnEquipHandler OnEquip;
+
+        partial void pBeforeEquip(NPCSlots slot, ItemInst item);
+        partial void pAfterEquip(NPCSlots slot, ItemInst item);
+        public void EquipItem(NPCSlots slot, ItemInst item)
         {
-            if (item.BaseInst.Slot == slot)
+            if (item.BaseInst.Slot == (int)slot)
                 return;
 
-            if (item.BaseInst.IsEquipped)
-            {
-                switch ((SlotNums)item.BaseInst.Slot)
-                {
-                    case SlotNums.Torso:
-                        this.armor = null;
-                        break;
-                    case SlotNums.Sword:
-                    case SlotNums.Longsword:
-                        this.meleeWep = null;
-                        break;
-                    case SlotNums.Bow:
-                    case SlotNums.XBow:
-                        this.rangedWep = null;
-                        break;
-                    case SlotNums.AmmoBow:
-                    case SlotNums.AmmoXBow:
-                        this.ammo = null;
-                        break;
-                    case SlotNums.Righthand:
-                    case SlotNums.Lefthand:
-                        this.drawnWeapon = null;
-                        break;
-                }
-            }
+            pBeforeEquip(slot, item);
+            this.BaseInst.EquipItem((int)slot, item.BaseInst);
+            pAfterEquip(slot, item);
 
-            switch ((SlotNums)slot)
-            {
-                case SlotNums.Torso:
-                    if (this.armor != null)
-                        UnequipItem(this.armor);
-                    this.armor = item;
-                    break;
-                case SlotNums.Sword:
-                case SlotNums.Longsword:
-                    if (this.meleeWep != null)
-                        UnequipItem(this.meleeWep);
-                    this.meleeWep = item;
-                    break;
-                case SlotNums.Bow:
-                case SlotNums.XBow:
-                    if (this.rangedWep != null)
-                        UnequipItem(this.rangedWep);
-                    this.rangedWep = item;
-                    break;
-                case SlotNums.AmmoBow:
-                case SlotNums.AmmoXBow:
-                    if (this.ammo != null)
-                        UnequipItem(this.ammo);
-                    this.ammo = item;
-                    break;
-                case SlotNums.Righthand:
-                case SlotNums.Lefthand:
-                    if (this.drawnWeapon != null)
-                        UnequipItem(this.drawnWeapon);
-                    this.drawnWeapon = item;
-                    break;
-            }
-
-            this.BaseInst.EquipItem(slot, item.BaseInst);
-            pEquipItem(slot, item);
+            OnEquip?.Invoke(item);
         }
 
         public void UnequipItem(Item item)
         {
             this.UnequipItem((ItemInst)item.ScriptObject);
         }
+        public event OnEquipHandler OnUnequip;
 
-        partial void pBeginUnequipItem(ItemInst item);
-        partial void pAfterUnequipItem(ItemInst item);
+        partial void pBeforeUnequip(ItemInst item);
+        partial void pAfterUnequip(ItemInst item);
         public void UnequipItem(ItemInst item)
         {
-            switch ((SlotNums)item.BaseInst.Slot)
-            {
-                case SlotNums.Torso:
-                    this.armor = null;
-                    break;
-                case SlotNums.Sword:
-                case SlotNums.Longsword:
-                    this.meleeWep = null;
-                    break;
-                case SlotNums.Bow:
-                case SlotNums.XBow:
-                    this.rangedWep = null;
-                    break;
-                case SlotNums.AmmoBow:
-                case SlotNums.AmmoXBow:
-                    this.ammo = null;
-                    break;
-                case SlotNums.Righthand:
-                case SlotNums.Lefthand:
-                    this.drawnWeapon = null;
-                    break;
-            }
-
-            pBeginUnequipItem(item);
+            pBeforeUnequip(item);
             this.BaseInst.UnequipItem(item.BaseInst);
-            pAfterUnequipItem(item);
+            pAfterUnequip(item);
+
+            OnUnequip?.Invoke(item);
         }
 
-        public void EquipItem(ItemInst item)
+        public void UnequipSlot(NPCSlots slot)
         {
-            if (item == null || item.Container != this)
-                return;
-
-            SlotNums slot;
-
-            switch (item.ItemType)
-            {
-                case ItemTypes.Armor:
-                    slot = SlotNums.Torso;
-                    break;
-                case ItemTypes.Wep1H:
-                    slot = SlotNums.Sword;
-                    break;
-                case ItemTypes.Wep2H:
-                    slot = SlotNums.Longsword;
-                    break;
-                case ItemTypes.WepBow:
-                    slot = SlotNums.Bow;
-                    break;
-                case ItemTypes.WepXBow:
-                    slot = SlotNums.XBow;
-                    break;
-                case ItemTypes.AmmoBow:
-                    slot = SlotNums.AmmoBow;
-                    break;
-                case ItemTypes.AmmoXBow:
-                    slot = SlotNums.AmmoXBow;
-                    break;
-                default:
-                    return;
-            }
-            EquipItem((int)slot, item);
+            ItemInst item = GetEquipmentBySlot(slot);
+            if (item != null)
+                UnequipItem(item);
         }
 
         #endregion
@@ -396,10 +295,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pBeforeSpawn();
         partial void pAfterSpawn();
-        public override void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        public override void Spawn(WorldInst world, Vec3f pos, Angles ang)
         {
             pBeforeSpawn();
-            base.Spawn(world, pos, dir);
+            base.Spawn(world, pos, ang);
             pAfterSpawn();
         }
     }

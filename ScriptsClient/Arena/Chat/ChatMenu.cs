@@ -128,65 +128,17 @@ namespace GUC.Scripts.Arena
             }
             base.KeyDown(key);
         }
-        
+
         static void SA(string msg, bool g = false)
         {
-            Angles angles = new Angles();
-            angles.SetByAtVector((Vec3f)GothicGlobals.Game.GetCameraVob().Direction);
-            Log.Logger.Log(angles.ToString("deg"));
-
-            /*string[] strs = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] strs = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             if (strs.Length != 3)
                 return;
 
             if (!float.TryParse(strs[0], out float x) || !float.TryParse(strs[1], out float y) || !float.TryParse(strs[2], out float z))
                 return;
 
-            var vob = ArenaClient.Client.Character.BaseInst.gVob;
-            using (var vec = Gothic.Types.zVec3.Create())
-            {
-                vob.TrafoObjToWorld.GetRightVector(vec);
-                Log.Logger.Log("Right: " + vec.X + " " + vec.Y + " " + vec.Z);
-
-                vob.TrafoObjToWorld.GetUpVector(vec);
-                Log.Logger.Log("Up: " + vec.X + " " + vec.Y + " " + vec.Z);
-
-                vob.TrafoObjToWorld.GetAtVector(vec);
-                Log.Logger.Log("At: " + vec.X + " " + vec.Y + " " + vec.Z);
-
-                Log.Logger.Log("-------------------");
-            }
-
-             Angles angles = new Angles(vob.TrafoObjToWorld);
-            
-             angles.Pitch += Angles.Deg2Rad(x);
-             angles.Yaw += Angles.Deg2Rad(y);
-             angles.Roll += Angles.Deg2Rad(z);
-
-             bool movement = vob.IsInMovement;
-             if (!movement)
-                 vob.BeginMovement();
-
-             var obj = vob.CollObj;
-             angles.SetMatrix(obj.NewTrafo);
-             obj.TrafoHintRotation = true;
-
-             if (!movement)
-                vob.EndMovement();
-
-            using (var vec = Gothic.Types.zVec3.Create())
-            {
-                vob.TrafoObjToWorld.GetRightVector(vec);
-                Log.Logger.Log("Right: " + vec.X + " " + vec.Y + " " + vec.Z);
-
-                vob.TrafoObjToWorld.GetUpVector(vec);
-                Log.Logger.Log("Up: " + vec.X + " " + vec.Y + " " + vec.Z);
-
-                vob.TrafoObjToWorld.GetAtVector(vec);
-                Log.Logger.Log("At: " + vec.X + " " + vec.Y + " " + vec.Z);
-
-                Log.Logger.Log("============");
-            }*/
+            GUCScripts.AddAngles = new Angles(Angles.Deg2Rad(x), Angles.Deg2Rad(y), Angles.Deg2Rad(z));
         }
 
         public void SendInput()

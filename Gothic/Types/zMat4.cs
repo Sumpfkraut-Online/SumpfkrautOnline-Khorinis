@@ -5,7 +5,7 @@ using WinApi;
 
 namespace Gothic.Types
 {
-    public class zMat4 : zClass
+    public class zMat4 : zClass, IDisposable
     {
         public const int ByteSize = 64;
 
@@ -162,6 +162,17 @@ namespace Gothic.Types
         public void SetByEulerAngles(zVec3 angles)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x5163D0, angles);
+        }
+
+        public static zMat4 Create()
+        {
+            int ptr = Process.Alloc(ByteSize).ToInt32();
+            return new zMat4(ptr);//Process.THISCALL<zMat4>(ptr, 0x514C10, (FloatArg)0);
+        }
+
+        public void Dispose()
+        {
+            Process.Free(new IntPtr(Address), zMat4.ByteSize);
         }
     }
 }

@@ -9,27 +9,26 @@ namespace GUC.WorldObjects.VobGuiding
 {
     public abstract partial class GuidedVob : BaseVob
     {
-        public delegate void ChangePosDirHandler(GuidedVob vob, Vec3f oldPos, Vec3f oldDir);
+        public delegate void ChangePosAngHandler(GuidedVob vob, Vec3f oldPos, Angles oldAng);
         /// <summary>
         /// Will not fire for NPCs! The NPC class has its own event.
         /// </summary>
-        public static event ChangePosDirHandler OnChangePosDir;
+        public static event ChangePosAngHandler OnChangePosAng;
 
         #region Network Messages
 
         new internal static class Messages
         {
-            public static void ReadPosDir(PacketReader stream, GameClient client, World world)
+            public static void ReadPosAng(PacketReader stream, GameClient client, World world)
             {
                 int id = stream.ReadUShort();
-                GuidedVob vob;
-                if (world.TryGetVob(id, out vob) && vob.guide == client)
+                if (world.TryGetVob(id, out GuidedVob vob) && vob.guide == client)
                 {
                     var oldPos = vob.GetPosition();
-                    var oldDir = vob.GetDirection();
+                    var oldAng = vob.GetAngles();
 
                     var pos = stream.ReadCompressedPosition();
-                    var dir = stream.ReadCompressedDirection();
+                    var ang = stream.ReadCompressedAngles();
                     int bitfield = stream.ReadShort();
 
                     bool inAir = (bitfield & 0x8000) != 0;
@@ -37,7 +36,7 @@ namespace GUC.WorldObjects.VobGuiding
                     float waterLevel = (bitfield & 0xFF) / (float)0xFF;
                     vob.environment = new Environment(inAir, waterLevel, waterDepth);
 
-                    vob.SetPosDir(pos, dir, client);
+                    vob.SetPosAng(pos, ang, client);
                     //vob.ScriptObject.OnPosChanged();
 
                     /*if (vob == client.Character)
@@ -45,8 +44,7 @@ namespace GUC.WorldObjects.VobGuiding
                         client.UpdateVobList(world, pos);
                     }*/
 
-                    if (OnChangePosDir != null)
-                        OnChangePosDir(vob, oldPos, oldDir);
+                    OnChangePosAng?.Invoke(vob, oldPos, oldAng);
                 }
             }
 
@@ -105,7 +103,7 @@ namespace GUC.WorldObjects.VobGuiding
         bool needsClientGuide = false;
         public bool NeedsClientGuide { get { return this.needsClientGuide; } }
 
-        partial void pSpawn(World world, Vec3f position, Vec3f direction)
+        partial void pSpawn(World world, Vec3f position, Angles angles)
         {
             if (this.needsClientGuide)
             {

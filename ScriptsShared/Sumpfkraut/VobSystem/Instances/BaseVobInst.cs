@@ -39,8 +39,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         // Definition 
         public BaseVobDef Definition
         {
-            get { return (BaseVobDef)BaseInst.Instance.ScriptObject; }
-            set { BaseInst.Instance = value.BaseDef; }
+            get { return (BaseVobDef)BaseInst.Instance?.ScriptObject; }
+            set { BaseInst.Instance = value?.BaseDef; }
         }
 
         public int ID { get { return BaseInst.ID; } }
@@ -51,10 +51,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public WorldInst World { get { return (WorldInst)this.BaseInst.World.ScriptObject; } }
 
         public Vec3f GetPosition() { return this.BaseInst.GetPosition(); }
-        public Vec3f GetDirection() { return this.BaseInst.GetDirection(); }
+        public Angles GetAngles() { return this.BaseInst.GetAngles(); }
 
         public void SetPosition(Vec3f position) { this.BaseInst.SetPosition(position); }
-        public void SetDirection(Vec3f direction) { this.BaseInst.SetDirection(direction); }
+        public void SetAngles(Angles angles) { this.BaseInst.SetAngles(angles); }
 
         #endregion
 
@@ -81,12 +81,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void Spawn(WorldInst world)
         {
-            this.Spawn(world, this.GetPosition(), this.GetDirection());
+            this.Spawn(world, this.GetPosition(), this.GetAngles());
         }
 
-        public virtual void Spawn(WorldInst world, Vec3f pos, Vec3f dir)
+        public virtual void Spawn(WorldInst world, Vec3f pos, Angles ang)
         {
-            this.BaseInst.Spawn(world.BaseWorld, pos, dir);
+            this.BaseInst.Spawn(world.BaseWorld, pos, ang);
         }
 
         public virtual void Despawn()

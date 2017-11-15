@@ -253,7 +253,10 @@ namespace GUC.Types
 
         #endregion
 
-        internal Vec3f CorrectPosition()
+        /// <summary>
+        /// Clamps to [-838860.8f, 838860.7f]
+        /// </summary>
+        internal Vec3f ClampToWorldLimits()
         {
             Vec3f ret;
             if (this.X < -838860.8f) ret.X = -838860.8f;
@@ -269,15 +272,6 @@ namespace GUC.Types
             else ret.Z = this.Z;
 
             return ret;
-        }
-
-        internal Vec3f CorrectDirection()
-        {
-            if (this.IsNull())
-            {
-                return new Vec3f(0, 0, 1);
-            }
-            return this.Normalise();
         }
     }
 }

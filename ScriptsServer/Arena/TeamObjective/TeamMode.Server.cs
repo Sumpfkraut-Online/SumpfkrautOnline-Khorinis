@@ -72,7 +72,7 @@ namespace GUC.Scripts.Arena
                 var item = new ItemInst(ItemDef.Get(eqPair.Item1));
                 item.SetAmount(eqPair.Item2);
                 npc.Inventory.AddItem(item);
-                npc.EquipItem(item);
+                npc.EffectHandler.TryEquipItem(item);
             }
 
             foreach (var overlay in classDef.Overlays)
@@ -86,7 +86,7 @@ namespace GUC.Scripts.Arena
 
             var spawnPoint = player.Team.GetSpawnPoint();
             npc.SetHealth(100, 100);
-            npc.Spawn(world, spawnPoint.Item1, spawnPoint.Item2);
+            npc.Spawn(world, spawnPoint.Item1, Angles.Null);
             player.SetControl(npc);
         }
 
@@ -296,8 +296,8 @@ namespace GUC.Scripts.Arena
             if (index >= 0)
             {
                 // don't join a team which has already more players than the others
-                if (!teams.TrueForAll(t => team.Players.Count <= t.Players.Count - (t == client.Team ? 1 : 0)))
-                    return;
+                //if (!teams.TrueForAll(t => team.Players.Count <= t.Players.Count - (t == client.Team ? 1 : 0)))
+                //    return;
 
                 if (client.Team != null)
                     client.Team.Players.Remove(client);

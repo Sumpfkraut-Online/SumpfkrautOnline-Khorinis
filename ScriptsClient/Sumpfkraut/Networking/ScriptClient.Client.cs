@@ -38,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             Menus.PlayerInventory.Menu.Close();
         }
 
-        partial void pSetToSpectator(WorldInst world, Vec3f pos, Vec3f dir)
+        partial void pSetToSpectator(WorldInst world, Vec3f pos, Angles ang)
         {
             Menus.PlayerInventory.Menu.Close();
         }

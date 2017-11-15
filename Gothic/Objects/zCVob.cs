@@ -460,6 +460,11 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x00602C60);
         }
+        
+        public void GetTrafoModelNodeToWorld(zString nodeName, zMat4 matrix)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x604960, matrix, nodeName);
+        }
 
         public override string ToString()
         {

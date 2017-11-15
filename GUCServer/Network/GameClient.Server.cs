@@ -96,11 +96,11 @@ namespace GUC.Network
                 client.SetPosition(stream.ReadCompressedPosition(), false);
             }
 
-            public static void WriteSpectatorMessage(GameClient client, Vec3f pos, Vec3f dir)
+            public static void WriteSpectatorMessage(GameClient client, Vec3f pos, Angles ang)
             {
                 var stream = GameServer.SetupStream(ServerMessages.SpectatorMessage);
                 stream.Write(pos);
-                stream.Write(dir);
+                stream.Write(ang);
                 client.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0');
             }
 
@@ -130,7 +130,7 @@ namespace GUC.Network
                 else if (client.specWorld != null)
                 {
                     client.isSpectating = true;
-                    WriteSpectatorMessage(client, client.specPos, client.specDir); // tell the client that he's spectating
+                    WriteSpectatorMessage(client, client.specPos, client.specAng); // tell the client that he's spectating
                     client.specWorld.AddClient(client);
                     client.specWorld.AddSpectatorToCells(client);
                     client.JoinWorld(client.specWorld, client.specPos);
@@ -495,7 +495,7 @@ namespace GUC.Network
         const int UpdateDistance = 100;
         internal void SetPosition(Vec3f pos, bool sendToClient)
         {
-            this.specPos = pos.CorrectPosition();
+            this.specPos = pos.ClampToWorldLimits();
             this.specWorld.UpdateSpectatorCell(this, this.specPos);
 
             if (specPos.GetDistancePlanar(lastPos) > UpdateDistance)
@@ -505,7 +505,7 @@ namespace GUC.Network
             }
         }
 
-        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
+        partial void pSetToSpectate(World world, Vec3f pos, Angles ang)
         {
             if (this.isSpectating) // is spectating, but in a different world
             {
@@ -552,7 +552,7 @@ namespace GUC.Network
                         {
                             // same world, just update
                             this.isSpectating = true;
-                            Messages.WriteSpectatorMessage(this, pos, dir);
+                            Messages.WriteSpectatorMessage(this, pos, ang);
                             world.AddClient(this);
                             world.AddSpectatorToCells(this);
                             UpdateVobList(world, pos);
@@ -572,7 +572,7 @@ namespace GUC.Network
             }
 
             this.specPos = pos;
-            this.specDir = dir;
+            this.specAng = ang;
             this.specWorld = world;
         }
 

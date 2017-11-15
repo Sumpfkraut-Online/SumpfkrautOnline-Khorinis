@@ -490,8 +490,7 @@ namespace GUC.WorldObjects
             {
                 for (int y = min.Y; y <= max.Y; y++)
                 {
-                    NPCCell cell;
-                    if (npcCells.TryGetValue(NPCCell.GetCoordinate(x, y), out cell))
+                    if (npcCells.TryGetValue(NPCCell.GetCoordinate(x, y), out NPCCell cell))
                     {
                         cell.ForEachNPCPredicate(predicate);
                     }

@@ -78,7 +78,7 @@ namespace GUC.WorldObjects
         #region Position & Direction
 
         protected Vec3f pos = new Vec3f(0, 0, 0);
-        protected Vec3f dir = new Vec3f(0, 0, 1);
+        protected Angles ang = new Angles(0, 0, 0);
 
         partial void pGetPosition();
         /// <summary> Gets the position of this Vob </summary>
@@ -88,28 +88,40 @@ namespace GUC.WorldObjects
             return pos;
         }
 
-        partial void pGetDirection();
-        /// <summary> Gets the direction of this Vob </summary>
-        public Vec3f GetDirection()
+        partial void pGetAngles();
+        /// <summary> Gets the rotational angles of this vob. Pitch (up-down), Yaw (left-right), Roll (sideways). </summary>
+        public Angles GetAngles()
         {
-            pGetDirection();
-            return dir;
+            pGetAngles();
+            return ang;
+        }
+        
+        /// <summary> Calculates the direction this vob is "heading at" from its angles. </summary>
+        public Vec3f GetAtVector()
+        {
+            return ang.ToAtVector();
         }
 
         partial void pSetPosition();
         /// <summary> Sets the position of this Vob </summary>
-        public virtual void SetPosition(Vec3f position)
+        public void SetPosition(Vec3f position)
         {
-            this.pos = position.CorrectPosition();
+            this.pos = position.ClampToWorldLimits();
             pSetPosition();
         }
 
-        partial void pSetDirection();
-        /// <summary> Sets the direction of this Vob </summary>
-        public virtual void SetDirection(Vec3f direction)
+        partial void pSetAngles();
+        /// <summary> Sets the rotational angles of this vob. Pitch (up-down), Yaw (left-right), Roll (sideways). </summary>
+        public void SetAngles(Angles angles)
         {
-            this.dir = direction.CorrectDirection();
-            pSetDirection();
+            this.ang = angles.Clamp();
+            pSetAngles();
+        }
+
+        /// <summary> Sets the angles of this Vob via a directional vector. </summary>
+        public void SetAtVector(Vec3f at)
+        {
+            SetAngles(Angles.FromAtVector(at));
         }
 
         #endregion
@@ -174,7 +186,7 @@ namespace GUC.WorldObjects
             base.WriteProperties(stream);
             stream.Write((ushort)this.instance.ID);
             stream.Write(this.pos);
-            stream.Write(this.dir);
+            stream.Write(this.ang);
         }
 
         protected override void ReadProperties(PacketReader stream)
@@ -190,14 +202,14 @@ namespace GUC.WorldObjects
             SetInstance(inst);
 
             this.pos = stream.ReadVec3f();
-            this.dir = stream.ReadVec3f();
+            this.ang = stream.ReadAngles();
         }
 
         #endregion
 
         #region Spawn
 
-        public delegate void OnSpawnHandler(BaseVob vob, World world, Vec3f pos, Vec3f dir);
+        public delegate void OnSpawnHandler(BaseVob vob, World world, Vec3f pos, Angles ang);
         public delegate void OnDespawnHandler(BaseVob vob);
 
         public static event OnSpawnHandler sOnSpawn = null;
@@ -211,7 +223,7 @@ namespace GUC.WorldObjects
         /// </summary>
         public void Spawn(World world)
         {
-            Spawn(world, this.pos, this.dir);
+            Spawn(world, this.pos, this.ang);
         }
 
         /// <summary>
@@ -219,13 +231,13 @@ namespace GUC.WorldObjects
         /// </summary>
         public void Spawn(World world, Vec3f position)
         {
-            Spawn(world, position, this.dir);
+            Spawn(world, position, this.ang);
         }
 
-        partial void pBeforeSpawn(World world, Vec3f position, Vec3f direction);
-        partial void pAfterSpawn(World world, Vec3f position, Vec3f direction);
+        partial void pBeforeSpawn(World world, Vec3f position, Angles angles);
+        partial void pAfterSpawn(World world, Vec3f position, Angles angles);
         /// <summary> Spawns the Vob in the given world at the given position & direction. </summary>
-        public virtual void Spawn(World world, Vec3f position, Vec3f direction)
+        public virtual void Spawn(World world, Vec3f position, Angles angles)
         {
             if (world == null)
                 throw new ArgumentNullException("World is null!");
@@ -239,24 +251,22 @@ namespace GUC.WorldObjects
             if (this.isCreated)
                 throw new Exception("Vob is already spawned!");
 
-            Vec3f spawnPos = position.CorrectPosition();
-            Vec3f spawnDir = direction.CorrectDirection();
+            Vec3f spawnPos = position.ClampToWorldLimits();
+            Angles spawnAng = angles.Clamp();
 
-            this.pBeforeSpawn(world, spawnPos, spawnDir);
+            this.pBeforeSpawn(world, spawnPos, spawnAng);
 
             this.pos = spawnPos;
-            this.dir = spawnDir;
+            this.ang = spawnAng;
 
             world.AddVob(this);
             this.world = world;
             this.isCreated = true;
 
-            this.pAfterSpawn(world, spawnPos, spawnDir);
+            this.pAfterSpawn(world, spawnPos, spawnAng);
 
-            if (this.OnSpawn != null)
-                this.OnSpawn(this, world, position, direction);
-            if (sOnSpawn != null)
-                sOnSpawn(this, world, position, direction);
+            this.OnSpawn?.Invoke(this, world, position, angles);
+            sOnSpawn?.Invoke(this, world, position, angles);
         }
 
 

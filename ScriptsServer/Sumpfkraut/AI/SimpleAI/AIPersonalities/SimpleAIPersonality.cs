@@ -238,7 +238,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void TurnAround (VobInst guided, Vec3f direction, float angularVelocity)
         {
-            guided.BaseInst.SetDirection(direction);
+            //guided.BaseInst.SetDirection(direction);
         }
 
         public void TurnAround (AIAgent aiAgent, Vec3f direction, float angularVelocity)
@@ -275,7 +275,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             {
                 NPCInst aggressorNPC = (NPCInst) aggressor;
 
-                if (aggressorNPC.DrawnWeapon == null)
+                if (aggressorNPC.GetDrawnWeapon() == null)
                 {
                     // TODO: draw weapon first if necessary
                 }

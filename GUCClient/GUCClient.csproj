@@ -148,6 +148,9 @@
     <Compile Include="..\GUCShared\Types\WorldTime.cs">
       <Link>Types\WorldTime.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\Alg.cs">
+      <Link>Utilities\Alg.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
     </Compile>

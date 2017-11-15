@@ -50,7 +50,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pSetDirection()
+        partial void pSetAngles()
         {
             throw new NotImplementedException();
 
@@ -72,16 +72,16 @@ namespace GUC.WorldObjects
         /// <summary>
         /// Set the position & direction of this vob
         /// </summary>
-        public void SetPosDir(Vec3f position, Vec3f direction)
+        public void SetPosAng(Vec3f position, Angles angles)
         {
-            SetPosDir(position, direction, null);
+            SetPosAng(position, angles, null);
         }
 
-        Vec3f lastPos;
-        internal void SetPosDir(Vec3f position, Vec3f direction, GameClient exclude)
+        protected Vec3f lastUpdatePos;
+        internal void SetPosAng(Vec3f position, Angles angles, GameClient exclude)
         {
-            this.pos = position.CorrectPosition();
-            this.dir = direction.CorrectDirection();
+            this.pos = position.ClampToWorldLimits();
+            this.ang = angles.Clamp();
 
             if (this.isCreated && !this.IsStatic)
             {
@@ -90,10 +90,10 @@ namespace GUC.WorldObjects
                     this.world.UpdateNPCCell((NPC)this, pos);
 
                 bool updateVis;
-                if (lastPos.GetDistancePlanar(this.pos) > 100)
+                if (lastUpdatePos.GetDistancePlanar(this.pos) > 100)
                 {
                     updateVis = true;
-                    lastPos = this.pos;
+                    lastUpdatePos = this.pos;
                     CleanClientList();
                 }
                 else
@@ -103,7 +103,7 @@ namespace GUC.WorldObjects
 
                 if (visibleClients.Count > 0 || targetOf.Count > 0)
                 {
-                    this.WritePosDirMessage(exclude);
+                    this.WritePosAngMessage(exclude);
                 }
 
                 if (updateVis)
@@ -113,12 +113,12 @@ namespace GUC.WorldObjects
             }
         }
 
-        protected virtual void WritePosDirMessage(GameClient exclude)
+        protected virtual void WritePosAngMessage(GameClient exclude)
         {
             PacketWriter stream = GameServer.SetupStream(ServerMessages.VobPosDirMessage);
             stream.Write((ushort)this.ID);
             stream.WriteCompressedPosition(this.pos);
-            stream.WriteCompressedDirection(this.dir);
+            stream.WriteCompressedAngles(this.ang);
 
             if (exclude == null)
             {
@@ -162,7 +162,7 @@ namespace GUC.WorldObjects
 
         #region Spawn & Despawn
 
-        partial void pAfterSpawn(World world, Vec3f position, Vec3f direction)
+        partial void pAfterSpawn(World world, Vec3f position, Angles angles)
         {
             UpdateClientList();
         }

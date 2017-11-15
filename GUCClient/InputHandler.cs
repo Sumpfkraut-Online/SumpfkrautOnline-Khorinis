@@ -32,13 +32,6 @@ namespace GUC
                         Process.Write(ai.Address + 0x1204, bitField);
                     }
                 }
-            },
-            { VirtualKeys.O, () =>
-                {
-                    var gItem = Gothic.Objects.oCItem.Create();
-                    gItem.ItemVisual.Set("NW_CITY_DECO_SHIELD_02.3DS");
-                    WorldObjects.NPC.Hero.gVob.PutInSlot(Gothic.Objects.oCNpc.NPCNodes.LeftHand, gItem, true);
-                }
             }
         };
 

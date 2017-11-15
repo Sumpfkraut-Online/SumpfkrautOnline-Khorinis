@@ -153,9 +153,6 @@ namespace GUC.Scripts
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
-            Sumpfkraut.TestingThings.Init();
-            //Sumpfkraut.AI.TestingAI.Test();
-
             CreateTestWorld();
             Arena.DuelMode.Init();
             Arena.Regeneration.Init();
@@ -412,8 +409,6 @@ namespace GUC.Scripts
             itemDef.Create();
 
             var projDef = new ProjDef("arrow");
-            projDef.Model = m;
-            projDef.Velocity = 0.00003f;
             projDef.Create();
 
             // LANGBOGEN
@@ -437,11 +432,6 @@ namespace GUC.Scripts
             itemDef.Damage = 6;
             itemDef.Model = m;
             itemDef.Create();
-
-            projDef = new ProjDef("bolt");
-            projDef.Model = m;
-            projDef.Velocity = 0.0003f;
-            projDef.Create();
 
             // ARMBRUST
             m = new ModelDef("itrw_crossbow", "ItRw_Crossbow_L_01.mms");

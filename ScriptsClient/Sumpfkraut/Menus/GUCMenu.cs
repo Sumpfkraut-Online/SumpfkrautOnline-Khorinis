@@ -43,14 +43,26 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                 activeMenus[i].Close();
         }
 
+        bool opened = false;
+        public bool Opened { get { return opened; } }
+
         public virtual void Open()
         {
+            if (opened)
+            {
+                activeMenus.Remove(this); // to the top
+            }
             activeMenus.Insert(0, this);
+            opened = true;
         }
 
         public virtual void Close()
         {
-            activeMenus.Remove(this);
+            if (opened)
+            {
+                activeMenus.Remove(this);
+                opened = false;
+            }
         }
 
         protected virtual void KeyDown(VirtualKeys key) { }

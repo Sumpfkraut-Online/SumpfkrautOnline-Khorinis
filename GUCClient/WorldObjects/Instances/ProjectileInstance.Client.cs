@@ -12,8 +12,6 @@ namespace GUC.WorldObjects.Instances
         public override zCVob CreateVob(zCVob vob = null)
         {
             zCVob ret = vob == null ? zCVob.Create() : vob;
-            zCVisual vis = zCVisual.LoadVisual(this.Model.Visual);
-            ret.SetVisual(vis);
             return ret;
         }
     }

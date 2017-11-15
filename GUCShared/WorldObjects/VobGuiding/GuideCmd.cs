@@ -61,18 +61,16 @@ namespace GUC.WorldObjects.VobGuiding
             BaseVob.sOnDespawn += CheckDespawn;
         }
 
-        static void CheckSpawn(BaseVob vob, World world, Vec3f pos, Vec3f dir)
+        static void CheckSpawn(BaseVob vob, World world, Vec3f pos, Angles ang)
         {
-            List<TargetCmd> cmdList;
-            if (Commands.TryGetValue(vob.ID, out cmdList))
+            if (Commands.TryGetValue(vob.ID, out List<TargetCmd> cmdList))
                 for (int i = 0; i < cmdList.Count; i++)
                     cmdList[i].target = vob;
         }
 
         static void CheckDespawn(BaseVob vob)
         {
-            List<TargetCmd> cmdList;
-            if (Commands.TryGetValue(vob.ID, out cmdList))
+            if (Commands.TryGetValue(vob.ID, out List<TargetCmd> cmdList))
                 for (int i = 0; i < cmdList.Count; i++)
                 {
                     cmdList[i].sentDest = vob.GetPosition();
@@ -101,8 +99,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         public override void Start(GuidedVob vob)
         {
-            List<TargetCmd> cmdList;
-            if (!Commands.TryGetValue(targetID, out cmdList))
+            if (!Commands.TryGetValue(targetID, out List<TargetCmd> cmdList))
             {
                 cmdList = new List<TargetCmd>();
                 Commands.Add(targetID, cmdList);
@@ -114,8 +111,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         public override void Stop(GuidedVob vob)
         {
-            List<TargetCmd> cmdList;
-            if (Commands.TryGetValue(targetID, out cmdList))
+            if (Commands.TryGetValue(targetID, out List<TargetCmd> cmdList))
             {
                 cmdList.Remove(this);
                 if (cmdList.Count == 0)

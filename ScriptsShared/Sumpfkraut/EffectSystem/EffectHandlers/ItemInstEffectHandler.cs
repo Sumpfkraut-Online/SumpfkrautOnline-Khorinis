@@ -20,8 +20,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         {
             PrintStatic(typeof(ItemInstEffectHandler), "Start subscribing listeners to events...");
 
-            ItemInst.OnSetAmount += OnSetAmount;
-
             PrintStatic(typeof(ItemInstEffectHandler), "Finished subscribing listeners to events...");
         }
 
@@ -34,13 +32,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public ItemInstEffectHandler (string objName, List<Effect> effects, ItemInst host) 
             : base(objName, effects, host)
         { }
-
-
-
-        public static void OnSetAmount (ItemInst itemInst, int amount)
-        {
-            //throw new NotImplementedException();
-        }
+        
         
     }
 

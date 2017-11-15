@@ -9,8 +9,6 @@ using GUC.GUI;
 using GUC.Scripting;
 using GUC.WorldObjects;
 using Gothic.Objects;
-using Gothic;
-using GUC.Animations;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Models;
 using GUC.WorldObjects.Instances;
@@ -308,7 +306,7 @@ namespace GUC.Network
 
         static void ReadMessage(ServerMessages id, PacketReader stream)
         {
-            if (id != ServerMessages.VobPosDirMessage && id != ServerMessages.NPCPosDirMessage)
+            if (id != ServerMessages.VobPosDirMessage && id != ServerMessages.NPCPosAngMessage)
                 Logger.Log(id);
 
             switch (id)
@@ -434,14 +432,17 @@ namespace GUC.Network
                     break;
 
                 // NPC Messages
-                case ServerMessages.NPCPosDirMessage:
-                    NPC.Messages.ReadPosDirMessage(stream);
+                case ServerMessages.NPCPosAngMessage:
+                    NPC.Messages.ReadPosAngMessage(stream);
                     break;
                 case ServerMessages.NPCEquipAddMessage:
                     NPC.Messages.ReadEquipMessage(stream);
                     break;
                 case ServerMessages.NPCEquipRemoveMessage:
                     NPC.Messages.ReadUnequipMessage(stream);
+                    break;
+                case ServerMessages.NPCEquipSwitchMessage:
+                    NPC.Messages.ReadEquipSwitchMessage(stream);
                     break;
                 case ServerMessages.NPCFightModeSetMessage:
                     NPC.Messages.ReadFightMode(stream, true);
@@ -556,14 +557,14 @@ namespace GUC.Network
             Client.UpdateSpectatorPos(now);
         }
 
-        partial void pSetToSpectate(World world, Vec3f pos, Vec3f dir)
+        partial void pSetToSpectate(World world, Vec3f pos, Angles ang)
         {
             var cam = GothicGlobals.Game.GetCameraVob();
             cam.SetAI(specCam);
 
             cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
-            using (var vec = Gothic.Types.zVec3.Create(dir.X, dir.Y, dir.Z))
-                cam.SetHeadingAtWorld(vec);
+            ang.SetMatrix(cam);
+
             this.isSpectating = true;
             this.character = null;
             GothicGlobals.Game.SetShowPlayerStatus(false);
@@ -573,9 +574,9 @@ namespace GUC.Network
         void ReadSpectatorMessage(PacketReader stream)
         {
             Vec3f pos = stream.ReadVec3f();
-            Vec3f dir = stream.ReadVec3f();
+            Angles ang = stream.ReadAngles();
 
-            this.ScriptObject.SetToSpectator(World.Current, pos, dir);
+            this.ScriptObject.SetToSpectator(World.Current, pos, ang);
         }
 
         Vec3f lastSpecPos;
@@ -587,7 +588,7 @@ namespace GUC.Network
                 return;
 
             var cam = GothicGlobals.Game.GetCameraVob();
-            var pos = new Vec3f(cam.Position).CorrectPosition();
+            var pos = new Vec3f(cam.Position).ClampToWorldLimits();
             cam.SetPositionWorld(pos.X, pos.Y, pos.Z);
 
             if (now - specNextUpdate < TimeSpan.TicksPerSecond && pos.GetDistance(lastSpecPos) < 10)

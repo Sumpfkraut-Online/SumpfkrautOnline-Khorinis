@@ -6,6 +6,7 @@ using System.Text;
 using GUC.WorldObjects.Instances;
 using GUC.Models;
 using GUC.Types;
+using GUC.Network;
 
 namespace GUC.WorldObjects
 {
@@ -39,9 +40,42 @@ namespace GUC.WorldObjects
             get { return (ProjectileInstance)base.Instance; }
             set { SetInstance(value); }
         }
+        
+        float velocity;
+        public float Velocity
+        {
+            get { return this.velocity; }
+            set
+            {
+                if (this.IsSpawned)
+                    throw new NotSupportedException();
+                this.velocity = value;
+            }
+        }
 
-        public ModelInstance Model { get { return this.Instance.Model; } }
-        public float Velocity { get { return this.Instance.Velocity; } }
+        ModelInstance model;
+        public ModelInstance Model
+        {
+            get { return this.model; }
+            set
+            {
+                if (this.IsSpawned)
+                    throw new NotSupportedException();
+                this.model = value;
+            }
+        }
+
+        Vec3f destination;
+        public Vec3f Destination
+        {
+            get { return this.destination; }
+            set
+            {
+                if (this.IsSpawned)
+                    throw new NotSupportedException();
+                this.destination = value;
+            }
+        }
 
         /// <summary> Projectiles are always dynamic! Will throw a NotSupportedException when set. </summary>
         public override bool IsStatic
@@ -55,21 +89,22 @@ namespace GUC.WorldObjects
         #region Spawn
         
         Vec3f lastPos;
+        public Vec3f LastPosition { get { return lastPos; } }
 
         long startTime;
-        Vec3f startPos;
-        public Vec3f GetStartPos() { return this.startPos; }
-        Vec3f startDir;
-        public Vec3f GetStartDir() { return this.startDir; }
 
-        public override void Spawn(World world, Vec3f position, Vec3f direction)
+        Vec3f startPos;
+        public Vec3f StartPosition { get { return this.startPos; } }
+
+        partial void pSpawn();
+        public override void Spawn(World world, Vec3f position, Angles angles)
         {
-            base.Spawn(world, position, direction);
+            base.Spawn(world, position, angles);
             startTime = GameTime.Ticks;
             startPos = position;
-            startDir = direction;
-            
             lastPos = position;
+
+            pSpawn();
         }
 
         #endregion
@@ -86,7 +121,27 @@ namespace GUC.WorldObjects
 
         Vec3f GetTimedPosition(long flyTime)
         {
-            return startPos + (startDir * Velocity) * flyTime;
+            return startPos + (destination - startPos).Normalise() * Velocity * flyTime;
+        }
+
+        protected override void WriteProperties(PacketWriter stream)
+        {
+            base.WriteProperties(stream);
+
+            stream.Write(velocity);
+            stream.Write((ushort)model.ID);
+            stream.WriteCompressedPosition(this.destination);
+        }
+
+        protected override void ReadProperties(PacketReader stream)
+        {
+            base.ReadProperties(stream);
+
+            this.velocity = stream.ReadFloat();
+            int modelID = stream.ReadUShort();
+            if (!ModelInstance.TryGet(modelID, out model))
+                throw new Exception("Model not found! " + modelID);
+            this.destination = stream.ReadCompressedPosition();
         }
     }
 }

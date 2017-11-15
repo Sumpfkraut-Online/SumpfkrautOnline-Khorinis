@@ -9,6 +9,7 @@ using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers;
 
 namespace GUC.Scripts.Sumpfkraut.Menus
 {
@@ -37,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             inv.SetContents(NPCInst.Hero?.Inventory);
         }
 
-        public void UpdateAmountEventMethod(ItemInst item, int amount)
+        public void UpdateAmountEventMethod(ItemInst item)
         {
             inv.UpdateAmounts();
         }
@@ -54,19 +55,24 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public override void Open()
         {
+            if (Opened)
+                return;
+
             player = ScriptClient.Client.Character;
-            if (player == null || player.IsDead || player.IsInFightMode)
+            if (player == null || player.IsDead || player.IsInFightMode || player.ModelInst.IsInAnimation())
                 return;
 
             var env = player.Environment;
-            if (env.InAir)
+            if (env.InAir || env.WaterLevel > 0.4f)
                 return;
 
             player.SetMovement(NPCMovement.Stand);
 
-            ItemInst.OnSetAmount += UpdateAmountEventMethod;
-            VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem += UpdateInventory;
-            VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem += UpdateInventory;
+            player.Inventory.OnItemAmountChange += UpdateAmountEventMethod;
+            player.Inventory.OnAddItem += UpdateInventory;
+            player.Inventory.OnRemoveItem += UpdateInventory;
+            player.OnEquip += Player_OnEquip;
+            player.OnUnequip += Player_OnUnequip;
 
             base.Open();
             inv.SetContents(player.Inventory);
@@ -74,11 +80,26 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             inv.Enabled = true;
         }
 
+        private void Player_OnUnequip(ItemInst item)
+        {
+            UpdateEquipment();
+        }
+
+        void Player_OnEquip(ItemInst item)
+        {
+            UpdateEquipment();
+        }
+
         public override void Close()
         {
-            ItemInst.OnSetAmount -= UpdateAmountEventMethod;
-            VobSystem.Instances.ItemContainers.ScriptInventory.OnAddItem -= UpdateInventory;
-            VobSystem.Instances.ItemContainers.ScriptInventory.OnRemoveItem -= UpdateInventory;
+            if (!Opened)
+                return;
+
+            player.Inventory.OnItemAmountChange -= UpdateAmountEventMethod;
+            player.Inventory.OnAddItem -= UpdateInventory;
+            player.Inventory.OnRemoveItem -= UpdateInventory;
+            player.OnEquip -= Player_OnEquip;
+            player.OnUnequip -= Player_OnUnequip;
 
             base.Close();
             inv.Hide();

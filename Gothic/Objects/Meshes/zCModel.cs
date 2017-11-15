@@ -289,6 +289,15 @@ namespace Gothic.Objects.Meshes
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetMeshLibTexture, texture, (IntArg)arg1, (IntArg)arg2, part);
         }
+        
+        public int SearchNode(zString nodeName)
+        {
+            return Process.THISCALL<IntArg>(Address, 0x57DFF0, nodeName);
+        }
 
+        public void GetTrafoNodeToModel(int nodePtr, zMat4 matrix)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x57A9C0, matrix, (IntArg)nodePtr);
+        }
     }
 }

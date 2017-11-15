@@ -25,8 +25,7 @@ namespace GUC.WorldObjects
 
             public static void ReadEquipMessage(PacketReader stream)
             {
-                NPC npc;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc))
                 {
                     int slot = stream.ReadByte();
 
@@ -46,9 +45,8 @@ namespace GUC.WorldObjects
 
             public static void ReadEquipSwitchMessage(PacketReader stream)
             {
-                NPC npc; Item item;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc)
-                    && npc.Inventory.TryGetItem(stream.ReadByte(), out item))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc)
+                    && npc.Inventory.TryGetItem(stream.ReadByte(), out Item item))
                 {
                     npc.ScriptObject.EquipItem(stream.ReadByte(), item);
                 }
@@ -56,9 +54,8 @@ namespace GUC.WorldObjects
 
             public static void ReadUnequipMessage(PacketReader stream)
             {
-                NPC npc; Item item;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc)
-                    && npc.Inventory.TryGetItem(stream.ReadByte(), out item))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc)
+                    && npc.Inventory.TryGetItem(stream.ReadByte(), out Item item))
                 {
                     npc.ScriptObject.UnequipItem(item);
                     if (npc != Hero)
@@ -112,15 +109,15 @@ namespace GUC.WorldObjects
 
             #region Position Updates
 
-            public static void ReadPosDirMessage(PacketReader stream)
+            public static void ReadPosAngMessage(PacketReader stream)
             {
                 int id = stream.ReadUShort();
 
                 if (World.Current.TryGetVob(id, out NPC npc))
                 {
                     Vec3f newPos = stream.ReadCompressedPosition();
-                    Vec3f newDir = stream.ReadCompressedDirection();
-                    npc.Interpolate(newPos, newDir);
+                    Angles newAng = stream.ReadCompressedAngles();
+                    npc.Interpolate(newPos, newAng);
 
                     npc.ScriptObject.SetMovement((NPCMovement)stream.ReadByte());
 
@@ -132,12 +129,12 @@ namespace GUC.WorldObjects
                 }
             }
 
-            public static void WritePosDirMessage(NPC npc, Vec3f pos, Vec3f dir, Environment env)
+            public static void WritePosAngMessage(NPC npc, Vec3f pos, Angles ang, Environment env)
             {
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedNPCMessage);
                 stream.Write((ushort)npc.ID);
                 stream.WriteCompressedPosition(pos);
-                stream.WriteCompressedDirection(dir);
+                stream.WriteCompressedAngles(ang);
 
                 // compress environment & npc movement
                 int bitfield = env.InAir ? 0x8000 : 0;
@@ -190,24 +187,24 @@ namespace GUC.WorldObjects
             if (hero == null)
                 return;
 
-            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 10, 0.02f); // update our hero better
+            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 10, 0.01f); // update our hero better
         }
 
         #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
-            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 14, 0.04f);
+            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 14, 0.02f);
         }
 
         NPCMovement guidedLastMovement;
-        void UpdateGuidedNPCPosition(long now, long interval, float minPosDist, float minDirDist)
+        void UpdateGuidedNPCPosition(long now, long interval, float minPosDist, float minAngDist)
         {
             if (now < guidedNextUpdate)
                 return;
 
             Vec3f pos = this.GetPosition();
-            Vec3f dir = this.GetDirection();
+            Angles ang = this.GetAngles();
             Environment env = this.GetEnvironment();
 
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
@@ -215,7 +212,7 @@ namespace GUC.WorldObjects
                 // nothing really changed, only update every second
                 if (guidedLastMovement == this.movement
                     && pos.GetDistance(guidedLastPos) < minPosDist
-                    && dir.GetDistance(guidedLastDir) < minDirDist
+                    && !ang.DifferenceIsBigger(guidedLastAng, minAngDist)
                     && env == guidedLastEnv)
                 {
                     return;
@@ -224,10 +221,10 @@ namespace GUC.WorldObjects
 
             guidedLastMovement = this.movement;
             guidedLastPos = pos;
-            guidedLastDir = dir;
+            guidedLastAng = ang;
             guidedLastEnv = env;
 
-            Messages.WritePosDirMessage(this, pos, dir, env);
+            Messages.WritePosAngMessage(this, pos, ang, env);
 
             guidedNextUpdate = now + interval;
 
@@ -355,9 +352,9 @@ namespace GUC.WorldObjects
         #region Spawn
 
         /// <summary> Spawns the NPC in the given world at the given position & direction. </summary>
-        public override void Spawn(World world, Vec3f position, Vec3f direction)
+        public override void Spawn(World world, Vec3f position, Angles angles)
         {
-            base.Spawn(world, position, direction);
+            base.Spawn(world, position, angles);
 
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
@@ -459,60 +456,59 @@ namespace GUC.WorldObjects
 
         #region Turning
 
-        const float MaxDirDiffToInterpolate = 0.5f;
-        const long InterpolationTimeDir = 1200000;
+        const float MinYawDiffToAnimate = 0.001f;
+        const long InterpolationTimeAng = 1200000;
 
-        Vec3f iDirStart;
-        Vec3f iDirEnd;
-        long iDirEndTime = -1;
+        Angles iAngStart;
+        Angles iAngEnd;
+        long iAngEndTime = 0;
 
-        protected override void Interpolate(Vec3f newPos, Vec3f newDir)
+        protected override void Interpolate(Vec3f newPos, Angles newAng)
         {
             // gothic is already setting positions through animations, gravity etc. 
             // so we just set the position because it would look twitchy otherwise
             SetPosition(newPos);
 
-            Vec3f curDir = GetDirection();
-            if (newDir.GetDistance(curDir) < MaxDirDiffToInterpolate && Movement == NPCMovement.Stand)
+            Angles oldAng = this.ang;
+            Angles curAng = GetAngles();
+
+            if (Movement == NPCMovement.Stand
+                && !newAng.DifferenceIsBigger(curAng, Angles.PI / 2f) // don't interpolate > 90 degree turns
+                && newAng.DifferenceIsBigger(curAng, 0.00001f)) // don't interpolate infinitesimal turns
             {
-                iDirStart = curDir;
-                iDirEnd = newDir;
-                iDirEndTime = GameTime.Ticks + InterpolationTimeDir;
+                iAngStart = curAng;
+                iAngEnd = newAng;
+                iAngEndTime = GameTime.Ticks + InterpolationTimeAng;
 
-                if (Movement == NPCMovement.Stand && !this.Model.IsInAnimation())
+                float diff;
+                if (!this.Model.IsInAnimation() && Math.Abs(diff = Angles.Difference(newAng.Yaw, curAng.Yaw)) > MinYawDiffToAnimate)
                 {
-                    float x = newDir.X - curDir.X;
-                    float z = newDir.Z - curDir.Z;
-
-                    if (x * x + z * z > 0.01f)
-                    {
-                        StartTurnAni(curDir.Z * newDir.X - newDir.Z * curDir.X > 0);
-                        return;
-                    }
+                    StartTurnAni(diff < 0);
+                    return;
                 }
             }
             else
             {
-                SetDirection(newDir);
-                iDirEndTime = -1;
+                SetAngles(newAng);
+                iAngEndTime = 0;
             }
             StopTurnAni();
         }
 
         void UpdateInterpolation(long now)
         {
-            if (iDirEndTime != -1)
+            if (iAngEndTime > 0)
             {
-                long timeDiff = iDirEndTime - now;
+                long timeDiff = iAngEndTime - now;
                 if (timeDiff < 0)
                 {
-                    iDirEndTime = -1;
-                    SetDirection(iDirEnd);
+                    iAngEndTime = 0;
+                    SetAngles(iAngEnd);
                     StopTurnAni();
                 }
                 else
                 {
-                    SetDirection(iDirStart + (iDirEnd - iDirStart) * (float)Math.Pow(1.0 - (double)timeDiff / InterpolationTimeDir, 1 / 3d));
+                    SetAngles(iAngStart + Angles.Difference(iAngEnd, iAngStart) * (float)Math.Pow(1.0 - (double)timeDiff / InterpolationTimeAng, 1 / 3d));
                 }
             }
         }

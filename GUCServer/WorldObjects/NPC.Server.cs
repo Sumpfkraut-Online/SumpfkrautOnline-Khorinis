@@ -15,7 +15,7 @@ namespace GUC.WorldObjects
     {
         #region Network Messages
 
-        public delegate void NPCMoveHandler(NPC npc, Vec3f oldPos, Vec3f oldDir, NPCMovement oldMovement);
+        public delegate void NPCMoveHandler(NPC npc, Vec3f oldPos, Angles oldAng, NPCMovement oldMovement);
         public static event NPCMoveHandler OnNPCMove;
 
         new internal static class Messages
@@ -76,18 +76,17 @@ namespace GUC.WorldObjects
 
             #region Positions
 
-            public static void ReadPosDir(PacketReader stream, GameClient client, World world)
+            public static void ReadPosAng(PacketReader stream, GameClient client, World world)
             {
                 int id = stream.ReadUShort();
-                NPC npc;
-                if (world.TryGetVob(id, out npc) && (npc.guide == client || npc.client == client))
+                if (world.TryGetVob(id, out NPC npc) && (npc.guide == client || npc.client == client))
                 {
                     var oldPos = npc.GetPosition();
-                    var oldDir = npc.GetDirection();
+                    var oldAng = npc.GetAngles();
                     var oldMovement = npc.Movement;
 
                     var pos = stream.ReadCompressedPosition();
-                    var dir = stream.ReadCompressedDirection();
+                    var ang = stream.ReadCompressedAngles();
                     int bitfield = stream.ReadShort();
 
                     bool inAir = (bitfield & 0x8000) != 0;
@@ -99,7 +98,7 @@ namespace GUC.WorldObjects
                     npc.movement = movement;
                     npc.environment = env;
 
-                    npc.SetPosDir(pos, dir, client);
+                    npc.SetPosAng(pos, ang, client);
                     //vob.ScriptObject.OnPosChanged();
 
                     if (npc == client.Character)
@@ -107,8 +106,7 @@ namespace GUC.WorldObjects
                         client.UpdateVobList(world, pos);
                     }
 
-                    if (OnNPCMove != null)
-                        OnNPCMove(npc, oldPos, oldDir, oldMovement);
+                    OnNPCMove?.Invoke(npc, oldPos, oldAng, oldMovement);
                 }
             }
 
@@ -161,12 +159,12 @@ namespace GUC.WorldObjects
 
         #region Position & Direction
 
-        protected override void WritePosDirMessage(GameClient exclude)
+        protected override void WritePosAngMessage(GameClient exclude)
         {
-            PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCPosDirMessage);
+            PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCPosAngMessage);
             stream.Write((ushort)this.ID);
             stream.WriteCompressedPosition(this.pos);
-            stream.WriteCompressedDirection(this.dir);
+            stream.WriteCompressedAngles(this.ang);
             stream.Write((byte)this.movement);
 
             if (exclude == null)
@@ -204,7 +202,7 @@ namespace GUC.WorldObjects
         /// Spawns the NPC in the given world at the given position & direction.
         /// If the NPC is a player, the spawn will be postponed until the client has loaded the map. 
         /// </summary>
-        public override void Spawn(World world, Vec3f position, Vec3f direction)
+        public override void Spawn(World world, Vec3f position, Angles angles)
         {
             if (this.IsPlayer)
             {
@@ -220,8 +218,8 @@ namespace GUC.WorldObjects
                 if (this.isCreated)
                     throw new Exception("Vob is already spawned!");
 
-                this.pos = position.CorrectPosition();
-                this.dir = direction.CorrectDirection();
+                this.pos = position.ClampToWorldLimits();
+                this.ang = angles.Clamp();
                 this.world = world;
 
                 // wait until the client has loaded the map
@@ -229,7 +227,7 @@ namespace GUC.WorldObjects
             }
             else
             {
-                base.Spawn(world, position, direction);
+                base.Spawn(world, position, angles);
                 world.AddToNPCCells(this);
             }
         }
@@ -241,7 +239,7 @@ namespace GUC.WorldObjects
 
             if (!this.IsSpawned)
             {
-                base.Spawn(this.world, this.pos, this.dir);
+                base.Spawn(this.world, this.pos, this.ang);
                 world.AddToNPCCells(this);
             }
             else

@@ -353,6 +353,7 @@ namespace GUC.Network
         /// </summary>
         public void WriteCompressedPosition(Vec3f position)
         {
+            CheckRealloc(9);
             WriteInt24((int)(position.X * 10));
             WriteInt24((int)(position.Y * 10));
             WriteInt24((int)(position.Z * 10));
@@ -366,13 +367,59 @@ namespace GUC.Network
         }
 
         /// <summary>
-        /// Coordinates must be between -1 and +1 !!!
+        /// Coordinates must be normalised (between -1 and +1) !!!
         /// </summary>
         public void WriteCompressedDirection(Vec3f direction)
         {
+            CheckRealloc(3);
             data[CurrentByte++] = (byte)(direction.X * 127.0f);
             data[CurrentByte++] = (byte)(direction.Y * 127.0f);
             data[CurrentByte++] = (byte)(direction.Z * 127.0f);
+        }
+
+
+        public void Write(Angles angles)
+        {
+            CheckRealloc(12);
+            byte[] arr = BitConverter.GetBytes(angles.Pitch);
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
+
+            arr = BitConverter.GetBytes(angles.Yaw);
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
+
+            arr = BitConverter.GetBytes(angles.Roll);
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+            data[CurrentByte++] = arr[2];
+            data[CurrentByte++] = arr[3];
+        }
+
+        /// <summary> Angle must be [-pi, +pi]. Writes 2 Bytes. </summary>
+        public void WriteCompressedAngle(float radians)
+        {
+            Write(Angles.Angle2Short(radians));
+        }
+
+        public void WriteCompressedAngles(Angles angles)
+        {
+            CheckRealloc(6);
+            byte[] arr = BitConverter.GetBytes(Angles.Angle2Short(angles.Pitch));
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+
+            arr = BitConverter.GetBytes(Angles.Angle2Short(angles.Yaw));
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
+
+            arr = BitConverter.GetBytes(Angles.Angle2Short(angles.Roll));
+            data[CurrentByte++] = arr[0];
+            data[CurrentByte++] = arr[1];
         }
 
         #endregion

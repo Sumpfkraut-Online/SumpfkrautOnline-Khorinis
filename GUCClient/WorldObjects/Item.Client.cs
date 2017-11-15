@@ -38,12 +38,12 @@ namespace GUC.WorldObjects
             {
                 dropped = true;
                 Vec3f pos = this.GetPosition();
-                Vec3f dir = this.GetDirection();
+                Angles ang = this.GetAngles();
                 
                 NPC.Hero.gVob.DoDropVob(this.gVob);
 
                 this.SetPosition(pos);
-                this.SetDirection(dir);
+                this.SetAngles(ang);
             }
         }
     }

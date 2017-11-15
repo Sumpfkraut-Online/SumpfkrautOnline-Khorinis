@@ -45,7 +45,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.BaseInst.gVob.Name.Set(CustomName);
             }
 
-            this.BaseInst.ForEachEquippedItem(i => this.pEquipItem(i.Slot, (ItemInst)i.ScriptObject));
+            this.BaseInst.ForEachEquippedItem(i => this.pAfterEquip((NPCSlots)i.Slot, (ItemInst)i.ScriptObject));
 
             if (this.HP <= 0)
                 this.BaseInst.gVob.Name.Clear();
@@ -60,7 +60,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Equipment
 
-        partial void pEquipItem(int slot, ItemInst item)
+        partial void pBeforeEquip(NPCSlots slot, ItemInst item)
+        {
+            if (item.IsEquipped)
+                pBeforeUnequip(item);
+        }
+
+        partial void pAfterEquip(NPCSlots slot, ItemInst item)
         {
             if (!this.IsSpawned)
                 return;
@@ -68,45 +74,29 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
-            if (item.BaseInst.IsEquipped)
-            {
-                pBeginUnequipItem(item);
-            }
-
             Gothic.Types.zString node;
             bool undraw = true;
-            switch ((SlotNums)slot)
+            switch (slot)
             {
-                case SlotNums.Sword:
+                case NPCSlots.OneHanded1:
                     node = oCNpc.NPCNodes.Sword;
                     break;
-                case SlotNums.Longsword:
+                case NPCSlots.TwoHanded:
                     node = oCNpc.NPCNodes.Longsword;
                     break;
-                case SlotNums.Bow:
-                    node = oCNpc.NPCNodes.Bow;
+                case NPCSlots.Ranged:
+                    node = item.ItemType == ItemTypes.WepBow ? oCNpc.NPCNodes.Bow : oCNpc.NPCNodes.Crossbow;
                     break;
-                case SlotNums.XBow:
-                    node = oCNpc.NPCNodes.Crossbow;
-                    break;
-                case SlotNums.Torso:
+                case NPCSlots.Armor:
                     node = oCNpc.NPCNodes.Torso;
                     gItem.VisualChange.Set(item.Definition.VisualChange);
                     break;
-                case SlotNums.Righthand:
+                case NPCSlots.RightHand:
                     node = oCNpc.NPCNodes.RightHand;
-                    if (item.ItemType == ItemTypes.WepXBow && this.ammo != null)
-                    {
-                        gNpc.PutInSlot(oCNpc.NPCNodes.LeftHand, ammo.BaseInst.gVob, true);
-                    }
                     undraw = false;
                     break;
-                case SlotNums.Lefthand:
+                case NPCSlots.LeftHand:
                     node = oCNpc.NPCNodes.LeftHand;
-                    if (item.ItemType == ItemTypes.WepBow && this.ammo != null)
-                    {
-                        gNpc.PutInSlot(oCNpc.NPCNodes.RightHand, ammo.BaseInst.gVob, true);
-                    }
                     undraw = false;
                     break;
                 default:
@@ -116,11 +106,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             gItem.Material = (int)item.Material;
             gNpc.PutInSlot(node, gItem, true);
             PlayDrawItemSound(item, undraw);
-
-            Menus.PlayerInventory.Menu.UpdateEquipment();
         }
 
-        partial void pBeginUnequipItem(ItemInst item)
+        partial void pBeforeUnequip(ItemInst item)
         {
             if (!this.IsSpawned)
                 return;
@@ -128,52 +116,32 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             oCNpc gNpc = this.BaseInst.gVob;
             oCItem gItem = item.BaseInst.gVob;
 
-            switch ((SlotNums)item.BaseInst.Slot)
+            Gothic.Types.zString node;
+            switch ((NPCSlots)item.BaseInst.Slot)
             {
-                case SlotNums.Sword:
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Sword, true, true);
+                case NPCSlots.OneHanded1:
+                    node = oCNpc.NPCNodes.Sword;
                     break;
-
-                case SlotNums.Longsword:
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Longsword, true, true);
+                case NPCSlots.TwoHanded:
+                    node = oCNpc.NPCNodes.Longsword;
                     break;
-
-                case SlotNums.Bow:
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Bow, true, true);
+                case NPCSlots.Ranged:
+                    node = item.ItemType == ItemTypes.WepBow ? oCNpc.NPCNodes.Bow : oCNpc.NPCNodes.Crossbow;
                     break;
-
-                case SlotNums.XBow:
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Crossbow, true, true);
+                case NPCSlots.Armor:
+                    node = oCNpc.NPCNodes.Torso;
                     break;
-
-                case SlotNums.Torso:
-                    gItem.VisualChange.Set(item.Definition.VisualChange);
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.Torso, true, true);
+                case NPCSlots.RightHand:
+                    node = oCNpc.NPCNodes.RightHand;
                     break;
-
-                case SlotNums.Righthand:
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.RightHand, true, true);
-                    if (item.ItemType == ItemTypes.WepXBow)
-                    {
-                        gNpc.RemoveFromSlot(oCNpc.NPCNodes.LeftHand, true, true);
-                    }
+                case NPCSlots.LeftHand:
+                    node = oCNpc.NPCNodes.LeftHand;
                     break;
-                case SlotNums.Lefthand:
-                    gNpc.RemoveFromSlot(oCNpc.NPCNodes.LeftHand, true, true);
-                    if (item.ItemType == ItemTypes.WepBow)
-                    {
-                        gNpc.RemoveFromSlot(oCNpc.NPCNodes.RightHand, true, true);
-                    }
-                    break;
-
                 default:
-                    break;
+                    return;
             }
-        }
 
-        partial void pAfterUnequipItem(ItemInst item)
-        {
-            Menus.PlayerInventory.Menu.UpdateEquipment();
+            gNpc.RemoveFromSlot(node, false, true);
         }
 
         #endregion
@@ -236,7 +204,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        GUC.Utilities.LockTimer collisionFXTimer = new GUC.Utilities.LockTimer(300);
+        GUC.Utilities.LockTimer collisionFXTimer = new GUC.Utilities.LockTimer(100);
         void DoFightStuff()
         {
             if (!this.IsInFightMode)
@@ -266,10 +234,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     var ai = this.BaseInst.gAI;
                     ai.ShowWeaponTrail();
                     ai.CorrectFightPosition();
-                    /*if (this.DrawnWeapon != null && collisionFXTimer.IsReady)
+
+                    /*var wep = GetDrawnWeapon();
+                    if (wep != null && collisionFXTimer.IsReady)
                     {
                         ai.GetFightLimbs();
-                        ai.CheckMeleeWeaponHitsLevel(this.DrawnWeapon.BaseInst.gVob);
+                        ai.CheckMeleeWeaponHitsLevel(wep.BaseInst.gVob);
                     }*/
                     return;
                 }
@@ -523,19 +493,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             int fmode;
             if (this.BaseInst.IsInFightMode)
             {
-                if (this.drawnWeapon == null)
+                ItemInst wep = GetDrawnWeapon();
+
+                if (wep == null)
                 {
                     fmode = 1; // fists
                 }
                 else
                 {
-                    if (this.drawnWeapon.ItemType == ItemTypes.Wep1H)
+                    if (wep.ItemType == ItemTypes.Wep1H)
                         fmode = 3;
-                    else if (this.drawnWeapon.ItemType == ItemTypes.Wep2H)
+                    else if (wep.ItemType == ItemTypes.Wep2H)
                         fmode = 4;
-                    else if (this.drawnWeapon.ItemType == ItemTypes.WepBow)
+                    else if (wep.ItemType == ItemTypes.WepBow)
                         fmode = 5;
-                    else if (this.drawnWeapon.ItemType == ItemTypes.WepXBow)
+                    else if (wep.ItemType == ItemTypes.WepXBow)
                         fmode = 6;
                     else
                         fmode = 0;

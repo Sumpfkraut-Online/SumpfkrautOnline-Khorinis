@@ -19,13 +19,11 @@ namespace GUC.WorldObjects
             public static void ReadPosDirMessage(PacketReader stream)
             {
                 int id = stream.ReadUShort();
-
-                BaseVob vob;
-                if (World.Current.TryGetVob(id, out vob))
+                if (World.Current.TryGetVob(id, out BaseVob vob))
                 {
                     Vec3f newPos = stream.ReadCompressedPosition();
-                    Vec3f newDir = stream.ReadCompressedDirection();
-                    vob.Interpolate(newPos, newDir);
+                    Angles newAng = stream.ReadCompressedAngles();
+                    vob.Interpolate(newPos, newAng);
 
                     //vob.ScriptObject.OnPosChanged();
                 }
@@ -42,10 +40,10 @@ namespace GUC.WorldObjects
 
         #region Position & Direction Interpolation
         
-        protected virtual void Interpolate(Vec3f newPos, Vec3f newDir)
+        protected virtual void Interpolate(Vec3f newPos, Angles newAng)
         {
             SetPosition(newPos);
-            SetDirection(newDir);
+            SetAngles(newAng);
         }
 
         #endregion
@@ -113,16 +111,16 @@ namespace GUC.WorldObjects
             // Updates the position from the correlating gothic-vob's position.
             if (this.gvob != null)
             {
-                this.pos = ((Vec3f)this.gvob.TrafoObjToWorld.Position).CorrectPosition();
+                this.pos = ((Vec3f)this.gvob.TrafoObjToWorld.Position).ClampToWorldLimits();
             }
         }
 
-        partial void pGetDirection()
+        partial void pGetAngles()
         {
             // Updates the direction from the correlating gothic-vob's direction.
             if (this.gvob != null)
             {
-                this.dir = ((Vec3f)this.gvob.TrafoObjToWorld.Direction).CorrectDirection();
+                this.ang = (Angles)gvob.TrafoObjToWorld;
             }
         }
 
@@ -131,17 +129,17 @@ namespace GUC.WorldObjects
             // Sets the position of the gothic vob
             if (this.gvob != null)
             {
-                this.gvob.TrafoObjToWorld.Position = this.pos.ToArray();
+                //this.gvob.TrafoObjToWorld.Position = this.pos.ToArray();
                 this.gvob.SetPositionWorld(this.pos.X, this.pos.Y, this.pos.Z);
             }
         }
 
-        partial void pSetDirection()
+        partial void pSetAngles()
         {
-            // Sets the direction of the gothic vob
+            // Sets the rotation matrix of the gothic vob
             if (this.gvob != null)
             {
-                this.gvob.SetHeadingAtWorld(this.dir.X, this.dir.Y, this.dir.Z);
+                ang.SetMatrix(gvob);
             }
         }
 
@@ -149,14 +147,14 @@ namespace GUC.WorldObjects
 
         #region Spawn & Despawn
 
-        partial void pBeforeSpawn(World world, Vec3f position, Vec3f direction)
+        partial void pBeforeSpawn(World world, Vec3f position, Angles angles)
         {
             // let the instance create the gothic object
             CreateGVob();
 
             // set position & orientation
             pSetPosition();
-            pSetDirection();
+            pSetAngles();
         }
 
         partial void pAfterDespawn()
@@ -179,7 +177,7 @@ namespace GUC.WorldObjects
             int refCtr = gvob.refCtr - 1;
             gvob.refCtr = refCtr;
 
-            // Free the gothic object if no references are left, otherwise gothic will free it
+            // Free the gothic object if no references are left, otherwise gothic should free it
             if (refCtr <= 0)
                 gvob.Dispose();
 

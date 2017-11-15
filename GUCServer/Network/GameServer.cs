@@ -54,10 +54,10 @@ namespace GUC.Network
                     client.ScriptObject.ReadScriptMessage(stream);
                     break;
                 case ClientMessages.GuidedVobMessage:
-                    WorldObjects.VobGuiding.GuidedVob.Messages.ReadPosDir(stream, client, client.World);
+                    WorldObjects.VobGuiding.GuidedVob.Messages.ReadPosAng(stream, client, client.World);
                     break;
                 case ClientMessages.GuidedNPCMessage:
-                    WorldObjects.NPC.Messages.ReadPosDir(stream, client, client.World);
+                    WorldObjects.NPC.Messages.ReadPosAng(stream, client, client.World);
                     break;
                 case ClientMessages.ScriptCommandMessage:
                     GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, false);
