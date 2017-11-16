@@ -729,6 +729,11 @@ namespace Gothic.Objects
             set { Process.Write((int)value, Address + VarOffsets.flags); }
         }
 
+        public void CollectFocusVob(bool force)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x733A10, (BoolArg)force);
+        }
+
         /*
         public static oCNpc StealNPC(Process process)
         {

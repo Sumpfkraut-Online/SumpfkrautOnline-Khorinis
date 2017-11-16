@@ -40,16 +40,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             Vec3f currentPos = this.GetPosition();
             Vec3f direction = (this.Destination - currentPos).Normalise();
 
-            Vec3f startPos = currentPos + direction * -50;
-            Vec3f ray = direction * 5000;
+            Vec3f startPos = currentPos + direction * -100;
+            Vec3f ray = direction * 200;
 
-            using (zVec3 zStart = zVec3.Create(startPos.X, startPos.Y, startPos.Z))
-            using (zVec3 zRay = zVec3.Create(ray.X, ray.Y, ray.Z))
+            using (zVec3 zStart = startPos.CreateGVec())
+            using (zVec3 zRay = ray.CreateGVec())
             {
                 var gWorld = GothicGlobals.Game.GetWorld();
 
                 const zCWorld.zTraceRay parm = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Test_Water | zCWorld.zTraceRay.Return_POLY | zCWorld.zTraceRay.Ignore_NPC | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision;
-                if (gWorld.TraceRayNearestHit(zStart, zRay, parm) && Destination.GetDistance((Vec3f)gWorld.Raytrace_FoundIntersection) < 40)
+                if (gWorld.TraceRayNearestHit(zStart, zRay, parm))
                 {
                     var poly = gWorld.Raytrace_FoundPoly;
 

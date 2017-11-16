@@ -101,6 +101,15 @@ namespace GUC
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
 
+        static void Test(Hook hook, RegisterMemory mem)
+        {
+            int ecx = Process.ReadInt(mem[Registers.EAX]);
+            if (ecx == 0)
+            {
+                Logger.LogWarning("HALT " + mem[Registers.EAX].ToString("X4"));
+            }
+        }
+
         static bool mained = false;
         public static int Main(string message)
         {
@@ -113,6 +122,8 @@ namespace GUC
 
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
+
+                Process.AddHook(Test, 0x656205, 6);
 
                 // add hooks
                 hFileSystem.AddHooks();
@@ -143,7 +154,7 @@ namespace GUC
                 Process.Nop(0x006C8A71, 5); // remove freeLook controls
 
                 //Process.Write(0x006C873D, 0xD8, 0x1D, 0xB4, 0x04, 0x83, 0x00); // reduce time gothic waits after the loading screen from 2500ms to 1000ms
-                Process.Write(0x006C8720, 0xEB, 0x2C); // skip precache time completely
+                //Process.Write(0x006C8720, 0xEB, 0x2C); // skip precache time completely
 
 
                 Process.Write(0x008BACD0, 18000.0f); // spawnManager : insertrange

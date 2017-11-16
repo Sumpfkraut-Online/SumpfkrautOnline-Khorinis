@@ -20,7 +20,13 @@ namespace Gothic.Objects
         public zCAICamera(int address) : base(address)
         {
         }
-        
+
+        public void CreateInstance(string instance)
+        {
+            using (var z = zString.Create(instance))
+                CreateInstance(z);
+        }
+
         public void CreateInstance(zString instance)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x4A3670, instance);
@@ -41,6 +47,22 @@ namespace Gothic.Objects
         {
             get { return Process.ReadFloat(Address + 0x44); }
             set { Process.Write(Address + 0x44, value); }
+        }
+
+        public void SetByScript(string instance)
+        {
+            using (var z = zString.Create(instance))
+                SetByScript(z);
+        }
+
+        public void SetByScript(zString instance)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x4A26E0, instance);
+        }
+
+        public static zString CamModRanged
+        {
+            get { return new zString(0x8CE910); }
         }
     }
 }

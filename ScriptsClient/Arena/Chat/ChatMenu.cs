@@ -129,18 +129,6 @@ namespace GUC.Scripts.Arena
             base.KeyDown(key);
         }
 
-        static void SA(string msg, bool g = false)
-        {
-            string[] strs = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            if (strs.Length != 3)
-                return;
-
-            if (!float.TryParse(strs[0], out float x) || !float.TryParse(strs[1], out float y) || !float.TryParse(strs[2], out float z))
-                return;
-
-            GUCScripts.AddAngles = new Angles(Angles.Deg2Rad(x), Angles.Deg2Rad(y), Angles.Deg2Rad(z));
-        }
-
         public void SendInput()
         {
             string message = textBox.Input.Trim();
@@ -150,18 +138,6 @@ namespace GUC.Scripts.Arena
             if (message == "/detectschinken")
             {
                 ArenaClient.DetectSchinken = true;
-                textBox.Input = "";
-                return;
-            }
-            else if (message.StartsWith("/sa "))
-            {
-                SA(message.Substring(4));
-                textBox.Input = "";
-                return;
-            }
-            else if (message.StartsWith("/sb "))
-            {
-                SA(message.Substring(4), true);
                 textBox.Input = "";
                 return;
             }

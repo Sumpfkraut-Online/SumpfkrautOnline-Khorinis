@@ -254,7 +254,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             inst.Radius = 10;
             inst.Item = new ItemInst(ammo.Definition);
             inst.Damage = drawnWeapon.Damage;
-            inst.Velocity = 0.00003f;
+            inst.Velocity = 0.0003f;
             inst.Model = ammo.ModelDef;
             
             /*if (ammo.Amount == 1)

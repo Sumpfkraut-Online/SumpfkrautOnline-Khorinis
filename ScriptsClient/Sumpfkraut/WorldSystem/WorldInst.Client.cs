@@ -49,7 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             ogame.SetTime(Clock.Time.GetDay(), Clock.Time.GetHour(), Clock.Time.GetMinute());
             
             GothicGlobals.Game.CloseLoadscreen();
-            Gothic.CGameManager.InitScreen_Close();
+            //Gothic.CGameManager.InitScreen_Close();
         }
     }
 }

@@ -129,8 +129,8 @@ namespace GUC.WorldObjects
             // Sets the position of the gothic vob
             if (this.gvob != null)
             {
-                //this.gvob.TrafoObjToWorld.Position = this.pos.ToArray();
-                this.gvob.SetPositionWorld(this.pos.X, this.pos.Y, this.pos.Z);
+                this.gvob.TrafoObjToWorld.Position = this.pos.ToArray();
+                //this.gvob.SetPositionWorld(this.pos.X, this.pos.Y, this.pos.Z);
             }
         }
 

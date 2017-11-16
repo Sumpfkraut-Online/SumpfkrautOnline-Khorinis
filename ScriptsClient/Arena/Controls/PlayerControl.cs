@@ -33,7 +33,8 @@ namespace GUC.Scripts.Arena.Controls
             { VirtualKeys.F3, ToggleG1Camera },
             { VirtualKeys.F5, ToggleScreenInfo },
             { VirtualKeys.N1, DrawMeleeWeapon },
-            { VirtualKeys.N2, DrawRangedWeapon }
+            { VirtualKeys.N2, DrawRangedWeapon },
+            { VirtualKeys.RightButton, FreeAim }
         };
 
         static void DrawMeleeWeapon(bool down)
@@ -144,24 +145,23 @@ namespace GUC.Scripts.Arena.Controls
 
         static void CheckFightMove(bool down, FightMoves move)
         {
-            if (!down || !KeyBind.Action.IsPressed())
+            if (!down)
                 return;
 
             var hero = ScriptClient.Client.Character;
-            if (hero.Movement == NPCMovement.Stand && hero.IsInFightMode)
-            {
-                if (CheckWarmup())
-                    return;
+            if (hero.IsDead || hero.Movement != NPCMovement.Stand || !hero.IsInFightMode || hero.Environment.InAir
+                || CheckWarmup())
+                return;
 
-                var drawnWeapon = hero.GetDrawnWeapon();
-                if (drawnWeapon != null && drawnWeapon.IsWepRanged)
-                {
+            var drawnWeapon = hero.GetDrawnWeapon();
+            if (drawnWeapon != null && drawnWeapon.IsWepRanged)
+            {
+                if (freeAim || KeyBind.Action.IsPressed())
                     RequestShoot(hero);
-                }
-                else
-                {
-                    NPCInst.Requests.Attack(hero, move);
-                }
+            }
+            else if (KeyBind.Action.IsPressed())
+            {
+                NPCInst.Requests.Attack(hero, move);
             }
         }
 
@@ -169,6 +169,12 @@ namespace GUC.Scripts.Arena.Controls
         {
             var hero = ScriptClient.Client.Character;
             if (hero.IsDead) return;
+
+            if (freeAim)
+            {
+                RequestShoot(hero);
+                return;
+            }
 
             if (hero.IsInFightMode)
             {
@@ -223,6 +229,12 @@ namespace GUC.Scripts.Arena.Controls
             if (hero.IsDead)
                 return;
 
+            if (freeAim)
+            {
+                FreeAiming(hero);
+                return;
+            }
+
             DoTurning(hero);
 
             if (KeyBind.Action.IsPressed())
@@ -252,7 +264,8 @@ namespace GUC.Scripts.Arena.Controls
                     oCNpcFocus.StopHighlightingFX();
                     enemy = null;
                 }
-                gAI.CheckFocusVob(1);
+
+                hero.BaseInst.gVob.CollectFocusVob(false);
             }
 
             NPCMovement state = NPCMovement.Stand;
@@ -264,7 +277,8 @@ namespace GUC.Scripts.Arena.Controls
                 }
                 else if (KeyBind.MoveBack.IsPressed()) // move backward
                 {
-                    if (hero.IsInFightMode)
+                    var drawnWeapon = hero.GetDrawnWeapon();
+                    if (hero.IsInFightMode && (drawnWeapon == null || drawnWeapon.IsWepMelee))
                     {
                         if (dodgeLock.IsReady) // don't spam
                         {
@@ -437,47 +451,128 @@ namespace GUC.Scripts.Arena.Controls
 
         static void RequestShoot(NPCInst hero)
         {
+            CalcRangedTrace(hero, out Vec3f start, out Vec3f end);
+            end = end - (end - start).Normalise() * 40f; // so arrows' bodies aren't 90% inside walls
+            NPCInst.Requests.Shoot(hero, start, end);
+        }
+
+        static void CalcRangedTrace(NPCInst npc, out Vec3f start, out Vec3f end)
+        {
             Vec3f projStartPos;
             using (var matrix = Gothic.Types.zMat4.Create())
             {
-                var node = hero.GetDrawnWeapon().ItemType == ItemTypes.WepBow ? oCNpc.NPCNodes.RightHand : oCNpc.NPCNodes.LeftHand;
-                hero.BaseInst.gVob.GetTrafoModelNodeToWorld(node, matrix);
+                var weapon = npc.GetDrawnWeapon();
+                var node = (weapon == null || weapon.ItemType == ItemTypes.WepBow) ? oCNpc.NPCNodes.RightHand : oCNpc.NPCNodes.LeftHand;
+                npc.BaseInst.gVob.GetTrafoModelNodeToWorld(node, matrix);
                 projStartPos = (Vec3f)matrix.Position;
             }
 
             const zCWorld.zTraceRay traceType = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision | zCWorld.zTraceRay.Ignore_NPC;
 
             var camVob = GothicGlobals.Game.GetCameraVob();
-            Vec3f start = (Vec3f)camVob.Position;
+            start = (Vec3f)camVob.Position;
             Vec3f ray = 500000f * (Vec3f)camVob.Direction;
-            Vec3f end = start + ray;
+            end = start + ray;
 
-            bool result;
-            using (var zStart = Gothic.Types.zVec3.Create(start.X, start.Y, start.Z))
-            using (var zRay = Gothic.Types.zVec3.Create(ray.X, ray.Y, ray.Z))
+            using (var zStart = start.CreateGVec())
+            using (var zRay = ray.CreateGVec())
             {
                 var gWorld = GothicGlobals.Game.GetWorld();
 
-                result = gWorld.TraceRayNearestHit(zStart, zRay, traceType);
-                if (result)
+                if (gWorld.TraceRayNearestHit(zStart, zRay, traceType))
                 {
                     end = (Vec3f)gWorld.Raytrace_FoundIntersection;
+                }
 
-                    start = projStartPos;
-                    ray = end - start;
+                start = projStartPos;
+                ray = end - start;
 
-                    start.SetGVec(zStart);
-                    ray.SetGVec(zRay);
+                start.SetGVec(zStart);
+                ray.SetGVec(zRay);
 
-                    result = gWorld.TraceRayNearestHit(zStart, zRay, traceType);
-                    if (result)
+                if (gWorld.TraceRayNearestHit(zStart, zRay, traceType))
+                {
+                    end = (Vec3f)gWorld.Raytrace_FoundIntersection;
+                }
+            }
+        }
+
+        static Sumpfkraut.GUI.GUCWorldSprite crosshair;
+        static bool freeAim = false;
+        static void FreeAim(bool down)
+        {
+            const string CamModFreeAim = "CAMMODRANGED_FREEAIM";
+
+            if (crosshair == null)
+            {
+                crosshair = new Sumpfkraut.GUI.GUCWorldSprite(10, 10);
+                crosshair.SetBackTexture("crosshair.tga");
+                crosshair.ShowOutOfScreen = false;
+            }
+
+            var hero = NPCInst.Hero;
+
+            if (down && hero != null && !hero.IsDead && hero.IsInFightMode
+                && !hero.Environment.InAir && !hero.ModelInst.IsInAnimation())
+            {
+                var drawnWeapon = hero.GetDrawnWeapon();
+                if (drawnWeapon != null && drawnWeapon.IsWepRanged)
+                {
+                    if (!freeAim)
                     {
-                        end = (Vec3f)gWorld.Raytrace_FoundIntersection;
+                        hero.SetMovement(NPCMovement.Stand);
+                        NPCInst.Requests.Aim(hero, true);
+
+                        // no auto-lock
+                        oCNpcFocus.StopHighlightingFX();
+                        enemy = null;
+
+                        crosshair.Show();
+
+                        // zoom in
+                        FOVTransition(60, TimeSpan.TicksPerSecond / 2);
+
+                        zCAICamera.CamModRanged.Set(CamModFreeAim); // replace so gothic sets it to this while in bow mode
+                        zCAICamera.CurrentCam.SetByScript(CamModFreeAim); // change camera
+                        freeAim = true;
                     }
+                    return;
                 }
             }
 
-            NPCInst.Requests.Shoot(hero, start, end);
+            if (freeAim)
+            {
+                NPCInst.Requests.Aim(hero, false);
+                crosshair.Hide();
+                FOVTransition(90, TimeSpan.TicksPerSecond / 2);
+
+                var cam = zCAICamera.CurrentCam;
+                zCAICamera.CamModRanged.Set("CAMMODRANGED"); // reset
+                if (cam.CurrentMode.ToString().Equals(CamModFreeAim, StringComparison.OrdinalIgnoreCase))
+                    cam.SetByScript("CAMMODRANGED"); // change camera
+                freeAim = false;
+            }
+        }
+
+        static void FreeAiming(NPCInst hero)
+        {
+            if (InputHandler.MouseDistY != 0)
+            {
+                const float maxSpeed = 1.0f;
+                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistY * 0.06f, maxSpeed);
+                zCAICamera.CurrentCam.BestRotX += rotSpeed;
+            }
+
+            if (InputHandler.MouseDistX != 0)
+            {
+                const float maxSpeed = 1.5f;
+
+                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistX * 0.07f, maxSpeed);
+                hero.BaseInst.gAI.Turn(rotSpeed, false);
+            }
+
+            CalcRangedTrace(hero, out Vec3f start, out Vec3f end);
+            crosshair.SetTarget(end);
         }
     }
 }

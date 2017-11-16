@@ -44,7 +44,7 @@ namespace GUC.WorldObjects.Instances
             }
         }
 
-        bool cddyn = true;
+        bool cddyn = false;
         /// <summary> Gothic-Collision-Detection against dynamic Gothic-Vobs. </summary>
         public bool CDDyn
         {
@@ -56,7 +56,7 @@ namespace GUC.WorldObjects.Instances
             }
         }
         
-        bool cdstatic = true;
+        bool cdstatic = false;
         /// <summary> Gothic-Collision-Detection against static Gothic-Vobs. </summary>
         public bool CDStatic
         {

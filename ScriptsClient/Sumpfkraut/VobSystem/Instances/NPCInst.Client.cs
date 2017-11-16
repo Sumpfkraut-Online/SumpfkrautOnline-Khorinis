@@ -487,7 +487,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }*/
         }
 
-        int fmode = 0;
+        int fmode = -1;
         void UpdateFightStance()
         {
             int fmode;
@@ -547,6 +547,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 if (this == ScriptClient.Client.Character)
                 {
                     gNpc.SetWeaponMode(fmode);
+                    if (fmode == 0)
+                        oCNpcFocus.SetFocusMode(0);
                 }
 
                 this.fmode = fmode;

@@ -37,10 +37,6 @@ namespace GUC.Scripts
             return asm;
         }
 
-        static Gothic.Objects.zCVob arrow;
-
-        public static Types.Angles AddAngles = new Types.Angles(0, 0, 0);
-
         public static event Action<long> OnUpdate;
         public void Update(long ticks)
         {
@@ -49,30 +45,6 @@ namespace GUC.Scripts
             OnUpdate?.Invoke(ticks);
             CheckMusic();
             CheckPosition();
-
-            var cam = GothicGlobals.Game.GetCameraVob();
-            if (!cam.IsNull && NPCInst.Hero != null)
-            {
-                if (arrow == null)
-                {
-                    arrow = Gothic.Objects.zCVob.Create();
-                    arrow.SetVisual("ITRW_ARROW.3DS");
-                    GothicGlobals.Game.GetWorld().AddVob(arrow);
-                    arrow.SetPositionWorld(NPCInst.Hero.GetPosition().X, NPCInst.Hero.GetPosition().Y, NPCInst.Hero.GetPosition().Z);
-                }
-
-                var rotation = Types.Angles.FromAtVector((Types.Vec3f)cam.Direction);
-                var p = rotation.Pitch;
-                rotation.Pitch = rotation.Roll;
-                rotation.Roll = p;
-
-                rotation += AddAngles;
-
-
-                GUI.GUCView.DebugText.Text = string.Format("{0:0.00} {1:0.00} {2:0.00}", rotation.Pitch, rotation.Yaw, rotation.Roll);
-
-                rotation.SetMatrix(arrow);
-            }
         }
 
         SoundInstance menuTheme = null;
