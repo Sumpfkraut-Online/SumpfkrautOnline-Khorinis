@@ -35,7 +35,7 @@ VALUES
     (XXX, XXX)
     
 INSERT OR REPLACE 
-INTO ScriptAniJobModelDef (ScriptAniJobID, ModelDefID)
+INTO ScriptAniJobModelDef (ModelDefID, ScriptAniJobID)
 VALUES
     (XXX, XXX),
     (XXX, XXX)
