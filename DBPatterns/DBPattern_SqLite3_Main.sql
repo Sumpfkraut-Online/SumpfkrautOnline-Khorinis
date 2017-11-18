@@ -120,27 +120,26 @@ CREATE TABLE IF NOT EXISTS VobDefEffect
 -- >> models and animations << --
 --------------------------------------------------------------
 
--- list of ModelDef --
-DROP TABLE IF EXISTS ModelDef;
-CREATE TABLE IF NOT EXISTS ModelDef 
+-- list of ScriptAni --
+-- combination of ScriptOverlayID and ScriptAniJobID must be unique
+DROP TABLE IF EXISTS ScriptAni;
+CREATE TABLE IF NOT EXISTS ScriptAni 
 (
-    ModelDefID INTEGER NOT NULL, -- unique primary key id
-    ModelDefName TEXT NOT NULL, -- descriptive name
-    Visual TEXT NOT NULL, -- Gothic visual name
-    AniCatalog TEXT NOT NULL, -- name  of catalog for possible animations (e.g. NPCCatalog)
-    Radius REAL DEFAULT 0, -- radius for collision detection
-    Height REAL DEFAULT 0, -- height for collision detection
-    FistRange REAL DEFAULT 0, -- fist range for hit detection without weapon
+    ScriptAniID INTEGER NOT NULL, -- unique primary key id
+    FPS INTEGER NOT NULL,
+    StartFrame INTEGER NOT NULL,
+    EndFrame INTEGER NOT NULL,
+    SpecialFrames TEXT NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
+    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
 );
 
-CREATE TRIGGER Update_ModelDef
+CREATE TRIGGER Update_ScriptAni
     AFTER UPDATE
-    ON ModelDef
+    ON ScriptAni
 BEGIN
-    UPDATE ModelDef SET ChangeDate = CURRENT_TIMESTAMP WHERE ModelDef = OLD.ModelDef;
+    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
 END;
 
 -- list of ScriptOverlay --
@@ -170,8 +169,6 @@ CREATE TABLE IF NOT EXISTS ScriptAniJob
     DefaultAniID INTEGER NOT NULL,
 	AniName TEXT NOT NULL,
 	CodeName TEXT NOT NULL,
-    AniJobType INTEGER NOT NULL,
-	-- PrevScriptAniJobID INTEGER DEFAULT NULL,
 	NextScriptAniJobID INTEGER DEFAULT NULL,
     Layer INTEGER NOT NULL,
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
@@ -187,28 +184,27 @@ BEGIN
     UPDATE ScriptAniJob SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniJobID = OLD.ScriptAniJobID;
 END;
 
--- list of ScriptAni --
--- combination of ScriptOverlayID and ScriptAniJobID must be unique
-DROP TABLE IF EXISTS ScriptAni;
-CREATE TABLE IF NOT EXISTS ScriptAni 
+-- list of ModelDef --
+DROP TABLE IF EXISTS ModelDef;
+CREATE TABLE IF NOT EXISTS ModelDef 
 (
-    ScriptAniID INTEGER NOT NULL, -- unique primary key id
-    ScriptOverlayID INTEGER NOT NULL,
-    ScriptAniJobID INTEGER NOT NULL,
-    FPS INTEGER NOT NULL,
-    StartFrame INTEGER NOT NULL,
-    EndFrame INTEGER NOT NULL,
-    SpecialFrames TEXT NOT NULL,
+    ModelDefID INTEGER NOT NULL, -- unique primary key id
+    ModelDefName TEXT NOT NULL, -- descriptive name
+    Visual TEXT NOT NULL, -- Gothic visual name
+    AniCatalog TEXT NOT NULL, -- name  of catalog for possible animations (e.g. NPCCatalog)
+    Radius REAL DEFAULT 0, -- radius for collision detection
+    Height REAL DEFAULT 0, -- height for collision detection
+    FistRange REAL DEFAULT 0, -- fist range for hit detection without weapon
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptAni_PK PRIMARY KEY (ScriptAniID)
+    CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
 );
 
-CREATE TRIGGER Update_ScriptAni
+CREATE TRIGGER Update_ModelDef
     AFTER UPDATE
-    ON ScriptAni
+    ON ModelDef
 BEGIN
-    UPDATE ScriptAni SET ChangeDate = CURRENT_TIMESTAMP WHERE ScriptAniID = OLD.ScriptAniID;
+    UPDATE ModelDef SET ChangeDate = CURRENT_TIMESTAMP WHERE ModelDef = OLD.ModelDef;
 END;
 
 -- maps ScriptOverlays to ScriptAniJobs

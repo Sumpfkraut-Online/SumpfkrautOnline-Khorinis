@@ -20,8 +20,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 "ScriptAni", new List<DBTables.ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ScriptAniID",        SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ScriptAniJobID",     SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("FPS",                SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("StartFrame",         SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("EndFrame",           SQLiteGetType.GetInt32),
@@ -45,7 +43,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     new ColumnGetTypeInfo("DefaultAniID",       SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("AniName",            SQLiteGetType.GetString),
                     new ColumnGetTypeInfo("CodeName",           SQLiteGetType.GetString),
-                    new ColumnGetTypeInfo("AniJobType",         SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("NextScriptAniJobID", SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("Layer",              SQLiteGetType.GetInt32),
                 }
@@ -141,6 +138,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             }
         }
 
+
+        /// <summary>
+        /// Event handler used to create visuals from completed database query.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void VisualsFromSQLResults (AbstractRunnable sender, FinishedQueueEventHandlerArgs e)
         {
             lock (loadLock)
@@ -203,6 +206,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             }
         }
 
+        /// <summary>
+        /// Create ScriptAni-objects from database table and output them as Dictionary aniByID.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="aniByID"></param>
+        /// <returns></returns>
         public bool TryGenerateScriptAnis (List<List<object>> dataTable, 
             out Dictionary<int, ScriptAni> aniByID)
         {
@@ -261,6 +270,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return true;
         }
 
+        /// <summary>
+        /// Create ScriptOverlay-objects from database table and output them as Dictionary overlayByID.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="overlayByID"></param>
+        /// <returns></returns>
         public bool TryGenerateScriptOverlays (List<List<object>> dataTable,
             out Dictionary<int, ScriptOverlay> overlayByID)
         {
@@ -305,6 +320,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return true;
         }
 
+        /// <summary>
+        /// Create ScriptAniJob-objects from diverse input and output them as Dictionary aniJobByID.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="aniByID"></param>
+        /// <param name="overlayByID"></param>
+        /// <param name="overlayAniJobRelations"></param>
+        /// <param name="aniJobByID"></param>
+        /// <returns></returns>
         public bool TryGenerateScriptAniJobs (List<List<object>> dataTable, 
             Dictionary<int, ScriptAni> aniByID, Dictionary<int, ScriptOverlay> overlayByID, 
             List<ScriptOverlayAniJobRelation> overlayAniJobRelations, 
@@ -381,6 +405,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return true;
         }
 
+        /// <summary>
+        /// Create ModelDef-objects from diverse prepared input and output them as Dictionary modelDefByID.
+        /// Finalize initialization of all input objects.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <param name="overlayByID"></param>
+        /// <param name="aniJobByID"></param>
+        /// <param name="overlayIDByModelDefID"></param>
+        /// <param name="aniJobIDByModelDefID"></param>
+        /// <param name="modelDefByID"></param>
+        /// <returns></returns>
         public bool TryGenerateModelDefs (List<List<object>> dataTable, 
             Dictionary<int, ScriptOverlay> overlayByID, Dictionary<int, ScriptAniJob> aniJobByID,
             Dictionary<int, int> overlayIDByModelDefID, Dictionary<int, int> aniJobIDByModelDefID, 
@@ -462,6 +497,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return true;
         }
 
+        /// <summary>
+        /// Uses data from database table OverlayAniJobRelation to map ScriptOverlay to their respective ScriptAniJob.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
         public List<ScriptOverlayAniJobRelation> MapOverlayAniJobRelations (List<List<object>> dataTable)
         {
             var relations = new List<ScriptOverlayAniJobRelation>(dataTable.Count);
@@ -506,6 +546,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return relations;
         }
 
+        /// <summary>
+        /// Uses data from database table ScriptOverlayModelDef to map ScriptOverlay to their respective ModelDef.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
         public Dictionary<int, int> MapOverlayByModelDef (List<List<object>> dataTable)
         {
             var overlayIDByModelDefID = new Dictionary<int, int>();
@@ -548,6 +593,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return overlayIDByModelDefID;
         }
 
+        /// <summary>
+        /// Uses data from database table ScriptAniJobModelDef to map ScriptAniJob to their respective ModelDef.
+        /// </summary>
+        /// <param name="dataTable"></param>
+        /// <returns></returns>
         public Dictionary<int, int> MapAniJobByModelDef (List<List<object>> dataTable)
         {
             var aniJobIDByModelDefID = new Dictionary<int, int>();
