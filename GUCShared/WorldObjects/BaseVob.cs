@@ -177,8 +177,8 @@ namespace GUC.WorldObjects
 
         #region Environment
 
-        protected VobEnvironment penvironment;
-        public VobEnvironment Environment { get { return this.penvironment; } }
+        protected VobEnvironment environment;
+        public VobEnvironment Environment { get { return this.environment; } }
 
         #endregion
 

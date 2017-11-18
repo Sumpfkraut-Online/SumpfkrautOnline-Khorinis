@@ -177,7 +177,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (item.BaseInst.Slot == (int)slot)
                 return;
-
+            
             pBeforeEquip(slot, item);
             this.BaseInst.EquipItem((int)slot, item.BaseInst);
             pAfterEquip(slot, item);

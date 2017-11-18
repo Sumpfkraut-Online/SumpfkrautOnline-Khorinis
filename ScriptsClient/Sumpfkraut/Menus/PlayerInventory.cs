@@ -136,11 +136,6 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     if (selItem == null)
                         return;
 
-                    if (selItem.ItemType < ItemTypes.MAXWEAPON)
-                    {
-                        player.LastUsedWeapon = selItem;
-                    }
-
                     switch (selItem.ItemType)
                     {
                         case ItemTypes.Wep1H:

@@ -34,7 +34,7 @@ namespace GUC.WorldObjects.VobGuiding
                     bool inAir = (bitfield & 0x8000) != 0;
                     float waterDepth = ((bitfield >> 8) & 0x7F) / (float)0x7F;
                     float waterLevel = (bitfield & 0xFF) / (float)0xFF;
-                    vob.penvironment = new VobEnvironment(inAir, waterLevel, waterDepth);
+                    vob.environment = new VobEnvironment(inAir, waterLevel, waterDepth);
 
                     vob.SetPosAng(pos, ang, client);
                     //vob.ScriptObject.OnPosChanged();

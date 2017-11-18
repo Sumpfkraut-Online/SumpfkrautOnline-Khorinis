@@ -485,6 +485,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\DespawnList.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />

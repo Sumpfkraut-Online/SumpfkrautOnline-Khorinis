@@ -13,7 +13,6 @@ using Gothic.Sound;
 using System.Threading;
 using GUC.GUI;
 using GUC.WorldObjects;
-using Gothic;
 
 namespace GUC.Hooks
 {

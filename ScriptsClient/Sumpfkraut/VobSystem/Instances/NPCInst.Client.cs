@@ -286,13 +286,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void OnTick(long now)
         {
+            Update2nd1H();
+
             if (this.IsDead)
                 return;
 
             UpdateFightStance();
 
             DoFightStuff();
-            
+
             var gVob = BaseInst.gVob;
             var gModel = BaseInst.gModel;
             var gAI = BaseInst.gAI;
@@ -309,97 +311,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     }
                 }
             }
-
-            /*if (this.drawnWeapon != null)
-            {
-                var gModel = this.BaseInst.gModel;
-
-                int aniID;
-                if (this.DrawnWeapon.ItemType == ItemTypes.WepBow)
-                {
-                    aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
-                }
-                else if (this.DrawnWeapon.ItemType == ItemTypes.WepXBow)
-                {
-                    aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
-                }
-                else
-                {
-                    return;
-                }
-
-                var aa = gModel.GetActiveAni(aniID);
-
-                if (this.isAiming)
-                {
-                    if (aa.Address == 0)
-                        gModel.StartAni(aniID, 0);
-                }
-                else
-                {
-                    if (aa.Address != 0)
-                        gModel.StopAni(aa);
-                }
-            }*/
-        }
-
-        public void StartAnimation(Animations.Animation ani, object[] netArgs)
-        {
-            /*ScriptAni a = (ScriptAni)ani.ScriptObject;
-
-            if (a.AniJob.IsJump)
-            {
-                this.StartAniJump(a, (int)netArgs[0], (int)netArgs[1]);
-            }
-            else if (a.AniJob.IsClimb)
-            {
-                this.StartAniClimb(a, (WorldObjects.NPC.ClimbingLedge)netArgs[0]);
-            }
-            else if (a.AniJob.IsDraw)
-            {
-                int itemID = (int)netArgs[0];
-                WorldObjects.Item item;
-                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
-                {
-                    this.StartAniDraw(a, (ItemInst)item.ScriptObject);
-                }
-            }
-            else if (a.AniJob.IsUndraw)
-            {
-                int itemID = (int)netArgs[0];
-                WorldObjects.Item item;
-                if (this.BaseInst.Inventory.TryGetItem(itemID, out item) && item.IsEquipped)
-                {
-                    this.StartAniUndraw(a, (ItemInst)item.ScriptObject);
-                }
-            }*/
-
-        }
-
-        public void StartAniJump(ScriptAni ani, int fwdVelocity, int upVelocity)
-        {
-            /*this.StartAnimation(ani);
-
-            var ai = this.BaseInst.HumanAI;
-            ai.AniCtrlBitfield &= ~(1 << 3);
-            //this.BaseInst.gVob.SetBodyState(8);
-
-            var vel = new Gothic.Types.zVec3(ai.Address + 0x90);
-            var dir = this.BaseInst.GetDirection();
-
-            vel.X = dir.X * fwdVelocity;
-            vel.Z = dir.Z * fwdVelocity;
-            vel.Y = upVelocity;
-
-            this.BaseInst.SetPhysics(true);
-
-            this.BaseInst.SetVelocity((Vec3f)vel);*/
-        }
-
-        public void StartAniClimb(ScriptAni ani, WorldObjects.NPC.ClimbingLedge ledge)
-        {
-            /*this.BaseInst.SetGClimbingLedge(ledge);
-            this.StartAnimation(ani);*/
         }
 
         static SoundDefinition sfx_DrawGeneric = new SoundDefinition("wurschtel.wav");
@@ -427,64 +338,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
 
             SoundHandler.PlaySound3D(sound, this.BaseInst);
-        }
-
-        public void StartAniDraw(ScriptAni ani, ItemInst item)
-        {
-            /*this.StartAnimation(ani);
-            if (item.IsWepMelee)
-            {
-                drawTimer.SetInterval(ani.DrawTime);
-                drawTimer.SetCallback(() =>
-                {
-                    drawTimer.Stop();
-                    if (this.BaseInst.IsDead)
-                        return;
-
-                    if (item.Definition.Material == ItemMaterials.Metal)
-                    {
-                        SoundHandler.PlaySound3D(sfx_DrawMetal, this.BaseInst);
-                    }
-                    else if (item.Definition.Material == ItemMaterials.Wood)
-                    {
-                        SoundHandler.PlaySound3D(sfx_DrawWood, this.BaseInst);
-                    }
-                    else
-                    {
-                        SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
-                    }
-                });
-                drawTimer.Start();
-            }*/
-        }
-
-        public void StartAniUndraw(ScriptAni ani, ItemInst item)
-        {
-            /*this.StartAnimation(ani);
-            if (item.IsWepMelee)
-            {
-                drawTimer.SetInterval(ani.DrawTime);
-                drawTimer.SetCallback(() =>
-                {
-                    drawTimer.Stop();
-                    if (this.BaseInst.IsDead)
-                        return;
-
-                    if (item.Definition.Material == ItemMaterials.Metal)
-                    {
-                        SoundHandler.PlaySound3D(sfx_UndrawMetal, this.BaseInst);
-                    }
-                    else if (item.Definition.Material == ItemMaterials.Wood)
-                    {
-                        SoundHandler.PlaySound3D(sfx_UndrawWood, this.BaseInst);
-                    }
-                    else
-                    {
-                        SoundHandler.PlaySound3D(sfx_DrawGeneric, this.BaseInst);
-                    }
-                });
-                drawTimer.Start();
-            }*/
         }
 
         int fmode = -1;
@@ -559,6 +412,41 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             var vob = this.BaseInst.GetFocusVob();
             return vob != null ? (BaseVobInst)vob.ScriptObject : null;
+        }
+
+        zCVob secondMeleeVob;
+        void Update2nd1H()
+        {
+            if (!IsSpawned)
+                return;
+
+            ItemInst weapon;            
+            if ((weapon = GetEquipmentBySlot(NPCSlots.OneHanded2)) == null)
+            {
+                if (secondMeleeVob != null)
+                    secondMeleeVob.BitField1 &= ~zCVob.BitFlag0.showVisual;
+                return;
+            }
+
+            if (secondMeleeVob == null)
+            {
+                secondMeleeVob = zCVob.Create();
+                GothicGlobals.Game.GetWorld().AddVob(secondMeleeVob);
+            }
+            secondMeleeVob.BitField1 |= zCVob.BitFlag0.showVisual;
+            secondMeleeVob.SetVisual(weapon.ModelDef.Visual);
+
+            BaseInst.gVob.GetTrafoModelNodeToWorld(oCNpc.NPCNodes.Sword, secondMeleeVob.TrafoObjToWorld);
+            var pos = (Vec3f)secondMeleeVob.Position;
+            secondMeleeVob.SetPositionWorld(pos.X, pos.Y, pos.Z);
+            secondMeleeVob.TrafoObjToWorld.PostRotateY(15);
+            secondMeleeVob.TrafoObjToWorld.PostRotateZ(5);
+        }
+
+        partial void pDespawn()
+        {
+            if (secondMeleeVob != null)
+                GothicGlobals.Game.GetWorld().RemoveVob(secondMeleeVob);
         }
     }
 }

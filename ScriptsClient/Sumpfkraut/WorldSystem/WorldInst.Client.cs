@@ -10,13 +10,10 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 {
     public partial class WorldInst
     {
-        public static WorldInst Current { get { return (WorldInst)WorldObjects.World.Current.ScriptObject; } }
-
-        public static bool Test = false;
+        public static WorldInst Current { get { return (WorldInst)WorldObjects.World.Current?.ScriptObject; } }
 
         public void Load()
         {
-            Test = true;
             GUCMenu.CloseActiveMenus();
 
             var ogame = GothicGlobals.Game;

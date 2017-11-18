@@ -156,8 +156,10 @@ namespace GUC.Scripts.Arena.Controls
             var drawnWeapon = hero.GetDrawnWeapon();
             if (drawnWeapon != null && drawnWeapon.IsWepRanged)
             {
-                if (freeAim || KeyBind.Action.IsPressed())
-                    RequestShoot(hero);
+                if (freeAim)
+                    RequestShootFree(hero);
+                else if (KeyBind.Action.IsPressed())
+                    RequestShootAuto(hero);
             }
             else if (KeyBind.Action.IsPressed())
             {
@@ -172,7 +174,8 @@ namespace GUC.Scripts.Arena.Controls
 
             if (freeAim)
             {
-                RequestShoot(hero);
+                if (!CheckWarmup())
+                    RequestShootFree(hero);
                 return;
             }
 
@@ -378,6 +381,7 @@ namespace GUC.Scripts.Arena.Controls
                 curAngles.Yaw += Alg.Clamp(-maxTurnFightSpeed, yawDiff, maxTurnFightSpeed);
 
                 hero.SetAngles(curAngles);
+                CheckCombineAim(hero, enemyPos - heroPos);
                 return;
             }
 
@@ -446,7 +450,42 @@ namespace GUC.Scripts.Arena.Controls
             }
         };
 
-        static void RequestShoot(NPCInst hero)
+        static void RequestShootAuto(NPCInst hero)
+        {
+            Vec3f start;
+            using (var matrix = Gothic.Types.zMat4.Create())
+            {
+                var weapon = hero.GetDrawnWeapon();
+                var node = (weapon == null || weapon.ItemType == ItemTypes.WepBow) ? oCNpc.NPCNodes.RightHand : oCNpc.NPCNodes.LeftHand;
+                hero.BaseInst.gVob.GetTrafoModelNodeToWorld(node, matrix);
+                start = (Vec3f)matrix.Position;
+            }
+
+            const zCWorld.zTraceRay traceType = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision | zCWorld.zTraceRay.Ignore_NPC;
+
+            Vec3f dir = enemy == null ? (Vec3f)hero.BaseInst.gVob.Direction : (enemy.GetPosition() - hero.GetPosition()).Normalise();
+            Vec3f ray = 500000f * dir;
+
+            Vec3f end;
+            using (var zStart = start.CreateGVec())
+            using (var zRay = ray.CreateGVec())
+            {
+                var gWorld = GothicGlobals.Game.GetWorld();
+
+                if (gWorld.TraceRayNearestHit(zStart, zRay, traceType))
+                {
+                    end = (Vec3f)gWorld.Raytrace_FoundIntersection;
+                }
+                else
+                {
+                    end = start + ray;
+                }
+            }
+
+            NPCInst.Requests.Shoot(hero, start, end);
+        }
+
+        static void RequestShootFree(NPCInst hero)
         {
             CalcRangedTrace(hero, out Vec3f start, out Vec3f end);
             NPCInst.Requests.Shoot(hero, start, end);
@@ -570,6 +609,11 @@ namespace GUC.Scripts.Arena.Controls
             CalcRangedTrace(hero, out Vec3f start, out Vec3f end);
             crosshair.SetTarget(end);
 
+            CheckCombineAim(hero, (Vec3f)GothicGlobals.Game.GetCameraVob().Direction);
+        }
+
+        static void CheckCombineAim(NPCInst hero, Vec3f direction)
+        {
             var gModel = hero.BaseInst.gModel;
             int aniID;
             if (gModel.IsAnimationActive("S_BOWAIM"))
@@ -582,10 +626,15 @@ namespace GUC.Scripts.Arena.Controls
             }
             else return;
 
-            Angles angles = Angles.FromAtVector((Vec3f)GothicGlobals.Game.GetCameraVob().Direction);
-            float y = Alg.Clamp(0, 0.5f - angles.Pitch / Angles.PI, 1);
+            Angles heroAngles = hero.GetAngles();
+            Angles angles = Angles.FromAtVector(direction);
+            float pitch = Angles.Difference(angles.Pitch, heroAngles.Pitch);
+            float yaw = Angles.Difference(angles.Yaw, heroAngles.Yaw);
 
-            hero.BaseInst.gAI.InterpolateCombineAni(0.5f, y, aniID);
+            float x = Alg.Clamp(0, 0.5f - yaw / Angles.PI, 1);
+            float y = Alg.Clamp(0, 0.5f - pitch / Angles.PI, 1);
+
+            hero.BaseInst.gAI.InterpolateCombineAni(x, y, aniID);
         }
     }
 }

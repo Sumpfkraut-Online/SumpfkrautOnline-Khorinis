@@ -96,7 +96,7 @@ namespace GUC.WorldObjects
                     VobEnvironment env = new VobEnvironment(inAir, waterLevel, waterDepth);
 
                     npc.movement = movement;
-                    npc.penvironment = env;
+                    npc.environment = env;
 
                     npc.SetPosAng(pos, ang, client);
                     //vob.ScriptObject.OnPosChanged();

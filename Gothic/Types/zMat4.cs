@@ -48,9 +48,19 @@ namespace Gothic.Types
             Process.THISCALL<NullReturnCall>(Address, 0x490DF0, vec);
         }
 
+        public void PostRotateX(float angle)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x00517730, (FloatArg)angle);
+        }
+
         public void PostRotateY(float angle)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x00517780, (FloatArg)angle);
+        }
+
+        public void PostRotateZ(float angle)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x005177D0, (FloatArg)angle);
         }
 
         public static zVec3 operator *(zMat4 a, zVec3 v)

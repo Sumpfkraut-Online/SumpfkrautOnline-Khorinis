@@ -11,6 +11,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
+        const int MaxNPCCorpses = 100;
+
         public bool AllowHit(NPCInst target)
         {
             if (this.TeamID == -1)
@@ -27,8 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
             return false;
         }
-
-        const long CorpseRemoveTime = 5 * TimeSpan.TicksPerMinute;
+        
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
@@ -644,39 +645,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
         #endregion
 
+        static DespawnList<NPCInst> npcDespawnList = new DespawnList<NPCInst>(MaxNPCCorpses);
+
         partial void pSetHealth(int hp, int hpmax)
         {
             if (hp <= 0)
             {
-                StartCorpseTimer();
+                npcDespawnList.AddVob(this);
             }
         }
 
-        #region Corpse Removal
-
-        public void StartCorpseTimer()
-        {
-            var timer = new GUCTimer<NPCInst, GUCAbstractTimer>(CorpseRemoveTime);
-            timer.SetCallback(RemoveCorpse, this, timer);
-            timer.Start();
-        }
-
-        static void RemoveCorpse(NPCInst npc, GUCAbstractTimer timer)
-        {
-            if (npc == null || timer == null)
-                throw new ArgumentNullException();
-
-            if (npc.IsSpawned)
-            {
-                if (npc.IsPlayer || npc.HP > 0)
-                    return; // FIXME: start timer through events
-
-                npc.Despawn();
-            }
-            timer.Stop();
-        }
-
-        #endregion
 
         #region Hit Detection
 
@@ -697,6 +675,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var armor = this.GetArmor();
             if (armor != null)
                 protection += armor.Protection;
+
+            // two weapons
+            ItemInst otherMelee;
+            if ((otherMelee = this.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
+                protection -= otherMelee.Damage / 4;
+
+            if ((otherMelee = attacker.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
+                damage += otherMelee.Damage / 4;
 
             if (this.TeamID != -1 && Cast.Try(this.Client, out Arena.ArenaClient tar) && tar.ClassDef != null)
                 protection += tar.ClassDef.Protection;

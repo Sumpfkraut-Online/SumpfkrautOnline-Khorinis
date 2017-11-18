@@ -323,6 +323,11 @@ namespace Gothic.Objects
             get { return new zCAIBase(Process.ReadInt(Address + VarOffsets.callback_ai)); }
         }
 
+        public zCWorld HomeWorld
+        {
+            get { return new zCWorld(Address + VarOffsets.homeWorld); }
+        }
+
         public zTBBox3D BBox3D
         {
             get { return new zTBBox3D(Address + VarOffsets.bbox3D); }

@@ -328,7 +328,7 @@ namespace GUC.WorldObjects
 
         protected override void UpdateEnvironment()
         {
-            this.penvironment = CalculateEnvironment(humanAI.StepHeight);
+            this.environment = CalculateEnvironment(humanAI.StepHeight);
         }
 
         #endregion

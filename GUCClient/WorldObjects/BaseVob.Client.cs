@@ -69,7 +69,7 @@ namespace GUC.WorldObjects
 
         protected virtual void UpdateEnvironment()
         {
-            this.penvironment = CalculateEnvironment(10);
+            this.environment = CalculateEnvironment(10);
         }
 
         protected VobEnvironment CalculateEnvironment(float groundDistToFly)
@@ -130,7 +130,7 @@ namespace GUC.WorldObjects
             if (this.gvob != null)
             {
                 this.gvob.TrafoObjToWorld.Position = this.pos.ToArray();
-                //this.gvob.SetPositionWorld(this.pos.X, this.pos.Y, this.pos.Z);
+                this.gvob.SetPositionWorld(pos.X, pos.Y, pos.Z);
             }
         }
 

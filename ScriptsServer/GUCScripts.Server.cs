@@ -414,14 +414,24 @@ namespace GUC.Scripts
             var projDef = new ProjDef("arrow");
             projDef.Create();
 
-            // LANGBOGEN
+            // BOGEN
             m = new ModelDef("itrw_longbow", "ItRw_Bow_M_01.mms");
             m.Create();
             itemDef = new ItemDef("itrw_longbow");
             itemDef.Name = "Langbogen";
             itemDef.Material = ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepBow;
-            itemDef.Damage = 32;
+            itemDef.Damage = 50;
+            itemDef.Model = m;
+            itemDef.Create();
+
+            m = new ModelDef("itrw_shortbow", "ItRw_Bow_L_01.mms");
+            m.Create();
+            itemDef = new ItemDef("itrw_shortbow");
+            itemDef.Name = "Kurzbogen";
+            itemDef.Material = ItemMaterials.Wood;
+            itemDef.ItemType = ItemTypes.WepBow;
+            itemDef.Damage = 40;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -432,21 +442,29 @@ namespace GUC.Scripts
             itemDef.Name = "Bolzen";
             itemDef.Material = ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.AmmoXBow;
-            itemDef.Damage = 6;
             itemDef.Model = m;
             itemDef.Create();
 
             // ARMBRUST
-            m = new ModelDef("itrw_crossbow", "ItRw_Crossbow_L_01.mms");
+            m = new ModelDef("light_xbow", "ItRw_Crossbow_L_01.mms");
             m.Create();
-            itemDef = new ItemDef("itrw_crossbow");
-            itemDef.Name = "Armbrust";
+            itemDef = new ItemDef("light_xbow");
+            itemDef.Name = "Leichte Armbrust";
             itemDef.Material = ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepXBow;
-            itemDef.Damage = 32;
+            itemDef.Damage = 40;
             itemDef.Model = m;
             itemDef.Create();
-
+            
+            m = new ModelDef("heavy_xbow", "ItRw_Crossbow_H_02.mms");
+            m.Create();
+            itemDef = new ItemDef("heavy_xbow");
+            itemDef.Name = "Schwere Armbrust";
+            itemDef.Material = ItemMaterials.Wood;
+            itemDef.ItemType = ItemTypes.WepXBow;
+            itemDef.Damage = 50;
+            itemDef.Model = m;
+            itemDef.Create();
 
             // HOSE
             m = new ModelDef("ITAR_Prisoner", "ItAr_Prisoner.3ds");

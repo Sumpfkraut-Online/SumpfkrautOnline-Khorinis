@@ -85,8 +85,8 @@ namespace GUC.Scripts.Arena
                 var to = new TODef();
                 to.name = "tdm_burg";
                 to.worldPath = "G1-OLDCAMP.ZEN";
-                to.duration = 8; // 5 min
-                to.scoreToWin = 100;
+                to.duration = 10; // 5 min
+                to.scoreToWin = 50;
                 to.maxDepth = -400;
                 to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(-2442.949f, 676.9498f, 412.3001f), new Vec3f(0.8977975f, -0.2387571f, -0.3700744f));
 
@@ -105,11 +105,11 @@ namespace GUC.Scripts.Arena
                 {
                     new TOClassDef("Gardist", null, new List<string, int>()
                     {
-                        { "2hschwert", 1 }, { "itar_garde", 1}
+                        { "2hschwert", 1 }, { "itar_garde", 1 }, { "light_xbow", 1}, { "itrw_bolt", 20 }
                     }),
                     new TOClassDef("Schatten", null, new List<string, int>()
                     {
-                        { "1hschwert", 1 }, { "itar_schatten", 1}
+                        { "1hschwert", 1 }, { "itar_schatten", 1 }, { "itrw_longbow", 1}, { "itrw_arrow", 50 }
                     },
                     new List<string>() { "1HST1"}),
                 };
@@ -128,11 +128,11 @@ namespace GUC.Scripts.Arena
                 {
                     new TOClassDef("Söldner", null, new List<string, int>()
                     {
-                        { "2haxt", 1 }, { "itar_söldner", 1}
+                        { "2haxt", 1 }, { "itar_söldner", 1}, { "light_xbow", 1}, { "itrw_bolt", 20 }
                     }),
                     new TOClassDef("Bandit", null, new List<string, int>()
                     {
-                        { "1haxt", 1 }, { "itar_bandit", 1}
+                        { "1haxt", 1 }, { "itar_bandit", 1}, { "itrw_longbow", 1}, { "itrw_arrow", 50 }
                     },
                     new List<string>() { "1HST1"}),
                 };
@@ -140,14 +140,14 @@ namespace GUC.Scripts.Arena
 
                 objectives.Add(to.name, to);
                 #endregion
-                
+
                 #region TDM Mine
 
                 to = new TODef();
                 to.name = "tdm_mine";
                 to.worldPath = "G1-OLDMINE.ZEN";
-                to.duration = 8; // 5 min
-                to.scoreToWin = 100;
+                to.duration = 10; // 5 min
+                to.scoreToWin = 50;
                 to.maxHeight = -6800;
                 to.maxWorldDistance = 8635;
                 to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(1478.838f, -9251.064f, -6242.642f), new Vec3f(0.9542055f, 0.128796f, 0.2700137f));
@@ -173,7 +173,7 @@ namespace GUC.Scripts.Arena
                     new TOClassDef("Gardist", null, new List<string, int>()
                     {
                         { "grobes_schwert", 1 }, { "itar_garde_l", 1}
-                    }, 
+                    },
                     new List<string>() { "2HST1"}),
                 };
                 to.AddTeam("Team Alte Mine", spawnPoints, npcDefs, ColorRGBA.Red);
@@ -203,12 +203,12 @@ namespace GUC.Scripts.Arena
                 to = new TODef();
                 to.name = "tdm_pass";
                 to.worldPath = "G2-PASS.ZEN";
-                to.duration = 8; // 5 min
-                to.scoreToWin = 100;
+                to.duration = 10; // 5 min
+                to.scoreToWin = 50;
                 to.maxWorldDistance = 10650;
                 to.maxHeight = 950;
                 to.specPos = new ValueTuple<Vec3f, Vec3f>(new Vec3f(3725.298f, -735.0935f, 2743.517f), new Vec3f(-0.8221546f, -0.04884968f, 0.567166f));
-                
+
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
                     { new Vec3f(3069.88f, 148.3073f, 9595.466f), new Vec3f(-0.8589599f, 0f, -0.512043f) },
@@ -222,17 +222,17 @@ namespace GUC.Scripts.Arena
                 {
                     new TOClassDef("Ritter", null, new List<string, int>()
                     {
-                        { "2hschwert", 1 }, { "itar_ritter", 1}
+                        { "2hschwert", 1 }, { "itar_ritter", 1}, { "light_xbow", 1}, { "itrw_bolt", 20 }
                     },
                     new List<string>() { "2HST2"}),
                     new TOClassDef("Miliz", null, new List<string, int>()
                     {
-                        { "1hschwert", 1 }, { "itar_miliz_s", 1}
+                        { "1hschwert", 1 }, { "itar_miliz_s", 1}, { "heavy_xbow", 1}, { "itrw_bolt", 50 }
                     },
                     new List<string>() { "1HST2"}),
                 };
                 to.AddTeam("Paladintrupp", spawnPoints, npcDefs, ColorRGBA.Red);
-                
+
                 spawnPoints = new List<Vec3f, Vec3f>()
                 {
                     { new Vec3f(-1181.993f, -437.1606f, -2589.357f), new Vec3f(-0.4277521f, 0f, 0.9038962f) },
@@ -246,11 +246,11 @@ namespace GUC.Scripts.Arena
                 {
                     new TOClassDef("Ork-Elite", "orc_elite", new List<string, int>()
                     {
-                        { "orc_sword", 1 }
+                        { "orc_sword", 1 }, { "light_xbow", 1}, { "itrw_bolt", 20 }
                     }, prot:40),
                     new TOClassDef("Ork-Krieger", "orc_warrior", new List<string, int>()
                     {
-                        { "krush_pach", 1 }
+                        { "krush_pach", 1 }, { "heavy_xbow", 1}, { "itrw_bolt", 50 }
                     }, prot:30),
                 };
                 to.AddTeam("Grünfellwacht", spawnPoints, npcDefs, ColorRGBA.Green);
@@ -263,8 +263,8 @@ namespace GUC.Scripts.Arena
                 to = new TODef();
                 to.name = "tdm_temple";
                 to.worldPath = "ADDON-TEMPLE.ZEN";
-                to.duration = 8; // 5 min
-                to.scoreToWin = 100;
+                to.duration = 10; // 5 min
+                to.scoreToWin = 50;
                 to.maxDepth = -2100;
                 to.maxHeight = 400;
                 to.maxWorldDistance = 7400;
@@ -281,14 +281,14 @@ namespace GUC.Scripts.Arena
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Bandit mit Zweihänder", null, new List<string, int>()
+                    new TOClassDef("Grober Bandit", null, new List<string, int>()
                     {
-                        { "2hschwert", 1 }, { "itar_bandit_m", 1}
+                        { "2hschwert", 1 }, { "itar_bandit_m", 1}, { "light_xbow", 1}, { "itrw_bolt", 20 }
                     },
                     new List<string>() { "2HST1"}),
-                    new TOClassDef("Bandit mit Einhänder", null, new List<string, int>()
+                    new TOClassDef("Nicht-grober Bandit", null, new List<string, int>()
                     {
-                        { "1hschwert", 1 }, { "itar_bandit", 1}
+                        { "1hschwert", 1 }, { "itar_bandit", 1}, { "itrw_longbow", 1}, { "itrw_arrow", 50 }
                     },
                     new List<string>() { "1HST1"}),
                 };
@@ -305,15 +305,15 @@ namespace GUC.Scripts.Arena
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Skelett-Krieger", "skeleton", new List<string, int>()
-                    {
-                        { "grober_2h", 1 }
-                    },
-                    new List<string>() { "2HST1"}, prot:30),
                     new TOClassDef("Schattenlord", "skeleton", new List<string, int>()
                     {
-                        { "grobes_schwert", 1 }, { "itar_pal_skel", 1 }
-                    }, new List<string>() { "1HST1"}),
+                        { "grober_2h", 1 }, { "itar_pal_skel", 1 }, { "light_xbow", 1}, { "itrw_bolt", 20 }
+                    }, new List<string>() { "2HST1"}),
+                    new TOClassDef("Skelett-Krieger", "skeleton", new List<string, int>()
+                    {
+                        { "grobes_schwert", 1 }, { "itrw_longbow", 1}, { "itrw_arrow", 50 }
+                    },
+                    new List<string>() { "1HST1"}, prot:30),
                 };
                 to.AddTeam("Armee der Untoten", spawnPoints, npcDefs, ColorRGBA.Blue);
 

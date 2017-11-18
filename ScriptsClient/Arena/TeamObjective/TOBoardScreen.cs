@@ -50,7 +50,7 @@ namespace GUC.Scripts.Arena
 
                 var board = GetBoard(t);
                 board.Fill(list);
-                board.SetTitle(string.Format("{0} ({1})", activeDef.Teams[t].Name, teamScore));
+                board.SetTitle(string.Format("{0} ({1}/50)", activeDef.Teams[t].Name, teamScore));
             }
         }
 

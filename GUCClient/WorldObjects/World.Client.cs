@@ -22,7 +22,10 @@ namespace GUC.WorldObjects
             public static void ReadLoadWorld(PacketReader stream)
             {
                 if (current != null)
+                {
+                    current.ForEachVob(v => v.Despawn());
                     current.Delete();
+                }
 
                 current = ScriptManager.Interface.CreateWorld();
 
