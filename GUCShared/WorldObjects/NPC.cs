@@ -96,17 +96,6 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        #region Environment
-
-        partial void pGetEnvironment();
-        public override Environment GetEnvironment()
-        {
-            pGetEnvironment();
-            return this.environment;
-        }
-
-        #endregion
-
         #region Health
 
         int hpmax = 100;
@@ -404,8 +393,7 @@ namespace GUC.WorldObjects
             var ani1 = this.Model.GetActiveAniFromLayerID(1);
             if (ani1 != null)
             {
-                var env = this.GetEnvironment();
-                if (env.InAir)
+                if (Environment.InAir)
                 {
                     ani1.Stop();
                 }

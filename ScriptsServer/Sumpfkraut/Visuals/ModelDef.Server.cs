@@ -74,7 +74,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         }
 
         float height = 1;
-        public float Height
+        public float HalfHeight
         {
             get { return this.height; }
             set

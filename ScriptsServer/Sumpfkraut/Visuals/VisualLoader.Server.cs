@@ -424,7 +424,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                 modelDef.Radius = (float) row[c];
                                 break;
                             case "Height":
-                                modelDef.Height = (float) row[c];
+                                modelDef.HalfHeight = (float) row[c];
                                 break;
                             case "FistRange":
                                 modelDef.FistRange = (float) row[c];

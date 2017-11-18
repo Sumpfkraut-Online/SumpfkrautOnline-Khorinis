@@ -19,7 +19,7 @@ namespace GUC.WorldObjects.VobGuiding
         {
             #region Positions
 
-            public static void WritePosDirMessage(GuidedVob vob, Vec3f pos, Angles ang, Environment env)
+            public static void WritePosDirMessage(GuidedVob vob, Vec3f pos, Angles ang, VobEnvironment env)
             {
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedVobMessage);
                 stream.Write((ushort)vob.ID);
@@ -144,7 +144,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         protected Vec3f guidedLastPos;
         protected Angles guidedLastAng;
-        protected Environment guidedLastEnv;
+        protected VobEnvironment guidedLastEnv;
         protected long guidedNextUpdate;
 
         protected virtual void UpdateGuidePos(long now)
@@ -154,7 +154,7 @@ namespace GUC.WorldObjects.VobGuiding
 
             Vec3f pos = this.GetPosition();
             Angles ang = this.GetAngles();
-            Environment env = this.GetEnvironment();
+            VobEnvironment env = this.Environment;
 
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
             {

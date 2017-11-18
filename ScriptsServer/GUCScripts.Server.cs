@@ -106,6 +106,9 @@ namespace GUC.Scripts
 
     public partial class GUCScripts : ScriptInterface
     {
+        public const float BiggestNPCRadius = 90; // fixme
+        public const float SmallestNPCRadius = 40;
+
         public WorldObjects.VobGuiding.TargetCmd GetTestCmd(BaseVob target)
         {
             return new Sumpfkraut.AI.GuideCommands.GoToVobCommand((BaseVobInst)target.ScriptObject);
@@ -210,8 +213,8 @@ namespace GUC.Scripts
             AddBowAnis(m);
             AddXBowAnis(m);
 
-            m.Radius = 80;
-            m.Height = 180;
+            m.Radius = 40;
+            m.HalfHeight = 90;
             m.FistRange = 40;
             m.Create();
 
@@ -976,8 +979,8 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(0, 29));
             m.AddAniJob(aniJob);
 
-            m.Radius = 180;
-            m.Height = 180;
+            m.Radius = 90;
+            m.HalfHeight = 90;
             m.FistRange = 80;
             m.Create();
 
@@ -1096,8 +1099,8 @@ namespace GUC.Scripts
 
             #endregion
 
-            m.Radius = 100;
-            m.Height = 200;
+            m.Radius = 50;
+            m.HalfHeight = 100;
             m.Create();
 
             // NPCs
@@ -1278,6 +1281,36 @@ namespace GUC.Scripts
 
             #endregion
 
+            #region Fight
+
+            aniJob1 = new ScriptAniJob("aim_xbow", "t_cbowwalk_2_cbowaim");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 5));
+            aniJob1.AddOverlayAni(new ScriptAni(0, 6), ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 6), ov2);
+
+            aniJob2 = new ScriptAniJob("aiming_xbow", "s_CBowAim");
+            model.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni());
+            aniJob2.AddOverlayAni(new ScriptAni(), ov1);
+            aniJob2.AddOverlayAni(new ScriptAni(), ov2);
+            aniJob1.NextAni = aniJob2;
+
+            // fixme: add s_bowshoot too?
+            aniJob1 = new ScriptAniJob("reload_xbow", "t_CBowReload");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 32));
+            aniJob1.AddOverlayAni(new ScriptAni(0, 29), ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 23), ov2);
+            aniJob1.NextAni = aniJob2;
+
+            aniJob1 = new ScriptAniJob("unaim_xbow", "t_CBowAim_2_CBowwalk");
+            model.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 6));
+            aniJob1.AddOverlayAni(new ScriptAni(0, 6), ov1);
+            aniJob1.AddOverlayAni(new ScriptAni(0, 6), ov2);
+
+            #endregion
         }
 
         #endregion

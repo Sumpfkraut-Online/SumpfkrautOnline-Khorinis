@@ -8,8 +8,9 @@ namespace GUC.WorldObjects
 {
     public partial class Projectile
     {
-        partial void pSpawn()
+        internal override void CreateGVob()
         {
+            base.CreateGVob();
             this.gVob.SetVisual(this.Model.Visual);
         }
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.WorldObjects.Collections;
 using Gothic.Objects;
 using Gothic.Objects.Meshes;
 
@@ -16,11 +15,9 @@ namespace GUC.WorldObjects.Instances
             zCVisual vis = zCVisual.LoadVisual(this.ModelInstance.Visual);
             ret.SetVisual(vis);
 
-            if (CDDyn) ret.BitField1 |= (int)zCVob.BitFlag0.collDetectionDynamic;
-            else ret.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionDynamic;
-
-            if (CDStatic) ret.BitField1 |= (int)zCVob.BitFlag0.collDetectionStatic;
-            else ret.BitField1 &= ~(int)zCVob.BitFlag0.collDetectionStatic;
+            ret.SetCollDetDyn(CDDyn);
+            ret.SetCollDetStat(CDStatic);
+            
             return ret;
         }
     }

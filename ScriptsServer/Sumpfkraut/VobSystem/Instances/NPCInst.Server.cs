@@ -1,19 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.Visuals;
+﻿using GUC.Log;
 using GUC.Scripting;
-using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
-using GUC.Types;
-using GUC.Log;
 using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Types;
+using System;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
+        public bool AllowHit(NPCInst target)
+        {
+            if (this.TeamID == -1)
+            {                    
+                if (this.IsPlayer && target.IsPlayer
+                    && ((Arena.ArenaClient)Client).DuelEnemy == target.Client)
+                {
+                    return true;
+                }
+            }
+            else if (target.TeamID != -1)
+            {
+                return true;
+            }
+            return false;
+        }
+
         const long CorpseRemoveTime = 5 * TimeSpan.TicksPerMinute;
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
@@ -51,7 +65,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
             }
 
-            var env = this.BaseInst.GetEnvironment();
+            var env = this.Environment;
             if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
                 ((Arena.ArenaClient)this.Client).KillCharacter();
 
@@ -705,9 +719,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
 
-        public delegate bool OnHitCheckHandler(NPCInst attacker, NPCInst target);
-        public static event OnHitCheckHandler sOnHitCheck;
-
         void CalcHit()
         {
             try
@@ -722,13 +733,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 
 
                 float weaponRange = this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
-                this.BaseInst.World.ForEachNPCRough(attPos, 2 * weaponRange, npc => // fixme: enemy model radius
+                this.BaseInst.World.ForEachNPCRough(attPos, GUCScripts.BiggestNPCRadius + weaponRange, npc => // fixme: enemy model radius
                   {
                       NPCInst target = (NPCInst)npc.ScriptObject;
                       if (target == this || target.IsDead)
                           return;
 
-                      if (sOnHitCheck != null && !sOnHitCheck(this, target))
+                      if (!AllowHit(target))
                           return;
 
                       float realRange = weaponRange + target.ModelDef.Radius;
@@ -744,16 +755,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       float hitYaw;
                       if (CurrentFightMove == FightMoves.Left || CurrentFightMove == FightMoves.Right)
                       {
-                          hitHeight = target.ModelDef.Height / 2f;
+                          hitHeight = target.ModelDef.HalfHeight;
                           hitYaw = Angles.PI * 0.9f;
                       }
                       else
                       {
-                          hitHeight = (target.ModelDef.Height + this.ModelDef.Height) / 2f;
-                          hitYaw = Angles.PI / 4f;
+                          hitHeight = target.ModelDef.HalfHeight + this.ModelDef.HalfHeight;
+                          hitYaw = Angles.PI * 0.25f;
                       }
 
-                      if (Math.Abs(targetPos.Y - attPos.Y) > target.ModelDef.Height / 1.5f)
+                      if (Math.Abs(targetPos.Y - attPos.Y) > hitHeight)
                           return; // not same height
 
                       float yaw = Angles.GetYawFromAtVector(targetPos - attPos);

@@ -385,9 +385,8 @@ namespace GUC.Scripts.Arena.Controls
             float rotSpeed = 0;
             if (InputHandler.MouseDistY != 0)
             {
-                rotSpeed = InputHandler.MouseDistY * 0.1f;
-                if (rotSpeed > maxLookupSpeed) rotSpeed = maxLookupSpeed;
-                else if (rotSpeed < -maxLookupSpeed) rotSpeed = -maxLookupSpeed;
+                rotSpeed = Alg.Clamp(-maxLookupSpeed, InputHandler.MouseDistY * 0.3f * MouseSpeed, maxLookupSpeed);
+
                 if (hero.Environment.WaterLevel >= 1)
                 {
                     hero.BaseInst.gAI.DiveRotateX(rotSpeed);
@@ -409,9 +408,7 @@ namespace GUC.Scripts.Arena.Controls
                     turn = maxTurnSpeed;
                 else if (Math.Abs(InputHandler.MouseDistX) > ((rotSpeed > 0.5f && hero.Movement == NPCMovement.Stand) ? 18 : 2))
                 {
-                    turn = InputHandler.MouseDistX * 0.15f;
-                    if (turn > maxTurnSpeed) turn = maxTurnSpeed;
-                    else if (turn < -maxTurnSpeed) turn = -maxTurnSpeed;
+                    turn = Alg.Clamp(-maxTurnSpeed, InputHandler.MouseDistX * 0.4f * MouseSpeed, maxTurnSpeed);
                 }
 
                 if (turn != 0)
@@ -452,7 +449,6 @@ namespace GUC.Scripts.Arena.Controls
         static void RequestShoot(NPCInst hero)
         {
             CalcRangedTrace(hero, out Vec3f start, out Vec3f end);
-            end = end - (end - start).Normalise() * 40f; // so arrows' bodies aren't 90% inside walls
             NPCInst.Requests.Shoot(hero, start, end);
         }
 
@@ -559,20 +555,37 @@ namespace GUC.Scripts.Arena.Controls
             if (InputHandler.MouseDistY != 0)
             {
                 const float maxSpeed = 1.0f;
-                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistY * 0.06f, maxSpeed);
-                zCAICamera.CurrentCam.BestRotX += rotSpeed;
+                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistY * 0.15f * MouseSpeed, maxSpeed);
+                zCAICamera.CurrentCam.BestRotX = Alg.Clamp(-30, zCAICamera.CurrentCam.BestRotX + rotSpeed, 90);
             }
 
             if (InputHandler.MouseDistX != 0)
             {
                 const float maxSpeed = 1.5f;
 
-                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistX * 0.07f, maxSpeed);
+                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistX * 0.18f * MouseSpeed, maxSpeed);
                 hero.BaseInst.gAI.Turn(rotSpeed, false);
             }
 
             CalcRangedTrace(hero, out Vec3f start, out Vec3f end);
             crosshair.SetTarget(end);
+
+            var gModel = hero.BaseInst.gModel;
+            int aniID;
+            if (gModel.IsAnimationActive("S_BOWAIM"))
+            {
+                aniID = gModel.GetAniIDFromAniName("S_BOWAIM");
+            }
+            else if (gModel.IsAnimationActive("S_CBOWAIM"))
+            {
+                aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
+            }
+            else return;
+
+            Angles angles = Angles.FromAtVector((Vec3f)GothicGlobals.Game.GetCameraVob().Direction);
+            float y = Alg.Clamp(0, 0.5f - angles.Pitch / Angles.PI, 1);
+
+            hero.BaseInst.gAI.InterpolateCombineAni(0.5f, y, aniID);
         }
     }
 }

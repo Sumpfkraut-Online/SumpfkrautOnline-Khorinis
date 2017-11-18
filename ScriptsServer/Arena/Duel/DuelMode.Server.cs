@@ -13,27 +13,12 @@ namespace GUC.Scripts.Arena
     {
 
         const long DuelRequestDuration = 20 * 1000 * 10000; // 20 secs
-        const float DuelMaxDistance = 1500.0f; // distance between players for the duel to automatically end
+        const float DuelMaxDistance = 150000.0f; // distance between players for the duel to automatically end
 
         static DuelMode()
         {
             Logger.Log("Duel mode initialised.");
-            NPCInst.sOnHitCheck += (a, t) =>
-            {
-                if (a.Client != null)
-                {
-                    var attacker = (ArenaClient)a.Client;
-                    var target = (ArenaClient)t.Client;
-                    if (target != null)
-                    {
-                        if (attacker.Team != null && target.Team != null)
-                            return true;
-                        else if (attacker.DuelEnemy == target)
-                            return true;
-                    }
-                }
-                return false;
-            };
+
             NPCInst.sOnHit += (NPCInst a, NPCInst t, int d) =>
             {
                 if (a == null)

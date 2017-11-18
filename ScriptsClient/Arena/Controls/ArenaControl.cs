@@ -123,5 +123,31 @@ namespace GUC.Scripts.Arena.Controls
             cam.SetFOV(fov, fov * ratio);
             currentFOV = fov;
         }
+
+        static float mSpeed;
+        static float MouseSpeed
+        {
+            get
+            {
+                if (mSpeed == 0)
+                {
+                    var section = Gothic.zCOption.GetSectionByName("GAME");
+                    if (!section.IsNull)
+                    {
+                        var entry = section.GetEntryByName("mouseSensitivity");
+                        if (!entry.IsNull)
+                        {
+                            if (float.TryParse(entry.VarValue.ToString(), System.Globalization.NumberStyles.Any,
+                                               System.Globalization.CultureInfo.InvariantCulture, out mSpeed))
+                            {
+                                return mSpeed;
+                            }
+                        }
+                    }
+                    mSpeed = 0.5f;
+                }
+                return mSpeed;
+            }
+        }
     }
 }

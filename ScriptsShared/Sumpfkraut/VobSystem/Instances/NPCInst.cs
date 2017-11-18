@@ -88,7 +88,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public new NPCDef Definition { get { return (NPCDef)base.Definition; } set { base.Definition = value; } }
 
         public NPCMovement Movement { get { return this.BaseInst.Movement; } }
-        public BaseVob.Environment Environment { get { return this.BaseInst.GetEnvironment(); } }
+        public VobEnvironment Environment { get { return this.BaseInst.Environment; } }
 
         public bool IsDead { get { return this.BaseInst.IsDead; } }
         public bool IsInFightMode { get { return this.BaseInst.IsInFightMode; } }

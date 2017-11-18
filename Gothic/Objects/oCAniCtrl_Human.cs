@@ -320,6 +320,11 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFightAnis, new IntArg(fmode));
         }
+        
+        public bool InterpolateCombineAni(float x, float y, int aniID)
+        {
+            return Process.THISCALL<BoolArg>(Address, 0x6B6170, (FloatArg)x, (FloatArg)y, (IntArg)aniID);
+        }
 
         /*public zString GetWalkModeZString()
         {

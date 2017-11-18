@@ -93,10 +93,10 @@ namespace GUC.WorldObjects
                     NPCMovement movement = (NPCMovement)((bitfield >> 12) & 0x7);
                     float waterDepth = ((bitfield >> 6) & 0x3F) / (float)0x3F;
                     float waterLevel = (bitfield & 0x3F) / (float)0x3F;
-                    Environment env = new Environment(inAir, waterLevel, waterDepth);
+                    VobEnvironment env = new VobEnvironment(inAir, waterLevel, waterDepth);
 
                     npc.movement = movement;
-                    npc.environment = env;
+                    npc.penvironment = env;
 
                     npc.SetPosAng(pos, ang, client);
                     //vob.ScriptObject.OnPosChanged();

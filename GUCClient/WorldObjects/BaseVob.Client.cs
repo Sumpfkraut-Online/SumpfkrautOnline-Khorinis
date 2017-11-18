@@ -67,12 +67,12 @@ namespace GUC.WorldObjects
 
         #region Environment
 
-        partial void pGetEnvironment()
+        protected virtual void UpdateEnvironment()
         {
-            this.environment = CalculateEnvironment(10);
+            this.penvironment = CalculateEnvironment(10);
         }
 
-        protected Environment CalculateEnvironment(float groundDistToFly)
+        protected VobEnvironment CalculateEnvironment(float groundDistToFly)
         {
             var collObj = gVob.CollObj;
             float waterLevel = collObj.WaterLevel;
@@ -97,7 +97,7 @@ namespace GUC.WorldObjects
             else if (waterDepth >= height) waterDepth = 1;
             else waterDepth /= height;
 
-            return new Environment(inAir, waterStand, waterDepth);
+            return new VobEnvironment(inAir, waterStand, waterDepth);
         }
 
         #endregion
@@ -166,7 +166,7 @@ namespace GUC.WorldObjects
 
         #region Creation & Deletion of the Gothic-Object
 
-        internal void CreateGVob()
+        internal virtual void CreateGVob()
         {
             this.gvob = this.instance.CreateVob();
         }
@@ -188,6 +188,7 @@ namespace GUC.WorldObjects
 
         partial void pOnTick(long now)
         {
+            UpdateEnvironment();
         }
     }
 }

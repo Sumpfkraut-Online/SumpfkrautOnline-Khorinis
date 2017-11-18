@@ -129,7 +129,7 @@ namespace GUC.WorldObjects
                 }
             }
 
-            public static void WritePosAngMessage(NPC npc, Vec3f pos, Angles ang, Environment env)
+            public static void WritePosAngMessage(NPC npc, Vec3f pos, Angles ang, VobEnvironment env)
             {
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedNPCMessage);
                 stream.Write((ushort)npc.ID);
@@ -205,7 +205,7 @@ namespace GUC.WorldObjects
 
             Vec3f pos = this.GetPosition();
             Angles ang = this.GetAngles();
-            Environment env = this.GetEnvironment();
+            VobEnvironment env = this.Environment;
 
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
             {
@@ -326,9 +326,9 @@ namespace GUC.WorldObjects
 
         #region Environment
 
-        partial void pGetEnvironment()
+        protected override void UpdateEnvironment()
         {
-            this.environment = CalculateEnvironment(humanAI.StepHeight);
+            this.penvironment = CalculateEnvironment(humanAI.StepHeight);
         }
 
         #endregion
@@ -437,7 +437,7 @@ namespace GUC.WorldObjects
                 return;
 
             if (this.gVob != null && !this.IsDead && this.Model.GetActiveAniFromLayerID(1) == null
-                && !this.environment.InAir && (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) == 0)
+                && !this.Environment.InAir && (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) == 0)
                 if (this.movement == NPCMovement.Right || this.movement == NPCMovement.Left)
                 {
                     if (state == NPCMovement.Forward)
@@ -562,7 +562,7 @@ namespace GUC.WorldObjects
                 switch (Movement)
                 {
                     case NPCMovement.Forward:
-                        if (!this.environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND"))
+                        if (!this.Environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND"))
                         {
                             gAI.LandAndStartAni(gModel.GetAniFromAniID(gAI._t_jump_2_runl));
                         }
@@ -588,8 +588,8 @@ namespace GUC.WorldObjects
 
         void DoStrafe(bool right)
         {
-            if (this.Model.GetActiveAniFromLayerID(1) != null
-                || this.environment.InAir || (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0)
+            if (this.Model.GetActiveAniFromLayerID(1) != null || this.Environment.InAir 
+                || (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0)
                 return;
 
             var strafeAni = right ? gAI._t_strafer : gAI._t_strafel;
@@ -617,6 +617,7 @@ namespace GUC.WorldObjects
 
             if (!gModel.IsAniActive(ani))
                 gModel.StartAni(ani, 0);
+
         }
 
         public override void Throw(Vec3f velocity)

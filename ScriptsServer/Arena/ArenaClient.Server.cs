@@ -15,14 +15,17 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
+
         #region Respawn
 
         const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
         static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
+
         static ArenaClient()
         {
             respawnTimer.Start();
         }
+
         static void RespawnPlayers()
         {
             ArenaClient.ForEach(s =>

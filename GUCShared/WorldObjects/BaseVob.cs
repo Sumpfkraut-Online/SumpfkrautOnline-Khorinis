@@ -10,6 +10,55 @@ using GUC.WorldObjects.Collections;
 
 namespace GUC.WorldObjects
 {
+    public struct VobEnvironment
+    {
+        bool inAir;
+        /// <summary> Whether the vob is in air. </summary>
+        public bool InAir { get { return this.inAir; } }
+        float waterLevel;
+        /// <summary> Returns the vob's relative water level to its height. [0..1] </summary>
+        public float WaterLevel { get { return this.waterLevel; } }
+        float waterDepth;
+        /// <summary> Returns the vob's relative water depth to its height. [0..1] </summary>
+        public float WaterDepth { get { return this.waterDepth; } }
+
+        internal VobEnvironment(bool inAir, float waterLevel, float waterDepth)
+        {
+            this.inAir = inAir;
+            this.waterLevel = waterLevel;
+            this.waterDepth = waterDepth;
+        }
+
+        public static bool operator ==(VobEnvironment env1, VobEnvironment env2)
+        {
+            if (env1.inAir != env2.inAir)
+                return false;
+
+            if (Math.Abs(env1.waterDepth - env2.waterDepth) >= 0.01f)
+                return false;
+
+            if (Math.Abs(env1.waterLevel - env2.waterLevel) >= 0.01f)
+                return false;
+
+            return true;
+        }
+
+        public static bool operator !=(VobEnvironment env1, VobEnvironment env2)
+        {
+            return !(env1 == env2);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is VobEnvironment && ((VobEnvironment)obj) == this;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Environment(InAir {0} WaterLevel {1} WaterDepth {2})", InAir, WaterLevel, WaterDepth);
+        }
+    }
+
     /// <summary>
     /// The lowermost Vob-Object.
     /// </summary>
@@ -23,7 +72,7 @@ namespace GUC.WorldObjects
             void Spawn(World world);
             void Despawn();
         }
-        
+
         /// <summary> The ScriptObject of this Vob. </summary>
         public new IScriptBaseVob ScriptObject { get { return (IScriptBaseVob)base.ScriptObject; } }
 
@@ -95,7 +144,7 @@ namespace GUC.WorldObjects
             pGetAngles();
             return ang;
         }
-        
+
         /// <summary> Calculates the direction this vob is "heading at" from its angles. </summary>
         public Vec3f GetAtVector()
         {
@@ -128,52 +177,8 @@ namespace GUC.WorldObjects
 
         #region Environment
 
-        public struct Environment
-        {
-            bool inAir;
-            /// <summary> Whether the vob is in air. </summary>
-            public bool InAir { get { return this.inAir; } }
-            float waterLevel;
-            /// <summary> Returns the vob's relative water level to its height. [0..1] </summary>
-            public float WaterLevel { get { return this.waterLevel; } }
-            float waterDepth;
-            /// <summary> Returns the vob's relative water depth to its height. [0..1] </summary>
-            public float WaterDepth { get { return this.waterDepth; } }
-
-            internal Environment(bool inAir, float waterLevel, float waterDepth)
-            {
-                this.inAir = inAir;
-                this.waterLevel = waterLevel;
-                this.waterDepth = waterDepth;
-            }
-
-            public static bool operator ==(Environment env1, Environment env2)
-            {
-                if (env1.inAir != env2.inAir)
-                    return false;
-
-                if (Math.Abs(env1.waterDepth - env2.waterDepth) >= 0.01f)
-                    return false;
-
-                if (Math.Abs(env1.waterLevel - env2.waterLevel) >= 0.01f)
-                    return false;
-
-                return true;
-            }
-
-            public static bool operator != (Environment env1, Environment env2)
-            {
-                return !(env1 == env2);
-            }
-        }
-
-        protected Environment environment;
-        partial void pGetEnvironment();
-        public virtual Environment GetEnvironment()
-        {
-            pGetEnvironment();
-            return this.environment;
-        }
+        protected VobEnvironment penvironment;
+        public VobEnvironment Environment { get { return this.penvironment; } }
 
         #endregion
 
@@ -269,7 +274,6 @@ namespace GUC.WorldObjects
             sOnSpawn?.Invoke(this, world, position, angles);
         }
 
-
         partial void pBeforeDespawn();
         partial void pAfterDespawn();
         /// <summary>
@@ -280,10 +284,8 @@ namespace GUC.WorldObjects
             if (!this.isCreated)
                 throw new Exception("Vob isn't spawned!");
 
-            if (this.OnDespawn != null)
-                this.OnDespawn(this);
-            if (sOnDespawn != null)
-                sOnDespawn(this);
+            this.OnDespawn?.Invoke(this);
+            sOnDespawn?.Invoke(this);
 
             pBeforeDespawn();
 

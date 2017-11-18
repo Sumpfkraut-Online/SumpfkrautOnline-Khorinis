@@ -251,12 +251,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 return;
 
             ProjInst inst = new ProjInst(ProjDef.Get<ProjDef>("arrow"));
-            inst.Radius = 10;
             inst.Item = new ItemInst(ammo.Definition);
             inst.Damage = drawnWeapon.Damage;
-            inst.Velocity = 0.0003f;
+            inst.Velocity = 0.0004f;
             inst.Model = ammo.ModelDef;
-            
+
             /*if (ammo.Amount == 1)
             {
                 Host.Inventory.RemoveItem(projItem);
@@ -266,6 +265,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 projItem = projItem.Split(1);
             }*/
 
+            end = end - (end - start).Normalise() * (ammo.ItemType == ItemTypes.AmmoBow ? 40 : 10); // so arrows' bodies aren't 90% inside walls
             Host.DoShoot(start, end, inst);
         }
     }
