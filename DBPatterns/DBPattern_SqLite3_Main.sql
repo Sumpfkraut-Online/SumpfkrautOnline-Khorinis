@@ -95,7 +95,6 @@ DROP TABLE IF EXISTS VobDef;
 CREATE TABLE IF NOT EXISTS VobDef 
 (
     VobDefID INTEGER NOT NULL,
-    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT VobDef_PK PRIMARY KEY (VobDefID) 
@@ -132,7 +131,6 @@ CREATE TABLE IF NOT EXISTS ModelDef
     Radius REAL DEFAULT 0, -- radius for collision detection
     Height REAL DEFAULT 0, -- height for collision detection
     FistRange REAL DEFAULT 0, -- fist range for hit detection without weapon
-    IsStatic INTEGER DEFAULT 0 CHECK ((IsStatic == 0) OR (IsStatic == 1)), -- static objects are already uploaded for the clients to download on their local hard drive !!! MIGHT AS WELL SAVE IT AS ANOTHER EFFECT ?!?
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
     CONSTRAINT ModelDef_PK PRIMARY KEY (ModelDefID)
@@ -154,9 +152,7 @@ CREATE TABLE IF NOT EXISTS ScriptOverlay
     ScriptOverlayName TEXT NOT NULL, -- descriptive name
     ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of last change made
     CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL, -- date of creation
-    CONSTRAINT ScriptOverlay_PK PRIMARY KEY (ScriptOverlayID),
-    FOREIGN KEY (ModelDefID) REFERENCES ModelDef(ModelDefID),
-    FOREIGN KEY (ScriptAniJobID) REFERENCES ScriptAniJob(ScriptAniJobID)
+    CONSTRAINT ScriptOverlay_PK PRIMARY KEY (ScriptOverlayID)
 );
 
 CREATE TRIGGER Update_ScriptOverlay
@@ -216,7 +212,7 @@ BEGIN
 END;
 
 -- maps ScriptOverlays to ScriptAniJobs
-DROP TABLE IF EXISTS OverlayAniJobRelation
+DROP TABLE IF EXISTS OverlayAniJobRelation;
 CREATE TABLE IF NOT EXISTS OverlayAniJobRelation
 (
     ScriptOverlayID INTEGER NOT NULL,
@@ -228,7 +224,7 @@ CREATE TABLE IF NOT EXISTS OverlayAniJobRelation
 );
 
 -- maps ScriptOverlays to ModelDefs
-DROP TABLE IF EXISTS ScriptOverlayModelDef
+DROP TABLE IF EXISTS ScriptOverlayModelDef;
 CREATE TABLE IF NOT EXISTS ScriptOverlayModelDef
 (
     ScriptOverlayID INTEGER NOT NULL,
@@ -238,7 +234,7 @@ CREATE TABLE IF NOT EXISTS ScriptOverlayModelDef
 );
 
 -- maps ScriptAniJobs to ModelDefs
-DROP TABLE IF EXISTS ScriptAniJobModelDef
+DROP TABLE IF EXISTS ScriptAniJobModelDef;
 CREATE TABLE IF NOT EXISTS ScriptAniJobModelDef
 (
     ScriptAniJobID INTEGER NOT NULL,
@@ -250,25 +246,25 @@ CREATE TABLE IF NOT EXISTS ScriptAniJobModelDef
 -- >> static and dynamic content management << --
 --------------------------------------------------------------
 
--- list of "jobs" concerning switches between statis and dynamic content --
-DROP TABLE IF EXISTS StaticDynamicJob;
-CREATE TABLE IF NOT EXISTS StaticDynamicJob
-(
-    StaticDynamicJobID INTEGER NOT NULL,
-    TableName TEXT NOT NULL,
-    Task TEXT NOT NULL,
-    ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT StaticDynamicJob_PK PRIMARY KEY (StaticDynamicJobID)
-);
+-- -- list of "jobs" concerning switches between statis and dynamic content --
+-- DROP TABLE IF EXISTS StaticDynamicJob;
+-- CREATE TABLE IF NOT EXISTS StaticDynamicJob
+-- (
+    -- StaticDynamicJobID INTEGER NOT NULL,
+    -- TableName TEXT NOT NULL,
+    -- Task TEXT NOT NULL,
+    -- ChangeDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    -- CreationDate DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    -- CONSTRAINT StaticDynamicJob_PK PRIMARY KEY (StaticDynamicJobID)
+-- );
 
-CREATE TRIGGER Update_StaticDynamicJob
-    AFTER UPDATE
-    ON StaticDynamicJob
-BEGIN
-    UPDATE StaticDynamicJob SET ChangeDate = CURRENT_TIMESTAMP 
-        WHERE StaticDynamicJobID = OLD.StaticDynamicJobID;
-END;
+-- CREATE TRIGGER Update_StaticDynamicJob
+    -- AFTER UPDATE
+    -- ON StaticDynamicJob
+-- BEGIN
+    -- UPDATE StaticDynamicJob SET ChangeDate = CURRENT_TIMESTAMP 
+        -- WHERE StaticDynamicJobID = OLD.StaticDynamicJobID;
+-- END;
 
 -- >> accounts << --
 --------------------------------------------------------------
