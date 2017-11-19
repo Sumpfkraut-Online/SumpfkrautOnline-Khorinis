@@ -275,11 +275,15 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             if (!(foundTime || foundRate)) { msgSB.Append("No valid WorldTime or rate provided!"); }
             else
             {
-                if (!foundTime) { time = WorldInst.List[0].Clock.Time; }
-                if (!foundRate) { rate = WorldInst.List[0].Clock.Rate; }
-                WorldInst.List[0].Clock.SetTime(time, rate);
-                msgSB.Append("Changed WorldTime to: ");
-                msgSB.AppendFormat("( time: {0}, rate: {1} )", time, rate);
+                for (int i = 0; i < WorldInst.List.Count; i++)
+                {
+                    if (!foundTime) { time = WorldInst.List[i].Clock.Time; }
+                    if (!foundRate) { rate = WorldInst.List[i].Clock.Rate; }
+                    WorldInst.List[i].Clock.SetTime(time, rate);
+
+                    msgSB.AppendFormat("Changed WorldTime of World {0} to: ( time: {1}, rate: {2} )",
+                        i, time, rate);
+                }
             }
 
             returnVal = new Dictionary<string, object>
