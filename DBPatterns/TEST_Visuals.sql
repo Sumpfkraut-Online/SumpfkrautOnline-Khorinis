@@ -30,12 +30,15 @@ VALUES
     (20, NULL, 0, 29, "Hit=19;"),
     (21, NULL, 0, 12, ""),
     (22, NULL, 0, 12, "")
+;
 
 INSERT OR REPLACE 
 INTO ScriptOverlay (ScriptOverlayID, CodeName, ScriptOverlayName)
 VALUES
+    --- >> 1H << ---
     (1, "1HST1", "Humans_1hST1"),
     (2, "1HST2", "Humans_1hST2")
+;
     
 INSERT OR REPLACE 
 INTO ScriptAniJob (ScriptAniJobID, DefaultAniID, AniName, CodeName, NextScriptAniJobID, Layer)
@@ -73,23 +76,27 @@ VALUES
     (22, 19, "s_FistAttack", "fistattack_fwd1", NULL, NULL),
     (23, 20, "t_FistAttackMove", "fistattack_run", NULL, 2),
     (24, 21, "t_FistParade_0", "fist_parade", NULL, NULL),
-    (25, 22, "t_FistParadeJumpB", "fist_jumpback", NULL, NULL),
+    (25, 22, "t_FistParadeJumpB", "fist_jumpback", NULL, NULL)
+;
 
 INSERT OR REPLACE 
 INTO ModelDef (ModelDefID, ModelDefName, Visual, AniCatalog, Radius, Height, FistRange)
 VALUES 
     (1, "humans", "HUMANS.MDS", "NPCCatalog", 80, 180, 40)
+;
     
-INSERT OR REPLACE 
-INTO OverlayAniJobRelation (ScriptOverlayID, ScriptAniJobID, ScriptAniID)
-VALUES
-    (XXX, XXX, XXX)
+-- INSERT OR REPLACE 
+-- INTO OverlayAniJobRelation (ScriptOverlayID, ScriptAniJobID, ScriptAniID)
+-- VALUES
+    -- (XXX, XXX, XXX)
+-- ;
     
 INSERT OR REPLACE 
 INTO ScriptOverlayModelDef (ModelDefID, ScriptOverlayID)
 VALUES
     (1, 1),
     (1, 2)
+;
     
 INSERT OR REPLACE 
 INTO ScriptAniJobModelDef (ModelDefID, ScriptAniJobID)
@@ -128,3 +135,4 @@ VALUES
     (1, 23),
     (1, 24),
     (1, 25)
+;

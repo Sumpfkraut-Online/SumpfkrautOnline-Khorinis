@@ -166,7 +166,7 @@ DROP TABLE IF EXISTS ScriptAniJob;
 CREATE TABLE IF NOT EXISTS ScriptAniJob 
 (
     ScriptAniJobID INTEGER NOT NULL, -- unique primary key id
-    DefaultAniID INTEGER NOT NULL,
+    DefaultAniID INTEGER DEFAULT NULL,
 	AniName TEXT NOT NULL,
 	CodeName TEXT NOT NULL,
 	NextScriptAniJobID INTEGER DEFAULT NULL,
