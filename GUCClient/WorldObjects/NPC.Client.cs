@@ -203,8 +203,8 @@ namespace GUC.WorldObjects
             if (now < guidedNextUpdate)
                 return;
 
-            Vec3f pos = this.GetPosition();
-            Angles ang = this.GetAngles();
+            Vec3f pos = this.Position;
+            Angles ang = this.Angles;
             VobEnvironment env = this.Environment;
 
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)
@@ -326,7 +326,7 @@ namespace GUC.WorldObjects
 
         #region Environment
 
-        protected override void UpdateEnvironment()
+        public override void UpdateEnvironment()
         {
             this.environment = CalculateEnvironment(humanAI.StepHeight);
         }
@@ -470,7 +470,7 @@ namespace GUC.WorldObjects
             SetPosition(newPos);
 
             Angles oldAng = this.ang;
-            Angles curAng = GetAngles();
+            Angles curAng = Angles;
 
             if (Movement == NPCMovement.Stand
                 && !newAng.DifferenceIsBigger(curAng, Angles.PI / 2f) // don't interpolate > 90 degree turns

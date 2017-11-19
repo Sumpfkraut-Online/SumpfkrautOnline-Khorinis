@@ -258,20 +258,21 @@ namespace GUC.Types
         /// </summary>
         internal Vec3f ClampToWorldLimits()
         {
-            Vec3f ret;
-            if (this.X < -838860.8f) ret.X = -838860.8f;
-            else if (this.X > 838860.7f) ret.X = 838860.7f;
-            else ret.X = this.X;
+            return new Vec3f(ClampToWorldLimits(this.X),
+                             ClampToWorldLimits(this.Y),
+                             ClampToWorldLimits(this.Z));
+        }
 
-            if (this.Y < -838860.8f) ret.Y = -838860.8f;
-            else if (this.Y > 838860.7f) ret.Y = 838860.7f;
-            else ret.Y = this.Y;
-
-            if (this.Z < -838860.8f) ret.Z = -838860.8f;
-            else if (this.Z > 838860.7f) ret.Z = 838860.7f;
-            else ret.Z = this.Z;
-
-            return ret;
+        /// <summary>
+        /// Clamps to [-838860.8f, 838860.7f]
+        /// </summary>
+        internal static float ClampToWorldLimits(float value)
+        {
+            if (value <= -838860.8f)
+                return -838860.8f;
+            if (value >= 838860.7f)
+                return 838860.7f;
+            return value;
         }
     }
 }

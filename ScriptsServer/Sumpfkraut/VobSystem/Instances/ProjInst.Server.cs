@@ -10,7 +10,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ProjInst
     {
-        public const int MaxProjectileItems = 1000;
+        public const int MaxProjectileItems = 500;
 
         public ItemInst Item { get { return (ItemInst)this.BaseInst.Item?.ScriptObject; } set { this.BaseInst.Item = value?.BaseInst; } }
 
@@ -70,16 +70,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 if (!npc.IsDead && npc != Shooter.BaseInst && Shooter.AllowHit((NPCInst)npc.ScriptObject))
                 {
-                    var npcPos = npc.GetPosition();
+                    var npcPos = npc.Position;
+                    if (npc.ModelInstance.Visual == "CRAWLER.MDS") // fixme
+                    {
+                        npcPos += npc.GetAtVector() * 50;
+                    }
+
                     var npcModel = ((ModelDef)npc.ModelInstance.ScriptObject);
                     if (npcPos.GetDistancePlanar(position) <= npcModel.Radius
                         && Math.Abs(npcPos.Y - position.Y) <= npcModel.HalfHeight)
                     {
                         target = (NPCInst)npc.ScriptObject;
-                        return true;
+                        return false;
                     }
                 }
-                return false;
+                return true;
             });
 
             if (target != null)

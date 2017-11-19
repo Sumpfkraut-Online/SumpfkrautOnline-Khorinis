@@ -48,7 +48,7 @@ namespace GUC.WorldObjects.VobGuiding
         public override void WriteStream(PacketWriter stream)
         {
             stream.Write((ushort)target.ID);
-            stream.Write(target.GetPosition());
+            stream.Write(target.Position);
         }
 #endif
 
@@ -73,7 +73,7 @@ namespace GUC.WorldObjects.VobGuiding
             if (Commands.TryGetValue(vob.ID, out List<TargetCmd> cmdList))
                 for (int i = 0; i < cmdList.Count; i++)
                 {
-                    cmdList[i].sentDest = vob.GetPosition();
+                    cmdList[i].sentDest = vob.Position;
                     cmdList[i].target = null;
                 }
         }
@@ -89,7 +89,7 @@ namespace GUC.WorldObjects.VobGuiding
         int targetID = -1;
 
         Vec3f sentDest;
-        public Vec3f Destination { get { return this.target == null ? this.sentDest : this.target.GetPosition(); } }
+        public Vec3f Destination { get { return this.target == null ? this.sentDest : this.target.Position; } }
 
         public override void ReadStream(PacketReader stream)
         {

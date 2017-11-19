@@ -50,8 +50,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public WorldInst World { get { return (WorldInst)this.BaseInst.World.ScriptObject; } }
 
-        public Vec3f GetPosition() { return this.BaseInst.GetPosition(); }
-        public Angles GetAngles() { return this.BaseInst.GetAngles(); }
+        public Vec3f GetPosition() { return this.BaseInst.Position; }
+        public Angles GetAngles() { return this.BaseInst.Angles; }
 
         public void SetPosition(Vec3f position) { this.BaseInst.SetPosition(position); }
         public void SetAngles(Angles angles) { this.BaseInst.SetAngles(angles); }

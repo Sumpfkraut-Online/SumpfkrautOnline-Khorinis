@@ -11,14 +11,14 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldInst
     {
         public static WorldInst Current { get { return (WorldInst)WorldObjects.World.Current?.ScriptObject; } }
-
+        
         public void Load()
         {
             GUCMenu.CloseActiveMenus();
 
             var ogame = GothicGlobals.Game;
 
-            ogame.OpenLoadscreen(false, zString.Create(Path));
+            ogame.OpenLoadscreen(!GUCScripts.Ingame, zString.Create(Path));
 
             zCViewProgressBar progBar = ogame.ProgressBar;
             if (progBar.Address != 0) progBar.SetPercent(0);

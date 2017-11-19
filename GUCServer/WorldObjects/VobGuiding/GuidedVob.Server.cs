@@ -24,8 +24,8 @@ namespace GUC.WorldObjects.VobGuiding
                 int id = stream.ReadUShort();
                 if (world.TryGetVob(id, out GuidedVob vob) && vob.guide == client)
                 {
-                    var oldPos = vob.GetPosition();
-                    var oldAng = vob.GetAngles();
+                    var oldPos = vob.Position;
+                    var oldAng = vob.Angles;
 
                     var pos = stream.ReadCompressedPosition();
                     var ang = stream.ReadCompressedAngles();

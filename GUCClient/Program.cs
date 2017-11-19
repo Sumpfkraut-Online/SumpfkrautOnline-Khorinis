@@ -193,7 +193,9 @@ namespace GUC
                 Process.Nop(0x4A059C, 7); // don't load dialogcams.zen
 
                 Process.Write(0x76D9E0, (byte)0xC3); // remove oCNPCStates.CloseCutscenes(); // made problems with npcs as menu3dvisuals
-                
+
+                Process.Write(0x4A45C0, (byte)0xC3); // remove zCAICamera::CheckKeys
+
                 Process.Nop(0x712E2C, 0x18); // don't let gothic make all items have collision
 
                 // double zFar limit

@@ -15,12 +15,11 @@ namespace GUC.Scripts.Arena
 
         public TOTeamInst(TOTeamDef def)
         {
-            if (def == null) throw new ArgumentNullException("def");
-            this.Def = def;
+            this.Def = def ?? throw new ArgumentNullException("def");
         }
 
         int spawnIndex = 0;
-        public ValueTuple<Vec3f, Vec3f> GetSpawnPoint()
+        public ValueTuple<Vec3f, Angles> GetSpawnPoint()
         {
             if (spawnIndex >= Def.SpawnPoints.Count())
                 spawnIndex = 0;

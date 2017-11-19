@@ -283,7 +283,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 isGhost = false;
             }
         }
-
+        
         public void OnTick(long now)
         {
             Update2nd1H();

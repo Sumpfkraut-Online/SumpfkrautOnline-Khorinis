@@ -39,7 +39,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Position & Direction Interpolation
-        
+
         protected virtual void Interpolate(Vec3f newPos, Angles newAng)
         {
             SetPosition(newPos);
@@ -67,7 +67,8 @@ namespace GUC.WorldObjects
 
         #region Environment
 
-        protected virtual void UpdateEnvironment()
+        /// <summary> Re-calculates the Environment property. (Is called once every frame by default) </summary>
+        public virtual void UpdateEnvironment()
         {
             this.environment = CalculateEnvironment(10);
         }
@@ -106,22 +107,19 @@ namespace GUC.WorldObjects
 
         #region Position & Direction
 
-        partial void pGetPosition()
+        /// <summary> Updates the position & angles property. (Is called once every frame by default) </summary>
+        public virtual void UpdateOrientation()
         {
-            // Updates the position from the correlating gothic-vob's position.
             if (this.gvob != null)
             {
-                this.pos = ((Vec3f)this.gvob.TrafoObjToWorld.Position).ClampToWorldLimits();
-            }
-        }
+                var trafo = this.gVob.TrafoObjToWorld;
+                this.pos.X = Vec3f.ClampToWorldLimits(trafo[3]);
+                this.pos.Y = Vec3f.ClampToWorldLimits(trafo[7]);
+                this.pos.Z = Vec3f.ClampToWorldLimits(trafo[11]);
 
-        partial void pGetAngles()
-        {
-            // Updates the direction from the correlating gothic-vob's direction.
-            if (this.gvob != null)
-            {
-                this.ang = (Angles)gvob.TrafoObjToWorld;
+                this.ang = new Angles(trafo);
             }
+
         }
 
         partial void pSetPosition()
@@ -189,6 +187,7 @@ namespace GUC.WorldObjects
         partial void pOnTick(long now)
         {
             UpdateEnvironment();
+            UpdateOrientation();
         }
     }
 }

@@ -299,7 +299,7 @@ namespace Gothic.Objects
             get { return Process.ReadFloat(Address + VarOffsets.visualAlpha); }
             set { Process.Write(Address + VarOffsets.visualAlpha, value); }
         }
-
+        
         public zMat4 TrafoObjToWorld
         {
             get { return new zMat4(Address + VarOffsets.trafoObjToWorld); }

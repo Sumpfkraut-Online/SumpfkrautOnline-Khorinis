@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const int MaxNPCCorpses = 100;
+        const int MaxNPCCorpses = 50;
 
         public bool AllowHit(NPCInst target)
         {
@@ -732,7 +732,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target.CurrentFightMove == FightMoves.Dodge)
                           realRange /= 3.0f; // decrease radius if target is backing up
 
-                      Vec3f targetPos = npc.GetPosition();
+                      Vec3f targetPos = npc.Position;
+                      if (target.ModelDef.Visual == "CRAWLER.MDS") // fixme
+                      {
+                          targetPos += npc.GetAtVector() * 50;
+                      }
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
 

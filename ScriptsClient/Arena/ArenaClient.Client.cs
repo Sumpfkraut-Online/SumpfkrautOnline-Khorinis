@@ -9,7 +9,7 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
-        public static bool DetectSchinken = true;
+        public static bool DetectSchinken = false;
 
         new public static ArenaClient Client { get { return (ArenaClient)ScriptClient.Client; } }
 

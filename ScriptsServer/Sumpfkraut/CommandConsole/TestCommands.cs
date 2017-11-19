@@ -417,7 +417,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             if (param.Length > 0)
             {
                 Arena.TeamMode.StartTO(param[0]);
-                msgSB.AppendFormat("Activated team objective mode {0}.", Arena.TeamMode.ActiveTODef);
+                msgSB.AppendFormat("Activated team objective mode {0}.", Arena.TeamMode.ActiveTODef.Name);
             }
             else { msgSB.Append("No name provided for the desired team objective mode!"); }
 

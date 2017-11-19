@@ -86,7 +86,7 @@ namespace GUC.Scripts.Arena
 
             var spawnPoint = player.Team.GetSpawnPoint();
             npc.SetHealth(100, 100);
-            npc.Spawn(world, spawnPoint.Item1, Angles.Null);
+            npc.Spawn(world, spawnPoint.Item1, spawnPoint.Item2);
             player.SetControl(npc);
         }
 
@@ -115,7 +115,13 @@ namespace GUC.Scripts.Arena
 
         public static void StartTO(string name)
         {
-            StartTO(TODef.TryGet(name));
+            var to = TODef.TryGet(name);
+            if (to == null)
+            {
+                Log.Logger.Log("StartTO '{0}' not found.", name);
+                return;
+            }
+            StartTO(to);
         }
 
         public static void StartTO (TODef def)
@@ -267,6 +273,7 @@ namespace GUC.Scripts.Arena
             if (classDef != null)
                 client.ClassDef = classDef;
 
+            client.KillCharacter();
             if (Phase == TOPhases.Warmup)
                 SpawnCharacter(client);
         }

@@ -24,7 +24,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
             Vec3f dest = this.Destination;
 
             var gVob = ((NPC)vob).gVob;
-            if (vob.GetPosition().GetDistance(dest) < 1)
+            if (vob.Position.GetDistance(dest) < 1)
             {
                 tracing = false;
                 return;

@@ -389,7 +389,7 @@ namespace GUC.Scripts.Arena.Controls
             float rotSpeed = 0;
             if (InputHandler.MouseDistY != 0)
             {
-                rotSpeed = Alg.Clamp(-maxLookupSpeed, InputHandler.MouseDistY * 0.3f * MouseSpeed, maxLookupSpeed);
+                rotSpeed = Alg.Clamp(-maxLookupSpeed, InputHandler.MouseDistY * 0.35f * MouseSpeed, maxLookupSpeed);
 
                 if (hero.Environment.WaterLevel >= 1)
                 {
@@ -397,7 +397,8 @@ namespace GUC.Scripts.Arena.Controls
                 }
                 else
                 {
-                    zCAICamera.CurrentCam.BestRotX += rotSpeed;
+                    var cam = zCAICamera.CurrentCam;
+                    cam.BestElevation = Alg.Clamp(-50, cam.BestElevation + rotSpeed, 85);
                 }
             }
 
@@ -412,7 +413,7 @@ namespace GUC.Scripts.Arena.Controls
                     turn = maxTurnSpeed;
                 else if (Math.Abs(InputHandler.MouseDistX) > ((rotSpeed > 0.5f && hero.Movement == NPCMovement.Stand) ? 18 : 2))
                 {
-                    turn = Alg.Clamp(-maxTurnSpeed, InputHandler.MouseDistX * 0.4f * MouseSpeed, maxTurnSpeed);
+                    turn = Alg.Clamp(-maxTurnSpeed, InputHandler.MouseDistX * 0.45f * MouseSpeed, maxTurnSpeed);
                 }
 
                 if (turn != 0)
@@ -463,7 +464,7 @@ namespace GUC.Scripts.Arena.Controls
 
             const zCWorld.zTraceRay traceType = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision | zCWorld.zTraceRay.Ignore_NPC;
 
-            Vec3f dir = enemy == null ? (Vec3f)hero.BaseInst.gVob.Direction : (enemy.GetPosition() - hero.GetPosition()).Normalise();
+            Vec3f dir = enemy == null ? (Vec3f)hero.BaseInst.gVob.Direction : (enemy.GetPosition() - start).Normalise();
             Vec3f ray = 500000f * dir;
 
             Vec3f end;
@@ -536,7 +537,6 @@ namespace GUC.Scripts.Arena.Controls
         static bool freeAim = false;
         static void FreeAim(bool down)
         {
-            const string CamModFreeAim = "CAMMODRANGED_FREEAIM";
 
             if (crosshair == null)
             {
@@ -547,6 +547,10 @@ namespace GUC.Scripts.Arena.Controls
 
             var hero = NPCInst.Hero;
 
+            string CamModFreeAim = "CAMMODRANGED_FREEAIM";
+            if (hero.ModelDef.Visual == "ORC.MDS")
+                CamModFreeAim += "_ORC";
+
             if (down && hero != null && !hero.IsDead && hero.IsInFightMode
                 && !hero.Environment.InAir && !hero.ModelInst.IsInAnimation())
             {
@@ -555,6 +559,7 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     if (!freeAim)
                     {
+
                         hero.SetMovement(NPCMovement.Stand);
                         NPCInst.Requests.Aim(hero, true);
 
@@ -562,11 +567,9 @@ namespace GUC.Scripts.Arena.Controls
                         oCNpcFocus.StopHighlightingFX();
                         enemy = null;
 
-                        crosshair.Show();
-
                         // zoom in
                         FOVTransition(60, TimeSpan.TicksPerSecond / 2);
-
+                        
                         zCAICamera.CamModRanged.Set(CamModFreeAim); // replace so gothic sets it to this while in bow mode
                         zCAICamera.CurrentCam.SetByScript(CamModFreeAim); // change camera
                         freeAim = true;
@@ -594,15 +597,17 @@ namespace GUC.Scripts.Arena.Controls
             if (InputHandler.MouseDistY != 0)
             {
                 const float maxSpeed = 1.0f;
-                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistY * 0.15f * MouseSpeed, maxSpeed);
-                zCAICamera.CurrentCam.BestRotX = Alg.Clamp(-30, zCAICamera.CurrentCam.BestRotX + rotSpeed, 90);
+                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistY * 0.16f * MouseSpeed, maxSpeed);
+
+                var cam = zCAICamera.CurrentCam;
+                cam.BestElevation = Alg.Clamp(-65, cam.BestElevation + rotSpeed, 85);
             }
 
             if (InputHandler.MouseDistX != 0)
             {
-                const float maxSpeed = 1.5f;
+                const float maxSpeed = 1.2f;
 
-                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistX * 0.18f * MouseSpeed, maxSpeed);
+                float rotSpeed = Alg.Clamp(-maxSpeed, InputHandler.MouseDistX * 0.20f * MouseSpeed, maxSpeed);
                 hero.BaseInst.gAI.Turn(rotSpeed, false);
             }
 
@@ -624,15 +629,23 @@ namespace GUC.Scripts.Arena.Controls
             {
                 aniID = gModel.GetAniIDFromAniName("S_CBOWAIM");
             }
-            else return;
+            else
+            {
+                if (freeAim)
+                    crosshair.Hide();
+                return;
+            }
+
+            if (freeAim)
+                crosshair.Show();
 
             Angles heroAngles = hero.GetAngles();
             Angles angles = Angles.FromAtVector(direction);
             float pitch = Angles.Difference(angles.Pitch, heroAngles.Pitch);
             float yaw = Angles.Difference(angles.Yaw, heroAngles.Yaw);
 
-            float x = Alg.Clamp(0, 0.5f - yaw / Angles.PI, 1);
-            float y = Alg.Clamp(0, 0.5f - pitch / Angles.PI, 1);
+            float x = 0.6f;// Alg.Clamp(0, 0.5f - yaw / Angles.PI, 1);
+            float y = Alg.Clamp(0, 0.47f - (pitch < 0 ? 1.2f : 1.0f) * pitch / Angles.PI, 1);
 
             hero.BaseInst.gAI.InterpolateCombineAni(x, y, aniID);
         }

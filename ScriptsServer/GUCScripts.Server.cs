@@ -106,7 +106,7 @@ namespace GUC.Scripts
 
     public partial class GUCScripts : ScriptInterface
     {
-        public const float BiggestNPCRadius = 90; // fixme
+        public const float BiggestNPCRadius = 150; // fixme
         public const float SmallestNPCRadius = 40;
 
         public WorldObjects.VobGuiding.TargetCmd GetTestCmd(BaseVob target)
@@ -194,8 +194,8 @@ namespace GUC.Scripts
             world = new WorldInst(null);
             world.Path = "ADDON-TEMPLE.ZEN";
             world.Create();
-            world.Clock.SetTime(new WorldTime(0, 12), 15.0f);
-            world.Clock.Start();
+            world.Clock.SetTime(new WorldTime(0, 12), 1.0f);
+            world.Clock.Stop();
             world.Barrier.StopTimer();
             WorldInst.List.Add(world);
         }
@@ -246,6 +246,15 @@ namespace GUC.Scripts
             npcDef.HeadTex = 0;
             npcDef.Create();
 
+            npcDef = new NPCDef("skeleton_lord");
+            npcDef.Name = "Skelett";
+            npcDef.Model = m;
+            npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0.ToString();
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "Ske_Head";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
             AddItems();
 
             AddCrawlers();
@@ -275,7 +284,7 @@ namespace GUC.Scripts
             itemDef.Name = "Templerrüstung";
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
-            itemDef.Protection = 30;
+            itemDef.Protection = 35;
             itemDef.VisualChange = "ARMOR_TPLM.ASC";
             itemDef.Model = m;
             itemDef.Create();
@@ -290,7 +299,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 45;
-            itemDef.Range = 65;
+            itemDef.Range = 70;
             itemDef.Create();
 
             m = new ModelDef("ITAR_garde_l", "ARMOR_GRDL.3DS");
@@ -348,7 +357,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Diego.asc";
-            itemDef.Protection = 30;
+            itemDef.Protection = 35;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -396,7 +405,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bdt_H.asc";
-            itemDef.Protection = 40;
+            itemDef.Protection = 35;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -407,7 +416,6 @@ namespace GUC.Scripts
             itemDef.Name = "Pfeil";
             itemDef.Material = ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.AmmoBow;
-            itemDef.Damage = 5;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -431,7 +439,7 @@ namespace GUC.Scripts
             itemDef.Name = "Kurzbogen";
             itemDef.Material = ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepBow;
-            itemDef.Damage = 40;
+            itemDef.Damage = 45;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -452,10 +460,10 @@ namespace GUC.Scripts
             itemDef.Name = "Leichte Armbrust";
             itemDef.Material = ItemMaterials.Wood;
             itemDef.ItemType = ItemTypes.WepXBow;
-            itemDef.Damage = 40;
+            itemDef.Damage = 45;
             itemDef.Model = m;
             itemDef.Create();
-            
+
             m = new ModelDef("heavy_xbow", "ItRw_Crossbow_H_02.mms");
             m.Create();
             itemDef = new ItemDef("heavy_xbow");
@@ -473,7 +481,7 @@ namespace GUC.Scripts
             itemDef.Name = "Malaks letzte Hose";
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
-            itemDef.Protection = 5;
+            itemDef.Protection = 10;
             itemDef.VisualChange = "Armor_Prisoner.asc";
             itemDef.Model = m;
             itemDef.Create();
@@ -486,8 +494,8 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep1H;
             itemDef.Material = ItemMaterials.Wood;
             itemDef.Model = m;
-            itemDef.Damage = 10;
-            itemDef.Range = 40;
+            itemDef.Damage = 15;
+            itemDef.Range = 50;
             itemDef.Create();
 
             // ORK WAFFEN
@@ -498,7 +506,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 50;
+            itemDef.Damage = 45;
             itemDef.Range = 80;
             itemDef.Create();
 
@@ -509,7 +517,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Damage = 45;
+            itemDef.Damage = 50;
             itemDef.Range = 100;
             itemDef.Create();
 
@@ -521,7 +529,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_MIL_M.asc";
-            itemDef.Protection = 30;
+            itemDef.Protection = 35;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -546,7 +554,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Leather;
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Bdt_M.asc";
-            itemDef.Protection = 30;
+            itemDef.Protection = 35;
             itemDef.Model = m;
             itemDef.Create();
 
@@ -997,9 +1005,9 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(0, 29));
             m.AddAniJob(aniJob);
 
-            m.Radius = 90;
-            m.HalfHeight = 90;
-            m.FistRange = 80;
+            m.Radius = 130;
+            m.HalfHeight = 80;
+            m.FistRange = 40;
             m.Create();
 
             // NPCs
@@ -1117,7 +1125,120 @@ namespace GUC.Scripts
 
             #endregion
 
-            m.Radius = 50;
+            #region XBow anis
+
+            #region Draw
+
+            aniJob1 = new ScriptAniJob("drawXbow_part0", "t_Run_2_Cbow");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 4) { { SpecialFrame.Draw, 4 } });
+
+            aniJob2 = new ScriptAniJob("drawXbow_part1", "s_Cbow");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("drawXbow_part2", "t_Cbow_2_CbowRun");
+            m.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 34));
+            aniJob2.NextAni = aniJob3;
+
+            aniJob = new ScriptAniJob("drawXbow_running", "t_Move_2_CBowMove", new ScriptAni(0, 20));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 7);
+            m.AddAniJob(aniJob);
+
+            aniJob1 = new ScriptAniJob("undrawXbow_part0", "t_CBowRun_2_CBow");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 34) { { SpecialFrame.Draw, 34 } });
+
+            aniJob2 = new ScriptAniJob("undrawXbow_part1", "s_CBow");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("undrawXbow_part2", "t_Cbow_2_Run");
+            m.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 4));
+            aniJob2.NextAni = aniJob3;
+
+            aniJob = new ScriptAniJob("undrawXbow_running", "t_CBowMove_2_Move", new ScriptAni(0, 20));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 14);
+            m.AddAniJob(aniJob);
+
+            #endregion
+
+            #region Fight
+
+            aniJob1 = new ScriptAniJob("aim_xbow", "t_cbowwalk_2_cbowaim");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 11));
+
+            aniJob2 = new ScriptAniJob("aiming_xbow", "s_CBowAim");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni());
+            aniJob1.NextAni = aniJob2;
+
+            // fixme: add s_bowshoot too?
+            aniJob1 = new ScriptAniJob("reload_xbow", "t_CBowReload");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 20));
+            aniJob1.NextAni = aniJob2;
+
+            aniJob1 = new ScriptAniJob("unaim_xbow", "t_CBowAim_2_CBowwalk");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 11));
+
+            #endregion
+
+            #endregion
+            #region Jump Anis
+
+            m.AddAniJob(new ScriptAniJob("jump_fwd", "t_Stand_2_Jump"));
+            m.AddAniJob(new ScriptAniJob("jump_run", "t_RunL_2_Jump"));
+
+
+            #endregion
+
+            #region Climb Anis
+
+            var ani1 = new ScriptAniJob("climb_low", "t_Stand_2_JumpUpLow", new ScriptAni(0, 10));
+            var ani2 = new ScriptAniJob("climb_low1", "s_JumpUpLow", new ScriptAni(0, 4));
+            var ani3 = new ScriptAniJob("climb_low2", "t_JumpUpLow_2_Stand", new ScriptAni(0, 15));
+
+            m.AddAniJob(ani1);
+            m.AddAniJob(ani2);
+            m.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+
+            ani1 = new ScriptAniJob("climb_mid", "t_Stand_2_JumpUpMid", new ScriptAni(0, 10));
+            ani2 = new ScriptAniJob("climb_mid1", "s_JumpUpMid", new ScriptAni(0, 2));
+            ani3 = new ScriptAniJob("climb_mid2", "t_JumpUpMid_2_Stand", new ScriptAni(0, 23));
+
+            m.AddAniJob(ani1);
+            m.AddAniJob(ani2);
+            m.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+
+            ani1 = new ScriptAniJob("climb_high", "t_Stand_2_JumpUp", new ScriptAni(0, 9));
+            ani2 = new ScriptAniJob("climb_high1", "t_JumpUp_2_Hang", new ScriptAni(0, 2));
+            ani3 = new ScriptAniJob("climb_high2", "t_Hang_2_Stand", new ScriptAni(0, 40));
+
+            m.AddAniJob(ani1);
+            m.AddAniJob(ani2);
+            m.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+            
+            #endregion
+
+            m.Radius = 80;
             m.HalfHeight = 100;
             m.Create();
 
@@ -1171,12 +1292,12 @@ namespace GUC.Scripts
             aniJob3.AddOverlayAni(new ScriptAni(0, 10), ov1);
             aniJob2.AddOverlayAni(new ScriptAni(0, 8), ov2);
             aniJob2.NextAni = aniJob3;
-            
+
             ScriptAniJob aniJob = new ScriptAniJob("drawbow_running", "t_Move_2_BowMove", new ScriptAni(0, 19));
             aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 7);
             model.AddAniJob(aniJob);
-            
+
             aniJob1 = new ScriptAniJob("undrawbow_part0", "t_BowRun_2_Bow");
             model.AddAniJob(aniJob1);
             aniJob1.SetDefaultAni(new ScriptAni(0, 12) { { SpecialFrame.Draw, 12 } });
@@ -1196,7 +1317,7 @@ namespace GUC.Scripts
             aniJob3.AddOverlayAni(new ScriptAni(0, 5), ov1);
             aniJob2.AddOverlayAni(new ScriptAni(0, 5), ov2);
             aniJob2.NextAni = aniJob3;
-            
+
             aniJob = new ScriptAniJob("undrawbow_running", "t_BowMove_2_Move", new ScriptAni(0, 19));
             aniJob.Layer = 2;
             aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 12);
@@ -1218,7 +1339,7 @@ namespace GUC.Scripts
             aniJob2.AddOverlayAni(new ScriptAni(), ov1);
             aniJob2.AddOverlayAni(new ScriptAni(), ov2);
             aniJob1.NextAni = aniJob2;
-            
+
             // fixme: add s_bowshoot too?
             aniJob1 = new ScriptAniJob("reload_bow", "t_BowReload");
             model.AddAniJob(aniJob1);

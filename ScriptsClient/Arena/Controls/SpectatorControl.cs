@@ -33,10 +33,10 @@ namespace GUC.Scripts.Arena.Controls
 
             var vob = GothicGlobals.Game.GetCameraVob();
             var pos = (Vec3f)vob.Position;
-            var dir = (Vec3f)vob.Direction;
+            var angles = (Angles)vob.TrafoObjToWorld;
 
-            Log.Logger.Log(pos + " " + dir);
-            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Vec3f({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, dir.X, dir.Y, dir.Z));
+            Log.Logger.Log(pos + " " + angles);
+            System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Angles({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, angles.Pitch, angles.Yaw, angles.Roll));
         }
 
         long lastUpdate = 0;

@@ -129,21 +129,11 @@ namespace GUC.WorldObjects
         protected Vec3f pos = new Vec3f(0, 0, 0);
         protected Angles ang = new Angles(0, 0, 0);
 
-        partial void pGetPosition();
         /// <summary> Gets the position of this Vob </summary>
-        public Vec3f GetPosition()
-        {
-            pGetPosition();
-            return pos;
-        }
-
-        partial void pGetAngles();
+        public Vec3f Position { get { return this.pos; } }
+        
         /// <summary> Gets the rotational angles of this vob. Pitch (up-down), Yaw (left-right), Roll (sideways). </summary>
-        public Angles GetAngles()
-        {
-            pGetAngles();
-            return ang;
-        }
+        public Angles Angles { get { return this.ang; } }
 
         /// <summary> Calculates the direction this vob is "heading at" from its angles. </summary>
         public Vec3f GetAtVector()

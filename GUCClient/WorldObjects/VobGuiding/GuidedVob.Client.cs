@@ -152,8 +152,8 @@ namespace GUC.WorldObjects.VobGuiding
             if (now < guidedNextUpdate)
                 return;
 
-            Vec3f pos = this.GetPosition();
-            Angles ang = this.GetAngles();
+            Vec3f pos = this.Position;
+            Angles ang = this.Angles;
             VobEnvironment env = this.Environment;
 
             if (now - guidedNextUpdate < TimeSpan.TicksPerSecond)

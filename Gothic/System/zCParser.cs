@@ -32,14 +32,64 @@ namespace Gothic.System
             return result;
         }
 
-        public void Reset()
-        {
-            Process.THISCALL<IntArg>(Address, 0x793100);
-        }
-
         public bool LoadDat(zString name)
         {
             return Process.THISCALL<IntArg>(Address, 0x78E900, name) == 0;
+        }
+
+        public bool SaveDat(string name)
+        {
+            bool result;
+            using (zString z = zString.Create(name))
+                result = SaveDat(z);
+            return result;
+        }
+
+        public bool SaveDat(zString name)
+        {
+            return Process.THISCALL<IntArg>(Address, 0x78E740, name) == 0;
+        }
+
+        public bool ParseSource(string name)
+        {
+            bool result;
+            using (zString z = zString.Create(name))
+                result = ParseSource(z);
+            return result;
+        }
+
+        public bool ParseSource(zString name)
+        {
+            return Process.THISCALL<IntArg>(Address, 0x78EE20, name) == 0;
+        }
+
+        public bool ParseFile(string name)
+        {
+            bool result;
+            using (zString z = zString.Create(name))
+                result = ParseFile(z);
+            return result;
+        }
+
+        public bool ParseFile(zString name)
+        {
+            return Process.THISCALL<IntArg>(Address, 0x78F660, name) == 0;
+        }
+
+        public void Reparse(string name)
+        {
+            using (zString z = zString.Create(name))
+                Reparse(z);
+        }
+
+        public void Reparse(zString name)
+        {
+            Process.THISCALL<IntArg>(Address, 0x794C30, name);
+        }
+
+        public void Reset()
+        {
+            Process.THISCALL<IntArg>(Address, 0x793100);
         }
 
         public int GetNumSymbols()

@@ -37,11 +37,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pDespawn()
         {
             // check the level for hits
-            Vec3f currentPos = this.GetPosition();
-            Vec3f direction = (this.Destination - currentPos).Normalise();
+            //Vec3f currentPos = this.GetPosition();
+            //Vec3f direction = (this.Destination - currentPos).Normalise();
 
-            Vec3f startPos = currentPos + direction * -100;
-            Vec3f ray = direction * 200;
+            Vec3f startPos = this.BaseInst.StartPosition;// currentPos + direction * -100;
+            Vec3f ray = (Destination - startPos).Normalise() * (Destination.GetDistance(startPos) + 100f);//direction * 200;
 
             using (zVec3 zStart = startPos.CreateGVec())
             using (zVec3 zRay = ray.CreateGVec())
@@ -62,7 +62,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     {
                         switch (poly.Material.MatGroup)
                         {
-                            case 0: // wood
+                            default:
+                            case 0: // undef
+                            case 3: // wood
                                 sfx = sfx_wo_wo;
                                 break;
                             case 1: // metal
@@ -71,18 +73,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                             case 2: // stone
                                 sfx = sfx_wo_st;
                                 break;
-                            case 3: // water
-                                sfx = sfx_wo_wa;
-                                break;
                             case 4: // earth
                                 sfx = sfx_wo_ea;
                                 break;
-                            default: // sand
+                            case 5: // water
+                                sfx = sfx_wo_wa;
+                                break;
+                            case 6: // snow
                                 sfx = sfx_wo_sa;
                                 break;
                         }
                     }
-                    SoundHandler.PlaySound3D(sfx, startPos);
+                    SoundHandler.PlaySound3D(sfx, Destination);
                 }
             }
         }

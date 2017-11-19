@@ -354,7 +354,7 @@ namespace GUC.Hooks
             if (File.Exists(path))
                 mem[Registers.EAX] = VDF_PHYSICAL;
         }
-        
+
         static void File_Open(Hook hook, RegisterMemory mem)
         {
             int arg0 = mem[0];

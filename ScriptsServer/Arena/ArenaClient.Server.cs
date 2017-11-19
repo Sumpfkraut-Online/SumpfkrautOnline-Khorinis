@@ -230,7 +230,7 @@ namespace GUC.Scripts.Arena
                 npc.ModelInst.ApplyOverlay(ov);
 
             var pair = spawnPositions.GetRandom();
-            npc.Spawn(WorldInst.List[0], pair.Item1, Angles.Null);
+            npc.Spawn(WorldInst.List[0], pair.Item1, pair.Item2);
             this.SetControl(npc);
         }
 
@@ -241,15 +241,16 @@ namespace GUC.Scripts.Arena
 
             KillCharacter();
             TeamMode.JoinTeam(this, null);
-            
+
             if (!team)
             {
-                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), Angles.Null);
+                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Angles(0.1151917f, -2.104867f, 0f));
             }
             else
             {
-                this.SetToSpectator(TeamMode.World, TeamMode.ActiveTODef.SpecPos.Item1, Angles.Null);
-            }  
+                var specPos = TeamMode.ActiveTODef.SpecPos;
+                this.SetToSpectator(TeamMode.World, specPos.Item1, specPos.Item2);
+            }
         }
 
         public void KillCharacter()
@@ -264,6 +265,8 @@ namespace GUC.Scripts.Arena
                     this.TODeaths++;
                     this.TOScore--;
                     this.Team.Score--;
+                    if (this.ID != -1)
+                        SendPointsMessage(-1);
                 }
             }
             else if (this.DuelEnemy != null)
@@ -274,15 +277,14 @@ namespace GUC.Scripts.Arena
             this.Character.SetHealth(0);
         }
 
-        static List<Vec3f, Vec3f> spawnPositions = new List<Vec3f, Vec3f>()
+        static List<Vec3f, Angles> spawnPositions = new List<Vec3f, Angles>()
         {
-            { new Vec3f(-3309.678f, -611.897f, 3652.568f), new Vec3f(0.4438523f, 0f, -0.8961f) },
-            { new Vec3f(-3748.823f, -631.83f, 4098.888f), new Vec3f(-0.9585717f, 0f, -0.2848513f) },
-            { new Vec3f(-4857.682f, -861.8788f, 4186.245f), new Vec3f(-0.2697614f, 0f, -0.9629272f) },
-            { new Vec3f(-5558.795f, -881.8917f, 4982.458f), new Vec3f(-0.7366884f, 0f, -0.6762323f) },
-            { new Vec3f(-5431.704f, -1086.897f, 2389.581f), new Vec3f(-0.6826372f, 0f, -0.7307576f) },
-            { new Vec3f(-7645.023f, -611.8591f, 3334.188f), new Vec3f(0.4344447f, 0f, -0.9006985f) },
-            { new Vec3f(-1778.532f, -1021.838f, 2775.348f), new Vec3f(-0.2376849f, 0f, 0.9713424f) },
+            { new Vec3f(-3309.678f, -611.8168f, 3652.568f), new Angles(0f, -2.81347f, 0f) },
+            { new Vec3f(-4083.023f, -631.8246f, 4190.007f), new Angles(0f, -2.680825f, 0f) },
+            { new Vec3f(-4813.559f, -861.8536f, 4222.456f), new Angles(0f, 2.823943f, 0f) },
+            { new Vec3f(-5527.228f, -881.897f, 4944.889f), new Angles(0f, 2.035054f, 0f) },
+            { new Vec3f(-7512.823f, -611.8413f, 3399.999f), new Angles(0f, 2.600541f, 0f) },
+            { new Vec3f(-5432.846f, -1086.882f, 2386.581f), new Angles(0f, 2.104867f, 0f) },
         };
     }
 }

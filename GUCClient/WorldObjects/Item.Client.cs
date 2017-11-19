@@ -37,8 +37,8 @@ namespace GUC.WorldObjects
             if (!dropped && NPC.Hero != null) // FIXME
             {
                 dropped = true;
-                Vec3f pos = this.GetPosition();
-                Angles ang = this.GetAngles();
+                Vec3f pos = this.Position;
+                Angles ang = this.Angles;
                 
                 NPC.Hero.gVob.DoDropVob(this.gVob);
 

@@ -39,8 +39,8 @@ namespace GUC.WorldObjects
 
         #region Spawn ranges
 
-        static float spawnInsertRange = 4000;
-        static float spawnRemoveRange = 5000;
+        static float spawnInsertRange = 8000;//4000;
+        static float spawnRemoveRange = 10000; //5000;
 
         public static float SpawnInsertRange
         {
@@ -205,7 +205,7 @@ namespace GUC.WorldObjects
             if (!vob.IsStatic)
             {
                 // find the cell for this vob
-                Vec2i coords = BigCell.GetCoords(vob.GetPosition());
+                Vec2i coords = BigCell.GetCoords(vob.Position);
                 int coord = BigCell.GetCoordinate(coords.X, coords.Y);
                 BigCell cell;
                 if (!cells.TryGetValue(coord, out cell))
@@ -238,7 +238,7 @@ namespace GUC.WorldObjects
         public void ForEachDynVobRougher(BaseVob vob, float radius, Action<BaseVob> action)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
-            this.ForEachDynVobRougher(vob.GetPosition(), radius, action);
+            this.ForEachDynVobRougher(vob.Position, radius, action);
         }
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace GUC.WorldObjects
         public void ForEachDynVobRougherPredicate(BaseVob vob, float radius, Predicate<BaseVob> predicate)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
-            this.ForEachDynVobRougherPredicate(vob.GetPosition(), radius, predicate);
+            this.ForEachDynVobRougherPredicate(vob.Position, radius, predicate);
         }
 
         /// <summary>
@@ -306,7 +306,7 @@ namespace GUC.WorldObjects
         public void ForEachClientRougher(BaseVob vob, float radius, Action<GameClient> action)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
-            this.ForEachClientRougher(vob.GetPosition(), radius, action);
+            this.ForEachClientRougher(vob.Position, radius, action);
         }
 
         /// <summary>
@@ -338,7 +338,7 @@ namespace GUC.WorldObjects
         public void ForEachClientRougherPredicate(BaseVob vob, float radius, Predicate<GameClient> predicate)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
-            this.ForEachClientRougherPredicate(vob.GetPosition(), radius, predicate);
+            this.ForEachClientRougherPredicate(vob.Position, radius, predicate);
         }
 
         /// <summary>
@@ -410,7 +410,7 @@ namespace GUC.WorldObjects
         internal void AddToNPCCells(NPC npc)
         {
             // find the cell for this npc
-            Vec2i coords = NPCCell.GetCoords(npc.GetPosition());
+            Vec2i coords = NPCCell.GetCoords(npc.Position);
             int coord = NPCCell.GetCoordinate(coords.X, coords.Y);
             NPCCell cell;
             if (!npcCells.TryGetValue(coord, out cell))
@@ -440,7 +440,7 @@ namespace GUC.WorldObjects
         {
             if (vob == null)
                 throw new ArgumentException("Vob is null!");
-            this.ForEachNPCRough(vob.GetPosition(), radius, action);
+            this.ForEachNPCRough(vob.Position, radius, action);
         }
 
         /// <summary>
@@ -473,7 +473,7 @@ namespace GUC.WorldObjects
         {
             if (vob == null)
                 throw new ArgumentException("Vob is null!");
-            this.ForEachNPCRoughPredicate(vob.GetPosition(), radius, predicate);
+            this.ForEachNPCRoughPredicate(vob.Position, radius, predicate);
         }
 
         /// <summary>

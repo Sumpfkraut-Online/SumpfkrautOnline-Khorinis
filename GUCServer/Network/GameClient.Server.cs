@@ -43,47 +43,72 @@ namespace GUC.Network
                 }
             }
 
+            static byte[] dynamics = null;
             public static void WriteDynamics(GameClient client)
             {
-                if (BaseVobInstance.GetCountDynamics() > 0 && ModelInstance.CountDynamics > 0)
+                if (dynamics == null)
                 {
-                    PacketWriter strm = GameServer.SetupStream(ServerMessages.DynamicsMessage);
+                    if (BaseVobInstance.GetCountDynamics() > 0 && ModelInstance.CountDynamics > 0)
+                    {
+                        PacketWriter strm = new PacketWriter();
 
-                    // MODELS
-                    if (ModelInstance.CountDynamics > 0)
-                    {
-                        strm.Write(true);
-                        strm.Write((ushort)ModelInstance.CountDynamics);
-                        ModelInstance.ForEachDynamic(model =>
+                        // MODELS
+                        if (ModelInstance.CountDynamics > 0)
                         {
-                            model.WriteStream(strm);
-                        });
-                    }
-                    else
-                    {
-                        strm.Write(false);
-                    }
-
-                    // INSTANCES
-                    if (BaseVobInstance.GetCountDynamics() > 0)
-                    {
-                        strm.Write(true);
-                        for (int i = 0; i < (int)VobTypes.Maximum; i++)
-                        {
-                            strm.Write((ushort)BaseVobInstance.GetCountDynamicsOfType((VobTypes)i));
-                            BaseVobInstance.ForEachDynamicOfType((VobTypes)i, inst =>
+                            strm.Write(true);
+                            strm.Write((ushort)ModelInstance.CountDynamics);
+                            ModelInstance.ForEachDynamic(model =>
                             {
-                                inst.WriteStream(strm);
+                                model.WriteStream(strm);
                             });
                         }
+                        else
+                        {
+                            strm.Write(false);
+                        }
+
+                        // INSTANCES
+                        if (BaseVobInstance.GetCountDynamics() > 0)
+                        {
+                            strm.Write(true);
+                            for (int i = 0; i < (int)VobTypes.Maximum; i++)
+                            {
+                                strm.Write((ushort)BaseVobInstance.GetCountDynamicsOfType((VobTypes)i));
+                                BaseVobInstance.ForEachDynamicOfType((VobTypes)i, inst =>
+                                {
+                                    inst.WriteStream(strm);
+                                });
+                            }
+                        }
+                        else
+                        {
+                            strm.Write(false);
+                        }
+
+                        byte[] arr = strm.CopyData();
+                        int decomp = arr.Length;
+                        using (var ms = new System.IO.MemoryStream(decomp))
+                        {
+                            using (var ds = new System.IO.Compression.DeflateStream(ms, System.IO.Compression.CompressionMode.Compress))
+                            {
+                                ds.Write(arr, 0, decomp);
+                            }
+                            arr = ms.ToArray();
+                        }
+
+                        strm.Reset();
+                        strm.Write((byte)ServerMessages.DynamicsMessage);
+                        strm.Write(decomp);
+                        strm.Write(arr, 0, arr.Length);
+                        dynamics = strm.CopyData();
                     }
                     else
                     {
-                        strm.Write(false);
+                        return;
                     }
-
-                    client.Send(strm, NetPriority.Low, NetReliability.Reliable, '\0');
                 }
+                client.Send(dynamics, dynamics.Length, NetPriority.Low, NetReliability.Reliable, '\0');
+
             }
 
             #region Spectator
@@ -124,7 +149,7 @@ namespace GUC.Network
                 if (client.character != null)
                 {
                     client.character.client = client;
-                    client.JoinWorld(client.character.World, client.character.GetPosition());
+                    client.JoinWorld(client.character.World, client.character.Position);
                     client.character.SpawnPlayer();
                 }
                 else if (client.specWorld != null)
@@ -361,7 +386,7 @@ namespace GUC.Network
 
                 visibleVobs.ForEach(vob =>
                 {
-                    if (vob.GetPosition().GetDistancePlanar(pos) > World.SpawnRemoveRange)
+                    if (vob.Position.GetDistancePlanar(pos) > World.SpawnRemoveRange)
                     {
                         stream.Write((ushort)vob.ID);
 
@@ -396,7 +421,7 @@ namespace GUC.Network
                 {
                     if (!visibleVobs.Contains(vob.ID))
                     {
-                        if (pos.GetDistancePlanar(vob.GetPosition()) < World.SpawnInsertRange)
+                        if (pos.GetDistancePlanar(vob.Position) < World.SpawnInsertRange)
                         {
                             AddVisibleVob(vob);
                             vob.AddVisibleClient(this);
@@ -412,7 +437,7 @@ namespace GUC.Network
             {
                 world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
                 {
-                    if (pos.GetDistancePlanar(vob.GetPosition()) < World.SpawnInsertRange)
+                    if (pos.GetDistancePlanar(vob.Position) < World.SpawnInsertRange)
                     {
                         AddVisibleVob(vob);
                         vob.AddVisibleClient(this);
@@ -451,7 +476,7 @@ namespace GUC.Network
             // check for vobs
             world.ForEachDynVobRougher(pos, World.SpawnInsertRange, vob =>
             {
-                if (vob.GetPosition().GetDistance(pos) < World.SpawnInsertRange)
+                if (vob.Position.GetDistance(pos) < World.SpawnInsertRange)
                 {
                     AddVisibleVob(vob);
                     vob.AddVisibleClient(this);
@@ -635,7 +660,7 @@ namespace GUC.Network
                             npc.Cell.AddClient(this);
                         }
 
-                        UpdateVobList(npc.World, npc.GetPosition());
+                        UpdateVobList(npc.World, npc.Position);
                         Messages.WritePlayerControl(this, npc);
                     }
 
@@ -671,7 +696,7 @@ namespace GUC.Network
                         }
 
                         this.character.client = null;
-                        UpdateVobList(npc.World, npc.GetPosition());
+                        UpdateVobList(npc.World, npc.Position);
 
                         Messages.WritePlayerControl(this, npc);
                     }

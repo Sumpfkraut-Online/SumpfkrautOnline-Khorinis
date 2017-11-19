@@ -37,16 +37,40 @@ namespace Gothic.Objects
             get { return new zString(Address + 0x26C); }
         }
 
-        public float BestRotX
+        public float BestElevation
         {
             get { return Process.ReadFloat(Address + 0x38); }
             set { Process.Write(Address + 0x38, value); }
         }
 
-        public float BestRotY
+        public float BestAzimuth
         {
             get { return Process.ReadFloat(Address + 0x44); }
             set { Process.Write(Address + 0x44, value); }
+        }
+
+        public float BestRotZ
+        {
+            get { return Process.ReadFloat(Address + 0x50); }
+            set { Process.Write(Address + 0x50, value); }
+        }
+
+        public float TargetOffsetX
+        {
+            get { return Process.ReadFloat(Address + 0x5C); }
+            set { Process.Write(Address + 0x5C, value); }
+        }
+
+        public float TargetOffsetY
+        {
+            get { return Process.ReadFloat(Address + 0x60); }
+            set { Process.Write(Address + 0x60, value); }
+        }
+
+        public float TargetOffsetZ
+        {
+            get { return Process.ReadFloat(Address + 0x64); }
+            set { Process.Write(Address + 0x64, value); }
         }
 
         public void SetByScript(string instance)

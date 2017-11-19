@@ -23,7 +23,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
             if (((NPC)vob).IsDead)
                 return;
 
-            if (vob.GetPosition().GetDistance(this.destination) < 50)
+            if (vob.Position.GetDistance(this.destination) < 50)
                 return;
 
             var gVob = vob.gVob;

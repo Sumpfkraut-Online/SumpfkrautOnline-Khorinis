@@ -181,7 +181,7 @@ namespace GUC.Types
             float yawSin = (float)Math.Sin(Yaw);
             float yawCos = (float)Math.Cos(Yaw);
 
-            return new Vec3f(rollCos * yawCos, rollCos * yawSin, -rollSin);
+            return new Vec3f(rollCos * yawCos, -rollSin, rollCos * yawSin);
         }
 
         public Vec3f ToUpVector()
@@ -196,8 +196,8 @@ namespace GUC.Types
             float pitchCos = (float)Math.Sin(Pitch); // (float)Math.Cos(Pitch - PI/2);
 
             return new Vec3f(pitchSin * rollSin * yawCos - pitchCos * yawSin,
-                             pitchSin * rollSin * yawSin + pitchCos * yawCos,
-                             pitchSin * rollCos);
+                             pitchSin * rollCos,
+                             pitchSin * rollSin * yawSin + pitchCos * yawCos);
         }
 
         public Vec3f ToAtVector()
@@ -212,8 +212,8 @@ namespace GUC.Types
             float pitchCos = (float)Math.Sin(Pitch); // (float)Math.Cos(Pitch - PI/2);
 
             return new Vec3f(pitchCos * rollSin * yawCos + pitchSin * yawSin,
-                             pitchCos * rollSin * yawSin - pitchSin * yawCos,
-                             pitchCos * rollCos);
+                             pitchCos * rollCos,
+                             pitchCos * rollSin * yawSin - pitchSin * yawCos);
         }
 
         #endregion

@@ -213,7 +213,7 @@ namespace GUC.WorldObjects
 
                 visibleClients.ForEach(client =>
                 {
-                    if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) > World.SpawnRemoveRange)
+                    if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.Position) > World.SpawnRemoveRange)
                     {
                         client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
                         client.RemoveVisibleVob(this);
@@ -233,7 +233,7 @@ namespace GUC.WorldObjects
                 {
                     if (!visibleClients.Contains(client.ID))
                     {
-                        if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) < World.SpawnInsertRange)
+                        if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.Position) < World.SpawnInsertRange)
                         {
                             AddVisibleClient(client);
                             client.AddVisibleVob(this);
@@ -253,7 +253,7 @@ namespace GUC.WorldObjects
             {
                 this.world.ForEachClientRougher(this.pos, World.SpawnInsertRange, client =>
                 {
-                    if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.GetPosition()) < World.SpawnInsertRange)
+                    if (this.pos.GetDistance(client.IsSpectating ? client.SpecGetPos() : client.Character.Position) < World.SpawnInsertRange)
                     {
                         AddVisibleClient(client);
                         client.AddVisibleVob(this);

@@ -175,8 +175,8 @@ namespace GUC.WorldObjects
             var gVob = vob.gVob;
 
             // update position & direction one last time
-            vob.GetPosition();
-            vob.GetAngles();
+            //vob.UpdateOrientation();
+            //vob.UpdateEnvironment();
 
             // remove gothic-object from the gothic-world
             gWorld.RemoveVob(gVob);

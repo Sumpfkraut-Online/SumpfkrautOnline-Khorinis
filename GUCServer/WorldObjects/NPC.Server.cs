@@ -81,8 +81,8 @@ namespace GUC.WorldObjects
                 int id = stream.ReadUShort();
                 if (world.TryGetVob(id, out NPC npc) && (npc.guide == client || npc.client == client))
                 {
-                    var oldPos = npc.GetPosition();
-                    var oldAng = npc.GetAngles();
+                    var oldPos = npc.Position;
+                    var oldAng = npc.Angles;
                     var oldMovement = npc.Movement;
 
                     var pos = stream.ReadCompressedPosition();

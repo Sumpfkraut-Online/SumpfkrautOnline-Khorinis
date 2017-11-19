@@ -27,6 +27,15 @@ namespace GUC.Network
             {
                 Logger.Log("Read dynamic instances: {0} Bytes.", stream.Length);
 
+                int decomp = stream.ReadInt();
+                byte[] data = new byte[decomp];
+                using (var ms = new System.IO.MemoryStream(stream.GetRemainingData()))
+                using (var ds = new System.IO.Compression.DeflateStream(ms, System.IO.Compression.CompressionMode.Decompress))
+                {
+                    ds.Read(data, 0, decomp);
+                }
+                stream.Load(data, decomp);
+
                 if (stream.ReadBit())
                 {
                     int modelCount = stream.ReadUShort();
@@ -66,7 +75,7 @@ namespace GUC.Network
                 stream.Write(signature.GetMD5Hash(), 0, 16);
                 GameClient.Send(stream, NetPriority.Immediate, NetReliability.Reliable);
             }
-            
+
             public static void ReadScriptVob(PacketReader stream)
             {
                 int id = stream.ReadUShort();
@@ -604,7 +613,7 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         #region Hero
 
         void ReadPlayerControlMessage(PacketReader stream)
@@ -654,7 +663,7 @@ namespace GUC.Network
         }
 
         #endregion
-        
+
         internal static PacketWriter SetupStream(ClientMessages id)
         {
             packetWriter.Reset();
