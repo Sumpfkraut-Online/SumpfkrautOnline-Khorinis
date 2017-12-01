@@ -23,6 +23,7 @@ namespace GUC.WorldObjects.VobGuiding
         public GuideCmd CurrentCommand { get { return this.currentCmd; } }
 
         internal GameClient guide;
+        public GameClient Guide { get { return this.guide; } }
 
         #endregion
 

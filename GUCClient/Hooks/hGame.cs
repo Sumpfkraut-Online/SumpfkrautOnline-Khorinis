@@ -133,11 +133,12 @@ namespace GUC.Hooks
         {
             try
             {
+                spikeWatch.Restart();
+
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
                 GameClient.Update();
                 InputHandler.Update();
-                SoundHandler.Update3DSounds();
 
                 if (!ShowConnectionAttempts())
                 {
@@ -158,6 +159,18 @@ namespace GUC.Hooks
                     NPC.UpdateHero(GameTime.Ticks);
                 }
 
+                SoundHandler.Update3DSounds();
+
+                spikeWatch.Stop();
+                if (spikeNextTime < GameTime.Ticks)
+                {
+                    spikeLongest = 0;
+                    spikeNextTime = GameTime.Ticks + 3 * TimeSpan.TicksPerSecond;
+                }
+
+                if (spikeLongest < spikeWatch.Elapsed.Ticks)
+                    spikeLongest = spikeWatch.Elapsed.Ticks;
+
                 if (fpsWatch.IsRunning)
                 {
                     long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
@@ -173,5 +186,10 @@ namespace GUC.Hooks
                 Logger.LogError(e);
             }
         }
+
+        static System.Diagnostics.Stopwatch spikeWatch = new System.Diagnostics.Stopwatch();
+        static long spikeLongest = 0;
+        static long spikeNextTime = 0;
+        public static long SpikeLongest { get { return spikeLongest; } }
     }
 }

@@ -37,8 +37,7 @@ namespace GUC.Hooks
             try
             {
                 int viewAddr = rmem[Registers.ECX];
-                zCVob vob;
-                if (VobRenderList.TryGetValue(viewAddr, out vob))
+                if (VobRenderList.TryGetValue(viewAddr, out zCVob vob))
                 {
                     zCView view = new zCView(viewAddr);
                     if (rndrWorld == null)
@@ -55,7 +54,7 @@ namespace GUC.Hooks
                         camVob = zCVob.Create();
                         rndrWorld.AddVob(camVob);
                         camera.CamVob = camVob;
-                   }
+                    }
 
                     //RenderItem(rndrWorld, view, 0);
 
@@ -88,7 +87,7 @@ namespace GUC.Hooks
                     rndrWorld.Render(camera);
 
                     zCEventManager.DisableEventManagers = false;
-                    
+
                     rndrWorld.RemoveVobSubTree(vob);
 
                     zCCamera.ActiveCamera = oldCam;

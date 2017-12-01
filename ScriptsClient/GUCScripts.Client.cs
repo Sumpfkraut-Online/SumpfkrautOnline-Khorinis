@@ -44,7 +44,7 @@ namespace GUC.Scripts
             InputControl.UpdateControls(ticks);
             OnUpdate?.Invoke(ticks);
             CheckMusic();
-            CheckPosition();
+            //CheckPosition();
         }
 
         SoundInstance menuTheme = null;

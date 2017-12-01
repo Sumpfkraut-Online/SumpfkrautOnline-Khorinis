@@ -27,7 +27,7 @@ namespace Gothic.Objects
             hc_bow = 484,
             hc_crossbow = 488,
 
-            targetVob = 0x4D4,
+            rbtTargetVob = 0x4D4,
             rbtBitfield = 0x4C4,
             rbtTimer = 0x4EC,
             targetPos = 0x4C8,
@@ -381,13 +381,13 @@ namespace Gothic.Objects
             set { Process.Write(Address + VarOffsets.rbtTimer, value); }
         }
 
-        public zCVob TargetVob
+        public zCVob RbtTargetVob
         {
-            get { return new zCVob(Process.ReadInt(Address + VarOffsets.targetVob)); }
-            set { Process.Write(Address + VarOffsets.targetVob, value.Address); }
+            get { return new zCVob(Process.ReadInt(Address + VarOffsets.rbtTargetVob)); }
+            set { Process.Write(Address + VarOffsets.rbtTargetVob, value.Address); }
         }
 
-        public zVec3 TargetPos
+        public zVec3 RbtTargetPos
         {
             get { return new zVec3(Address + VarOffsets.targetPos); }
         }

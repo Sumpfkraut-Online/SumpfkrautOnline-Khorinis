@@ -193,8 +193,8 @@ namespace GUC.Scripts.Arena
                 };
                 npcDefs = new List<TOClassDef>()
                 {
-                    new TOClassDef("Klauen-Minecrawler", "minecrawler", null, null, prot:37, dam:52),
-                    new TOClassDef("Panzer-Minecrawler", "minecrawler_warrior", null, null, prot:42, dam:47),
+                    new TOClassDef("Klauen-Minecrawler", "minecrawler", null, null, prot:35, dam:50),
+                    new TOClassDef("Panzer-Minecrawler", "minecrawler_warrior", null, null, prot:40, dam:45),
                 };
                 to.AddTeam("Schachtcrew", spawnPoints, npcDefs, ColorRGBA.Orange);
 

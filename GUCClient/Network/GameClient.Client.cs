@@ -278,32 +278,17 @@ namespace GUC.Network
                 lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
-                /*
+                
                 if (World.Current != null)
                 {
-                    devIndex++;
+                    devIndex = 8;
+                    devInfo.Texts[devIndex++].Text = "Spike: " + Hooks.hGame.SpikeLongest / TimeSpan.TicksPerMillisecond + "ms";
                     devInfo.Texts[devIndex++].Text = World.Current.VobCount + " Vobs";
                     devInfo.Texts[devIndex++].Text = Client.guidedIDs.Count + " guided";
-
-                    if (Client.character != null)
-                    {
-                        devInfo.Texts[devIndex++].Text = "Pos: " + Client.character.GetPosition();
-                        devInfo.Texts[devIndex++].Text = "Dir: " + Client.character.GetDirection();
-                    }
-                    else
-                    {
-                        devInfo.Texts[devIndex++].Text = "Pos: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Position);
-                        devInfo.Texts[devIndex++].Text = "Dir: " + new Vec3f(oCGame.GetCameraVob().TrafoObjToWorld.Direction);
-                    }
+                    
                     devInfo.Texts[devIndex++].Text = "Weather: " + World.Current.WeatherCtrl.CurrentWeight + " " + World.Current.Clock.Time.ToString(false);
                     devInfo.Texts[devIndex++].Text = "Barrier: " + World.Current.BarrierCtrl.CurrentWeight + " " + World.Current.BarrierCtrl.EndWeight;
-
-                    if (Client.character != null)
-                    {
-                        devInfo.Texts[devIndex++].Text = Client.character.Movement.ToString();
-                        devInfo.Texts[devIndex++].Text = Client.character.gVob.FocusVob.Address.ToString("X4");
-                    }
-                }*/
+                }
             }
 
             #endregion

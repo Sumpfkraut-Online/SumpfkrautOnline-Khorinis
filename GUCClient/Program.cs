@@ -122,7 +122,7 @@ namespace GUC
 
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-                Process.AddHook(Test, 0x656205, 6);
+               // Process.AddHook(Test, 0x656205, 6);
 
                 // add hooks
                 hFileSystem.AddHooks();

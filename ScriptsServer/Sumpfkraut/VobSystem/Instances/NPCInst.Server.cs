@@ -12,13 +12,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     public partial class NPCInst
     {
         const int MaxNPCCorpses = 50;
-
+        
         public bool AllowHit(NPCInst target)
         {
             if (this.TeamID == -1)
             {                    
-                if (this.IsPlayer && target.IsPlayer
-                    && ((Arena.ArenaClient)Client).DuelEnemy == target.Client)
+                if (!target.IsPlayer || (this.IsPlayer && ((Arena.ArenaClient)Client).DuelEnemy == target.Client))
                 {
                     return true;
                 }
@@ -68,8 +67,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             var env = this.Environment;
             if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
-                ((Arena.ArenaClient)this.Client).KillCharacter();
-
+                if (this.IsPlayer) ((Arena.ArenaClient)this.Client).KillCharacter();
+                else this.SetHealth(0);
         }
 
         #region Constructors
@@ -746,12 +745,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (CurrentFightMove == FightMoves.Left || CurrentFightMove == FightMoves.Right)
                       {
                           hitHeight = target.ModelDef.HalfHeight;
-                          hitYaw = Angles.PI * 0.9f;
+                          hitYaw = Angles.PI * 0.4f;
                       }
                       else
                       {
                           hitHeight = target.ModelDef.HalfHeight + this.ModelDef.HalfHeight;
-                          hitYaw = Angles.PI * 0.25f;
+                          hitYaw = Angles.PI * 0.2f;
                       }
 
                       if (Math.Abs(targetPos.Y - attPos.Y) > hitHeight)

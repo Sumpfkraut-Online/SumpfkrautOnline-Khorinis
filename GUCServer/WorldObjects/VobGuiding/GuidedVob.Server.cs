@@ -234,6 +234,15 @@ namespace GUC.WorldObjects.VobGuiding
             }
 
             this.guide = client;
+
+            /*if (guide == null || guide.Character == null)
+            {
+                SetGuideCommand(null);
+            }
+            else
+            {
+                SetGuideCommand(Scripting.ScriptManager.Interface.GetTestCmd(this.guide.Character));
+            }*/
         }
     }
 }

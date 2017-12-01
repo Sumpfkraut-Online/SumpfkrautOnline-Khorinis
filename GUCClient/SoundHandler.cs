@@ -125,7 +125,7 @@ namespace GUC
         static readonly List<ActiveSound> locSounds = new List<ActiveSound>();
         static readonly List<zCVob> sndVobs = new List<zCVob>();
 
-        public static void PlaySound3D(SoundDefinition sound, BaseVob vob, float range = -1.0f, float volume = 1.0f)
+        public static void PlaySound3D(SoundDefinition sound, BaseVob vob, float range = 2500, float volume = 1.0f)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");
@@ -146,7 +146,7 @@ namespace GUC
             vobSounds.Add(new ActiveSound(idPtr, param, sound));
         }
 
-        public static void PlaySound3D(SoundDefinition sound, Vec3f location, float range = -1.0f, float volume = 1.0f)
+        public static void PlaySound3D(SoundDefinition sound, Vec3f location, float range = 2500, float volume = 1.0f)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");
@@ -182,10 +182,14 @@ namespace GUC
             locSounds.Add(new ActiveSound(idPtr, param, sound, vob));
         }
 
+        static int frame = 0;
         internal static void Update3DSounds()
         {
             try
             {
+                if (frame % 3 == 0) // only every third frame
+                    return;
+
                 for (int i = vobSounds.Count - 1; i >= 0; i--)
                 {
                     var tup = vobSounds[i];
@@ -215,6 +219,8 @@ namespace GUC
                         locSounds.RemoveAt(i);
                     }
                 }
+
+                frame++;
             }
             catch (Exception e)
             {

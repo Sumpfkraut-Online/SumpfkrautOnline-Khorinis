@@ -106,7 +106,7 @@ namespace GUC.Scripts
 
     public partial class GUCScripts : ScriptInterface
     {
-        public const float BiggestNPCRadius = 150; // fixme
+        public const float BiggestNPCRadius = 150; // improveme
         public const float SmallestNPCRadius = 40;
 
         public WorldObjects.VobGuiding.TargetCmd GetTestCmd(BaseVob target)
@@ -169,8 +169,28 @@ namespace GUC.Scripts
             world.Path = "G1-OLDCAMP.ZEN";
             world.Create();
             world.Clock.SetTime(new WorldTime(0, 8), 15.0f);
-            world.Clock.Start();
+            world.Clock.Stop();
             WorldInst.List.Add(world);
+
+            Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
+            var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
+            aiManager01.Start();
+
+            for (int i = 0; i < 100; i++)
+            {
+                NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
+                if (testNPC.ModelDef.TryGetOverlay("humans_skeleton", out ScriptOverlay ov))
+                    testNPC.ModelInst.ApplyOverlay(ov);
+                testNPC.BaseInst.SetNeedsClientGuide(true);
+                testNPC.Spawn(world, Randomizer.GetVec3fRad(new Vec3f(0, 1000, 0), 25000), Angles.Null);      
+                
+                var aiMemory = new Sumpfkraut.AI.SimpleAI.AIMemory();
+                var aiRoutine = new Sumpfkraut.AI.SimpleAI.AIRoutines.SimpleAIRoutine();
+                var aiPersonality = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(20000f, 1f);
+                aiPersonality.Init(aiMemory, aiRoutine);
+                var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
+                aiManager01.SubscribeAIAgent(aiAgent);
+            }
 
             world = new WorldInst(null);
             world.Path = "G1-OLDMINE.ZEN";
@@ -212,6 +232,8 @@ namespace GUC.Scripts
             AddClimbAnis(m);
             AddBowAnis(m);
             AddXBowAnis(m);
+            
+            m.AddOverlay(new ScriptOverlay("Humans_Skeleton", "Humans_Skeleton.mds"));
 
             m.Radius = 40;
             m.HalfHeight = 90;
@@ -1235,7 +1257,7 @@ namespace GUC.Scripts
 
             ani1.NextAni = ani2;
             ani2.NextAni = ani3;
-            
+
             #endregion
 
             m.Radius = 80;
