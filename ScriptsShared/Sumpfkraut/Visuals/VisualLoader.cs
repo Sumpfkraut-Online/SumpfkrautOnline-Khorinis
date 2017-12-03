@@ -21,7 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         partial void pLoad (bool useAsyncMode);
         public override void Load (bool useAsyncMode)
         {
-            throw new NotImplementedException();
+            pLoad(useAsyncMode);
         }
 
         partial void pSave (bool useAsyncMode);

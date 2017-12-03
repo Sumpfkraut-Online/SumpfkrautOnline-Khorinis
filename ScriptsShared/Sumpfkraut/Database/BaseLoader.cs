@@ -106,8 +106,9 @@ namespace GUC.Scripts.Sumpfkraut.Database
             }
         }
 
-        public string PrepareLoadCommand (string tableName, List<ColumnGetTypeInfo> getTypeInfos, 
-            string additionalSQLSort = null)
+        public string PrepareLoadCommand (string tableName, List<ColumnGetTypeInfo> getTypeInfos,
+            string where = "1",
+            string orderBy = "")
         {
             StringBuilder commandSB = new StringBuilder();
 
@@ -126,8 +127,15 @@ namespace GUC.Scripts.Sumpfkraut.Database
                 }
             }
 
-            commandSB.AppendFormat(" FROM {0} WHERE 1 ORDER BY {0}ID ASC", tableName);
-            if (additionalSQLSort != null) { commandSB.Append(additionalSQLSort); }
+            commandSB.Append(" FROM ").Append(tableName);
+            if (where is null || where.Length == 0)
+            {
+                commandSB.Append(" WHERE ").Append(where);
+            }
+            if (orderBy is null || orderBy.Length == 0)
+            {
+                commandSB.Append(" ORDER BY ").Append(orderBy);
+            }
             commandSB.Append(";");
 
             return commandSB.ToString();

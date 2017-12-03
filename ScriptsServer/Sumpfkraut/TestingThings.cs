@@ -19,13 +19,14 @@ using System.Drawing;
 using GUC.Scripts.Sumpfkraut.Utilities;
 using System.Threading;
 using GUC.Scripts.Sumpfkraut.Utilities.Functions;
+using static GUC.Scripts.Sumpfkraut.Database.DBAgent;
 
 namespace GUC.Scripts.Sumpfkraut
 {
     public class TestingThings : ExtendedObject
     {
 
-        public static void Init ()
+        public static void Init()
         {
             Logger.Log("****** TestingThings *************************************");
 
@@ -341,14 +342,6 @@ namespace GUC.Scripts.Sumpfkraut
 
 
 
-            Logger.Print(TestTable.Instance.GetTableName());
-
-
-
-
-
-
-
 
             //ChangeInitInfo info;
             //BaseChangeInit.TryGetChangeInitInfo(ChangeType.Effect_Name_Set, out info);
@@ -370,12 +363,42 @@ namespace GUC.Scripts.Sumpfkraut
             //});
 
 
+
+
+            //List<string> cmdList = new List<string> { "SELECT * FROM ModelDef;" };
+            //DBAgent agentOrange = new DBAgent(@"Data Source=C:\Programs\Games\Gothic2_GMPA\Gothic II\system\UntoldChapters\SumpfkrautOnline\Server\TESTME.db;Version=3;", cmdList, false, false);
+            //agentOrange.SetObjName("Agent Orange");
+            //agentOrange.FinishedQueue += (GUC.Utilities.Threading.AbstractRunnable sender,
+            //FinishedQueueEventHandlerArgs e) => 
+            //{
+            //    var results = e.GetSQLResults();
+            //    foreach (var result in results)
+            //    {
+            //        foreach (var row in result)
+            //        {
+            //            foreach (var col in row)
+            //            {
+            //                agentOrange.Print(col);
+            //            }
+            //        }
+            //    }
+            //};
+            //agentOrange.Start();
+
+
+            var dataSource = @"Data Source=C:\Programs\Games\Gothic2_GMPA\Gothic II\system\UntoldChapters\SumpfkrautOnline\Server\TESTME.db;Version=3;";
+
+            var vl = new Visuals.VisualLoader(dataSource,
+                Visuals.VisualLoader.DBStructure,
+                Visuals.VisualLoader.DBTableLoadOrder);
+            vl.Load(false);
+
+
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
-
     }
 
- 
+
 
 
 }

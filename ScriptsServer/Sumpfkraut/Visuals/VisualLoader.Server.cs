@@ -17,7 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             new Dictionary<string, List<ColumnGetTypeInfo>>()
         {
             {
-                "ScriptAni", new List<DBTables.ColumnGetTypeInfo>
+                "ScriptAni", new List<ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ScriptAniID",        SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("FPS",                SQLiteGetType.GetInt32),
@@ -27,17 +27,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
             },
             {
-                "ScriptOverlay", new List<DBTables.ColumnGetTypeInfo>
+                "ScriptOverlay", new List<ColumnGetTypeInfo>
                 {
-                    new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
-                    new ColumnGetTypeInfo("ModelDefID",         SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("CodeName",           SQLiteGetType.GetString),
                     new ColumnGetTypeInfo("ScriptOverlayName",  SQLiteGetType.GetString),
                 }
             },
             {
-                "ScriptAniJob", new List<DBTables.ColumnGetTypeInfo>
+                "ScriptAniJob", new List<ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ScriptAniJobID",     SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("DefaultAniID",       SQLiteGetType.GetInt32),
@@ -48,7 +46,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
             },
             {
-                "ModelDef", new List<DBTables.ColumnGetTypeInfo>
+                "ModelDef", new List<ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ModelDefID",         SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ModelDefName",       SQLiteGetType.GetString),
@@ -60,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
             },
             {
-                "OverlayAniJobRelation", new List<DBTables.ColumnGetTypeInfo>
+                "OverlayAniJobRelation", new List<ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ScriptAniJobID",     SQLiteGetType.GetInt32),
@@ -68,14 +66,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 }
             },
             {
-                "ScriptOverlayModelDef", new List<DBTables.ColumnGetTypeInfo>
+                "ScriptOverlayModelDef", new List<ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ScriptOverlayID",    SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ModelDefID",         SQLiteGetType.GetInt32),
                 }
             },
             {
-                "ScriptAniJobModelDef", new List<DBTables.ColumnGetTypeInfo>
+                "ScriptAniJobModelDef", new List<ColumnGetTypeInfo>
                 {
                     new ColumnGetTypeInfo("ScriptAniJobID",     SQLiteGetType.GetInt32),
                     new ColumnGetTypeInfo("ModelDefID",         SQLiteGetType.GetInt32),
@@ -107,13 +105,27 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return new List<string>()
             {
                 
-                PrepareLoadCommand("ScriptAni", colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptAni")]),
-                PrepareLoadCommand("ScriptOverlay", colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptOverlay")]),
-                PrepareLoadCommand("ScriptAniJob", colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptAniJob")]),
-                PrepareLoadCommand("ModelDef", colGetTypeInfo[DBTableLoadOrder.IndexOf("ModelDef")]),
-                PrepareLoadCommand("OverlayAniJobRelation", colGetTypeInfo[DBTableLoadOrder.IndexOf("OverlayAniJobRelation")]),
-                PrepareLoadCommand("ScriptOverlayModelDef", colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptOverlayModelDef")]),
-                PrepareLoadCommand("ScriptAniJobModelDef", colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptAniJobModelDef")]),
+                PrepareLoadCommand("ScriptAni", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptAni")], 
+                    "1", "ScriptAniID ASC"),
+                PrepareLoadCommand("ScriptOverlay", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptOverlay")], 
+                    "1", "ScriptOverlayID ASC"),
+                PrepareLoadCommand("ScriptAniJob", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptAniJob")], 
+                    "1", "ScriptAniJobID ASC"),
+                PrepareLoadCommand("ModelDef", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("ModelDef")], 
+                    "1", "ModelDefID ASC"),
+                PrepareLoadCommand("OverlayAniJobRelation", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("OverlayAniJobRelation")],
+                    "1", "ScriptAniJobID ASC"),
+                PrepareLoadCommand("ScriptOverlayModelDef", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptOverlayModelDef")],
+                    "1", "ModelDefID ASC"),
+                PrepareLoadCommand("ScriptAniJobModelDef", 
+                    colGetTypeInfo[DBTableLoadOrder.IndexOf("ScriptAniJobModelDef")],
+                    "1", "ModelDefID ASC"),
             };
         }
 
@@ -165,8 +177,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 var tableModelDef           = sqlResults[DBTableLoadOrder.IndexOf("ModelDef")];
 
                 List<ScriptOverlayAniJobRelation> overlayAniJobRelations = MapOverlayAniJobRelations(tableOverlayAniJob);
-                Dictionary<int, int> overlayIDByModelDefID = MapOverlayByModelDef(tableOverlayModelDef);
-                Dictionary<int, int> aniJobIDByModelDefID = MapAniJobByModelDef(tableOverlayModelDef);
+                Dictionary<int, List<int>> overlayIDByModelDefID = MapOverlayByModelDef(tableOverlayModelDef);
+                Dictionary<int, List<int>> aniJobIDByModelDefID = MapAniJobByModelDef(tableOverlayModelDef);
 
                 Dictionary<int, ScriptAni> aniByID;
                 if (!TryGenerateScriptAnis(tableScriptAni, out aniByID))
@@ -222,7 +234,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var ani = new ScriptAni();
@@ -235,19 +247,28 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                 aniID = (int) row[c];
                                 break;
                             case "FPS":
-                                ani.FPS = (int) row[c];
+                                if (row[c] is int) { ani.FPS = (int)row[c]; }
                                 break;
                             case "StartFrame":
-                                ani.StartFrame = (float) row[c];
+                                ani.StartFrame = (int) row[c];
                                 break;
                             case "EndFrame":
-                                ani.EndFrame = (float) row[c];
+                                ani.EndFrame = (int) row[c];
                                 break;
                             case "SpecialFrames":
+                                var rawSF = (string)row[c];
+                                if (rawSF.Length == 0) { break; }
+
                                 // must split something like "Combo=1;..." and apply key and val
-                                var temp = ((string) row[c]).Split(new char[] { ';' });
+                                var temp = rawSF.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                                 foreach (var t in temp)
                                 {
+                                    if (t.Length == 0)
+                                    {
+                                        MakeLogWarning("Invalid SpecialFrame format detected for ScriptAni with id " 
+                                            + aniID + " => " + rawSF);
+                                        break;
+                                    }
                                     var keyAndVal = t.Split('=');
                                     ani.SetSpecialFrame((SpecialFrame) Enum.Parse(typeof(SpecialFrame), keyAndVal[0]),
                                         float.Parse(keyAndVal[1]));
@@ -418,7 +439,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// <returns></returns>
         public bool TryGenerateModelDefs (List<List<object>> dataTable, 
             Dictionary<int, ScriptOverlay> overlayByID, Dictionary<int, ScriptAniJob> aniJobByID,
-            Dictionary<int, int> overlayIDByModelDefID, Dictionary<int, int> aniJobIDByModelDefID, 
+            Dictionary<int, List<int>> overlayIDByModelDefID, Dictionary<int, List<int>> aniJobIDByModelDefID, 
             out Dictionary<int, ModelDef> modelDefByID)
         {
             modelDefByID = new Dictionary<int, ModelDef>(dataTable.Count);
@@ -469,21 +490,30 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
                     if (id < 0) { throw new Exception("No ModelDefID found in db-data!"); }
 
+                    modelDef.Create();
                     modelDefByID.Add(id, modelDef);
+
+                    Print("Created ModelDef => " + id + ": " + modelDef.CodeName);
                 }
 
                 // finalize initialization by adding ScriptOverlays and ScriptAniJobs
                 foreach (var kv in overlayIDByModelDefID)
                 {
                     var modelDefID = kv.Key;
-                    var overlayID = kv.Value;
-                    modelDefByID[modelDefID].AddOverlay(overlayByID[overlayID]);
+                    var overlayIDs = kv.Value;
+                    foreach (var overlayID in overlayIDs)
+                    {
+                        modelDefByID[modelDefID].AddOverlay(overlayByID[overlayID]);
+                    }
                 }
                 foreach (var kv in aniJobIDByModelDefID)
                 {
                     var modelDefID = kv.Key;
-                    var aniJobID = kv.Value;
-                    modelDefByID[modelDefID].AddAniJob(aniJobByID[aniJobID]);
+                    var aniJobIDs = kv.Value;
+                    foreach (var aniJobID in aniJobIDs)
+                    {
+                        modelDefByID[modelDefID].AddAniJob(aniJobByID[aniJobID]);
+                    }
                 }
             }
             catch (Exception ex)
@@ -511,7 +541,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var overlayID = -1;
@@ -526,6 +556,9 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                 break;
                             case "ScriptAniJobID":
                                 aniJobID = (int) row[c];
+                                break;
+                            case "ScriptAniID":
+                                aniID = (int)row[c];
                                 break;
                         }
                     }
@@ -551,16 +584,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// </summary>
         /// <param name="dataTable"></param>
         /// <returns></returns>
-        public Dictionary<int, int> MapOverlayByModelDef (List<List<object>> dataTable)
+        public Dictionary<int, List<int>> MapOverlayByModelDef (List<List<object>> dataTable)
         {
-            var overlayIDByModelDefID = new Dictionary<int, int>();
+            var overlayIDByModelDefID = new Dictionary<int, List<int>>();
+            List<int> overlayIDs = null;
 
             List<ColumnGetTypeInfo> info;
             TryGetColGetTypeInfo("ScriptOverlayModelDef", out info);
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var overlayID = -1;
@@ -581,7 +615,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     // map the references
                     if (overlayID < 0) { throw new Exception("No ScriptOverlayID found in db-data!"); }
                     if (modelDefID < 0) { throw new Exception("No ModelDefID found in db-data!"); }
-                    overlayIDByModelDefID.Add(modelDefID, overlayID);
+
+                    if (overlayIDByModelDefID.TryGetValue(modelDefID, out overlayIDs))
+                    {
+                        overlayIDs.Add(overlayID);
+                    }
+                    else
+                    {
+                        overlayIDByModelDefID.Add(modelDefID, new List<int> { overlayID });
+                    }
                 }
             }
             catch (Exception ex)
@@ -598,16 +640,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// </summary>
         /// <param name="dataTable"></param>
         /// <returns></returns>
-        public Dictionary<int, int> MapAniJobByModelDef (List<List<object>> dataTable)
+        public Dictionary<int, List<int>> MapAniJobByModelDef (List<List<object>> dataTable)
         {
-            var aniJobIDByModelDefID = new Dictionary<int, int>();
+            var aniJobIDByModelDefID = new Dictionary<int, List<int>>();
+            List<int> aniJobIDs = null;
 
             List<ColumnGetTypeInfo> info;
             TryGetColGetTypeInfo("ScriptAniJobModelDef", out info);
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var aniJobID = -1;
@@ -628,7 +671,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     // map the references
                     if (aniJobID < 0) { throw new Exception("No ScriptAniJobID found in db-data!"); }
                     if (modelDefID < 0) { throw new Exception("No ModelDef found in db-data!"); }
-                    aniJobIDByModelDefID.Add(modelDefID, aniJobID);
+
+                    if (aniJobIDByModelDefID.TryGetValue(modelDefID, out aniJobIDs))
+                    {
+                        aniJobIDs.Add(aniJobID);
+                    }
+                    else
+                    {
+                        aniJobIDByModelDefID.Add(modelDefID, new List<int> { aniJobID });
+                    }
                 }
             }
             catch (Exception ex)
