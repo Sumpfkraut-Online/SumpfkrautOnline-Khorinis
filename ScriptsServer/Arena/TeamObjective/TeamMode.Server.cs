@@ -15,7 +15,7 @@ namespace GUC.Scripts.Arena
 {
     static partial class TeamMode
     {
-        public const int MinClientsToStart = 1;
+        public const int MinClientsToStart = 2;
 
         static List<TOTeamInst> teams = new List<TOTeamInst>(3);
         public static ReadOnlyList<TOTeamInst> Teams { get { return teams; } }

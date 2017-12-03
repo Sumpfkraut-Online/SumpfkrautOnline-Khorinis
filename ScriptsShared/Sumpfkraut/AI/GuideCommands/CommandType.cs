@@ -10,5 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
     {
         GoToPos,
         GoToVob,
+        GoToVobLookAt,
     }
 }

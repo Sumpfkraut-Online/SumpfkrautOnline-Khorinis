@@ -12,13 +12,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
     {
         public override byte CmdType { get { return (byte)CommandType.GoToVob; } }
 
-        new public BaseVobInst Target { get { return (BaseVobInst)base.Target.ScriptObject; } }
+        new public BaseVobInst Target { get { return (BaseVobInst)base.Target?.ScriptObject; } }
 
-        public GoToVobCommand()
+        public GoToVobCommand() : base()
         {
         }
 
-        public GoToVobCommand(BaseVobInst target) : base(target.BaseInst)
+        public GoToVobCommand(BaseVobInst target, float distance = 500f) : base(target.BaseInst, distance)
         {
         }
     }

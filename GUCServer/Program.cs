@@ -8,13 +8,13 @@ using GUC.Scripting;
 using GUC.Log;
 using GUC.Network;
 using GUC.Options;
-using System.Collections;
+using GUC.Utilities;
 
 namespace GUC
 {
     public static class Program
     {
-        private static long updateRate = 0L;
+        private static long updateRate = 15 * TimeSpan.TicksPerMillisecond;
         public static long UpdateRate { get { return updateRate; } }
 
         private static long timeTillNextUpdate = 0L;
@@ -101,12 +101,10 @@ namespace GUC
         {
             try
             {
-                const long updateRate = 15 * TimeSpan.TicksPerMillisecond; //min time between server ticks
-
-                const long nextInfoUpdateInterval = 1 * TimeSpan.TicksPerMinute;
-                long nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
-
                 TimeStat timeAll = new TimeStat();
+                LockTimer perfUpdateTimer = new LockTimer(60 * 1000);
+                perfUpdateTimer.Trigger();
+
                 while (true)
                 {
                     timeAll.Start();
@@ -114,19 +112,23 @@ namespace GUC
                     GameTime.Update();
                     OnTick?.Invoke();
 
+                    GameTime.Update();
                     GUCTimer.Update(GameTime.Ticks); // move to new thread?
+                    
+                    GameTime.Update();
                     GameServer.Update(); //process received packets
-                    //WorldObjects.World.UpdateWorlds(GameTime.Ticks);
+
+                    GameTime.Update();
                     WorldObjects.World.ForEach(w => w.OnTick(GameTime.Ticks));
 
-                    if (nextInfoUpdateTime < GameTime.Ticks)
+                    long elapsed = timeAll.Stop();
+                    if (perfUpdateTimer.IsReady)
                     {
-                        Logger.Log("Performance: {0:0.00}ms avg, {1:0.00}ms max. RAM: {2:0.0}MB", timeAll.Average, timeAll.Maximum, Process.GetCurrentProcess().PrivateMemorySize64 / 1048576d);
+                        Logger.Log("Performance: {0:0}ms avg, {1:0}ms max. RAM: {2:0.0}MB", timeAll.Average, timeAll.Maximum, Process.GetCurrentProcess().PrivateMemorySize64 / 1000000d);
                         timeAll.Reset();
-                        nextInfoUpdateTime = GameTime.Ticks + nextInfoUpdateInterval;
                     }
 
-                    long diff = (updateRate - timeAll.Stop()) / TimeSpan.TicksPerMillisecond;
+                    long diff = (updateRate - elapsed) / TimeSpan.TicksPerMillisecond;
                     if (diff > 0)
                     {
                         Thread.Sleep((int)diff);

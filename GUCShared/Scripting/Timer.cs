@@ -16,24 +16,105 @@ namespace GUC.Scripting
         internal static void Update(long now)
         {
             int index;
-            while ((index = activeTimers.Count-1) >= 0)
+            while ((index = activeTimers.Count - 1) >= 0)
             {
-                currentTimer = activeTimers[index];
-                if (currentTimer.NextCallTime > now)
+                GUCAbstractTimer timer = activeTimers[index];
+                if (timer.NextCallTime > now)
                     break;
 
                 activeTimers.RemoveAt(index);
-                currentTimer.Fire();
-                if (currentTimer.Started)
-                    currentTimer.SetNextCallTime(now);
+
+                currentTimer = timer; // in case of Fire() changing the interval so SetNextCallTime is not called twice
+                timer.Fire();
+
+                if (timer.Started) // still running?
+                    timer.SetNextCallTime(now);
             }
             currentTimer = null;
+        }
+
+        // search by cutting the list repeatedly in half
+        static int FindIndex(long time)
+        {
+            int upper = activeTimers.Count;
+            int lower = -1;
+
+            int index = upper / 2;
+            while (true)
+            {
+                if (index == upper)
+                    break;
+                if (index == lower)
+                {
+                    index++;
+                    break;
+                }
+
+                long otherTime = activeTimers[index].NextCallTime;
+                if (otherTime > time)
+                {
+                    lower = index;
+                    // index += (upper - index) / 2;
+                    index += (upper - index + 1) / 2; // round up
+                }
+                else if (otherTime < time)
+                {
+                    upper = index;
+                    index -= (index - lower + 1) / 2; // round up
+                }
+                else break;
+            }
+            return index;
+        }
+
+        static void AddTimer(GUCAbstractTimer timer)
+        {
+            /*for (int i = 0; i < activeTimers.Count; i++)
+                if (activeTimers[i].nextCallTime <= timer.nextCallTime)
+                {
+                    activeTimers.Insert(i, timer);
+                    return;
+                }
+
+            activeTimers.Add(timer);*/
+
+            activeTimers.Insert(FindIndex(timer.NextCallTime), timer);
+        }
+
+        static bool RemoveTimer(GUCAbstractTimer timer)
+        {                
+            //return activeTimers.Remove(timer);
+            int index = FindIndex(timer.NextCallTime);
+            int i = index;
+
+            if (index >= activeTimers.Count)
+                return false;
+
+            while (activeTimers[i] != timer)
+            {
+                i++;
+                if (i >= activeTimers.Count || activeTimers[i].NextCallTime != timer.NextCallTime)
+                {
+                    i = index;
+                    do
+                    {
+                        i--;
+                        if (i < 0 || activeTimers[i].NextCallTime != timer.NextCallTime)
+                            return false; // has not been in the list
+
+                    } while (activeTimers[i] != timer);
+                    break;
+                }
+            }
+
+            activeTimers.RemoveAt(index);            
+            return true;
         }
 
         #endregion
 
         protected abstract void Fire();
-        
+
         #region Properties
 
         long interval;
@@ -68,12 +149,7 @@ namespace GUC.Scripting
         protected object Callback
         {
             get { return this.callback; }
-            set
-            {
-                if (value == null)
-                    throw new ArgumentNullException("Callback is null!");
-                this.callback = value;
-            }
+            set { this.callback = value ?? throw new ArgumentNullException("Callback is null!"); }
         }
 
         #endregion
@@ -96,8 +172,9 @@ namespace GUC.Scripting
         {
             if (started)
             {
-                activeTimers.Remove(this);
                 started = false;
+
+                RemoveTimer(this);
 
                 if (fire)
                     this.Fire();
@@ -112,7 +189,7 @@ namespace GUC.Scripting
         #endregion
 
         #region Set Methods
-        
+
         public void SetInterval(long interval)
         {
             if (interval <= 0)
@@ -134,14 +211,7 @@ namespace GUC.Scripting
         {
             this.startTime = now;
             this.nextCallTime = now + this.interval;
-            for (int i = 0; i < activeTimers.Count; i++)
-                if (activeTimers[i].nextCallTime <= this.nextCallTime)
-                {
-                    activeTimers.Insert(i, this);
-                    return;
-                }
-
-            activeTimers.Add(this);
+            AddTimer(this);
         }
 
         #endregion
@@ -231,7 +301,7 @@ namespace GUC.Scripting
 
         protected override void Fire()
         {
-            ((Action<T1,T2>)this.Callback).Invoke(arg1, arg2);
+            ((Action<T1, T2>)this.Callback).Invoke(arg1, arg2);
         }
 
         public void SetCallback(Action<T1, T2> callback, T1 argument1, T2 argument2)
@@ -258,7 +328,7 @@ namespace GUC.Scripting
             SetInterval(interval);
         }
 
-        public GUCTimer(Action<T1,T2> callback, T1 argument1, T2 argument2)
+        public GUCTimer(Action<T1, T2> callback, T1 argument1, T2 argument2)
         {
             SetCallback(callback, argument1, argument2);
         }

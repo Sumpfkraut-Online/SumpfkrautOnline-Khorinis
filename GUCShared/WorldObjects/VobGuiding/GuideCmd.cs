@@ -26,6 +26,9 @@ namespace GUC.WorldObjects.VobGuiding
 
     public abstract partial class TargetCmd : GuideCmd
     {
+        float distance;
+        public float Distance { get { return distance; } }
+
         BaseVob target;
         public BaseVob Target { get { return this.target; } }
 
@@ -34,7 +37,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         }
 
-        public TargetCmd(BaseVob target)
+        public TargetCmd(BaseVob target, float distance)
         {
             if (target == null)
                 throw new ArgumentNullException("Target is null!");
@@ -42,6 +45,7 @@ namespace GUC.WorldObjects.VobGuiding
                 throw new ArgumentException("Target is not spawned!");
 
             this.target = target;
+            this.distance = distance;
         }
 
 #if D_SERVER
@@ -49,6 +53,7 @@ namespace GUC.WorldObjects.VobGuiding
         {
             stream.Write((ushort)target.ID);
             stream.Write(target.Position);
+            stream.Write(distance);
         }
 #endif
 
@@ -80,8 +85,7 @@ namespace GUC.WorldObjects.VobGuiding
 
         internal static void CheckPos(int id, Vec3f pos)
         {
-            List<TargetCmd> cmdList;
-            if (Commands.TryGetValue(id, out cmdList))
+            if (Commands.TryGetValue(id, out List<TargetCmd> cmdList))
                 for (int i = 0; i < cmdList.Count; i++)
                     cmdList[i].sentDest = pos;
         }
@@ -95,6 +99,7 @@ namespace GUC.WorldObjects.VobGuiding
         {
             this.targetID = stream.ReadUShort();
             this.sentDest = stream.ReadVec3f();
+            this.distance = stream.ReadFloat();
         }
 
         public override void Start(GuidedVob vob)

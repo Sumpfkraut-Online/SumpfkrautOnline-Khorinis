@@ -223,6 +223,11 @@ namespace Gothic.Objects.Meshes
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.IsAnimationActive, animname) != 0;
         }
+        
+        public bool IsAniActive(int aniID)
+        {
+            return IsAniActive(GetAniFromAniID(aniID));
+        }
 
         public bool IsAniActive(zCModelAni ani)
         {

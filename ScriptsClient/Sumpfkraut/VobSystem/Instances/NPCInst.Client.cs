@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Utilities;
 using GUC.Types;
 using Gothic.Objects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
@@ -157,6 +157,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         static readonly Dictionary<string, SoundDefinition> hitScreams = new Dictionary<string, SoundDefinition>();
 
+        LockTimer screamTimer = new LockTimer(1000);
         public override void OnReadScriptVobMsg(PacketReader stream)
         {
             var msgID = (ScriptVobMessageIDs)stream.ReadByte();
@@ -170,16 +171,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         int index = Randomizer.GetInt(hitSounds.Count);
                         SoundHandler.PlaySound3D(hitSounds[index], target);
 
-                        index = Randomizer.GetInt(6) - 2;
-                        if (index > 0)
+                        if (screamTimer.IsReady)
                         {
-                            string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
-                            if (!hitScreams.TryGetValue(str, out SoundDefinition scream))
+                            index = Randomizer.GetInt(6) - 2;
+                            if (index > 0)
                             {
-                                scream = new SoundDefinition(str);
-                                hitScreams.Add(str, scream);
+                                string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
+                                if (!hitScreams.TryGetValue(str, out SoundDefinition scream))
+                                {
+                                    scream = new SoundDefinition(str);
+                                    hitScreams.Add(str, scream);
+                                }
+                                SoundHandler.PlaySound3D(scream, target);
                             }
-                            SoundHandler.PlaySound3D(scream, target);
                         }
 
                         if (!target.Model.IsInAnimation())
@@ -204,7 +208,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
 
-        GUC.Utilities.LockTimer collisionFXTimer = new GUC.Utilities.LockTimer(100);
+        LockTimer collisionFXTimer = new LockTimer(100);
         void DoFightStuff()
         {
             if (!this.IsInFightMode)
@@ -283,7 +287,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 isGhost = false;
             }
         }
-        
+
         public void OnTick(long now)
         {
             Update2nd1H();
@@ -298,17 +302,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var gVob = BaseInst.gVob;
             var gModel = BaseInst.gModel;
             var gAI = BaseInst.gAI;
-            if (gModel.IsAnimationActive("T_STAND_2_JUMP") || gModel.IsAnimationActive("S_JUMP")
-                || gModel.IsAnimationActive("T_RUNL_2_JUMP"))
+            if ((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 && gAI.AboveFloor <= 0 && gAI.Velocity.Y <= 0)
             {
-                if ((gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0 && gAI.AboveFloor <= 0)
+                if (gModel.IsAniActive(gAI._t_jump_2_stand)
+                 || gModel.IsAniActive(gAI._s_jump)
+                 || gModel.IsAnimationActive("T_RUNL_2_JUMP"))
                 {
-                    if (gAI.Velocity.Y <= 0)
-                    {
-                        // LAND
-                        int id = this.Movement == NPCMovement.Forward ? gAI._t_jump_2_runl : gAI._t_jump_2_stand;
-                        gAI.LandAndStartAni(gModel.GetAniFromAniID(id));
-                    }
+                    // LAND
+                    int id = this.Movement == NPCMovement.Forward ? gAI._t_jump_2_runl : gAI._t_jump_2_stand;
+                    gAI.LandAndStartAni(gModel.GetAniFromAniID(id));
                 }
             }
         }
@@ -420,7 +422,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (!IsSpawned)
                 return;
 
-            ItemInst weapon;            
+            ItemInst weapon;
             if ((weapon = GetEquipmentBySlot(NPCSlots.OneHanded2)) == null)
             {
                 if (secondMeleeVob != null)

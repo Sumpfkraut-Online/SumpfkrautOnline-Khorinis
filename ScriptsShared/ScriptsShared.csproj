@@ -62,6 +62,7 @@
     <Compile Include="Arena\TeamObjective\TOTeamDef.cs" />
     <Compile Include="GUCScripts.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\CommandType.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs" />
     <Compile Include="Sumpfkraut\Database\BaseLoader.cs" />

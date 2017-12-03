@@ -16,7 +16,8 @@ namespace GUC.Hooks
         {
             if (inited) return;
             inited = true;
-
+        
+            
             Process.AddHook(RbtForwardHook, 0x687B71, 6);
             Process.AddHook(RbtStandHook, 0x683BEA, 6);
             Process.AddHook(RbtStandHook, 0x686AF8, 6);

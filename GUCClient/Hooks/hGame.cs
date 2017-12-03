@@ -13,6 +13,7 @@ using Gothic.Sound;
 using System.Threading;
 using GUC.GUI;
 using GUC.WorldObjects;
+using GUC.Utilities;
 
 namespace GUC.Hooks
 {
@@ -23,9 +24,9 @@ namespace GUC.Hooks
         {
             if (inited) return;
             inited = true;
-            
+
             // should never be called anyway, but just to be sure
-            Process.AddHook((k,m) => GothicGlobals.UpdateGameAddress(), 0x426F5E, 0xB); // GameSessionInit
+            Process.AddHook((k, m) => GothicGlobals.UpdateGameAddress(), 0x426F5E, 0xB); // GameSessionInit
             Process.AddHook((k, m) => GothicGlobals.UpdateGameAddress(), 0x0042705B, 0xB); // GameSessionDone
 
             // hook outgame loop and kick out the original menus
@@ -83,9 +84,13 @@ namespace GUC.Hooks
             {
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
+
+                GameTime.Update();
                 GameClient.Update();
+
+                GameTime.Update();
                 InputHandler.Update();
-                
+
                 if (!ShowConnectionAttempts())
                 {
                     if (!outgameStarted)
@@ -94,6 +99,7 @@ namespace GUC.Hooks
                         ScriptManager.Interface.StartOutgame();
                     }
 
+                    GameTime.Update();
                     ScriptManager.Interface.Update(GameTime.Ticks);
                 }
 
@@ -114,7 +120,7 @@ namespace GUC.Hooks
 
                 if (fpsWatch.IsRunning)
                 {
-                    long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
+                    long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.Elapsed.Ticks;
                     if (diff > 0)
                     {
                         Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
@@ -135,9 +141,16 @@ namespace GUC.Hooks
             {
                 spikeWatch.Restart();
 
+                // Update Timers
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
+
+                // Do networking, read packets
+                GameTime.Update();
                 GameClient.Update();
+
+                // handle peripherals' input
+                GameTime.Update();
                 InputHandler.Update();
 
                 if (!ShowConnectionAttempts())
@@ -148,37 +161,43 @@ namespace GUC.Hooks
                         ScriptManager.Interface.StartIngame();
                     }
 
+                    // ClientScripts update
+                    GameTime.Update();
                     ScriptManager.Interface.Update(GameTime.Ticks);
 
                     if (GameClient.Client.IsIngame)
                     {
+                        // Update worlds
+                        GameTime.Update();
                         World.UpdateWorlds(GameTime.Ticks);
                     }
 
+                    // Check spectator stuff
+                    GameTime.Update();
                     GameClient.UpdateSpectator(GameTime.Ticks);
+
+                    // check player hero
+                    GameTime.Update();
                     NPC.UpdateHero(GameTime.Ticks);
                 }
 
+                // update guc sounds
+                GameTime.Update();
                 SoundHandler.Update3DSounds();
 
                 spikeWatch.Stop();
-                if (spikeNextTime < GameTime.Ticks)
-                {
+                if (spikeTimer.IsReady)
                     spikeLongest = 0;
-                    spikeNextTime = GameTime.Ticks + 3 * TimeSpan.TicksPerSecond;
-                }
-
                 if (spikeLongest < spikeWatch.Elapsed.Ticks)
                     spikeLongest = spikeWatch.Elapsed.Ticks;
 
                 if (fpsWatch.IsRunning)
                 {
-                    long diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.ElapsedTicks;
-                    if (diff > 0)
-                    {
+                    long diff;
+                    if ((diff = 8 * TimeSpan.TicksPerMillisecond - fpsWatch.Elapsed.Ticks) > 0)
                         Thread.Sleep((int)(diff / TimeSpan.TicksPerMillisecond));
-                    }
                 }
+                lastElapsed = fpsWatch.Elapsed.Ticks;
                 fpsWatch.Restart();
             }
             catch (Exception e)
@@ -187,9 +206,12 @@ namespace GUC.Hooks
             }
         }
 
+        static long lastElapsed = 0;
+        public static long LastElapsedTicks { get { return lastElapsed; } }
+
         static System.Diagnostics.Stopwatch spikeWatch = new System.Diagnostics.Stopwatch();
         static long spikeLongest = 0;
-        static long spikeNextTime = 0;
+        static LockTimer spikeTimer = new LockTimer(1000);
         public static long SpikeLongest { get { return spikeLongest; } }
     }
 }

@@ -15,6 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
     public class SimpleAIPersonality : BaseAIPersonality
     {
+        public List<SimpleAIPersonality> Group = new List<SimpleAIPersonality>();
+
 
         // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
         // movement paths to a destination and guide the vob to it
@@ -67,6 +69,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             for (int t = 0; t < vobTargets.Count; t++)
             {
+                if (Cast.Try(vobTargets[t], out NPCInst npc) && npc.IsDead)
+                    continue;
+
                 currTargetRange = vob.GetPosition().GetDistance(vobTargets[t].GetPosition());
                 if (currTargetRange <= closestTargetRange)
                 {
@@ -92,6 +97,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             for (int t = 0; t < vobTargets.Count; t++)
             {
+                if (Cast.Try(vobTargets[t], out NPCInst npc) && npc.IsDead)
+                    continue;
+
                 currTargetRange = vob.GetPosition().GetDistance(vobTargets[t].GetPosition());
                 if (currTargetRange <= closestTargetRange)
                 {
@@ -147,19 +155,18 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         {
             // find out if there already is an existing, similar guide-command 
             // and recycle it if possible before assigning a new one (costly on client-side)
-            GuideCommandInfo oldInfo;
-            if (guideCommandByVobInst.TryGetValue(guided, out oldInfo))
+            if (guideCommandByVobInst.TryGetValue(guided, out GuideCommandInfo oldInfo))
             {
-                if (oldInfo.GuideCommand.CmdType == (byte) CommandType.GoToPos)
+                if (oldInfo.GuideCommand.CmdType == (byte)CommandType.GoToPos)
                 {
-                    if ( ((GoToPosCommand) oldInfo.GuideCommand).Destination.Equals(position) )
+                    if (((GoToPosCommand)oldInfo.GuideCommand).Destination.Equals(position))
                     {
                         oldInfo.UpdateInfo(oldInfo.GuideCommand, oldInfo.GuidedVobInst, DateTime.MaxValue);
                         return;
                     }
                 }
             }
-            
+
             // initialize new guide and remove old one from GUC-memory automatically
             GoToPosCommand cmd = new GoToPosCommand(position);
             guided.BaseInst.SetGuideCommand(cmd);
@@ -172,12 +179,11 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         {
             // find out if there already is an existing, similar guide-command 
             // and recycle it if possible before assigning a new one (costly on client-side)
-            GuideCommandInfo oldInfo;
-            if (guideCommandByVobInst.TryGetValue(guided, out oldInfo))
+            if (guideCommandByVobInst.TryGetValue(guided, out GuideCommandInfo oldInfo))
             {
-                if (oldInfo.GuideCommand.CmdType == (byte) CommandType.GoToVob)
+                if (oldInfo.GuideCommand.CmdType == (byte)CommandType.GoToVob)
                 {
-                    if ( ((GoToVobCommand) oldInfo.GuideCommand).Target.Equals(target) )
+                    if (((GoToVobCommand)oldInfo.GuideCommand).Target.Equals(target))
                     {
                         oldInfo.UpdateInfo(oldInfo.GuideCommand, oldInfo.GuidedVobInst, DateTime.MaxValue);
                         return;
@@ -261,50 +267,42 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void Attack (VobInst aggressor, VobInst target)
         {
-            Type aggressorType = aggressor.GetType();
-            Type targetType = target.GetType();
-            float distance = aggressor.GetPosition().GetDistance(target.GetPosition());
-            float totalRadius = aggressor.ModelDef.Radius + target.ModelDef.Radius;
-
-            // some sort of effective distance at which attacks can be conducted
-            // modify as much as needed to enhance the combat ai
-            // e.g. take weapons, animation movements into account
-            float fightDistance = 1f;
-
-            if (aggressorType == typeof(NPCInst))
+            if (aggressor is NPCInst aggressorNPC)
             {
-                NPCInst aggressorNPC = (NPCInst) aggressor;
-
-                if (aggressorNPC.GetDrawnWeapon() == null)
+                if (!aggressorNPC.IsInFightMode && !aggressorNPC.ModelInst.IsInAnimation())
                 {
-                    // TODO: draw weapon first if necessary
+                    ItemInst weapon;
+                    if ((weapon = aggressorNPC.GetEquipmentBySlot(NPCSlots.OneHanded1)) != null
+                     || (weapon = aggressorNPC.GetEquipmentBySlot(NPCSlots.TwoHanded)) != null)
+                    {
+                        aggressorNPC.EffectHandler.TryDrawWeapon(weapon);
+                    }
+                    else
+                    {
+                        aggressorNPC.EffectHandler.TryDrawFists();
+                    }
                 }
 
-                //Print(distance);
-                if (distance > fightDistance)
+                float fightRange = target.ModelDef.Radius + aggressorNPC.GetFightRange();
+
+                var cmd = aggressorNPC.BaseInst.CurrentCommand;
+                if (cmd == null || !(cmd is GoToVobLookAtCommand) || ((GoToVobLookAtCommand)cmd).Target != target)
                 {
-                    Print("GoTo");
-                    // approach first to be able to strike at closer distance
-                    //Print(aggressor.GetObjName() + " approaches " + target.GetObjName());
-                    GoTo(aggressor, target);
+                    aggressorNPC.BaseInst.SetGuideCommand(new GoToVobLookAtCommand(target, fightRange - 20f)); // -20 cm for safety
                 }
-                else
+
+                float distance = aggressorNPC.GetPosition().GetDistance(target.GetPosition());
+                if (distance < fightRange)
                 {
-                    Print("Attack");
-                    // close enough to strike target
-                    //Print(aggressor.GetObjName() + " attacks " + target.GetObjName());
-
-                    // do not interrupt an ongoing fight ani
-                    if (aggressorNPC.FightAnimation != null) { return; }
-
-                    //Visuals.ScriptAniJob scriptAniJob;
-                    //NPCCatalog.FightAnis AniCatalog = new NPCCatalog.FightAnis();
-                    //aggressorNPC.ModelDef.TryGetAniJob((int) Visuals.SetAnis.Attack1HFwd1, out scriptAniJob);
                     aggressorNPC.EffectHandler.TryFightMove(FightMoves.Fwd);
+                }
+                else if (distance < fightRange + 100f)
+                {
+                    aggressorNPC.EffectHandler.TryFightMove(FightMoves.Run);
                 }
             }
             else
-            { 
+            {
                 // Do nothing, you lifeless object ! 
             }
         }
@@ -375,15 +373,15 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
-                        if (!aiAgent.HasAIClient(nearNPC))
+                        /*if (!aiAgent.HasAIClient(nearNPC))
+                        {
+                            enemies.Add((VobInst) nearNPC.ScriptObject);
+                        }*/
+
+                        if (!nearNPC.IsDead && nearNPC.IsPlayer)
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }
-
-                        //if (nearNPC.IsPlayer)
-                        //{
-                        //    enemies.Add((VobInst) nearNPC.ScriptObject);
-                        //}
                     });
                 }
             }
@@ -416,46 +414,46 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     break;
             }
 
-            //for (int i = 0; i < aiActions.Count; i++)
-            //{
-            //    aiAction = aiActions[i];
+            /*for (int i = 0; i < aiActions.Count; i++)
+            {
+                aiAction = aiActions[i];
                 // attack if there is a spotted enemy nearby
-                //if (aiAction.GetType() == typeof(AttackAIAction))
-                //{
-                    //// do not control again, if enemy is still in radius
-                    //// simply attack the calculated nearest enemy
-                    //List<VobInst> aiClients = aiAgent.AIClients;
-                    //List<VobInst> enemies = aiAction.AITarget.vobTargets;
-                    //NPCInst npc;
-                    
-                    //if (enemies.Count < 1) { break; }
+                if (aiAction.GetType() == typeof(AttackAIAction))
+                {
+                    // do not control again, if enemy is still in radius
+                    // simply attack the calculated nearest enemy
+                    List<VobInst> aiClients = aiAgent.AIClients;
+                    List<VobInst> enemies = aiAction.AITarget.vobTargets;
+                    NPCInst npc;
 
-                    //for (int c = 0; c < aiClients.Count; c++)
-                    //{
-                    //    // simply hit the enemy by magical means without necessary physical contact :D
-                    //    if (aiClients[c].GetType() == typeof(NPCInst))
-                    //    {
-                    //        npc = (NPCInst) aiClients[c];
-                    //        try
-                    //        {
-                    //            Visuals.ScriptAniJob scriptAniJob;
-                    //            npc.Model.TryGetAniJob((int) Visuals.SetAnis.JumpFwd, out scriptAniJob);
-                    //            if (scriptAniJob != null)
-                    //            {
-                    //                if (npc.GetJumpAni() != null) { continue; }
+                    if (enemies.Count < 1) { break; }
 
-                    //                npc.StartAniJump(scriptAniJob.DefaultAni, 50, 50);
-                    //                Print("npc.IsSpawned = " + npc.GetPosition());
-                    //            }
-                    //        }
-                    //        catch (Exception ex)
-                    //        {
-                    //            MakeLogWarning(ex);
-                    //        }
-                    //    }
-                    //}
-                //}
-            //}
+                    for (int c = 0; c < aiClients.Count; c++)
+                    {
+                        // simply hit the enemy by magical means without necessary physical contact :D
+                        if (aiClients[c].GetType() == typeof(NPCInst))
+                        {
+                            npc = (NPCInst)aiClients[c];
+                            try
+                            {
+                                Visuals.ScriptAniJob scriptAniJob;
+                                npc.Model.TryGetAniJob((int)Visuals.SetAnis.JumpFwd, out scriptAniJob);
+                                if (scriptAniJob != null)
+                                {
+                                    if (npc.GetJumpAni() != null) { continue; }
+
+                                    npc.StartAniJump(scriptAniJob.DefaultAni, 50, 50);
+                                    Print("npc.IsSpawned = " + npc.GetPosition());
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                MakeLogWarning(ex);
+                            }
+                        }
+                    }
+                }
+            }*/
         }
 
 

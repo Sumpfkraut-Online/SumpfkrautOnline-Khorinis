@@ -65,7 +65,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected static readonly TimeSpan totalSimulationThreshold = new TimeSpan(0, 0, 10);
 
-        protected static TimeSpan aiCycleTime = new TimeSpan(0, 0, 1);
+        protected static TimeSpan aiCycleTime = new TimeSpan(0, 0, 0, 0, 500);
         public static TimeSpan AICycleTime { get { return aiCycleTime; } }
         public static void SetAICycleTime (TimeSpan value)
         {
@@ -346,8 +346,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                 //  =       simulationRate             *                  time
                 int agentsToSimulate = (int) Math.Ceiling(
                     (((double) TotalAIAgentsSinglethreaded) / AICycleTime.TotalMilliseconds)
-                    * ((double) Program.UpdateRate / (double) TimeSpan.TicksPerMillisecond)
-                    );
+                    * ((double) Program.UpdateRate / (double) TimeSpan.TicksPerMillisecond));
+
                 int simNext = agentsToSimulate;
                 int tempSimulated;
                 bool tempAllSimulated = true;
@@ -434,7 +434,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
                     {
                         currRangeNext = remainingRanges[0].X;
                         currRangeEnd = remainingRanges[0].Y;
-
+                        
                         while (currRangeNext <= currRangeEnd)
                         {
                             if (simulatedAgents >= loopLimit)

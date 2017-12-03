@@ -128,6 +128,9 @@ namespace Gothic.Objects
         public int _t_runl_2_jump { get { return Process.ReadInt(Address + VarOffsets._t_runl_2_jump); } }
         public int _t_jump_2_runl { get { return Process.ReadInt(Address + VarOffsets._t_jump_2_runl); } }
         public int _t_jump_2_stand { get { return Process.ReadInt(Address + VarOffsets._t_jump_2_stand); } }
+        
+        public int _t_stand_2_jump { get { return Process.ReadInt(Address + 0x1064); } }
+        public int _s_jump { get { return Process.ReadInt(Address + 0x1068); } }
 
         public int wmode_last { get { return Process.ReadInt(Address + VarOffsets.wmode_last); } }
         public int actionMode { get { return Process.ReadInt(Address + VarOffsets.actionMode); } }

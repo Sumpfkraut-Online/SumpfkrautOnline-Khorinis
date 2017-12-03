@@ -158,7 +158,7 @@ namespace GUC.Scripts
 
             CreateTestWorld();
             Arena.DuelMode.Init();
-            Arena.Regeneration.Init();
+            //Arena.Regeneration.Init();
 
             Logger.Log("######################## Finished #########################");
         }
@@ -175,18 +175,21 @@ namespace GUC.Scripts
             Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
             var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.Start();
-
-            for (int i = 0; i < 100; i++)
+            
+            for (int i = 0; i < 800; i++)
             {
                 NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
                 if (testNPC.ModelDef.TryGetOverlay("humans_skeleton", out ScriptOverlay ov))
                     testNPC.ModelInst.ApplyOverlay(ov);
                 testNPC.BaseInst.SetNeedsClientGuide(true);
-                testNPC.Spawn(world, Randomizer.GetVec3fRad(new Vec3f(0, 1000, 0), 25000), Angles.Null);      
+                var item = new ItemInst(ItemDef.Get("grobes_schwert"));
+                testNPC.Inventory.AddItem(item);
+                testNPC.EquipItem(NPCSlots.OneHanded1, item);
+                testNPC.Spawn(world, Randomizer.GetVec3fRad(new Vec3f(0, 1000, 0), 20000), Angles.Null);      
                 
                 var aiMemory = new Sumpfkraut.AI.SimpleAI.AIMemory();
                 var aiRoutine = new Sumpfkraut.AI.SimpleAI.AIRoutines.SimpleAIRoutine();
-                var aiPersonality = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(20000f, 1f);
+                var aiPersonality = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800f, 1f);
                 aiPersonality.Init(aiMemory, aiRoutine);
                 var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
                 aiManager01.SubscribeAIAgent(aiAgent);

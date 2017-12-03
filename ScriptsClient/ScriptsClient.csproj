@@ -88,6 +88,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
       <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Database\BaseLoader.cs">
       <Link>Sumpfkraut\Database\BaseLoader.cs</Link>
     </Compile>
@@ -382,6 +385,7 @@
     <Compile Include="Arena\TeamObjective\TOBoardScreen.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
+    <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.Client.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyBinds.cs" />
     <Compile Include="Arena\Controls\PlayerControl.cs" />
     <Compile Include="Arena\Controls\SpectatorControl.cs" />

@@ -4,9 +4,6 @@ using System.Linq;
 using System.Text;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using Gothic.Objects.EventManager;
-using GUC.Types;
-using Gothic.Types;
 
 namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 {
@@ -14,6 +11,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
     {
         public override void Update(GuidedVob vob, long now)
         {
+            if (Target == null)
+                return;
+
             if (!Cast.Try(vob.ScriptObject, out NPCInst npc))
                 throw new Exception("Vob used with GoToPosCommand is no NPC!");
 
@@ -25,7 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
             gNpc.RbtTimer = 500;
             gNpc.RbtTargetVob = Target.BaseInst.gVob;
             Target.GetPosition().SetGVec(gNpc.RbtTargetPos);
-            gNpc.RbtMaxTargetDist = 200 * 200;
+            gNpc.RbtMaxTargetDist = Distance * Distance;
             gNpc.RbtGotoFollowPosition();
         }
     }

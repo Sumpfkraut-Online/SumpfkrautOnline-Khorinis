@@ -45,6 +45,7 @@
     <Compile Include="Args\CallValue.cs" />
     <Compile Include="Args\FloatArg.cs" />
     <Compile Include="Args\CharArg.cs" />
+    <Compile Include="Calls\ThisCall.cs" />
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
     <Compile Include="Hook.cs" />

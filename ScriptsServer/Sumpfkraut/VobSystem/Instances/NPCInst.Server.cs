@@ -11,13 +11,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const int MaxNPCCorpses = 50;
+        const int MaxNPCCorpses = 500000;
         
         public bool AllowHit(NPCInst target)
         {
             if (this.TeamID == -1)
             {                    
-                if (!target.IsPlayer || (this.IsPlayer && ((Arena.ArenaClient)Client).DuelEnemy == target.Client))
+                if (!this.IsPlayer || !target.IsPlayer || (this.IsPlayer && ((Arena.ArenaClient)Client).DuelEnemy == target.Client))
                 {
                     return true;
                 }
@@ -700,6 +700,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             lastHitMoveTime = GameTime.Ticks;
         }
 
+        public float GetFightRange()
+        {
+            ItemInst drawnWeapon = GetDrawnWeapon();
+            return this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
+        }
 
         public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
@@ -713,17 +718,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
                 Vec3f attPos = this.GetPosition();
                 Angles attAng = this.GetAngles();
+
                 ItemInst drawnWeapon = GetDrawnWeapon();
                 int baseDamage = drawnWeapon == null ? 10 : drawnWeapon.Damage;
-                
-
-                float weaponRange = this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
+                float weaponRange = GetFightRange();
                 this.BaseInst.World.ForEachNPCRough(attPos, GUCScripts.BiggestNPCRadius + weaponRange, npc => // fixme: enemy model radius
                   {
                       NPCInst target = (NPCInst)npc.ScriptObject;
                       if (target == this || target.IsDead)
                           return;
-
+                      
                       if (!AllowHit(target))
                           return;
 

@@ -186,7 +186,7 @@ namespace GUC.Network
 
         static long receivedBytes = 0;
         static long sentBytes = 0;
-        static long lastInfoUpdate = 0;
+        static LockTimer infoTimer = new LockTimer(1000);
 
         static readonly PacketWriter packetWriter = new PacketWriter(128000);
         static readonly PacketReader packetReader = new PacketReader();
@@ -231,8 +231,7 @@ namespace GUC.Network
             #region Debug Info
 
             // update only every second
-            long time = GameTime.Ticks - lastInfoUpdate;
-            if (time > TimeSpan.TicksPerSecond)
+            if (infoTimer.IsReady)
             {
                 int ping = clientInterface.GetLastPing(clientInterface.GetSystemAddressFromIndex(0));
 
@@ -256,39 +255,62 @@ namespace GUC.Network
                 // update ping text on screen
                 int devIndex = 0;
                 GUCVisualText pingText = devInfo.Texts[devIndex++];
-                pingText.Text = ("Ping: " + ping + "ms");
+                pingText.Text = string.Format("Ping: {0}ms", ping);
+                ColorRGBA color;
                 if (ping <= 120)
                 {
-                    pingText.SetColor(new ColorRGBA((byte)(40 + 180 * ping / 120), 220, 40));
+                    color = new ColorRGBA((byte)(40 + 180 * ping / 120), 220, 40);
                 }
                 else if (ping <= 220)
                 {
-                    pingText.SetColor(new ColorRGBA(220, (byte)(220 - 180 * (ping - 100) / 120), 40));
+                    color = new ColorRGBA(220, (byte)(220 - 180 * (ping - 100) / 120), 40);
                 }
                 else
                 {
-                    pingText.SetColor(ColorRGBA.Red);
+                    color = new ColorRGBA(220, 40, 40);
                 }
+                pingText.SetColor(color);
+
+                long fps = Hooks.hGame.LastElapsedTicks > 0 ? TimeSpan.TicksPerSecond / Hooks.hGame.LastElapsedTicks : 999;
+                GUCVisualText fpsText = devInfo.Texts[devIndex++];
+                fpsText.Text = "FPS: " + fps;
+                if (fps < 10)
+                {
+                    color = new ColorRGBA(220, 40, 40);
+                }
+                else if (fps < 40)
+                {
+                    color = new ColorRGBA(220, (byte)(40 + 180 * (fps - 10) / 30), 40);
+                }
+                else if (fps < 90)
+                {
+                    color = new ColorRGBA((byte)(220 - 180 * (fps - 40) / 50), 220, 40);
+                }
+                else
+                {
+                    color = new ColorRGBA(40, 220, 40);
+                }
+                fpsText.SetColor(color);
+
+                devInfo.Texts[devIndex++].Text = "Spike: " + Hooks.hGame.SpikeLongest / TimeSpan.TicksPerMillisecond + "ms";
 
                 // update kB/s text on screen
-                int kbs = (int)(receivedBytes);
+                /*int kbs = (int)(receivedBytes);
                 devInfo.Texts[devIndex++].Text = ("Net received: " + kbs + "B/s");
                 kbs = (int)(sentBytes);
                 devInfo.Texts[devIndex++].Text = ("Net Sent: " + kbs + "B/s");
-                lastInfoUpdate = GameTime.Ticks;
                 receivedBytes = 0;
                 sentBytes = 0;
-                
+
                 if (World.Current != null)
                 {
                     devIndex = 8;
-                    devInfo.Texts[devIndex++].Text = "Spike: " + Hooks.hGame.SpikeLongest / TimeSpan.TicksPerMillisecond + "ms";
                     devInfo.Texts[devIndex++].Text = World.Current.VobCount + " Vobs";
                     devInfo.Texts[devIndex++].Text = Client.guidedIDs.Count + " guided";
-                    
+
                     devInfo.Texts[devIndex++].Text = "Weather: " + World.Current.WeatherCtrl.CurrentWeight + " " + World.Current.Clock.Time.ToString(false);
                     devInfo.Texts[devIndex++].Text = "Barrier: " + World.Current.BarrierCtrl.CurrentWeight + " " + World.Current.BarrierCtrl.EndWeight;
-                }
+                }*/
             }
 
             #endregion

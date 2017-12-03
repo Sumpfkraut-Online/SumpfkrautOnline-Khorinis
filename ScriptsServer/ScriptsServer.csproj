@@ -102,6 +102,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs">
       <Link>Sumpfkraut\AI\GuideCommands\GoToVobCommand.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.cs">
+      <Link>Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Database\BaseLoader.cs">
       <Link>Sumpfkraut\Database\BaseLoader.cs</Link>
     </Compile>

@@ -683,9 +683,9 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, 0x749800, slot);
         }
 
-        public int RbtGotoFollowPosition()
+        public bool RbtGotoFollowPosition()
         {
-            return Process.THISCALL<IntArg>(Address, 0x688450);
+            return Process.THISCALL<BoolArg>(Address, 0x688450);
         }
 
         public int RobustTrace()
