@@ -307,7 +307,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var overlay = new ScriptOverlay();
@@ -363,7 +363,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var aniJob = new ScriptAniJob();
@@ -378,6 +378,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                 currID = (int) row[c];
                                 break;
                             case "DefaultAniID":
+                                if (row[c] is null) { break; }
                                 defaultAniID = (int) row[c];
                                 break;
                             case "AniName":
@@ -387,9 +388,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                 aniJob.CodeName = (string) row[c];
                                 break;
                             case "NextScriptAniID":
+                                if (row[c] is null) { break; }
                                 nextID = (int) row[c];
                                 break;
                             case "Layer":
+                                if (row[c] is null) { break; }
                                 aniJob.Layer = (int) row[c];
                                 break;
                         }
@@ -449,7 +452,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                info = new List<ColumnGetTypeInfo>(dataTable.Count);
+                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var modelDef = new ModelDef();
