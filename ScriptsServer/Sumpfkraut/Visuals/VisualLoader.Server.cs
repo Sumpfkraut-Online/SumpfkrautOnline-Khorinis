@@ -234,7 +234,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var ani = new ScriptAni();
@@ -307,7 +306,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var overlay = new ScriptOverlay();
@@ -363,7 +361,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var aniJob = new ScriptAniJob();
@@ -452,7 +449,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var modelDef = new ModelDef();
@@ -493,10 +489,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
                     if (id < 0) { throw new Exception("No ModelDefID found in db-data!"); }
 
-                    modelDef.Create();
                     modelDefByID.Add(id, modelDef);
-
-                    Print("Created ModelDef => " + id + ": " + modelDef.CodeName);
                 }
 
                 // finalize initialization by adding ScriptOverlays and ScriptAniJobs
@@ -517,6 +510,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     {
                         modelDefByID[modelDefID].AddAniJob(aniJobByID[aniJobID]);
                     }
+                }
+
+                foreach (var kv in modelDefByID)
+                {
+                    kv.Value.Create();
+                    Print("Created ModelDef => " + kv.Key + ": " + kv.Value.CodeName);
                 }
             }
             catch (Exception ex)
@@ -544,7 +543,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var overlayID = -1;
@@ -597,7 +595,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var overlayID = -1;
@@ -653,7 +650,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                //info = new List<ColumnGetTypeInfo>(dataTable.Count);
                 foreach (List<object> row in dataTable)
                 {
                     var aniJobID = -1;

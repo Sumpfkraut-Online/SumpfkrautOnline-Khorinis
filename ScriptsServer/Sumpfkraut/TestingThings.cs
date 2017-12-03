@@ -386,16 +386,27 @@ namespace GUC.Scripts.Sumpfkraut
             //agentOrange.Start();
 
 
+            //var dataSource = @"Data Source=C:\Programs\Games\Gothic2_GMPA\Gothic II\system\UntoldChapters\SumpfkrautOnline\Server\TESTME.db;Version=3;";
+
+            //var vl = new Visuals.VisualLoader(dataSource,
+            //    Visuals.VisualLoader.DBStructure,
+            //    Visuals.VisualLoader.DBTableLoadOrder);
+            //vl.Load(false);
+
+
+            Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+
+        public static void TestLoadHumanModelDef ()
+        {
             var dataSource = @"Data Source=C:\Programs\Games\Gothic2_GMPA\Gothic II\system\UntoldChapters\SumpfkrautOnline\Server\TESTME.db;Version=3;";
 
             var vl = new Visuals.VisualLoader(dataSource,
                 Visuals.VisualLoader.DBStructure,
                 Visuals.VisualLoader.DBTableLoadOrder);
             vl.Load(false);
-
-
-            Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
+
     }
 
 

@@ -200,18 +200,23 @@ namespace GUC.Scripts
         void AddSomeDefs()
         {
             // HUMAN MODEL
-            ModelDef m = new ModelDef("humans", "HUMANS.MDS");
-            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
-            AddFistAnis(m);
-            Add1HAnis(m);
-            Add2hAnis(m);
-            AddJumpAnis(m);
-            AddClimbAnis(m);
+            //ModelDef m = new ModelDef("humans", "HUMANS.MDS");
+            //m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+            //AddFistAnis(m);
+            //Add1HAnis(m);
+            //Add2hAnis(m);
+            //AddJumpAnis(m);
+            //AddClimbAnis(m);
 
-            m.Radius = 80;
-            m.Height = 180;
-            m.FistRange = 40;
-            m.Create();
+            //m.Radius = 80;
+            //m.Height = 180;
+            //m.FistRange = 40;
+            //m.Create();
+
+            Sumpfkraut.TestingThings.TestLoadHumanModelDef();
+
+            ModelDef m;
+            ModelDef.TryGetModel("humans", out m);
 
             // NPCs
             NPCDef npcDef = new NPCDef("maleplayer");
