@@ -4,6 +4,7 @@ using System.Text;
 using WinApi;
 using Gothic.Types;
 using Gothic.Objects.Meshes;
+using WinApi.Calls;
 
 namespace Gothic.Objects
 {
@@ -316,9 +317,11 @@ namespace Gothic.Objects
 
         }
 
+        static CdeclReturnCall<int> createInstance = new CdeclReturnCall<int>(0x0075FA00);
         new public static oCNpc Create()
         {
-            int address = Process.CDECLCALL<IntArg>(0x0075FA00); //_CreateInstance()
+            int address = createInstance.Call();
+            //int address = Process.CDECLCALL<IntArg>(0x0075FA00); //_CreateInstance()
             //Process.THISCALL<NullReturnCall>(address, 0x0072D950); //Konstruktor...
             return new oCNpc(address);
         }
@@ -419,15 +422,22 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetModelScale, vec);
         }
+
+        
+
         public void SetFatness(float val)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFatness, new FloatArg(val));
         }
 
+
         public void SetToFistMode()
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetToFistMode);
         }
+
+
+
 
         public void InitHumanAI()
         {
@@ -637,9 +647,12 @@ namespace Gothic.Objects
                 PutInSlot(z, vob, inInv);
         }
 
+
+        static ThisCall<int, int, bool> putinslot = new ThisCall<int, int, bool>(FuncAddresses.PutInSlot_str);
         public void PutInSlot(zString slot, zCVob vob, bool inInv)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot_str, slot, vob, (BoolArg)inInv);
+            putinslot.Call(Address, slot.Address, vob.Address, inInv);
+         //   Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot_str, slot, vob, (BoolArg)inInv);
         }
         
         public int GetInvSlot(string slot)

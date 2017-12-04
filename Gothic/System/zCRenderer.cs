@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WinApi;
+using WinApi.Calls;
 using Gothic.Types;
 
 namespace Gothic.System
@@ -22,24 +23,32 @@ namespace Gothic.System
             return Process.ReadInt(zrenderer);
         }
 
+        static readonly ThisCall<int, int> vidClear = new ThisCall<int, int>(0x00657E20);
         public static void Vid_Clear(zColor color, int arg)
         {
-            Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x00657E20, color, new IntArg(arg));
+            vidClear.Call(GetRendererAddress(), color.Address, arg);
+            //Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x00657E20, color, new IntArg(arg));
         }
 
+        static readonly ThisCall beginFrame = new ThisCall(0x0064DD20);
         public static void BeginFrame()
         {
-            Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x0064DD20);
+            beginFrame.Call(GetRendererAddress());
+            //Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x0064DD20);
         }
 
+        static readonly ThisCall endFrame = new ThisCall(0x0064DF20);
         public static void EndFrame()
         {
-            Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x0064DF20);
+            endFrame.Call(GetRendererAddress());
+            //Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x0064DF20);
         }
 
+        static readonly ThisCall<int, int, int> vidBlit = new ThisCall<int, int, int>(0x00657670);
         public static void Vid_Blit(int arg1, int tagRect1, int tagRect2)
         {
-            Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x00657670, new IntArg(arg1), new IntArg(tagRect1), new IntArg(tagRect2));
+            vidBlit.Call(GetRendererAddress(), arg1, tagRect1, tagRect2);
+            //Process.THISCALL<NullReturnCall>(GetRendererAddress(), 0x00657670, new IntArg(arg1), new IntArg(tagRect1), new IntArg(tagRect2));
         }
 
         public static void SetFogRange(float near, float far, int mode)

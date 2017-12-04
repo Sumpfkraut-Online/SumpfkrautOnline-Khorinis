@@ -76,7 +76,8 @@ namespace GUC.Hooks
             }
             return !GameClient.IsConnected;
         }
-
+        
+        
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
         static void RunOutgame(Hook hook, RegisterMemory rmem)
         {

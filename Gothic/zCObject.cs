@@ -2,23 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WinApi.Calls;
 using Gothic.Types;
 using WinApi;
 
-namespace Gothic.Objects
+namespace Gothic
 {
-    public class zCObject : zClass, IDisposable
+    public class zCObject
     {
         public class VarOffsets
         {
-            public const int vtbl = 0x00,
-            refCtr = 0x04,
-            hashIndex = 0x08,
-            hashNext = 0x0C,
-            objectName = 0x10; //string
+            public const int
+            VirtualTable = 0x00,
+            ReferenceCount = 0x04,
+            HashIndex = 0x08,
+            HashNext = 0x0C, // zCObject*
+            ObjectName = 0x10;
         }
 
-        public enum gVobTypes //vftables
+        public class FuncAddresses
+        {
+
+        }
+
+        public enum VirtualTables
         {
             ERROR = 0,
             Item = 8636420,
@@ -394,40 +401,19 @@ namespace Gothic.Objects
             zCProgMeshProto = 0x008329CC
         }
 
-
-        public zCObject(int address)
-            : base(address)
-        { }
-
-        public zCObject()
+        public static int GetVirtualTable(zPointer ptr)
         {
-
-        }
-        public gVobTypes VTBL
-        {
-            get { return (gVobTypes)Process.ReadInt(Address + VarOffsets.vtbl); }
-            set { Process.Write(Address + VarOffsets.vtbl, (int)value); }
+            return Process.ReadInt(ptr + VarOffsets.VirtualTable);
         }
 
-        public int refCtr
+        public static int GetRefCount(zPointer ptr)
         {
-            get { return Process.ReadInt(Address + VarOffsets.refCtr); }
-            set { Process.Write(Address + VarOffsets.refCtr, value); }
+            return Process.ReadInt(ptr + VarOffsets.ReferenceCount);
         }
 
-        public zString ObjectName
+        public static void SetRefCount(zPointer ptr, int refCount)
         {
-            get { return new zString(Address + VarOffsets.objectName); }
-        }
-        
-        public virtual void Dispose()
-        {
-            Process.THISCALL<NullReturnCall>(Address, 0x401EF0, (BoolArg)true);
-        }
-
-        public void AnyDispose()
-        {
-            Process.THISCALL<NullReturnCall>(Address, Process.ReadInt(Process.ReadInt(this.Address) + 0x12), (BoolArg)true);
+            Process.Write(ptr + VarOffsets.ReferenceCount, refCount);
         }
     }
 }

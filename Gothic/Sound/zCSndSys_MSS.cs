@@ -5,6 +5,7 @@ using System.Text;
 using WinApi;
 using Gothic.Types;
 using Gothic.Objects;
+using WinApi.Calls;
 
 namespace Gothic.Sound
 {
@@ -32,14 +33,18 @@ namespace Gothic.Sound
             return ret;
         }
 
+        static ThisReturnCall<int, int> loadsoundfx = new ThisReturnCall<int, int>(0x004ED960);
         public static zCSndFX_MSS LoadSoundFX(zString str)
         {
-            return Process.THISCALL<zCSndFX_MSS>(GetZSound(), 0x004ED960, str);
+            return new zCSndFX_MSS(loadsoundfx.Call(GetZSound(), str.Address));
+            //return Process.THISCALL<zCSndFX_MSS>(GetZSound(), 0x004ED960, str);
         }
 
+        static ThisReturnCall<int, int, int, int, int> playsound3d = new ThisReturnCall<int, int, int, int, int>(0x004F10F0);
         public static int PlaySound3D(zCSndFX_MSS snd, zCVob vob, int arg, zTSound3DParams param)
         {
-            return Process.THISCALL<IntArg>(GetZSound(), 0x004F10F0, snd, vob, new IntArg(arg), param);
+            return playsound3d.Call(GetZSound(), snd.Address, vob.Address, arg, param.Address);
+            //return Process.THISCALL<IntArg>(GetZSound(), 0x004F10F0, snd, vob, new IntArg(arg), param);
         }
 
         public static int PlaySound3D(string snd, zCVob vob, int arg, zTSound3DParams param)
@@ -93,6 +98,7 @@ namespace Gothic.Sound
 
         public static float GetMasterVolume()
         {
+            throw new NotSupportedException("Float return!");
             return Process.THISCALL<FloatArg>(GetZSound(), 0x004ED730);
         }
 

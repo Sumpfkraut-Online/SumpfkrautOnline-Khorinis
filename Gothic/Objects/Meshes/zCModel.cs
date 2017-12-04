@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using WinApi;
 using Gothic.Types;
+using WinApi.Calls;
 
 namespace Gothic.Objects.Meshes
 {
@@ -170,9 +171,11 @@ namespace Gothic.Objects.Meshes
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StartAni_StrInt, ani, new IntArg(id));
         }
 
+        static ThisCall<int, int> startAni1 = new ThisCall<int, int>(FuncAddresses.StartAni_ModelInt);
         public void StartAni(zCModelAni ani, int id)
         {
-            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StartAni_ModelInt, ani, new IntArg(id));
+            startAni1.Call(Address, ani.Address, id);
+            //Process.THISCALL<NullReturnCall>(Address, FuncAddresses.StartAni_ModelInt, ani, new IntArg(id));
         }
 
         public void StopAnisLayerRange(int ani, int id)

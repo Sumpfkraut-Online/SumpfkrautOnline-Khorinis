@@ -127,9 +127,12 @@
     <Compile Include="View\zCView.cs" />
     <Compile Include="System\zError.cs" />
     <Compile Include="Types\zString.cs" />
+    <Compile Include="zCObject.cs" />
     <Compile Include="zCOption.cs" />
     <Compile Include="zCOptionEntry.cs" />
     <Compile Include="zCOptionSection.cs" />
+    <Compile Include="zPointer.cs" />
+    <Compile Include="zString.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WinApi\WinApi.csproj">

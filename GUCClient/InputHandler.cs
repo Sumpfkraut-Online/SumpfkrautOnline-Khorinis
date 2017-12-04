@@ -32,10 +32,25 @@ namespace GUC
                         Process.Write(ai.Address + 0x1204, bitField);
                     }
                 }
+            },
+            { VirtualKeys.V, () =>
+                {
+                    var ai = Network.GameClient.Client?.Character?.gVob;
+                    if (ai != null)
+                    {
+
+                    }
+                }
             }
         };
 
         #endregion
+
+        static void DoSomething()
+        {
+            int i = 1;
+            i += 2;
+        }
 
         public static bool IsPressed(VirtualKeys key)
         {

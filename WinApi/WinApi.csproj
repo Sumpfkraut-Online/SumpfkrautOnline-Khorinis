@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -45,7 +46,15 @@
     <Compile Include="Args\CallValue.cs" />
     <Compile Include="Args\FloatArg.cs" />
     <Compile Include="Args\CharArg.cs" />
+    <Compile Include="Calls\AbstractCall.cs" />
+    <Compile Include="Calls\CdeclCall.cs" />
+    <Compile Include="Calls\CdeclReturnCall.cs" />
+    <Compile Include="Calls\FastCall.cs" />
+    <Compile Include="Calls\FastReturnCall.cs" />
+    <Compile Include="Calls\StdCall.cs" />
+    <Compile Include="Calls\StdReturnCall.cs" />
     <Compile Include="Calls\ThisCall.cs" />
+    <Compile Include="Calls\ThisReturnCall.cs" />
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
     <Compile Include="Hook.cs" />
