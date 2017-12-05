@@ -269,6 +269,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                         break;
                                     }
                                     var keyAndVal = t.Split('=');
+                                    //Print("SpecialFrame ~~~> " + keyAndVal[0] + " -> " + Enum.Parse(typeof(SpecialFrame), keyAndVal[0]));
                                     ani.SetSpecialFrame((SpecialFrame) Enum.Parse(typeof(SpecialFrame), keyAndVal[0]),
                                         float.Parse(keyAndVal[1]));
                                 }
@@ -384,7 +385,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                             case "CodeName":
                                 aniJob.CodeName = (string) row[c];
                                 break;
-                            case "NextScriptAniID":
+                            case "NextScriptAniJobID":
                                 if (row[c] is null) { break; }
                                 nextID = (int) row[c];
                                 break;
@@ -395,11 +396,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                         }
                     }
 
+                    Print(string.Format("{0} ({1}) -> {2}", currID, defaultAniID, nextID));
+
                     if (currID <= -1) { throw new Exception("Didn't find ScriptAniJobID in db-data!"); }
                     if (defaultAniID > -1) { aniJob.SetDefaultAni(aniByID[defaultAniID]); }
 
                     // prepare for later completion of the initialization after all ScriptAniJobs-objects are present
                     aniJobByID.Add(currID, aniJob);
+                    
                     if (nextID > -1) { nextIDByCurrID.Add(currID, nextID); }
                 }
 

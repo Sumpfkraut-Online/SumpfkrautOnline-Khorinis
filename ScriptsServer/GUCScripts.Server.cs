@@ -199,7 +199,7 @@ namespace GUC.Scripts
 
         void AddSomeDefs()
         {
-            // HUMAN MODEL
+            //// HUMAN MODEL
             //ModelDef m = new ModelDef("humans", "HUMANS.MDS");
             //m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
             //AddFistAnis(m);
@@ -214,9 +214,12 @@ namespace GUC.Scripts
             //m.Create();
 
             Sumpfkraut.TestingThings.TestLoadHumanModelDef();
-
             ModelDef m;
             ModelDef.TryGetModel("humans", out m);
+
+            //ScriptAniJob _;
+            //Logger.Print(m.TryGetAniJob("jump_fwd".ToUpper(), out _));
+
 
             // NPCs
             NPCDef npcDef = new NPCDef("maleplayer");
