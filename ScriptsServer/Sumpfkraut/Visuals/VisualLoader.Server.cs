@@ -169,7 +169,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
                 var tableOverlayAniJob      = sqlResults[DBTableLoadOrder.IndexOf("OverlayAniJobRelation")];
                 var tableOverlayModelDef    = sqlResults[DBTableLoadOrder.IndexOf("ScriptOverlayModelDef")];
-                var tableAniJobModelDef     = sqlResults[DBTableLoadOrder.IndexOf("ScriptOverlayModelDef")];
+                var tableAniJobModelDef     = sqlResults[DBTableLoadOrder.IndexOf("ScriptAniJobModelDef")];
 
                 var tableScriptAni          = sqlResults[DBTableLoadOrder.IndexOf("ScriptAni")];
                 var tableScriptOverlay      = sqlResults[DBTableLoadOrder.IndexOf("ScriptOverlay")];
@@ -178,7 +178,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
                 List<ScriptOverlayAniJobRelation> overlayAniJobRelations = MapOverlayAniJobRelations(tableOverlayAniJob);
                 Dictionary<int, List<int>> overlayIDByModelDefID = MapOverlayByModelDef(tableOverlayModelDef);
-                Dictionary<int, List<int>> aniJobIDByModelDefID = MapAniJobByModelDef(tableOverlayModelDef);
+                Dictionary<int, List<int>> aniJobIDByModelDefID = MapAniJobByModelDef(tableAniJobModelDef);
 
                 Dictionary<int, ScriptAni> aniByID;
                 if (!TryGenerateScriptAnis(tableScriptAni, out aniByID))
@@ -269,7 +269,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                                         break;
                                     }
                                     var keyAndVal = t.Split('=');
-                                    //Print("SpecialFrame ~~~> " + keyAndVal[0] + " -> " + Enum.Parse(typeof(SpecialFrame), keyAndVal[0]));
                                     ani.SetSpecialFrame((SpecialFrame) Enum.Parse(typeof(SpecialFrame), keyAndVal[0]),
                                         float.Parse(keyAndVal[1]));
                                 }
@@ -399,7 +398,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     Print(string.Format("{0} ({1}) -> {2}", currID, defaultAniID, nextID));
 
                     if (currID <= -1) { throw new Exception("Didn't find ScriptAniJobID in db-data!"); }
-                    if (defaultAniID > -1) { aniJob.SetDefaultAni(aniByID[defaultAniID]); }
+                    if (defaultAniID > -1)
+                    {
+                        aniJob.SetDefaultAni(aniByID[defaultAniID]);
+                    }
+                    //Print(defaultAniID + ": " + aniJob.DefaultAni);
 
                     // prepare for later completion of the initialization after all ScriptAniJobs-objects are present
                     aniJobByID.Add(currID, aniJob);
@@ -506,11 +509,28 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                         modelDefByID[modelDefID].AddOverlay(overlayByID[overlayID]);
                     }
                 }
+
                 foreach (var kv in aniJobIDByModelDefID)
                 {
                     var modelDefID = kv.Key;
                     var aniJobIDs = kv.Value;
+
+                    // generate list of ScriptAniJobIDs with corrected add order, so that each ani jobs possible
+                    // next ani is already added to the ModelDef before being added itself
+                    var sortedAniJobIDs = new List<int>(aniJobIDs.Count);
                     foreach (var aniJobID in aniJobIDs)
+                    {
+                        var aj = aniJobByID[aniJobID];
+                        if (aj.NextAni == null) { sortedAniJobIDs.Add(aniJobID); }
+                        else
+                        {
+                            // TO DO: need db id of NextAni which, yet, is only internally used in the
+                            //        generating function for ScriptAniJobs --> sort it there pass it here as parameter
+                            //var index = sortedAniJobIDs.IndexOf()
+                        }
+                    }
+
+                    foreach (var aniJobID in sortedAniJobIDs)
                     {
                         modelDefByID[modelDefID].AddAniJob(aniJobByID[aniJobID]);
                     }
@@ -654,7 +674,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
             try
             {
-                foreach (List<object> row in dataTable)
+                foreach (var row in dataTable)
                 {
                     var aniJobID = -1;
                     var modelDefID = -1;
@@ -682,6 +702,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     else
                     {
                         aniJobIDByModelDefID.Add(modelDefID, new List<int> { aniJobID });
+                    }
+                }
+
+                foreach (var bla in aniJobIDByModelDefID)
+                {
+                    foreach (var blubb in bla.Value)
+                    {
+                        Print("### " + bla.Key + ": " + blubb);
                     }
                 }
             }
