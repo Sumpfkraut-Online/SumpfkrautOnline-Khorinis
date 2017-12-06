@@ -155,7 +155,13 @@ namespace GUC.Scripts
 
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
+<<<<<<< HEAD
+=======
             
+            Sumpfkraut.TestingThings.Init();
+            //Sumpfkraut.AI.TestingAI.Test();
+>>>>>>> VisualLoader
+
             CreateTestWorld();
             Arena.DuelMode.Init();
             Arena.Regeneration.Init();
