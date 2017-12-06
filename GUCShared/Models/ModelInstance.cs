@@ -200,7 +200,6 @@ namespace GUC.Models
             if (job.IsCreated)
                 throw new ArgumentException("AniJob is already added to another Model!");
 
-            Log.Logger.Print("AAAAAAAAAHHHH " + job.NextAni.ModelInstance);
             if (job.NextAni != null && job.NextAni.ModelInstance != this)
                 throw new ArgumentException("AniJob's NextAni is for a different Model!");
 

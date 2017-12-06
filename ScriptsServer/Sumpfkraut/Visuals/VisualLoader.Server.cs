@@ -197,9 +197,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     return;
                 }
 
+                Dictionary<int, int> nextIDByAniJobID;
                 Dictionary<int, ScriptAniJob> aniJobByID;
                 if (!TryGenerateScriptAniJobs(tableScriptAniJob, aniByID, 
-                    overlayByID, overlayAniJobRelations, out aniJobByID))
+                    overlayByID, overlayAniJobRelations,
+                    out nextIDByAniJobID, out aniJobByID))
                 {
                     MakeLogError("Failed to produce ScriptAniJob-objects from sql data. "
                         + "Aborting Generation of Visuals.");
@@ -208,7 +210,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
                 Dictionary<int, ModelDef> modelDefByID;
                 if (!TryGenerateModelDefs(tableModelDef, overlayByID, aniJobByID,
-                    overlayIDByModelDefID, aniJobIDByModelDefID, 
+                    overlayIDByModelDefID, aniJobIDByModelDefID, nextIDByAniJobID,
                     out modelDefByID))
                 {
                     MakeLogError("Failed to produce ModelDef-objects from sql data. "
@@ -348,13 +350,14 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// <param name="overlayAniJobRelations"></param>
         /// <param name="aniJobByID"></param>
         /// <returns></returns>
-        public bool TryGenerateScriptAniJobs (List<List<object>> dataTable, 
-            Dictionary<int, ScriptAni> aniByID, Dictionary<int, ScriptOverlay> overlayByID, 
-            List<ScriptOverlayAniJobRelation> overlayAniJobRelations, 
+        public bool TryGenerateScriptAniJobs(List<List<object>> dataTable,
+            Dictionary<int, ScriptAni> aniByID, Dictionary<int, ScriptOverlay> overlayByID,
+            List<ScriptOverlayAniJobRelation> overlayAniJobRelations,
+            out Dictionary<int, int> nextIDByAniJobID,
             out Dictionary<int, ScriptAniJob> aniJobByID)
         {
+            nextIDByAniJobID = new Dictionary<int, int>();
             aniJobByID = new Dictionary<int, ScriptAniJob>(dataTable.Count);
-            var nextIDByCurrID = new Dictionary<int, int>();
 
             List<ColumnGetTypeInfo> info;
             TryGetColGetTypeInfo("ScriptAniJob", out info);
@@ -407,10 +410,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     // prepare for later completion of the initialization after all ScriptAniJobs-objects are present
                     aniJobByID.Add(currID, aniJob);
                     
-                    if (nextID > -1) { nextIDByCurrID.Add(currID, nextID); }
+                    if (nextID > -1) { nextIDByAniJobID.Add(currID, nextID); }
                 }
 
-                foreach (var kv in nextIDByCurrID)
+                foreach (var kv in nextIDByAniJobID)
                 {
                     aniJobByID[kv.Key].NextAni = aniJobByID[kv.Value];
                 }
@@ -446,8 +449,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         /// <returns></returns>
         public bool TryGenerateModelDefs (List<List<object>> dataTable, 
             Dictionary<int, ScriptOverlay> overlayByID, Dictionary<int, ScriptAniJob> aniJobByID,
-            Dictionary<int, List<int>> overlayIDByModelDefID, Dictionary<int, List<int>> aniJobIDByModelDefID, 
-            out Dictionary<int, ModelDef> modelDefByID)
+            Dictionary<int, List<int>> overlayIDByModelDefID, Dictionary<int, List<int>> aniJobIDByModelDefID,
+            Dictionary<int, int> nextIDByAniJobID, out Dictionary<int, ModelDef> modelDefByID)
         {
             modelDefByID = new Dictionary<int, ModelDef>(dataTable.Count);
 
@@ -513,26 +516,33 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 foreach (var kv in aniJobIDByModelDefID)
                 {
                     var modelDefID = kv.Key;
-                    var aniJobIDs = kv.Value;
-
-                    // generate list of ScriptAniJobIDs with corrected add order, so that each ani jobs possible
-                    // next ani is already added to the ModelDef before being added itself
-                    var sortedAniJobIDs = new List<int>(aniJobIDs.Count);
-                    foreach (var aniJobID in aniJobIDs)
+                    var remains = new List<int>(kv.Value);
+                    var added = new List<int>(remains.Count);
+                    int next;
+                   
+                    while (remains.Count > 0)
                     {
-                        var aj = aniJobByID[aniJobID];
-                        if (aj.NextAni == null) { sortedAniJobIDs.Add(aniJobID); }
-                        else
+                        var newlyAdded = new List<int>();
+                        foreach (var r in remains)
                         {
-                            // TO DO: need db id of NextAni which, yet, is only internally used in the
-                            //        generating function for ScriptAniJobs --> sort it there pass it here as parameter
-                            //var index = sortedAniJobIDs.IndexOf()
+                            // if ScriptAniJob has a followup animation
+                            // and it is still missing from the current ModelDef
+                            // then wait up until it possibly is
+                            if (nextIDByAniJobID.TryGetValue(r, out next))
+                            {
+                                if (!added.Contains(next)) { continue; }
+                            }
+                            // otherwise proceed with initialization
+                            modelDefByID[modelDefID].AddAniJob(aniJobByID[r]);
+                            newlyAdded.Add(r);
                         }
-                    }
-
-                    foreach (var aniJobID in sortedAniJobIDs)
-                    {
-                        modelDefByID[modelDefID].AddAniJob(aniJobByID[aniJobID]);
+                        added.AddRange(newlyAdded);
+                        remains = remains.Except(newlyAdded).ToList();
+                        if (newlyAdded.Count < 1)
+                        {
+                            MakeLogError("Cannor resolve NextAni-dependencies"
+                                + " while adding ScriptAniJobs to ModelDef with database-id: " + modelDefID);
+                        }
                     }
                 }
 
