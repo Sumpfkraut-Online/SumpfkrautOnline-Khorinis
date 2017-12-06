@@ -398,14 +398,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                         }
                     }
 
-                    Print(string.Format("{0} ({1}) -> {2}", currID, defaultAniID, nextID));
-
                     if (currID <= -1) { throw new Exception("Didn't find ScriptAniJobID in db-data!"); }
                     if (defaultAniID > -1)
                     {
                         aniJob.SetDefaultAni(aniByID[defaultAniID]);
                     }
-                    //Print(defaultAniID + ": " + aniJob.DefaultAni);
 
                     // prepare for later completion of the initialization after all ScriptAniJobs-objects are present
                     aniJobByID.Add(currID, aniJob);
@@ -546,11 +543,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     }
                 }
 
-                foreach (var kv in modelDefByID)
-                {
-                    kv.Value.Create();
-                    Print("Created ModelDef => " + kv.Key + ": " + kv.Value.CodeName);
-                }
+                foreach (var kv in modelDefByID) { kv.Value.Create(); }
             }
             catch (Exception ex)
             {
@@ -712,14 +705,6 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                     else
                     {
                         aniJobIDByModelDefID.Add(modelDefID, new List<int> { aniJobID });
-                    }
-                }
-
-                foreach (var bla in aniJobIDByModelDefID)
-                {
-                    foreach (var blubb in bla.Value)
-                    {
-                        Print("### " + bla.Key + ": " + blubb);
                     }
                 }
             }
