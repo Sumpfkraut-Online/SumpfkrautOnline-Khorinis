@@ -96,7 +96,14 @@
     <Compile Include="System\zFile.cs" />
     <Compile Include="System\zFile_File.cs" />
     <Compile Include="System\zFile_VDFS.cs" />
+    <Compile Include="Test\Types\zVec3.cs" />
+    <Compile Include="Test\Vobs\zCVob.cs" />
+    <Compile Include="Test\zCClassDef.cs" />
+    <Compile Include="Test\zCObject.cs" />
+    <Compile Include="Test\zString.cs" />
     <Compile Include="Types\zCQuat.cs" />
+    <Compile Include="Types\zString.cs" />
+    <Compile Include="Types\zVec3.cs" />
     <Compile Include="View\zCFontManager.cs" />
     <Compile Include="View\zCFont.cs" />
     <Compile Include="View\zCViewDraw.cs" />
@@ -118,7 +125,6 @@
     <Compile Include="Types\zMat4.cs" />
     <Compile Include="Types\zPoint3.cs" />
     <Compile Include="Types\zTBBox3D.cs" />
-    <Compile Include="Types\zVec3.cs" />
     <Compile Include="Types\zVec4.cs" />
     <Compile Include="zClass.cs" />
     <Compile Include="Types\zColor.cs" />
@@ -126,13 +132,9 @@
     <Compile Include="Sound\zCSndSys_MSS.cs" />
     <Compile Include="View\zCView.cs" />
     <Compile Include="System\zError.cs" />
-    <Compile Include="Types\zString.cs" />
-    <Compile Include="zCObject.cs" />
     <Compile Include="zCOption.cs" />
     <Compile Include="zCOptionEntry.cs" />
     <Compile Include="zCOptionSection.cs" />
-    <Compile Include="zPointer.cs" />
-    <Compile Include="zString.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WinApi\WinApi.csproj">

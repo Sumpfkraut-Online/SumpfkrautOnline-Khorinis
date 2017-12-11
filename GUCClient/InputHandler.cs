@@ -38,6 +38,16 @@ namespace GUC
                     var ai = Network.GameClient.Client?.Character?.gVob;
                     if (ai != null)
                     {
+                        var tvob = Gothic.Test.Vobs.zCVob.Create();
+                        var visual = Gothic.Test.zString.Create("ITFO_APPLE.3DS");
+                        tvob.SetVisual(visual);
+                        visual.Dispose();
+
+                        var vec = Gothic.Test.Types.zVec3.Create(0,500,0);
+                        tvob.SetPositionWorld(vec);
+                        vec.Dispose();
+
+                        GothicGlobals.Game.GetWorld().AddVob(new Gothic.Objects.zCVob(tvob.Address));
 
                     }
                 }
@@ -45,12 +55,6 @@ namespace GUC
         };
 
         #endregion
-
-        static void DoSomething()
-        {
-            int i = 1;
-            i += 2;
-        }
 
         public static bool IsPressed(VirtualKeys key)
         {
