@@ -88,7 +88,7 @@ namespace GUC.Scripts.Sumpfkraut.Database
 
                 return false;
             }
-            
+
             using (SQLiteCommand cmd = new SQLiteCommand(completeQuery, con))
             {
                 SQLiteDataReader rdr = null;
