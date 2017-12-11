@@ -373,12 +373,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
+                        var npc = (NPCInst)nearNPC.ScriptObject;
                         /*if (!aiAgent.HasAIClient(nearNPC))
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }*/
 
-                        if (!nearNPC.IsDead && nearNPC.IsPlayer)
+                        if (nearNPC.IsPlayer && !nearNPC.IsDead && !npc.IsUnconscious)
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }

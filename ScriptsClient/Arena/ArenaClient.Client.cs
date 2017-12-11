@@ -43,6 +43,7 @@ namespace GUC.Scripts.Arena
                 PlayerInfo.ReadPlayerInfoMessage(stream);
 
             TeamMode.ReadGameInfo(stream);
+            HordeMode.ReadGameInfo(stream);
 
             long remainingSpawnTicks = stream.ReadUInt();
             Menus.RespawnTimer.NextSpawnTime = GameTime.Ticks + remainingSpawnTicks;
@@ -107,6 +108,12 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.PointsMessage:
                     int points = stream.ReadSByte();
                     Sumpfkraut.Menus.ScreenScrollText.AddText((points > 0 ? "Punkte +" : "Punkte ") + points);
+                    break;
+                case ScriptMessages.HordeStart:
+                    HordeMode.ReadStartMessage(stream);
+                    break;
+                case ScriptMessages.HordePhase:
+                    HordeMode.ReadPhaseMessage(stream);
                     break;
             }
         }

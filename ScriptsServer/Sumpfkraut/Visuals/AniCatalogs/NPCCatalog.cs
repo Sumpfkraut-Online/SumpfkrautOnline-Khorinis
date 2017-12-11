@@ -71,6 +71,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "climb_mid", "Climbs.Mid" },
             { "climb_low", "Climbs.Low" },
 
+            // unconsciousness
+            { "uncon_dropfront", "Unconscious.DropFront" },
+            { "uncon_dropback", "Unconscious.DropBack" },
+
             // bows
             { "drawbow_part0", "DrawBow.Draw" },
             { "undrawbow_part0", "DrawBow.Undraw" },
@@ -201,6 +205,20 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob Low { get; private set; }
         }
         public ClimbAnis Climbs { get; private set; }
+        #endregion
+
+        #region Unconscious
+
+        public class UnconsciousAnis : AniCatalog
+        {
+            public ScriptAniJob DropFront { get; private set; }
+            public ScriptAniJob DropBack { get; private set; }
+
+            public ScriptAniJob StandUpFront { get; private set; }
+            public ScriptAniJob StandUpBack { get; private set; }
+        }
+        public UnconsciousAnis Unconscious { get; private set; }
+
         #endregion
     }
 }

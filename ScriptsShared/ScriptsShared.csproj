@@ -55,6 +55,10 @@
     <Compile Include="Arena\Chat\Chat.cs" />
     <Compile Include="Arena\Chat\ChatMode.cs" />
     <Compile Include="Arena\Duel\DuelMode.cs" />
+    <Compile Include="Arena\Horde\HordeDef.cs" />
+    <Compile Include="Arena\Horde\HordeMode.cs" />
+    <Compile Include="Arena\Horde\HordeClassDef.cs" />
+    <Compile Include="Arena\Horde\HordeSection.cs" />
     <Compile Include="Arena\ScriptMessages.cs" />
     <Compile Include="Arena\TeamObjective\TeamMode.cs" />
     <Compile Include="Arena\TeamObjective\TOClassDef.cs" />

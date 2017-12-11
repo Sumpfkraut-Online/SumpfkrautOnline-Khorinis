@@ -75,6 +75,18 @@
     <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
       <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeClassDef.cs">
+      <Link>Arena\Horde\HordeClassDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeDef.cs">
+      <Link>Arena\Horde\HordeDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeMode.cs">
+      <Link>Arena\Horde\HordeMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeSection.cs">
+      <Link>Arena\Horde\HordeSection.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
@@ -406,6 +418,8 @@
     <Compile Include="Arena\Chat\Chat.Server.cs" />
     <Compile Include="Arena\Duel\DuelBoard.cs" />
     <Compile Include="Arena\Duel\DuelMode.Server.cs" />
+    <Compile Include="Arena\Horde\HordeDef.Server.cs" />
+    <Compile Include="Arena\Horde\HordeMode.Server.cs" />
     <Compile Include="Arena\Regeneration.cs" />
     <Compile Include="Arena\ScoreBoard\ScoreBoard.cs" />
     <Compile Include="Arena\TeamObjective\TeamMenu.cs" />

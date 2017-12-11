@@ -41,5 +41,10 @@ namespace GUC.Scripts.Arena
         PlayerQuitMessage,
 
         PointsMessage,
+
+        HordeJoin,
+        HordeSpectate,
+        HordeStart,
+        HordePhase,
     }
 }

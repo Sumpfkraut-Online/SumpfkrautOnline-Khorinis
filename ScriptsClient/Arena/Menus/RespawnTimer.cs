@@ -35,7 +35,7 @@ namespace GUC.Scripts.Arena.Menus
             if (0 < seconds && seconds < 10)
                 if (TeamMode.TeamDef != null)
                 {
-                    if (ArenaClient.Client.ClassDef != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish)
+                    if (ArenaClient.Client.TOClass != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish)
                     {
                         if (NPCInst.Hero != null)
                         {

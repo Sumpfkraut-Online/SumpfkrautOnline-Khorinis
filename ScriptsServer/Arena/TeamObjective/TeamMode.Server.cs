@@ -42,12 +42,12 @@ namespace GUC.Scripts.Arena
 
         public static void SpawnCharacter(ArenaClient player)
         {
-            if (player.Team == null || player.ClassDef == null)
+            if (player.Team == null || player.TOClass == null)
                 return;
 
             player.KillCharacter();
 
-            var classDef = player.ClassDef;
+            var classDef = player.TOClass;
             NPCInst npc;
             if (classDef.NPCDef == null)
             {
@@ -271,7 +271,7 @@ namespace GUC.Scripts.Arena
             int index = stream.ReadByte();
             var classDef = client.Team.Def.ClassDefs.ElementAtOrDefault(index);
             if (classDef != null)
-                client.ClassDef = classDef;
+                client.TOClass = classDef;
 
             client.KillCharacter();
             if (Phase == TOPhases.Warmup)
@@ -317,7 +317,7 @@ namespace GUC.Scripts.Arena
                 client.Team.Players.Remove(client);
                 client.Team = null;
             }
-            client.ClassDef = null;
+            client.TOClass = null;
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.TOJoinTeam);

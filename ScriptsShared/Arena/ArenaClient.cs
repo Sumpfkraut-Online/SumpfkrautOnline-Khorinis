@@ -10,7 +10,8 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient : ScriptClient
     {
-        public TOClassDef ClassDef;
+        public TOClassDef TOClass;
+        public HordeClassDef HordeClass;
 
         partial void pOnConnect();
         public override void OnConnection()

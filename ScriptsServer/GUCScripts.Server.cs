@@ -155,10 +155,16 @@ namespace GUC.Scripts
 
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
-            
+
             CreateTestWorld();
+
+            Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
+            new Sumpfkraut.AI.SimpleAI.AIManager(true, true, new TimeSpan(0, 0, 0, 0, 500));
+
             Arena.DuelMode.Init();
-            //Arena.Regeneration.Init();
+            Arena.Regeneration.Init();
+
+            Arena.HordeMode.StartHorde();
 
             Logger.Log("######################## Finished #########################");
         }
@@ -176,7 +182,7 @@ namespace GUC.Scripts
             var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.Start();
             
-            for (int i = 0; i < 800; i++)
+            for (int i = 0; i < 100; i++)
             {
                 NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
                 if (testNPC.ModelDef.TryGetOverlay("humans_skeleton", out ScriptOverlay ov))
@@ -185,7 +191,7 @@ namespace GUC.Scripts
                 var item = new ItemInst(ItemDef.Get("grobes_schwert"));
                 testNPC.Inventory.AddItem(item);
                 testNPC.EquipItem(NPCSlots.OneHanded1, item);
-                testNPC.Spawn(world, Randomizer.GetVec3fRad(new Vec3f(0, 1000, 0), 20000), Angles.Null);      
+                testNPC.Spawn(world, Randomizer.GetVec3fRad(new Vec3f(0, 1000, 0), 10000), Angles.Null);      
                 
                 var aiMemory = new Sumpfkraut.AI.SimpleAI.AIMemory();
                 var aiRoutine = new Sumpfkraut.AI.SimpleAI.AIRoutines.SimpleAIRoutine();
@@ -221,6 +227,16 @@ namespace GUC.Scripts
             world.Clock.Stop();
             world.Barrier.StopTimer();
             WorldInst.List.Add(world);
+
+            world = new WorldInst(null);
+            world.Path = "H_PASS.ZEN";
+            world.Create();
+            world.Clock.SetTime(new WorldTime(0, 20), 1.0f);
+            world.Clock.Stop();
+            world.Barrier.StopTimer();
+            world.Weather.StopRainTimer();
+            world.Weather.SetNextWeight(world.Clock.Time, 1.0f);
+            WorldInst.List.Add(world);
         }
 
         void AddSomeDefs()
@@ -235,7 +251,8 @@ namespace GUC.Scripts
             AddClimbAnis(m);
             AddBowAnis(m);
             AddXBowAnis(m);
-            
+            AddUnconsciousAnis(m);
+
             m.AddOverlay(new ScriptOverlay("Humans_Skeleton", "Humans_Skeleton.mds"));
 
             m.Radius = 40;
@@ -289,6 +306,16 @@ namespace GUC.Scripts
 
             AddCrawlers();
             AddOrcs();
+
+            m = new ModelDef("barrier");
+            m.Visual = "OW_Palissade.3ds";
+            m.Create();
+
+            VobDef vobDef = new VobDef("barrier");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
         }
 
         #region Items
@@ -609,6 +636,34 @@ namespace GUC.Scripts
             itemDef.Protection = 40;
             itemDef.Model = m;
             itemDef.Create();
+        }
+
+        #endregion
+
+        #region Unconscious
+
+        void AddUnconsciousAnis(ModelDef model)
+        {
+            var ani1 = new ScriptAniJob("uncon_dropfront", "t_Stand_2_Wounded", new ScriptAni(1, 49));
+            ani1.DefaultAni.FPS = 10;
+
+            var ani2 = new ScriptAniJob("uncon_front", "s_wounded", new ScriptAni());
+            model.AddAniJob(ani1);
+            model.AddAniJob(ani2);
+            ani1.NextAni = ani2;
+
+
+
+
+            ani1 = new ScriptAniJob("uncon_dropback", "t_Stand_2_Woundedb", new ScriptAni(1, 49));
+            ani1.DefaultAni.FPS = 10;
+
+            ani2 = new ScriptAniJob("uncon_back", "s_woundedb", new ScriptAni());
+
+            model.AddAniJob(ani1);
+            model.AddAniJob(ani2);
+
+            ani1.NextAni = ani2;
         }
 
         #endregion

@@ -90,7 +90,7 @@ namespace GUC.Scripts.Arena.Menus
             if (classDef == null)
                 return;
 
-            if (classDef == ArenaClient.Client.ClassDef)
+            if (classDef == ArenaClient.Client.TOClass)
             {
                 Close();
                 return;
@@ -104,7 +104,7 @@ namespace GUC.Scripts.Arena.Menus
             stream.Write((byte)index);
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
 
-            ArenaClient.Client.ClassDef = classDef;
+            ArenaClient.Client.TOClass = classDef;
 
             Close();
         }

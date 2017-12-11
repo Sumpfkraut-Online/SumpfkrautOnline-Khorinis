@@ -65,8 +65,7 @@ namespace GUC.Scripts.Arena
         static Dictionary<string, TODef> objectives = new Dictionary<string, TODef>(StringComparer.OrdinalIgnoreCase);
         public static TODef TryGet(string name)
         {
-            TODef result;
-            if (objectives.TryGetValue(name, out result))
+            if (objectives.TryGetValue(name, out TODef result))
                 return result;
             return null;
         }

@@ -12,23 +12,27 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     public partial class NPCInst
     {
         const int MaxNPCCorpses = 500000;
-        
+
         public bool AllowHit(NPCInst target)
         {
-            if (this.TeamID == -1)
-            {                    
-                if (!this.IsPlayer || !target.IsPlayer || (this.IsPlayer && ((Arena.ArenaClient)Client).DuelEnemy == target.Client))
-                {
-                    return true;
-                }
-            }
-            else if (target.TeamID != -1)
+            if (!target.IsPlayer)
             {
-                return true;
+                return this.IsPlayer;
+            }
+            else if (this.IsPlayer) // pvp
+            {
+                if (this.TeamID == -1)
+                {
+                    return target.TeamID == -1 && ((Arena.ArenaClient)this.Client).DuelEnemy == target.Client;
+                }
+                else
+                {
+                    return this.TeamID != target.TeamID;
+                }
             }
             return false;
         }
-        
+
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
@@ -119,8 +123,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            this.ModelInst.StartAniJobUncontrolled(job);
-            this.Throw(velocity);
+            //this.ModelInst.StartAniJobUncontrolled(job);
+            //this.Throw(velocity);
+
+            this.ModelInst.StartAniJob(AniCatalog.Unconscious.DropFront);
         }
 
         #endregion
@@ -667,8 +673,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             strm.Write((ushort)this.ID);
             this.BaseInst.SendScriptVobStream(strm);
 
-            if (attacker.TeamID != -1 && Cast.Try(attacker.Client, out Arena.ArenaClient att) && att.ClassDef != null)
-                damage += att.ClassDef.Damage;
+            if (Cast.Try(attacker.Client, out Arena.ArenaClient att) && attacker.TeamID != -1 && att.TOClass != null)
+                damage += att.TOClass.Damage;
 
             int protection = 0;
             var armor = this.GetArmor();
@@ -683,8 +689,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if ((otherMelee = attacker.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
                 damage += otherMelee.Damage / 4;
 
-            if (this.TeamID != -1 && Cast.Try(this.Client, out Arena.ArenaClient tar) && tar.ClassDef != null)
-                protection += tar.ClassDef.Protection;
+            if (Cast.Try(this.Client, out Arena.ArenaClient tar) && this.TeamID != -1 && tar.TOClass != null)
+                protection += tar.TOClass.Protection;
 
             damage -= protection;
 
@@ -695,7 +701,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (damage <= 0)
                 damage = 1;
 
-            this.SetHealth(this.GetHealth() - damage);
+            int resultingHP = this.GetHealth() - damage;
+
+            if (resultingHP <= 0 && !attacker.IsPlayer && tar != null && tar.HordeClass != null)
+            {
+                this.DropUnconscious();
+            }
+
+            this.SetHealth(resultingHP);
             sOnHit?.Invoke(attacker, this, damage);
             lastHitMoveTime = GameTime.Ticks;
         }
@@ -727,7 +740,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       NPCInst target = (NPCInst)npc.ScriptObject;
                       if (target == this || target.IsDead)
                           return;
-                      
+
                       if (!AllowHit(target))
                           return;
 
@@ -887,5 +900,39 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         #endregion
+
+        public enum Unconsciousness
+        {
+            None,
+            Front,
+            Back
+        }
+
+
+        Unconsciousness uncon = Unconsciousness.None;
+        public bool IsUnconscious { get { return uncon != Unconsciousness.None; } }
+
+        public void DropUnconscious(bool toFront = true)
+        {
+            var cat = AniCatalog.Unconscious;
+            ScriptAniJob job = toFront ? cat.DropFront : cat.DropBack;
+            if (job != null)
+                this.ModelInst.StartAniJob(job);
+
+            uncon = toFront ? Unconsciousness.Front : Unconsciousness.Back;
+        }
+
+        public void LiftUnconsciousness()
+        {
+            if (!IsUnconscious)
+                return;
+
+            var cat = AniCatalog.Unconscious;
+            ScriptAniJob job = uncon == Unconsciousness.Front ? cat.StandUpFront : cat.StandUpBack;
+            if (job != null)
+                this.ModelInst.StartAniJob(job, () => uncon = Unconsciousness.None);
+            else
+                uncon = Unconsciousness.None;
+        }
     }
 }

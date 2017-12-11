@@ -213,6 +213,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Health
 
+        public delegate void OnDeathHandler(NPCInst npc);
+        public static event OnDeathHandler sOnDeath;
+        public event OnDeathHandler OnDeath;
+
         public void SetHealth(int hp)
         {
             this.SetHealth(hp, BaseInst.HPMax);
@@ -228,6 +232,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.BaseInst.SetHealth(hp, hpmax);
             pSetHealth(hp, hpmax);
+
+            if (hp <= 0)
+            {
+                OnDeath?.Invoke(this);
+                sOnDeath?.Invoke(this);
+            }
         }
 
         #endregion

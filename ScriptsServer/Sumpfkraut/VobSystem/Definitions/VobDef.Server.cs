@@ -12,5 +12,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         {
             this.CodeName = codeName;
         }
+
+        public static VobDef Get(string codeName)
+        {
+            return BaseVobDef.Get<VobDef>(codeName);
+        }
     }
 }

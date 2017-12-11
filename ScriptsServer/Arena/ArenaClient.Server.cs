@@ -15,7 +15,6 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
-
         #region Respawn
 
         const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
@@ -33,7 +32,7 @@ namespace GUC.Scripts.Arena
                 ArenaClient client = (ArenaClient)s;
                 if (client.Team != null)
                 {
-                    if (client.ClassDef != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish
+                    if (client.TOClass != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish
                         && (client.Character == null || client.Character.IsDead))
                         TeamMode.SpawnCharacter(client);
                 }
@@ -69,6 +68,14 @@ namespace GUC.Scripts.Arena
 
         #endregion
 
+        #region Horde
+
+        public int HordeScore;
+        public int HordeKills;
+        public int HordeDeaths;
+
+        #endregion
+
         static void SendGameInfo(ArenaClient client)
         {
             var stream = ArenaClient.GetScriptMessageStream();
@@ -79,6 +86,7 @@ namespace GUC.Scripts.Arena
             ArenaClient.ForEach(c => ((ArenaClient)c).WritePlayerInfo(stream));
 
             TeamMode.WriteGameInfo(stream);
+            HordeMode.WriteGameInfo(stream);
 
             stream.Write((uint)respawnTimer.GetRemainingTicks());
 
@@ -174,6 +182,12 @@ namespace GUC.Scripts.Arena
                     break;
                 case ScriptMessages.SpectateTeam:
                     Spectate(true);
+                    break;
+                case ScriptMessages.HordeJoin:
+                    HordeMode.JoinClass(stream, this);
+                    break;
+                case ScriptMessages.HordeSpectate:
+                    HordeMode.JoinSpectate(this);
                     break;
             }
         }

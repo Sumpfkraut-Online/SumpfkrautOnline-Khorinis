@@ -61,6 +61,18 @@
     <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
       <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeClassDef.cs">
+      <Link>Arena\Horde\HordeClassDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeDef.cs">
+      <Link>Arena\Horde\HordeDef.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeMode.cs">
+      <Link>Arena\Horde\HordeMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\Horde\HordeSection.cs">
+      <Link>Arena\Horde\HordeSection.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
     </Compile>
@@ -369,6 +381,9 @@
     <Compile Include="Arena\Controls\ArenaControl.cs" />
     <Compile Include="Arena\Duel\DuelBoardScreen.cs" />
     <Compile Include="Arena\Duel\DuelMode.Client.cs" />
+    <Compile Include="Arena\Horde\HordeDef.Client.cs" />
+    <Compile Include="Arena\Horde\HordeMenu.cs" />
+    <Compile Include="Arena\Horde\HordeMode.Client.cs" />
     <Compile Include="Arena\Menus\CharCreationMenu.cs" />
     <Compile Include="Arena\Chat\ChatMenu.cs" />
     <Compile Include="Arena\Menus\ExitMenu.cs" />
