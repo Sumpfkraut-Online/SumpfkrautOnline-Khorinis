@@ -359,5 +359,18 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x620080, (BoolArg)true);
         }
+
+        public zCVob SearchVobByName(string name)
+        {
+            zCVob result;
+            using (var z = zString.Create(name))
+                result = SearchVobByName(z);
+            return result;
+        }
+
+        public zCVob SearchVobByName(zString name)
+        {
+            return Process.THISCALL<zCVob>(Address, 0x623FB0, name);
+        }
     }
 }

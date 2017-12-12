@@ -130,6 +130,10 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     TOBoardScreen.Instance.Open();
                 }
+                else if (ArenaClient.Client.HordeClass != null)
+                {
+                    HordeBoardScreen.Instance.Open();
+                }
                 else
                 {
                     DuelBoardScreen.Instance.Open();
@@ -139,6 +143,7 @@ namespace GUC.Scripts.Arena.Controls
             {
                 DuelBoardScreen.Instance.Close();
                 TOBoardScreen.Instance.Close();
+                HordeBoardScreen.Instance.Close();
             }
         }
 
@@ -256,6 +261,8 @@ namespace GUC.Scripts.Arena.Controls
                 LookAround(hero);
                 return;
             }
+
+            zCAICamera.CurrentCam.BestAzimuth = 0;
 
             if (freeAim)
             {

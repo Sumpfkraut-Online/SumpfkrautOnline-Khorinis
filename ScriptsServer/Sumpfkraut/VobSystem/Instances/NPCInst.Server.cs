@@ -74,6 +74,32 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
                 if (this.IsPlayer) ((Arena.ArenaClient)this.Client).KillCharacter();
                 else this.SetHealth(0);
+
+            CheckUnconsciousness();
+        }
+
+        void CheckUnconsciousness()
+        {
+            if (!this.IsUnconscious || this.Environment.InAir)
+                return;
+
+            var cat = AniCatalog.Unconscious;
+            var dropJob = uncon == Unconsciousness.Front ? cat.DropFront : cat.DropBack;
+            if (dropJob == null) return;
+
+            var aa = this.ModelInst.GetActiveAniFromLayer(1);
+            if (aa != null)
+            {
+                var job = (ScriptAniJob)aa.AniJob.ScriptObject;
+                if (job == dropJob || job == dropJob.NextAni)
+                    return;
+
+                var standJob = uncon == Unconsciousness.Front ? cat.StandUpFront : cat.StandUpBack;
+                if (standJob != null && standJob == job)
+                    return;
+            }
+
+            this.ModelInst.StartAniJob(dropJob);
         }
 
         #region Constructors
@@ -906,7 +932,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         #endregion
-        
+
         public void DropUnconscious(bool toFront = true)
         {
             var cat = AniCatalog.Unconscious;
@@ -915,7 +941,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.ModelInst.StartAniJob(job);
 
             uncon = toFront ? Unconsciousness.Front : Unconsciousness.Back;
-            
+
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.Uncon);
             strm.Write((byte)uncon);

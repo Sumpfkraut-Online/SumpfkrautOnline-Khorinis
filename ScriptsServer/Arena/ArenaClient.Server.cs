@@ -70,7 +70,7 @@ namespace GUC.Scripts.Arena
 
         #region Horde
 
-        public int HordeScore;
+        public float HordeScore;
         public int HordeKills;
         public int HordeDeaths;
 
@@ -132,11 +132,14 @@ namespace GUC.Scripts.Arena
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
             TOBoard.Instance.Remove(this);
+            HordeBoard.Instance.Remove(this);
             TeamMenu.Remove(this);
 
             if (this.Team != null)
                 this.Team.Players.Remove(this);
             this.Team = null;
+
+            HordeMode.LeaveHorde(this);
         }
 
         public override void ReadScriptMessage(PacketReader stream)
@@ -188,6 +191,9 @@ namespace GUC.Scripts.Arena
                     break;
                 case ScriptMessages.HordeSpectate:
                     HordeMode.JoinSpectate(this);
+                    break;
+                case ScriptMessages.ScoreHordeMessage:
+                    HordeBoard.Instance.Toggle(this);
                     break;
             }
         }

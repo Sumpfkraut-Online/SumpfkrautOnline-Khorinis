@@ -141,6 +141,23 @@ namespace GUC.Scripts.Arena
                 textBox.Input = "";
                 return;
             }
+            else if (message.StartsWith("/tell"))
+            {
+                string name = message.Substring(6).Trim();
+                var vob = GothicGlobals.Game.GetWorld().SearchVobByName(name);
+                if (vob.Address != 0)
+                {
+                    Vec3f pos = (Vec3f)vob.Position;
+                    Angles ang = Angles.FromMatrix(vob.TrafoObjToWorld);
+                    string msg = string.Format(System.Globalization.CultureInfo.InvariantCulture, "new HordeBarrier() {{ Definition = \"barrier\", Position = new Vec3f({0:0}, {1:0}, {2:0}), Angles = new Angles({3:0.000}, {4:0.000}, {5:0.000}) }},\n", pos.X, pos.Y, pos.Z, ang.Pitch, ang.Yaw, ang.Roll);
+                    System.IO.File.AppendAllText("barriers.txt", msg);
+                }
+                else
+                {
+                    Log.Logger.Log("not found");
+                }
+                return;
+            }
 
             switch (openChatMode)
             {

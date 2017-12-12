@@ -59,6 +59,11 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         #region Animations
 
+        public bool IsAniActive(ScriptAniJob job)
+        {
+            return this.BaseInst.GetActiveAniFromAniJob(job.BaseAniJob) != null;
+        }
+
         public void ForEachActiveAni(Action<ActiveAni> action)
         {
             this.BaseInst.ForEachActiveAni(action);
@@ -104,6 +109,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         {
             return this.BaseInst.IsInAnimation();
         }
+
         public ActiveAni StartAniJob(ScriptAniJob aniJob) { return StartAniJob(aniJob, 1.0f); }
         public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult) { return StartAniJob(aniJob, fpsMult, default(FrameActionPair[])); }
         public ActiveAni StartAniJob(ScriptAniJob aniJob, Action onStop) { return StartAniJob(aniJob, 1.0f, FrameActionPair.OnEnd(onStop)); }

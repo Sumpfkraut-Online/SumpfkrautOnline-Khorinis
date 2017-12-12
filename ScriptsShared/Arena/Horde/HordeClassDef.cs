@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GUC.Scripts.Arena
 {
     partial class HordeClassDef
     {
         public string Name;
+
+        public List<string> Equipment;
+        public bool NeedsArrows, NeedsBolts;
+
+        public int ExtraProtection;
+        public int ExtraDamage;
     }
 }

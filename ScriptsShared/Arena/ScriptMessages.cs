@@ -36,6 +36,7 @@ namespace GUC.Scripts.Arena
 
         ScoreDuelMessage,
         ScoreTOMessage,
+        ScoreHordeMessage,
 
         PlayerInfoMessage,
         PlayerQuitMessage,

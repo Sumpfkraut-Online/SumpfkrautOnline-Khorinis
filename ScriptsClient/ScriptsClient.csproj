@@ -381,6 +381,7 @@
     <Compile Include="Arena\Controls\ArenaControl.cs" />
     <Compile Include="Arena\Duel\DuelBoardScreen.cs" />
     <Compile Include="Arena\Duel\DuelMode.Client.cs" />
+    <Compile Include="Arena\Horde\HordeBoardScreen.cs" />
     <Compile Include="Arena\Horde\HordeDef.Client.cs" />
     <Compile Include="Arena\Horde\HordeMenu.cs" />
     <Compile Include="Arena\Horde\HordeMode.Client.cs" />

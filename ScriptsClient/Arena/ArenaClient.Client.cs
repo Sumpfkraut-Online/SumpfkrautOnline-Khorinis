@@ -115,6 +115,9 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.HordePhase:
                     HordeMode.ReadPhaseMessage(stream);
                     break;
+                case ScriptMessages.ScoreHordeMessage:
+                    HordeBoardScreen.Instance.ReadMessage(stream);
+                    break;
             }
         }
     }

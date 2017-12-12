@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using GUC.Types;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Arena
 {
@@ -34,7 +34,9 @@ namespace GUC.Scripts.Arena
             {
                 new HordeClassDef()
                 {
-                    Name = "Paladin",
+                    Name = "Miliz",
+                    Equipment = new List<string>() { "ITAR_miliz_s", "1hschwert", "light_xbow" },
+                    NeedsBolts = true,
                 },
              };
 
@@ -42,14 +44,15 @@ namespace GUC.Scripts.Arena
             {
                 SpawnPos = new Vec3f(0, 400, 0),
                 SpawnRange = 500,
-                SecsTillNext = 10,
+                SecsTillNext = 1000,
                 SpecPos = new Vec3f(0, 400, 0),
                 SpecAng = new Angles(0, 0, 0),
             };
 
             section.barriers = new List<HordeBarrier>()
             {
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(0, 200, 100) }
+                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(6414, 6426, 41209), Angles = new Angles(0.162, -2.997, 0.042) },
+                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(6877, 6446, 41255), Angles = new Angles(0.156, -3.039, 0.035) },
             };
             section.groups = new List<HordeGroup>();
             def.Sections.Add(section);

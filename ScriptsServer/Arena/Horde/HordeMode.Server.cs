@@ -15,14 +15,54 @@ namespace GUC.Scripts.Arena
 {
     static partial class HordeMode
     {
+        static HordeMode()
+        {
+            NPCInst.sOnHit += NPCInst_sOnHit;
+        }
+
+        static void NPCInst_sOnHit(NPCInst attacker, NPCInst target, int damage)
+        {
+            if (attacker.IsPlayer)
+            {
+                if (target.IsPlayer)
+                    return;
+
+                ArenaClient player = (ArenaClient)attacker.Client;
+                if (player.HordeClass == null) return;
+
+                player.HordeScore += damage / 10.0f;
+                if (target.HP <= 0)
+                {
+                    player.HordeKills++;
+                    player.HordeScore += 5;
+                    enemies.Remove(target);
+                    CheckSectionClear();
+                }
+            }
+            else if (target.IsPlayer)
+            {
+                ArenaClient player = (ArenaClient)target.Client;
+                if (player.HordeClass == null) return;
+
+                if (target.HP <= 1)
+                {
+                    player.HordeDeaths++;
+                    if (Players.TrueForAll(p => p.Character.HP <= 1))
+                        EndHorde(false);
+                }
+            }
+        }
+
         static GUCTimer barrierTimer = new GUCTimer();
-        
+
         static WorldInst activeWorld;
 
         static List<VobInst> barriers = new List<VobInst>(10);
         static HashSet<NPCInst> enemies = new HashSet<NPCInst>();
+        public static HashSet<NPCInst> Enemies { get { return enemies; } }
 
         static List<ArenaClient> players = new List<ArenaClient>(10);
+        public static List<ArenaClient> Players { get { return players; } }
 
         static int currentIndex = 0;
         public static void StartHorde()
@@ -48,6 +88,17 @@ namespace GUC.Scripts.Arena
         {
             if (def == null) return;
 
+            ArenaClient.ForEach(c =>
+            {
+                var client = (ArenaClient)c;
+                client.HordeScore = 0;
+                client.HordeDeaths = 0;
+                client.HordeKills = 0;
+                client.HordeClass = null;
+            });
+
+            players.Clear();
+
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.HordeStart);
             stream.Write(def.Name);
@@ -60,14 +111,18 @@ namespace GUC.Scripts.Arena
             activeSectionIndex = 0;
 
             SpawnSection(ActiveSection);
-            
+
             SetPhase(HordePhase.Intermission);
             CheckSectionClear();
         }
 
-        static void EndHorde()
+        static void EndHorde(bool victory)
         {
+            SetPhase(victory ? HordePhase.Victory : HordePhase.Lost);
 
+            barrierTimer.SetCallback(StartHorde);
+            barrierTimer.SetInterval(60 * TimeSpan.TicksPerSecond);
+            barrierTimer.Start();
         }
 
         static void CheckSectionClear()
@@ -75,11 +130,19 @@ namespace GUC.Scripts.Arena
             if (enemies.Count > 0 || players.Count == 0)
                 return;
 
-            barrierTimer.SetCallback(NextSection);
-            barrierTimer.SetInterval(ActiveSection.SecsTillNext * TimeSpan.TicksPerSecond);
-            barrierTimer.Start();
+            players.ForEach(p => p.Character.LiftUnconsciousness());
+            if (activeSectionIndex + 1 >= activeDef.Sections.Count)
+            {
+                EndHorde(true);
+            }
+            else
+            {
+                barrierTimer.SetCallback(NextSection);
+                barrierTimer.SetInterval(ActiveSection.SecsTillNext * TimeSpan.TicksPerSecond);
+                barrierTimer.Start();
 
-            SetPhase(HordePhase.Intermission);
+                SetPhase(HordePhase.Intermission);
+            }
         }
 
         static void NextSection()
@@ -89,16 +152,8 @@ namespace GUC.Scripts.Arena
             activeSectionIndex++;
 
             List<VobInst> oldBarriers = new List<VobInst>(barriers);
-            if (activeSectionIndex >= activeDef.Sections.Count)
-            {
-                // Victory
-            }
-            else
-            {
-                SpawnSection(ActiveSection);
-                CheckSectionClear();
-            }
-
+            SpawnSection(ActiveSection);
+            CheckSectionClear();
             oldBarriers.ForEach(b => b.Despawn());
         }
 
@@ -169,6 +224,18 @@ namespace GUC.Scripts.Arena
             npc.CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth);
             npc.CustomName = charInfo.Name;
 
+            foreach (string e in client.HordeClass.Equipment)
+            {
+                ItemInst item = new ItemInst(ItemDef.Get(e));
+                npc.Inventory.AddItem(item);
+                npc.EffectHandler.TryEquipItem(item);
+            }
+
+            if (client.HordeClass.NeedsBolts)
+            {
+
+            }
+
             Vec3f spawnPos = Randomizer.GetVec3fRad(ActiveSection.SpawnPos, ActiveSection.SpawnRange);
             Angles spawnAng = new Angles(0, Randomizer.GetFloat(-Angles.PI, Angles.PI), 0);
             npc.Spawn(activeWorld, spawnPos, spawnAng);
@@ -210,6 +277,10 @@ namespace GUC.Scripts.Arena
             {
                 SpawnPlayer(client);
                 CheckSectionClear();
+            }
+            else if (client.HordeScore == 0)
+            {
+                SpawnPlayer(client);
             }
         }
 

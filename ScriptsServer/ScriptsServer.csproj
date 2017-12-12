@@ -418,6 +418,7 @@
     <Compile Include="Arena\Chat\Chat.Server.cs" />
     <Compile Include="Arena\Duel\DuelBoard.cs" />
     <Compile Include="Arena\Duel\DuelMode.Server.cs" />
+    <Compile Include="Arena\Horde\HordeBoard.cs" />
     <Compile Include="Arena\Horde\HordeDef.Server.cs" />
     <Compile Include="Arena\Horde\HordeMode.Server.cs" />
     <Compile Include="Arena\Regeneration.cs" />

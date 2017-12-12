@@ -33,14 +33,25 @@ namespace GUC.Scripts.Arena
         static void SetPhase(HordePhase phase)
         {
             Phase = phase;
-            if (phase == HordePhase.Intermission)
+            string screenMsg;
+            switch (phase)
             {
-                ScreenScrollText.AddText(ActiveSection.FinishedMessage, GUI.GUCView.Fonts.Menu);
+                case HordePhase.Intermission:
+                    screenMsg = ActiveSection.FinishedMessage;
+                    break;
+                case HordePhase.Fight:
+                    screenMsg = "Der Kampf beginnt!";
+                    break;
+                case HordePhase.Victory:
+                    screenMsg = "Sieg!";
+                    break;
+                case HordePhase.Lost:
+                    screenMsg = "Niederlage!";
+                    break;
+                default: return;
             }
-            else
-            {
-                ScreenScrollText.AddText("Fight!", GUI.GUCView.Fonts.Menu);
-            }
+
+            ScreenScrollText.AddText(screenMsg, GUI.GUCView.Fonts.Menu);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace GUC.Scripts.Arena
     {
         Intermission,
         Fight,
+        Victory,
+        Lost,
     }
 
     static partial class HordeMode
