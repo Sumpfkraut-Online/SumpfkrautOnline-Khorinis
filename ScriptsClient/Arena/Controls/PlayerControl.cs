@@ -42,7 +42,7 @@ namespace GUC.Scripts.Arena.Controls
             if (!down) return;
 
             var hero = ScriptClient.Client.Character;
-            if (hero.ModelInst.IsInAnimation() || hero.IsDead)
+            if (hero.ModelInst.IsInAnimation() || hero.IsDead || hero.IsUnconscious)
                 return;
 
             ItemInst weapon;
@@ -57,7 +57,7 @@ namespace GUC.Scripts.Arena.Controls
             if (!down) return;
 
             var hero = ScriptClient.Client.Character;
-            if (hero.ModelInst.IsInAnimation() || hero.IsDead)
+            if (hero.ModelInst.IsInAnimation() || hero.IsDead || hero.IsUnconscious)
                 return;
 
             ItemInst weapon;
@@ -71,7 +71,7 @@ namespace GUC.Scripts.Arena.Controls
             if (!down) return;
 
             var hero = ScriptClient.Client.Character;
-            if (hero.ModelInst.IsInAnimation() || hero.IsDead)
+            if (hero.ModelInst.IsInAnimation() || hero.IsDead || hero.IsUnconscious)
                 return;
 
             ItemInst weapon;
@@ -92,7 +92,7 @@ namespace GUC.Scripts.Arena.Controls
         static void Jump(bool d)
         {
             var hero = NPCInst.Hero;
-            if (!d || hero == null) return;
+            if (!d || hero == null || hero.IsDead || hero.IsUnconscious) return;
 
             if (hero.ModelInst.GetActiveAniFromLayer(1) != null || hero.BaseInst.gAI.GetFoundLedge() || CheckWarmup())
                 return;
@@ -149,7 +149,7 @@ namespace GUC.Scripts.Arena.Controls
                 return;
 
             var hero = ScriptClient.Client.Character;
-            if (hero.IsDead || hero.Movement != NPCMovement.Stand || !hero.IsInFightMode || hero.Environment.InAir
+            if (hero.IsDead || hero.IsUnconscious || hero.Movement != NPCMovement.Stand || !hero.IsInFightMode || hero.Environment.InAir
                 || CheckWarmup())
                 return;
 
@@ -170,7 +170,7 @@ namespace GUC.Scripts.Arena.Controls
         static void PlayerActionButton(bool down)
         {
             var hero = ScriptClient.Client.Character;
-            if (hero.IsDead) return;
+            if (hero.IsDead || hero.IsUnconscious) return;
 
             if (freeAim)
             {
@@ -216,6 +216,28 @@ namespace GUC.Scripts.Arena.Controls
             return false;
         }
 
+        void LookAround(NPCInst hero)
+        {
+            const float maxLookSpeed = 2f;
+
+            float rotSpeed = 0;
+            if (InputHandler.MouseDistY != 0)
+            {
+                rotSpeed = Alg.Clamp(-maxLookSpeed, InputHandler.MouseDistY * 0.35f * MouseSpeed, maxLookSpeed);
+
+                var cam = zCAICamera.CurrentCam;
+                cam.BestElevation = Alg.Clamp(-50, cam.BestElevation + rotSpeed, 85);
+            }
+
+            if (InputHandler.MouseDistX != 0)
+            {
+                rotSpeed = Alg.Clamp(-maxLookSpeed, InputHandler.MouseDistX * 0.35f * MouseSpeed, maxLookSpeed);
+
+                var cam = zCAICamera.CurrentCam;
+                cam.BestAzimuth -= rotSpeed;
+            }
+        }
+
         LockTimer dodgeLock = new LockTimer(200);
         const long StrafeInterval = 200 * TimeSpan.TicksPerMillisecond;
         long nextStrafeChange = 0;
@@ -229,8 +251,11 @@ namespace GUC.Scripts.Arena.Controls
 
             NPCInst hero = ScriptClient.Client.Character;
             var gAI = hero.BaseInst.gAI;
-            if (hero.IsDead)
+            if (hero.IsDead || hero.IsUnconscious)
+            {
+                LookAround(hero);
                 return;
+            }
 
             if (freeAim)
             {
@@ -569,7 +594,7 @@ namespace GUC.Scripts.Arena.Controls
 
                         // zoom in
                         FOVTransition(60, TimeSpan.TicksPerSecond / 2);
-                        
+
                         zCAICamera.CamModRanged.Set(CamModFreeAim); // replace so gothic sets it to this while in bow mode
                         zCAICamera.CurrentCam.SetByScript(CamModFreeAim); // change camera
                         freeAim = true;

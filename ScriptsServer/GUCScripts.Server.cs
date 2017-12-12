@@ -644,18 +644,15 @@ namespace GUC.Scripts
 
         void AddUnconsciousAnis(ModelDef model)
         {
-            var ani1 = new ScriptAniJob("uncon_dropfront", "t_Stand_2_Wounded", new ScriptAni(1, 49));
+            var ani1 = new ScriptAniJob("uncon_dropfront", "t_Stand_2_Wounded", new ScriptAni(0, 20));
             ani1.DefaultAni.FPS = 10;
 
             var ani2 = new ScriptAniJob("uncon_front", "s_wounded", new ScriptAni());
             model.AddAniJob(ani1);
             model.AddAniJob(ani2);
             ani1.NextAni = ani2;
-
-
-
-
-            ani1 = new ScriptAniJob("uncon_dropback", "t_Stand_2_Woundedb", new ScriptAni(1, 49));
+            
+            ani1 = new ScriptAniJob("uncon_dropback", "t_Stand_2_Woundedb", new ScriptAni(0, 14));
             ani1.DefaultAni.FPS = 10;
 
             ani2 = new ScriptAniJob("uncon_back", "s_woundedb", new ScriptAni());
@@ -664,6 +661,15 @@ namespace GUC.Scripts
             model.AddAniJob(ani2);
 
             ani1.NextAni = ani2;
+            
+            // STAND UP
+            var ani = new ScriptAniJob("uncon_standupfront", "t_Wounded_2_Stand", new ScriptAni(0, 34));
+            ani.DefaultAni.FPS = 10;
+            model.AddAniJob(ani);
+
+            ani = new ScriptAniJob("uncon_standupback", "t_Woundedb_2_Stand", new ScriptAni(0, 40));
+            ani.DefaultAni.FPS = 10;
+            model.AddAniJob(ani);
         }
 
         #endregion

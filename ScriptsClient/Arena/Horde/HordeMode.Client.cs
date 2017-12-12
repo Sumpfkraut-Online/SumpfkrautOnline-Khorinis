@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.Menus;
 
 namespace GUC.Scripts.Arena
 {
@@ -13,6 +14,7 @@ namespace GUC.Scripts.Arena
             string name = stream.ReadString();
             activeDef = HordeDef.GetDef(name);
             activeSectionIndex = stream.ReadByte();
+            SetPhase((HordePhase)stream.ReadByte());
         }
 
         public static void ReadStartMessage(PacketReader stream)
@@ -24,12 +26,21 @@ namespace GUC.Scripts.Arena
 
         public static void ReadPhaseMessage(PacketReader stream)
         {
-            Phase = (HordePhase)stream.ReadByte();
             activeSectionIndex = stream.ReadByte();
-
-            Sumpfkraut.Menus.ScreenScrollText.AddText(Phase.ToString() + " " + activeSectionIndex, GUI.GUCView.Fonts.Menu);
+            SetPhase((HordePhase)stream.ReadByte());
         }
 
-
+        static void SetPhase(HordePhase phase)
+        {
+            Phase = phase;
+            if (phase == HordePhase.Intermission)
+            {
+                ScreenScrollText.AddText(ActiveSection.FinishedMessage, GUI.GUCView.Fonts.Menu);
+            }
+            else
+            {
+                ScreenScrollText.AddText("Fight!", GUI.GUCView.Fonts.Menu);
+            }
+        }
     }
 }

@@ -29,7 +29,7 @@ namespace GUC.Hooks
         static void RbtForwardHook(Hook hook, RegisterMemory rmem)
         {
             int npcAddr = rmem[Registers.ESI];
-
+            
             if (World.Current.TryGetVobByAddress(npcAddr, out NPC npc) && npc.Guide == Network.GameClient.Client)
             {
                 npc.ScriptObject.SetMovement(NPCMovement.Forward);
@@ -39,7 +39,7 @@ namespace GUC.Hooks
         static void RbtStandHook(Hook hook, RegisterMemory rmem)
         {
             int npcAddr = rmem[Registers.ESI];
-
+            
             if (World.Current.TryGetVobByAddress(npcAddr, out NPC npc) && npc.Guide == Network.GameClient.Client)
             {
                 npc.ScriptObject.SetMovement(NPCMovement.Stand);

@@ -203,10 +203,31 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     var ledge = new NPC.ClimbingLedge(stream);
                     this.BaseInst.SetGClimbingLedge(ledge);
                     break;
+                case ScriptVobMessageIDs.Uncon:
+                    var unconsciousness = (Unconsciousness)stream.ReadByte();
+                    if (this.uncon != Unconsciousness.None && unconsciousness == Unconsciousness.None)
+                    {
+                        int voice = (int)this.CustomVoice;
+                        if (voice > 0 && voice < 20)
+                        {
+                            SoundDefinition def = ohmyhead[voice];
+                            if (def == null)
+                            {
+                                def = new SoundDefinition(string.Format("SVM_{0}_OHMYHEAD.WAV", voice));
+                                ohmyhead[voice] = def;
+                            }
+                            SoundHandler.PlaySound3D(def, this.BaseInst);
+                        }
+                    }
+                    this.uncon = unconsciousness;
+                    break;
                 default:
                     break;
             }
         }
+
+        static SoundDefinition[] ohmyhead = new SoundDefinition[20];
+
 
         LockTimer collisionFXTimer = new LockTimer(100);
         void DoFightStuff()

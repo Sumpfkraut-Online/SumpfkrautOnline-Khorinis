@@ -83,10 +83,14 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x4A26E0, instance);
         }
+        
+        public static readonly zString CamModRanged = new zString(0x8CE910);
+        public static readonly zString CamModDeath = new zString(0x8CE8AC);
+        public static readonly zString CamModNormal = new zString(0x8CE9F0);
 
-        public static zString CamModRanged
+        public void SetMode(zString mode)
         {
-            get { return new zString(0x8CE910); }
+            Process.THISCALL<NullReturnCall>(Address, 0x04A09C0, mode, (IntArg)0, (IntArg)0, (IntArg)0);  
         }
     }
 }

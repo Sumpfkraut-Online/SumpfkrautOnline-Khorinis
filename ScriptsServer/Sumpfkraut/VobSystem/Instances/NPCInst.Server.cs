@@ -30,7 +30,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     return this.TeamID != target.TeamID;
                 }
             }
-            return false;
+
+            return true;
         }
 
 
@@ -123,10 +124,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            //this.ModelInst.StartAniJobUncontrolled(job);
-            //this.Throw(velocity);
-
-            this.ModelInst.StartAniJob(AniCatalog.Unconscious.DropFront);
+            this.ModelInst.StartAniJobUncontrolled(job);
+            this.Throw(velocity);
         }
 
         #endregion
@@ -666,7 +665,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
 
-        public void Hit(NPCInst attacker, int damage)
+        public void Hit(NPCInst attacker, int damage, bool fromFront = true)
         {
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.HitMessage);
@@ -705,7 +704,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (resultingHP <= 0 && !attacker.IsPlayer && tar != null && tar.HordeClass != null)
             {
-                this.DropUnconscious();
+                resultingHP = 1;
+                this.DropUnconscious(!fromFront);
             }
 
             this.SetHealth(resultingHP);
@@ -726,7 +726,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             try
             {
-                if (this.IsDead || this.FightAnimation == null)
+                if (this.IsDead || this.FightAnimation == null || this.IsUnconscious)
                     return;
 
                 Vec3f attPos = this.GetPosition();
@@ -738,7 +738,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.BaseInst.World.ForEachNPCRough(attPos, GUCScripts.BiggestNPCRadius + weaponRange, npc => // fixme: enemy model radius
                   {
                       NPCInst target = (NPCInst)npc.ScriptObject;
-                      if (target == this || target.IsDead)
+                      if (target == this || target.IsDead || target.IsUnconscious)
                           return;
 
                       if (!AllowHit(target))
@@ -809,12 +809,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                               }
                           }
 
+                          bool frontAttack;
                           if (tdiff < Angles.PI / 4) // backstab
                           {
                               damage += 4;
+                              frontAttack = false;
+                          }
+                          else
+                          {
+                              frontAttack = true;
                           }
 
-                          target.Hit(this, damage);
+                          target.Hit(this, damage, frontAttack);
                       }
                   });
             }
@@ -900,18 +906,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         #endregion
-
-        public enum Unconsciousness
-        {
-            None,
-            Front,
-            Back
-        }
-
-
-        Unconsciousness uncon = Unconsciousness.None;
-        public bool IsUnconscious { get { return uncon != Unconsciousness.None; } }
-
+        
         public void DropUnconscious(bool toFront = true)
         {
             var cat = AniCatalog.Unconscious;
@@ -920,6 +915,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.ModelInst.StartAniJob(job);
 
             uncon = toFront ? Unconsciousness.Front : Unconsciousness.Back;
+            
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)ScriptVobMessageIDs.Uncon);
+            strm.Write((byte)uncon);
+            this.BaseInst.SendScriptVobStream(strm);
         }
 
         public void LiftUnconsciousness()
@@ -930,9 +930,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var cat = AniCatalog.Unconscious;
             ScriptAniJob job = uncon == Unconsciousness.Front ? cat.StandUpFront : cat.StandUpBack;
             if (job != null)
-                this.ModelInst.StartAniJob(job, () => uncon = Unconsciousness.None);
+                this.ModelInst.StartAniJob(job, DoLiftUncon);
             else
-                uncon = Unconsciousness.None;
+                DoLiftUncon();
+        }
+
+        void DoLiftUncon()
+        {
+            uncon = Unconsciousness.None;
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)ScriptVobMessageIDs.Uncon);
+            strm.Write((byte)uncon);
+            this.BaseInst.SendScriptVobStream(strm);
         }
     }
 }

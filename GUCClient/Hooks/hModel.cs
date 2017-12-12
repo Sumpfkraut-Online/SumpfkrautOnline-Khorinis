@@ -27,21 +27,23 @@ namespace GUC.Hooks
             var gActiveAni = new zCModelAniActive(mem[Registers.ESI]);
             string aniName = gActiveAni.ModelAni.Name.ToString();
 
-            Vob vob;
-            if (World.Current.TryGetVobByAddress(gModel.Owner.Address, out vob))
+            if (World.Current.TryGetVobByAddress(gModel.Owner.Address, out Vob vob))
             {
                 vob.Model.ForEachActiveAniPredicate(aa =>
                 {
-                    if (string.Equals(aa.AniJob.Name,aniName, StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(aa.AniJob.Name, aniName, StringComparison.OrdinalIgnoreCase))
                     {
                         // guc ani
-                        float startFrame = aa.Ani.StartFrame;
-                        float endFrame = aa.Ani.EndFrame;
+                        if (!aa.IsIdleAni)
+                        {
+                            float startFrame = aa.Ani.StartFrame;
+                            float endFrame = aa.Ani.EndFrame;
 
-                        float percent = gActiveAni.ModelAni.IsReversed ? (1 - aa.GetProgress()) : aa.GetProgress();
+                            float percent = gActiveAni.ModelAni.IsReversed ? (1 - aa.GetProgress()) : aa.GetProgress();
 
-                        float actFrame = startFrame + (endFrame - startFrame) * percent;
-                        gActiveAni.SetActFrame(actFrame);
+                            float actFrame = startFrame + (endFrame - startFrame) * percent;
+                            gActiveAni.SetActFrame(actFrame);
+                        }
                         return false;
                     }
                     return true;

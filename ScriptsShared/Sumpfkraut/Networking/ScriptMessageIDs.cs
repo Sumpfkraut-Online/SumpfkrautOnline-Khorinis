@@ -55,5 +55,6 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         HitMessage,
         ParryMessage,
         Climb,
+        Uncon,
     }
 }

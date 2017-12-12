@@ -74,6 +74,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             // unconsciousness
             { "uncon_dropfront", "Unconscious.DropFront" },
             { "uncon_dropback", "Unconscious.DropBack" },
+            { "uncon_standupfront", "Unconscious.StandUpFront" },
+            { "uncon_standupback", "Unconscious.StandUpBack" },
 
             // bows
             { "drawbow_part0", "DrawBow.Draw" },

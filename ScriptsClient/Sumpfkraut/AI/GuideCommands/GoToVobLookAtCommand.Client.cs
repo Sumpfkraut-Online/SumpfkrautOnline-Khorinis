@@ -27,6 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
             gNpc.RbtTargetVob = Target.BaseInst.gVob;
             Target.GetPosition().SetGVec(gNpc.RbtTargetPos);
             gNpc.RbtMaxTargetDist = Distance * Distance;
+            gNpc.RbtGotoFollowPosition();
 
             Vec3f npcPos = npc.GetPosition();
             Vec3f targetPos = Target.GetPosition();

@@ -55,6 +55,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         Parry
     }
 
+    public enum Unconsciousness
+    {
+        None,
+        Front,
+        Back
+    }
+
     public partial class NPCInst : VobInst, NPC.IScriptNPC, ScriptInventory.IContainer
     {
         #region Constructors
@@ -311,5 +318,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             base.Spawn(world, pos, ang);
             pAfterSpawn();
         }
+
+        Unconsciousness uncon = Unconsciousness.None;
+        public bool IsUnconscious { get { return uncon != Unconsciousness.None; } }
     }
 }

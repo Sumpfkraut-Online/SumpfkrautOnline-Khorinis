@@ -9,11 +9,10 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
 using GUC.Utilities;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Arena
 {
-
-
     static partial class HordeMode
     {
         static GUCTimer barrierTimer = new GUCTimer();
@@ -152,24 +151,35 @@ namespace GUC.Scripts.Arena
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.HordePhase);
-            stream.Write((byte)Phase);
             stream.Write((byte)activeSectionIndex);
+            stream.Write((byte)Phase);
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
 
         static void SpawnPlayer(ArenaClient client)
         {
-            NPCInst player = new NPCInst(NPCDef.Get("maleplayer"));
+            var charInfo = client.CharInfo;
+            NPCInst npc = new NPCInst(NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"));
+            npc.UseCustoms = true;
+            npc.CustomBodyTex = charInfo.BodyTex;
+            npc.CustomHeadMesh = charInfo.HeadMesh;
+            npc.CustomHeadTex = charInfo.HeadTex;
+            npc.CustomVoice = charInfo.Voice;
+            npc.CustomFatness = charInfo.Fatness;
+            npc.CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth);
+            npc.CustomName = charInfo.Name;
+
             Vec3f spawnPos = Randomizer.GetVec3fRad(ActiveSection.SpawnPos, ActiveSection.SpawnRange);
             Angles spawnAng = new Angles(0, Randomizer.GetFloat(-Angles.PI, Angles.PI), 0);
-            player.Spawn(activeWorld, spawnPos, spawnAng);
-            client.SetControl(player);
+            npc.Spawn(activeWorld, spawnPos, spawnAng);
+            client.SetControl(npc);
         }
 
         public static void WriteGameInfo(PacketWriter stream)
         {
             stream.Write(activeDef.Name);
             stream.Write((byte)activeSectionIndex);
+            stream.Write((byte)Phase);
         }
 
         public static void KillEnemy(NPCInst enemy, NPCInst player)

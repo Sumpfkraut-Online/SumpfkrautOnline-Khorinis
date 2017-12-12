@@ -8,19 +8,27 @@ namespace GUC.Scripts.Arena
 {
     static partial class Chat
     {
+        static StringBuilder builder = new StringBuilder(200);
         public static void ReadMessage(ArenaClient sender, PacketReader stream)
         {
-            string message = sender.CharInfo.Name;
-            if (!sender.IsSpecating)
+            string message = stream.ReadString();
+
+            if (message == "/lift")
             {
-                message += ": ";
+                if (sender.Character != null)
+                    sender.Character.LiftUnconsciousness();
+
+                return;
             }
-            else
-            {
-                message += "(Zuschauer): ";
-            }
-            message += stream.ReadString();
-            SendMessage(message);
+
+            builder.Clear();
+            builder.Append(sender.CharInfo.Name);
+            if (sender.IsSpecating)
+                builder.Append(" (Zuschauer)");
+            
+            builder.Append(": ");
+            builder.Append(message);
+            SendMessage(builder.ToString());
         }
 
         public static void ReadTeamMessage(ArenaClient sender, PacketReader stream)
@@ -28,7 +36,14 @@ namespace GUC.Scripts.Arena
             if (sender.Team == null)
                 return;
 
-            SendTeamMessage(sender.Team, sender.CharInfo.Name + " (Team): " + stream.ReadString());
+            string message = stream.ReadString();
+
+            builder.Clear();
+            builder.Append(sender.CharInfo.Name);
+            builder.Append(" (Team): ");
+            builder.Append(message);
+
+            SendTeamMessage(sender.Team, builder.ToString());
         }
 
         public static void SendMessage(string message)

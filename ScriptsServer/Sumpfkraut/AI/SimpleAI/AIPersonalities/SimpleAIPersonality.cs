@@ -69,7 +69,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             for (int t = 0; t < vobTargets.Count; t++)
             {
-                if (Cast.Try(vobTargets[t], out NPCInst npc) && npc.IsDead)
+                if (Cast.Try(vobTargets[t], out NPCInst npc) && (npc.IsDead || npc.IsUnconscious))
                     continue;
 
                 currTargetRange = vob.GetPosition().GetDistance(vobTargets[t].GetPosition());
@@ -97,7 +97,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             for (int t = 0; t < vobTargets.Count; t++)
             {
-                if (Cast.Try(vobTargets[t], out NPCInst npc) && npc.IsDead)
+                if (Cast.Try(vobTargets[t], out NPCInst npc) && (npc.IsDead || npc.IsUnconscious))
                     continue;
 
                 currTargetRange = vob.GetPosition().GetDistance(vobTargets[t].GetPosition());
