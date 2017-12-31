@@ -327,6 +327,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\StringUtil.cs">
       <Link>Sumpfkraut\Utilities\StringUtil.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\TypeSwitch.cs">
+      <Link>Sumpfkraut\Utilities\TypeSwitch.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\HumanVisuals.cs">
       <Link>Sumpfkraut\Visuals\HumanVisuals.cs</Link>
     </Compile>
@@ -490,7 +493,6 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.Server.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
-    <Compile Include="Sumpfkraut\Utilities\TypeSwitch.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\NPCCatalog.cs" />
     <Compile Include="Sumpfkraut\Visuals\SpecialFrame.cs" />

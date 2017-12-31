@@ -364,9 +364,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         /// <param name="aiAgent"></param>
         public override void MakeActiveObservation (AIAgent aiAgent)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
+            var aiClients = aiAgent.AIClients;
             VobInst currVob;
-            List<VobInst> enemies = new List<VobInst>();
+            var enemies = new List<VobInst>();
 
             for (int c = 0; c < aiClients.Count; c++)
             {
@@ -400,7 +400,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         /// <param name="aiAgent"></param>
         public override void ProcessActions (AIAgent aiAgent)
         {
-            List<BaseAIAction> aiActions = aiMemory.GetAIActions();
+            var aiActions = aiMemory.GetAIActions();
             if (aiActions.Count < 1) { return; }
 
             var aiAction = aiActions[0]; // current action
@@ -420,8 +420,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)
             if (aiAgent.AIClients.Count < 1) { return; }
 
-            List<BaseAIObservation> aiObservations = aiMemory.GetAIObservations();
-            List<VobInst> enemies = new List<VobInst>();
+            var aiObservations = aiMemory.GetAIObservations();
+            var enemies = new List<VobInst>();
 
             // search all observations for enemies nearby and add them to the list of targets
             for (int i = 0; i < aiObservations.Count; i++)
@@ -438,7 +438,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             if (enemies.Count > 0)
             {
-                List<BaseAIAction> newAIActions = new List<BaseAIAction> { new AttackAIAction(
+                var newAIActions = new List<BaseAIAction> { new AttackAIAction(
                         new AITarget( enemies )) };
                     aiMemory.SetAIActions(newAIActions);
             }
