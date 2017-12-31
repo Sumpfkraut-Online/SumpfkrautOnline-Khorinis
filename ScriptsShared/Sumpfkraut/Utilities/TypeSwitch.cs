@@ -9,7 +9,7 @@ namespace GUC.Scripts.Sumpfkraut.Utilities
     public class TypeSwitch
     {
 
-        Dictionary<Type, Action<object>> matches = new Dictionary<Type, Action<object>>();
+        protected Dictionary<Type, Action<object>> matches = new Dictionary<Type, Action<object>>();
 
         public TypeSwitch Case<T>(Action<T> action)
         {
@@ -21,6 +21,32 @@ namespace GUC.Scripts.Sumpfkraut.Utilities
         {
             matches[x.GetType()](x);
         }
+
+        //protected List<Type> cases = new List<Type>();
+        //protected List<Action<object>> actions = new List<Action<object>>();
+        //protected Action defaultAction;
+
+
+        //public TypeSwitch Case<T>(Action<T> action)
+        //{
+        //    cases.Add(typeof(T));
+        //    actions.Add((x) => action((T)x));
+        //    return this;
+        //}
+
+        //public TypeSwitch Default(Action action)
+        //{
+        //    defaultAction = action;
+        //    return this;
+        //}
+
+        //public TypeSwitch Switch(object x)
+        //{
+        //    var index = cases.IndexOf(x.GetType());
+        //    if (index > -1) { actions[index](x); }
+        //    else if (!(defaultAction is null)) { defaultAction(); }
+        //    return this;
+        //}
 
     }
 

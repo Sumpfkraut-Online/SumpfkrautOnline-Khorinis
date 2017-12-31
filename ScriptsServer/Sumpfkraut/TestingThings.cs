@@ -20,6 +20,7 @@ using GUC.Scripts.Sumpfkraut.Utilities;
 using System.Threading;
 using GUC.Scripts.Sumpfkraut.Utilities.Functions;
 using static GUC.Scripts.Sumpfkraut.Database.DBAgent;
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions;
 
 namespace GUC.Scripts.Sumpfkraut
 {
@@ -392,6 +393,17 @@ namespace GUC.Scripts.Sumpfkraut
             //    Visuals.VisualLoader.DBStructure,
             //    Visuals.VisualLoader.DBTableLoadOrder);
             //vl.Load(false);
+
+
+
+
+            //var bla = new List<BaseAIAction> { new AttackAIAction(null), new FollowAIAction(null), new GoToAIAction(null) };
+            //var ts = new TypeSwitch()
+            //    .Case((AttackAIAction a) => Logger.Print("ATTACK"))
+            //    .Case((FollowAIAction a) => Logger.Print("FOLLOW"))
+            //    .Case((GoToAIAction a) => Logger.Print("GOTO"));
+            //foreach (var a in bla) { ts.Switch(a); }
+
 
 
             Logger.Log("===> !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");

@@ -166,6 +166,8 @@ namespace GUC.Scripts
 
             Arena.HordeMode.StartHorde();
 
+            GUC.Scripts.Sumpfkraut.TestingThings.Init();
+
             Logger.Log("######################## Finished #########################");
         }
 

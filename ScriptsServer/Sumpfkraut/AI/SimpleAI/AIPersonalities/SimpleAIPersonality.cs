@@ -408,6 +408,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 .Case((GoToAIAction a) => GoTo(aiAgent, a.AITarget))
                 .Case((FollowAIAction a) => GoTo(aiAgent, a.AITarget))
                 .Case((AttackAIAction a) => Attack(aiAgent, a.AITarget));
+            ts.Switch(aiAction);
         }
 
 

@@ -493,6 +493,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.Server.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
+    <Compile Include="Sumpfkraut\TestingThings.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\NPCCatalog.cs" />
     <Compile Include="Sumpfkraut\Visuals\SpecialFrame.cs" />
