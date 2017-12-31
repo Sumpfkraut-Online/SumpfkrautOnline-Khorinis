@@ -22,8 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
         public BaseAIPersonality ()
-        {
-        }
+        { }
 
 
 

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 {
-    public class FollowAIAction : BaseAIAction
+    public class FollowAIAction : TargetedAIAction
     {
 
         public FollowAIAction (AITarget aiTarget)

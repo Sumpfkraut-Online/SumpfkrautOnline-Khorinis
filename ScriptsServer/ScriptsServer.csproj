@@ -438,11 +438,14 @@
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\BaseAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\FollowAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\GoToAIAction.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\TargetedAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIAgent.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIManager.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIMemory.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\BaseAIObservation.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\BeingAttackedObservation.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\EnemyAIObservation.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\TargetedObservation.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\BaseAIPersonality.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\SimpleAIPersonality.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIRoutines\BaseAIRoutine.cs" />

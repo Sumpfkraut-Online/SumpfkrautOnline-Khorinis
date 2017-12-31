@@ -413,18 +413,11 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)
             if (aiAgent.AIClients.Count < 1) { return; }
 
+            // search all observations for enemies nearby and add them to the list of targets
             var aiObservations = aiMemory.GetAIObservations();
             var enemies = new List<VobInst>();
-
-            // search all observations for enemies nearby and add them to the list of targets
-            for (int i = 0; i < aiObservations.Count; i++)
-            {
-                if (aiObservations[i].GetType() == typeof(EnemyAIObservation))
-                {
-                    // only add those enemies which aren't already there
-                    enemies = enemies.Union(aiObservations[i].AITarget.VobTargets).ToList();
-                }
-            }
+            var enemyObs = (List<EnemyAIObservation>) aiObservations.Where((x) => x is EnemyAIObservation);
+            foreach (var o in enemyObs) { enemies = enemies.Union(o.Enemies.VobTargets).ToList(); }
 
             // reset the observations after retrieving all necessary info
             aiObservations.Clear();

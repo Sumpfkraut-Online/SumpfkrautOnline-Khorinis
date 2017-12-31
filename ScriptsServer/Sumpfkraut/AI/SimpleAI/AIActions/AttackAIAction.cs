@@ -6,7 +6,7 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 {
 
-    public class AttackAIAction : BaseAIAction
+    public class AttackAIAction : TargetedAIAction
     {
 
         public AttackAIAction (AITarget aiTarget)
