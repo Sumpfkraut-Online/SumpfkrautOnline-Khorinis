@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
 using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
+using GUC.Scripts.Sumpfkraut.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 {
@@ -356,7 +357,11 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        // can be run anytime to let the aiClients recognize their surrounding actively
+        /// <summary>
+        /// Force active observation of the environment. 
+        /// Can be run anytime to let the aiClients recognize their surrounding actively.
+        /// </summary>
+        /// <param name="aiAgent"></param>
         public override void MakeActiveObservation (AIAgent aiAgent)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
@@ -374,10 +379,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                         delegate (WorldObjects.NPC nearNPC)
                     {
                         var npc = (NPCInst)nearNPC.ScriptObject;
-                        /*if (!aiAgent.HasAIClient(nearNPC))
-                        {
-                            enemies.Add((VobInst) nearNPC.ScriptObject);
-                        }*/
 
                         if (nearNPC.IsPlayer && !nearNPC.IsDead && !npc.IsUnconscious)
                         {
@@ -393,72 +394,27 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
+        /// <summary>
+        /// Pass action on which the ai decided upon to respective subroutines.
+        /// </summary>
+        /// <param name="aiAgent"></param>
         public override void ProcessActions (AIAgent aiAgent)
         {
             List<BaseAIAction> aiActions = aiMemory.GetAIActions();
-
             if (aiActions.Count < 1) { return; }
 
-            BaseAIAction aiAction = aiActions[0]; // current action
-            AIActions.Enumeration.AiActionType actionType = aiAction.ActionType;
-            
-            switch (actionType)
-            {
-                case AIActions.Enumeration.AiActionType.GoToAIAction:
-                    GoTo(aiAgent, aiAction.AITarget);
-                    break;
-                case AIActions.Enumeration.AiActionType.FollowAIAction:
-                    GoTo(aiAgent, aiAction.AITarget);
-                    break;
-                case AIActions.Enumeration.AiActionType.AttackAIAction:
-                    Attack(aiAgent, aiAction.AITarget);
-                    break;
-            }
-
-            /*for (int i = 0; i < aiActions.Count; i++)
-            {
-                aiAction = aiActions[i];
-                // attack if there is a spotted enemy nearby
-                if (aiAction.GetType() == typeof(AttackAIAction))
-                {
-                    // do not control again, if enemy is still in radius
-                    // simply attack the calculated nearest enemy
-                    List<VobInst> aiClients = aiAgent.AIClients;
-                    List<VobInst> enemies = aiAction.AITarget.vobTargets;
-                    NPCInst npc;
-
-                    if (enemies.Count < 1) { break; }
-
-                    for (int c = 0; c < aiClients.Count; c++)
-                    {
-                        // simply hit the enemy by magical means without necessary physical contact :D
-                        if (aiClients[c].GetType() == typeof(NPCInst))
-                        {
-                            npc = (NPCInst)aiClients[c];
-                            try
-                            {
-                                Visuals.ScriptAniJob scriptAniJob;
-                                npc.Model.TryGetAniJob((int)Visuals.SetAnis.JumpFwd, out scriptAniJob);
-                                if (scriptAniJob != null)
-                                {
-                                    if (npc.GetJumpAni() != null) { continue; }
-
-                                    npc.StartAniJump(scriptAniJob.DefaultAni, 50, 50);
-                                    Print("npc.IsSpawned = " + npc.GetPosition());
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                MakeLogWarning(ex);
-                            }
-                        }
-                    }
-                }
-            }*/
+            var aiAction = aiActions[0]; // current action
+            var ts = new TypeSwitch()
+                .Case((GoToAIAction a) => GoTo(aiAgent, a.AITarget))
+                .Case((FollowAIAction a) => GoTo(aiAgent, a.AITarget))
+                .Case((AttackAIAction a) => Attack(aiAgent, a.AITarget));
         }
 
 
-        // create AIAction- from AIObservation-objects
+        /// <summary>
+        /// Create AIAction- from AIObservation-objects. This is where the ai makes decisions.
+        /// </summary>
+        /// <param name="aiAgent"></param>
         public override void ProcessObservations (AIAgent aiAgent)
         {
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)

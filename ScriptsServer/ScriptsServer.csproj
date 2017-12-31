@@ -433,7 +433,7 @@
     <Compile Include="Sumpfkraut\AI\GuideCommands\GuideCommandInfo.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\AttackAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\BaseAIAction.cs" />
-    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\Enumeration.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\FollowAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIActions\GoToAIAction.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIAgent.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIManager.cs" />
@@ -490,6 +490,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.Server.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
+    <Compile Include="Sumpfkraut\Utilities\TypeSwitch.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\NPCCatalog.cs" />
     <Compile Include="Sumpfkraut\Visuals\SpecialFrame.cs" />

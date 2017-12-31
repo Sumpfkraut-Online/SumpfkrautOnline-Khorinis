@@ -5,10 +5,10 @@ using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions
 {
-    public class GoToAIAction : BaseAIAction
+    public class FollowAIAction : BaseAIAction
     {
 
-        public GoToAIAction (AITarget aiTarget)
+        public FollowAIAction (AITarget aiTarget)
             : base(aiTarget)
         { }
 

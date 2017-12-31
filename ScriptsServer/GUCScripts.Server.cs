@@ -182,7 +182,7 @@ namespace GUC.Scripts
             var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.Start();
             
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
                 if (testNPC.ModelDef.TryGetOverlay("humans_skeleton", out ScriptOverlay ov))
