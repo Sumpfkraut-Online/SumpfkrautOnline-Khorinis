@@ -30,19 +30,11 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             this.aggressionRadius = value;
         }
 
-        protected float turnAroundVelocity;
-        public float TurnAroundVelocity { get { return this.turnAroundVelocity; } }
-        public void SetAroundTurnVelocity (float value)
-        {
-            this.turnAroundVelocity = value;
-        }
 
 
-
-        public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
+        public SimpleAIPersonality (float aggressionRadius)
         {
             this.aggressionRadius = aggressionRadius;
-            this.turnAroundVelocity = turnAroundVelocity;
         }
 
 
@@ -375,7 +367,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     currVob = aiClients[c];
 
                     // find all enemies in the radius of aggression
-                    currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
+                    currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, AggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
                         var npc = (NPCInst)nearNPC.ScriptObject;

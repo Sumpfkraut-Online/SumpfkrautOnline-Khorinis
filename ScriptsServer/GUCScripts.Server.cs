@@ -197,7 +197,7 @@ namespace GUC.Scripts
                 
                 var aiMemory = new Sumpfkraut.AI.SimpleAI.AIMemory();
                 var aiRoutine = new Sumpfkraut.AI.SimpleAI.AIRoutines.SimpleAIRoutine();
-                var aiPersonality = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800f, 1f);
+                var aiPersonality = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800f);
                 aiPersonality.Init(aiMemory, aiRoutine);
                 var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
                 aiManager01.SubscribeAIAgent(aiAgent);

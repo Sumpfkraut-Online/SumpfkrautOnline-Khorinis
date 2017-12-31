@@ -187,7 +187,7 @@ namespace GUC.Scripts.Arena
                             vobs.Add(npc);
                         }
                     }
-                    var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800, 1);
+                    var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800);
                     pers.Init(null, null);
                     var agent = new Sumpfkraut.AI.SimpleAI.AIAgent(vobs, pers);
                     manager.SubscribeAIAgent(agent);
