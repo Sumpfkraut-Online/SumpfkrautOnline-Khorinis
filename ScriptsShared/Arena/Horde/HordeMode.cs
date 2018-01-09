@@ -16,6 +16,7 @@ namespace GUC.Scripts.Arena
 
     static partial class HordeMode
     {
+        public static event Action<HordePhase> OnPhaseChange;
         public static HordePhase Phase { get; private set; }
 
         static HordeDef activeDef;

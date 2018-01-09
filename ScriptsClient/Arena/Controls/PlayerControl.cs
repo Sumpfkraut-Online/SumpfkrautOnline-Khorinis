@@ -109,6 +109,7 @@ namespace GUC.Scripts.Arena.Controls
             }
         }
 
+        static Vec3f lastPos;
         static void PrintPosition(bool down)
         {
             var hero = NPCInst.Hero;
@@ -118,8 +119,9 @@ namespace GUC.Scripts.Arena.Controls
             var pos = hero.GetPosition();
             var ang = hero.GetAngles();
 
-            Log.Logger.Log(pos + " " + ang);
+            Log.Logger.Log(pos + " " + ang + " Distance to last: " + lastPos.GetDistance(pos));
             System.IO.File.AppendAllText("positions.txt", string.Format(System.Globalization.CultureInfo.InvariantCulture, "{{ new Vec3f({0}f, {1}f, {2}f), new Angles({3}f, {4}f, {5}f) }},\n", pos.X, pos.Y, pos.Z, ang.Pitch, ang.Yaw, ang.Roll));
+            lastPos = pos;
         }
 
         static void ToggleScoreBoard(bool down)

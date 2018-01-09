@@ -19,7 +19,7 @@ namespace GUC.Models
             void ApplyOverlay(Overlay overlay);
             void RemoveOverlay(Overlay overlay);
 
-            ActiveAni StartAniJob(AniJob aniJob, float fpsMult);
+            ActiveAni StartAniJob(AniJob aniJob, float fpsMult, float progress);
             void StopAnimation(ActiveAni ani, bool fadeOut);
             void StartAniJobUncontrolled(AniJob job);
         }
@@ -256,36 +256,23 @@ namespace GUC.Models
             if (aniJob.ModelInstance != this.Instance)
                 throw new ArgumentException("AniJob is not for this Model!");
 
-            pStartUncontrolledAni(aniJob);            
+            pStartUncontrolledAni(aniJob);
         }
 
-
-        /// <summary> 
-        /// Starts the given AniJob and calls onStop at the end of the animation. 
-        /// Returns a handle to the active animation or null if the animation can't be played (f.e. by not having the right overlays applied).
-        /// </summary>
-        public ActiveAni StartAniJob(AniJob aniJob)
-        {
-            return StartAniJob(aniJob, 1.0f, null);
-        }
-
-        partial void pStartAnimation(ActiveAni aa, float fpsMult);
+        partial void pStartAnimation(ActiveAni aa, float fpsMult, float progress);
         /// <summary> 
         /// Starts the given Animation with the given frame speed multiplier value and calls onStop at the end of the animation. 
         /// Returns false if the Animation can't be played (f.e not the right overlays applied). 
         /// </summary>
-        public ActiveAni StartAniJob(AniJob aniJob, float fpsMult, FrameActionPair[] pairs)
+        public ActiveAni StartAniJob(AniJob aniJob, float fpsMult, float progress, FrameActionPair[] pairs)
         {
-            ActiveAni aa = PlayAni(aniJob, fpsMult, pairs);
-            pStartAnimation(aa, fpsMult);
+            ActiveAni aa = PlayAni(aniJob, fpsMult, progress, pairs);
+            pStartAnimation(aa, fpsMult, progress);
             return aa;
         }
-        
-        ActiveAni PlayAni(AniJob aniJob, float fpsMult, FrameActionPair[] pairs)
-        {
-            if (!this.vob.IsSpawned)
-                throw new Exception("Vob is not spawned!");
 
+        ActiveAni PlayAni(AniJob aniJob, float fpsMult, float progress, FrameActionPair[] pairs)
+        {
             if (aniJob == null)
                 throw new ArgumentNullException("AniJob is null!");
 
@@ -295,8 +282,7 @@ namespace GUC.Models
             if (fpsMult <= 0)
                 throw new ArgumentException("Frame speed multiplier has to be greater than zero!");
 
-            Animation ani;
-            if (!this.TryGetAniFromJob(aniJob, out ani))
+            if (!this.TryGetAniFromJob(aniJob, out Animation ani))
                 return null;
 
             // search a free ActiveAni
@@ -322,7 +308,7 @@ namespace GUC.Models
                 activeAnis.Add(aa);
             }
 
-            aa.Start(ani, fpsMult, pairs);
+            aa.Start(ani, fpsMult, progress, pairs);
             return aa;
         }
 
@@ -354,15 +340,27 @@ namespace GUC.Models
             int count = stream.ReadByte();
             for (int i = 0; i < count; i++)
             {
-                Overlay ov;
                 int id = stream.ReadByte();
-                if (this.Instance.TryGetOverlay(id, out ov))
+                if (this.Instance.TryGetOverlay(id, out Overlay ov))
                 {
                     this.ScriptObject.ApplyOverlay(ov);
                 }
                 else
                 {
                     throw new Exception("Overlay not found: " + id);
+                }
+            }
+
+            count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                int id = stream.ReadUShort();
+                float fpsMult = stream.ReadFloat();
+                float progress = stream.ReadFloat();
+
+                if (this.Instance.TryGetAniJob(id, out AniJob job))
+                {
+                    this.ScriptObject.StartAniJob(job, fpsMult, progress);
                 }
             }
         }
@@ -382,6 +380,22 @@ namespace GUC.Models
                 for (int i = 0; i < overlays.Count; i++)
                 {
                     stream.Write((byte)overlays[i].ID);
+                }
+            }
+
+            int count = 0;
+            for (int i = 0; i < activeAnis.Count; i++)
+                if (activeAnis[i].Ani != null) count++;
+
+            stream.Write((byte)count);
+            for (int i = 0; i < activeAnis.Count; i++)
+            {
+                if (activeAnis[i].Ani != null)
+                {
+                    var aa = activeAnis[i];
+                    stream.Write((ushort)aa.AniJob.ID);
+                    stream.Write(aa.FrameSpeedMultiplier);
+                    stream.Write(aa.GetProgress());
                 }
             }
         }

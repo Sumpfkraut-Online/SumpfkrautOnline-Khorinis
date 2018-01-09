@@ -95,9 +95,9 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             this.BaseInst.StartUncontrolledAni(aniJob.BaseAniJob);
         }
 
-        public ActiveAni StartAniJob(AniJob aniJob, float fpsMult)
+        public ActiveAni StartAniJob(AniJob aniJob, float fpsMult, float progress)
         {
-            return StartAniJob((ScriptAniJob)aniJob.ScriptObject, fpsMult);
+            return StartAniJob((ScriptAniJob)aniJob.ScriptObject, fpsMult, progress);
         }
 
         public void StopAnimation(ActiveAni ani, bool fadeOut)
@@ -110,15 +110,12 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
             return this.BaseInst.IsInAnimation();
         }
 
-        public ActiveAni StartAniJob(ScriptAniJob aniJob) { return StartAniJob(aniJob, 1.0f); }
-        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult) { return StartAniJob(aniJob, fpsMult, default(FrameActionPair[])); }
-        public ActiveAni StartAniJob(ScriptAniJob aniJob, Action onStop) { return StartAniJob(aniJob, 1.0f, FrameActionPair.OnEnd(onStop)); }
-        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult, Action onStop) { return StartAniJob(aniJob, fpsMult, FrameActionPair.OnEnd(onStop)); }
-        public ActiveAni StartAniJob(ScriptAniJob aniJob, params FrameActionPair[] pairs) { return StartAniJob(aniJob, 1.0f, pairs); }
-        
-        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult, params FrameActionPair[] pairs)
+
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, Action onEnd) { return StartAniJob(aniJob, 1, 0, FrameActionPair.OnEnd(onEnd)); }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, params FrameActionPair[] pairs) { return StartAniJob(aniJob, 1, 0, pairs); }
+        public ActiveAni StartAniJob(ScriptAniJob aniJob, float fpsMult = 1, float progress = 0, params FrameActionPair[] pairs)
         {
-            return this.BaseInst.StartAniJob(aniJob.BaseAniJob, fpsMult, pairs);
+            return this.BaseInst.StartAniJob(aniJob.BaseAniJob, fpsMult, progress, pairs);
         }
         
 

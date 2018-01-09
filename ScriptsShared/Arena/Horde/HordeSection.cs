@@ -17,7 +17,7 @@ namespace GUC.Scripts.Arena
 
     class HordeGroup
     {
-        public List<string, int> npcs;
+        public List<string, float> npcs;
         public Vec3f Position;
         public float Range;
     }

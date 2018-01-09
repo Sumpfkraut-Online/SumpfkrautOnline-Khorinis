@@ -265,6 +265,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 CustomName = stream.ReadString();
             }
 
+            this.uncon = (Unconsciousness)stream.ReadByte();
             this.TeamID = stream.ReadSByte();
         }
 
@@ -290,6 +291,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 stream.Write(false);
             }
 
+            stream.Write((byte)this.uncon);
             stream.Write((sbyte)TeamID);
         }
 

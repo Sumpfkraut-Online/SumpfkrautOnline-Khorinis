@@ -99,8 +99,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                BaseVob vob;
-                if (current.TryGetVob(id, out vob))
+                if (current.TryGetVob(id, out BaseVob vob))
                 {
                     vob.ScriptObject.Despawn();
                 }

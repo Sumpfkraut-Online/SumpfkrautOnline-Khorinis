@@ -113,6 +113,10 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, 0x50E750, vob);
         }
+        public bool IsSliding()
+        {
+            return Process.THISCALL<BoolArg>(Address, 0x50D4A0);
+        }
 
         public void End()
         {

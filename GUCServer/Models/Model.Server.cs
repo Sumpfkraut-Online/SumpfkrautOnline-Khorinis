@@ -44,7 +44,7 @@ namespace GUC.Models
                 model.vob.ForEachVisibleClient(c => c.Send(stream, NetPriority.High, NetReliability.ReliableOrdered, 'W'));
             }
 
-            public static void WriteAniStart(Model model, AniJob job, float fpsMult)
+            public static void WriteAniStart(Model model, AniJob job, float fpsMult, float progress)
             {
                 PacketWriter stream;
                 if (fpsMult == 1.0f)
@@ -56,6 +56,7 @@ namespace GUC.Models
                     stream = GameServer.SetupStream(ServerMessages.ModelAniStartFPSMessage);
                     stream.Write(fpsMult);
                 }
+                stream.Write(progress);
                 stream.Write((ushort)model.vob.ID);
                 stream.Write((ushort)job.ID);
                 model.vob.ForEachVisibleClient(c => c.Send(stream, NetPriority.High, NetReliability.ReliableOrdered, 'W'));
@@ -98,10 +99,10 @@ namespace GUC.Models
                 Messages.WriteAniStartUncontrolled(this, aniJob);
         }
 
-        partial void pStartAnimation(ActiveAni aa, float fpsMult)
+        partial void pStartAnimation(ActiveAni aa, float fpsMult, float progress)
         {
             if (this.vob.IsSpawned)
-                Messages.WriteAniStart(this, aa.AniJob, fpsMult);
+                Messages.WriteAniStart(this, aa.AniJob, fpsMult, progress);
         }
 
         partial void pStopAnimation(ActiveAni aa, bool fadeOut)

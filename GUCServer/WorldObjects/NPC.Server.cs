@@ -99,7 +99,6 @@ namespace GUC.WorldObjects
                     npc.environment = env;
 
                     npc.SetPosAng(pos, ang, client);
-                    //vob.ScriptObject.OnPosChanged();
 
                     if (npc == client.Character)
                     {

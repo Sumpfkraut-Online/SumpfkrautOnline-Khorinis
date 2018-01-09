@@ -52,12 +52,12 @@ namespace GUC.WorldObjects
 
             void EquipItem(int slot, Item item);
             void UnequipItem(Item item);
-            
+
             void SetHealth(int hp, int hpmax);
-            
+
             void SetFightMode(bool fightMode);
         }
-        
+
         new public IScriptNPC ScriptObject { get { return (IScriptNPC)base.ScriptObject; } }
 
         #endregion
@@ -72,7 +72,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #region Properties
-        
+
         public override Type InstanceType { get { return typeof(NPCInstance); } }
         new public NPCInstance Instance
         {
@@ -82,7 +82,7 @@ namespace GUC.WorldObjects
 
         NPCInventory inventory;
         public ItemInventory Inventory { get { return inventory; } }
-        
+
         /// <summary> The NPC's name set by its Instance. </summary>
         public string Name { get { return Instance.Name; } }
         /// <summary> The NPC's body mesh set by its Instance. </summary>
@@ -102,7 +102,7 @@ namespace GUC.WorldObjects
         public int HPMax { get { return hpmax; } }
         int hp = 100;
         public int HP { get { return hp; } }
-        
+
         public bool IsDead { get { return this.hp <= 0; } }
 
         public void SetHealth(int hp)
@@ -141,28 +141,28 @@ namespace GUC.WorldObjects
         public NPCMovement Movement { get { return this.movement; } }
 
         #endregion
-        
+
         #region Equipment
 
         Dictionary<int, Item> equippedItems = new Dictionary<int, Item>();
 
-        partial void pEquipSwitch(int slot, Item item); 
+        partial void pEquipSwitch(int slot, Item item);
         partial void pEquipItem(int slot, Item item);
         public void EquipItem(int slot, Item item)
         {
             if (item == null)
                 throw new ArgumentNullException("Item is null!");
-            
+
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
-            
+
             if (slot < 0 || slot >= Item.SlotNumUnused)
                 throw new ArgumentOutOfRangeException("Slotnum must be greater or equal than zero and smaller than " + Item.SlotNumUnused);
 
             if (equippedItems.ContainsKey(slot))
                 throw new ArgumentException("Slot is already in use!");
 
-            if (item.IsEquipped) 
+            if (item.IsEquipped)
             {
                 if (item.slot == slot)
                     return;
@@ -202,7 +202,7 @@ namespace GUC.WorldObjects
         {
             if (item == null)
                 throw new ArgumentNullException("Item is null!");
-            
+
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
 
@@ -227,7 +227,7 @@ namespace GUC.WorldObjects
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            foreach(Item item in equippedItems.Values)
+            foreach (Item item in equippedItems.Values)
             {
                 action(item);
             }
@@ -251,7 +251,7 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
-        
+
         #region Fight Mode
 
         bool isInFightMode = false;
@@ -322,7 +322,7 @@ namespace GUC.WorldObjects
 
             stream.Write((ushort)hpmax);
             stream.Write((ushort)hp);
-            
+
             stream.Write((byte)equippedItems.Count);
             ForEachEquippedItem(item =>
             {
@@ -389,20 +389,11 @@ namespace GUC.WorldObjects
         internal override void OnTick(long now)
         {
             base.OnTick(now);
-            
-            var ani1 = this.Model.GetActiveAniFromLayerID(1);
-            if (ani1 != null)
-            {
-                if (Environment.InAir)
-                {
-                    ani1.Stop();
-                }
-            }
 
             this.Model.OnTick(now); // update animations
 
             pOnTick(now);
         }
     }
-    
+
 }

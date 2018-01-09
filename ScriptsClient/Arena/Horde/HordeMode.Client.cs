@@ -32,7 +32,6 @@ namespace GUC.Scripts.Arena
 
         static void SetPhase(HordePhase phase)
         {
-            Phase = phase;
             string screenMsg;
             switch (phase)
             {
@@ -44,14 +43,18 @@ namespace GUC.Scripts.Arena
                     break;
                 case HordePhase.Victory:
                     screenMsg = "Sieg!";
+                    HordeBoardScreen.Instance.Open();
                     break;
                 case HordePhase.Lost:
                     screenMsg = "Niederlage!";
+                    HordeBoardScreen.Instance.Open();
                     break;
                 default: return;
             }
 
+            Phase = phase;
             ScreenScrollText.AddText(screenMsg, GUI.GUCView.Fonts.Menu);
+            OnPhaseChange?.Invoke(phase);
         }
     }
 }

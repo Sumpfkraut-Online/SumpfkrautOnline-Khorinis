@@ -20,6 +20,11 @@ namespace GUC.Scripts.Arena
 
                 return;
             }
+            else if (message == "/nextsec")
+            {
+                HordeMode.ForceNextSection();
+                return;
+            }
 
             builder.Clear();
             builder.Append(sender.CharInfo.Name);

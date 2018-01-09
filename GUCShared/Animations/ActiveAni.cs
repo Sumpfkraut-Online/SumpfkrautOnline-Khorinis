@@ -71,19 +71,39 @@ namespace GUC.Animations
             actionPairs.Add(pair);
         }
 
-        internal void Start(Animation ani, float fpsMult, FrameActionPair[] pairs)
+        float cachedProgress = 0;
+        FrameActionPair[] cachedPairs = null;
+        bool cachedStuff = false;
+
+        internal void Start(Animation ani, float fpsMult, float progress, FrameActionPair[] pairs)
         {
-            this.totalFinishedFrames = 0;
+            if (!this.Model.Vob.IsSpawned)
+            {
+                this.ani = ani;
+                this.fpsMult = fpsMult;
+                this.cachedProgress = progress;
+                this.cachedPairs = pairs;
+                this.cachedStuff = true;
+                return;
+            }
+            else
+            {
+                cachedStuff = false;
+                this.cachedPairs = null;
+            }
+
             this.ani = ani;
             this.fpsMult = fpsMult;
+            this.totalFinishedFrames = 0;
 
             float numFrames = ani.GetFrameNum();
             if (numFrames > 0)
             {
                 float coeff = TimeSpan.TicksPerSecond / (ani.FPS * fpsMult);
+                float duration = numFrames * coeff;
 
-                startTime = GameTime.Ticks;
-                endTime = startTime + (long)(numFrames * coeff);
+                startTime = GameTime.Ticks - (long)(progress * duration);
+                endTime = startTime + (long)duration;
 
                 if (pairs != null && pairs.Length > 0)
                 {
@@ -105,6 +125,9 @@ namespace GUC.Animations
 
         internal void Stop()
         {
+            cachedStuff = false;
+            this.cachedPairs = null;
+
             if (this.actionPairs.Count > 0)
             {
                 // fire all callbacks which should happen when or after the last nextAni ends
@@ -131,6 +154,11 @@ namespace GUC.Animations
 
         internal void OnTick(long now)
         {
+            if (cachedStuff)
+            {
+                this.Start(ani, fpsMult, cachedProgress, cachedPairs);
+            }
+
             if (!this.IsIdleAni)
             {
                 if (now < endTime) // still playing

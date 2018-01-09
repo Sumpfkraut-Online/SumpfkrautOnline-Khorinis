@@ -10,6 +10,7 @@ using System.IO;
 using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Scripts.Sumpfkraut.Controls;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Types;
 
 namespace GUC.Scripts
 {
@@ -44,7 +45,7 @@ namespace GUC.Scripts
             InputControl.UpdateControls(ticks);
             OnUpdate?.Invoke(ticks);
             CheckMusic();
-            //CheckPosition();
+            CheckPosition();
         }
 
         SoundInstance menuTheme = null;
@@ -65,9 +66,9 @@ namespace GUC.Scripts
         {
             // stop oCAniCtrl_Human::_Stand from canceling the s_bowaim animation
             WinApi.Process.Write(0x006B7772, 0xEB, 0x69);
-
-
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
+
+
             GUCMenu.CloseActiveMenus();
 
             if (menuTheme != null)
@@ -116,23 +117,66 @@ namespace GUC.Scripts
             SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
         }
 
+        Vec3f lastValidPos = Vec3f.Null;
+        bool doneUncon = false;
+        Utilities.LockTimer swimTimer = new Utilities.LockTimer(3000);
+
+        void DoUnconstuff(NPCInst hero)
+        {
+            var env = hero.Environment;
+            if (env.WaterLevel < 0.2f)
+            {
+                if (env.InAir) return;
+                var gAI = hero.BaseInst.gAI;
+                if (!gAI.CheckEnoughSpaceMoveForward(false)) return;
+                if (!gAI.CheckEnoughSpaceMoveBackward(false)) return;
+                if (!gAI.CheckEnoughSpaceMoveLeft(false)) return;
+                if (!gAI.CheckEnoughSpaceMoveRight(false)) return;
+
+                lastValidPos = hero.GetPosition();
+            }
+            else
+            {
+                if (!hero.IsUnconscious && env.WaterLevel > 0.3f && swimTimer.IsReady)
+                {
+                    ScreenScrollText.AddText("Deine Rüstung ist zu schwer zum schwimmen!");
+                }
+
+                if (!hero.IsUnconscious)
+                    doneUncon = false;
+
+                if (!doneUncon && hero.IsUnconscious)
+                {
+                    hero.BaseInst.SetPhysics(false);
+                    var rb = WinApi.Process.ReadInt(hero.BaseInst.gVob.Address + 224);
+                    using (var vec = Vec3f.Null.CreateGVec())
+                        WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
+                    Vec3f.Null.SetGVec(hero.BaseInst.gAI.Velocity);
+                    hero.SetPosition(lastValidPos);
+                    doneUncon = true;
+                }
+            }
+        }
+
         void CheckPosition()
         {
             var hero = Arena.ArenaClient.Client.Character;
             if (hero != null && !hero.IsDead)
             {
-                if (Arena.TeamMode.TeamDef == null)
+                DoUnconstuff(hero);
+
+                if (Arena.TeamMode.TeamDef == null && Arena.ArenaClient.Client.HordeClass == null)
                 {
-                    if (hero.GetPosition().GetDistancePlanar(Types.Vec3f.Null) > 10000)
+                    if (hero.GetPosition().GetDistancePlanar(Vec3f.Null) > 10000)
                         if (Randomizer.GetInt(2) == 0)
                         {
-                            hero.SetPosition(new Types.Vec3f(-1969.563f, -120.6398f, 2707.328f));
-                            hero.SetAngles(Types.Angles.Null);
+                            hero.SetPosition(new Vec3f(-1969.563f, -120.6398f, 2707.328f));
+                            hero.SetAngles(Angles.Null);
                         }
                         else
                         {
-                            hero.SetPosition(new Types.Vec3f(-4550.162f, -98.70279f, 1392.133f));
-                            hero.SetAngles(Types.Angles.Null);
+                            hero.SetPosition(new Vec3f(-4550.162f, -98.70279f, 1392.133f));
+                            hero.SetAngles(Angles.Null);
                         }
                 }
             }

@@ -18,8 +18,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                Vob vob;
-                if (World.Current.TryGetVob(id, out vob))
+                if (World.Current.TryGetVob(id, out Vob vob))
                 {
                     vob.ScriptObject.Throw(stream.ReadVec3f());
                 }

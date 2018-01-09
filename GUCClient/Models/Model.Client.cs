@@ -53,15 +53,14 @@ namespace GUC.Models
 
             public static void ReadAniStart(PacketReader stream, float fpsMult = 1.0f)
             {
-                Vob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                float progress = stream.ReadFloat();
+                if (World.Current.TryGetVob(stream.ReadUShort(), out Vob vob))
                 {
                     Model model = vob.Model;
 
-                    AniJob job;
-                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
+                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
                     {
-                        model.ScriptObject.StartAniJob(job, fpsMult);
+                        model.ScriptObject.StartAniJob(job, fpsMult, progress);
                     }
                 }
             }
@@ -84,13 +83,11 @@ namespace GUC.Models
 
             public static void ReadAniStartUncontrolled(PacketReader stream)
             {
-                Vob vob;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out vob))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out Vob vob))
                 {
                     Model model = vob.Model;
 
-                    AniJob job;
-                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out job))
+                    if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
                     {
                         model.ScriptObject.StartAniJobUncontrolled(job);
                     }
@@ -150,7 +147,7 @@ namespace GUC.Models
             }
         }
 
-        partial void pStartAnimation(ActiveAni aa, float fpsMult)
+        partial void pStartAnimation(ActiveAni aa, float fpsMult, float progress)
         {
             if (this.vob is NPC)
             {
@@ -173,11 +170,11 @@ namespace GUC.Models
                             {
                                 if (!gAni.IsReversed)
                                 {
-                                    activeAni.SetActFrame(aa.Ani.StartFrame);
+                                    activeAni.SetActFrame(aa.Ani.StartFrame + aa.Ani.GetFrameNum() * progress);
                                 }
                                 else
                                 {
-                                    activeAni.SetActFrame(gAni.NumFrames - aa.Ani.StartFrame);
+                                    activeAni.SetActFrame(gAni.NumFrames - (aa.Ani.StartFrame + aa.Ani.GetFrameNum() * progress));
                                 }
                             }
                         }
@@ -275,8 +272,10 @@ namespace GUC.Models
                 if (aa.Ani == null)
                     continue;
 
-                int gAniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
+                if (aa.AniJob.Layer == 1 && vob.Environment.InAir)
+                    continue;
 
+                int gAniID = gModel.GetAniIDFromAniName(aa.AniJob.Name);
                 if (gModel.GetActiveAni(gAniID).Address == 0)
                 {
                     gModel.StartAni(gAniID, 0);

@@ -110,15 +110,35 @@ namespace GUC.Scripts.Arena
             activeWorld = world;
             activeSectionIndex = 0;
 
+            foreach (var sec in activeDef.Sections)
+                if (sec.barriers != null)
+                    foreach (var bar in sec.barriers)
+                    {
+                        VobInst vob = new VobInst(VobDef.Get(bar.Definition));
+                        vob.Spawn(activeWorld, bar.Position, bar.Angles);
+                        barriers.Add(vob);
+                    }
+
             SpawnSection(ActiveSection);
 
             SetPhase(HordePhase.Intermission);
             CheckSectionClear();
         }
 
+        public static void ForceNextSection()
+        {
+            foreach (var npc in enemies)
+                npc.SetHealth(0);
+            enemies.Clear();
+            CheckSectionClear();
+        }
+
         static void EndHorde(bool victory)
         {
             SetPhase(victory ? HordePhase.Victory : HordePhase.Lost);
+            players.ForEach(p => p.Character.LiftUnconsciousness());
+            barriers.ForEach(b => b.Despawn());
+            barriers.Clear();
 
             barrierTimer.SetCallback(StartHorde);
             barrierTimer.SetInterval(60 * TimeSpan.TicksPerSecond);
@@ -151,22 +171,23 @@ namespace GUC.Scripts.Arena
 
             activeSectionIndex++;
 
-            List<VobInst> oldBarriers = new List<VobInst>(barriers);
             SpawnSection(ActiveSection);
+
+            var oldBars = activeDef.Sections[activeSectionIndex - 1].barriers;
+            if (oldBars != null)
+            {
+                for (int i = 0; i < oldBars.Count; i++)
+                {
+                    barriers[i].Despawn();
+                }
+                barriers.RemoveRange(0, oldBars.Count);
+            }
+
             CheckSectionClear();
-            oldBarriers.ForEach(b => b.Despawn());
         }
 
         static void SpawnSection(HordeSection section)
         {
-            if (section.barriers != null)
-                foreach (var bar in section.barriers)
-                {
-                    VobInst vob = new VobInst(VobDef.Get(bar.Definition));
-                    vob.Spawn(activeWorld, bar.Position, bar.Angles);
-                    barriers.Add(vob);
-                }
-
             if (section.groups != null)
             {
                 var manager = Sumpfkraut.AI.SimpleAI.AIManager.aiManagers[0];
@@ -175,7 +196,7 @@ namespace GUC.Scripts.Arena
                     List<VobInst> vobs = new List<VobInst>(group.npcs.Count);
                     foreach (var bots in group.npcs)
                     {
-                        int maxNum = bots.Item2 * players.Count;
+                        int maxNum = (int)Math.Ceiling(bots.Item2 * players.Count);
                         for (int i = 0; i < maxNum; i++)
                         {
                             NPCInst npc = new NPCInst(NPCDef.Get(bots.Item1));
@@ -209,6 +230,8 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)activeSectionIndex);
             stream.Write((byte)Phase);
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
+
+            OnPhaseChange?.Invoke(phase);
         }
 
         static void SpawnPlayer(ArenaClient client)

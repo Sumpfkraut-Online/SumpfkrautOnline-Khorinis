@@ -275,7 +275,7 @@ namespace GUC.Scripts.Arena
 
         public void KillCharacter()
         {
-            if (this.Character == null || this.Character.IsDead)
+            if (this.Character == null || this.Character.IsDead || this.Character.IsUnconscious)
                 return;
 
             if (this.Team != null)
@@ -292,6 +292,12 @@ namespace GUC.Scripts.Arena
             else if (this.DuelEnemy != null)
             {
                 DuelMode.DuelWin(this.DuelEnemy);
+            }
+            else if (this.HordeClass != null)
+            {
+                this.Character.DropUnconscious(false);
+                this.Character.SetHealth(1);
+                return;
             }
 
             this.Character.SetHealth(0);

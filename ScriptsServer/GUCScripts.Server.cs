@@ -316,6 +316,14 @@ namespace GUC.Scripts
             vobDef.CDDyn = vobDef.CDStatic = true;
             vobDef.Create();
 
+            m = new ModelDef("gate");
+            m.Visual = "OC_LOB_GATE_BIG.3DS";
+            m.Create();
+
+            vobDef = new VobDef("gate");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
         }
 
         #region Items
@@ -1334,7 +1342,17 @@ namespace GUC.Scripts
             m.Create();
 
             // NPCs
-            NPCDef npcDef = new NPCDef("orc_warrior");
+            NPCDef npcDef = new NPCDef("orc_scout");
+            npcDef.Name = "Ork-Späher";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Orc_BodyScout";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "Orc_HeadScout";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            // NPCs
+            npcDef = new NPCDef("orc_warrior");
             npcDef.Name = "Ork-Krieger";
             npcDef.Model = m;
             npcDef.BodyMesh = "Orc_BodyWarrior";

@@ -45,10 +45,32 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
         }
 
+        float highestY = 0;
+
         Vec3f lastRegPos;
         void ChangePosDir(Vec3f oldPos, Angles oldAng, NPCMovement oldMovement)
         {
             Vec3f pos = GetPosition();
+
+            var env = this.Environment;
+
+            if (env.InAir)
+            {
+                if (pos.Y > highestY)
+                    highestY = pos.Y;
+            }
+            else if (highestY != 0)
+            {
+                float dmg = 0.14f * (highestY - pos.Y) - 135;
+                if (dmg > 0)
+                {
+                    Logger.Log("Damage: " + dmg);
+                    this.SetHealth(this.HP - (int)dmg);
+                    highestY = 0;
+                }
+            }
+
+
             if (lastRegPos.GetDistance(pos) > 30.0f)
             {
                 lastHitMoveTime = GameTime.Ticks;
@@ -70,10 +92,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 }
             }
 
-            var env = this.Environment;
-            if (env.WaterLevel > 0 && env.WaterDepth > 0.3f)
-                if (this.IsPlayer) ((Arena.ArenaClient)this.Client).KillCharacter();
-                else this.SetHealth(0);
+            if (env.WaterLevel > 0.7f)
+            {
+                if (this.IsPlayer)
+                {
+                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                }
+            }
+            
+            if (env.InAir && !this.isClimbing)
+            {
+                var aa = this.ModelInst.GetActiveAniFromLayer(1);
+                if (aa != null)
+                    this.ModelInst.StopAnimation(aa, false);
+            }
+
 
             CheckUnconsciousness();
         }
@@ -158,6 +191,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Climbing
 
+        bool isClimbing = false;
+        public bool IsClimbing { get { return this.isClimbing; } }
 
         public void DoClimb(ClimbMoves move, WorldObjects.NPC.ClimbingLedge ledge)
         {
@@ -187,7 +222,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ledge.WriteStream(stream);
             this.BaseInst.SendScriptVobStream(stream);
 
-            this.ModelInst.StartAniJob(job);
+            this.isClimbing = true;
+            this.ModelInst.StartAniJob(job, () => this.isClimbing = false);
         }
 
         #endregion
