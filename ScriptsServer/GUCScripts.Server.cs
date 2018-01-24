@@ -305,13 +305,31 @@ namespace GUC.Scripts
             AddItems();
 
             AddCrawlers();
-            AddOrcs();
+            AddOrcs();            
 
-            m = new ModelDef("barrier");
-            m.Visual = "OW_Palissade.3ds";
+            m = new ModelDef("trollpalisade");
+            m.Visual = "OW_TROLLPALISSADE.3DS";
             m.Create();
 
-            VobDef vobDef = new VobDef("barrier");
+            VobDef vobDef = new VobDef("trollpalisade");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+            m = new ModelDef("invwall");
+            m.Visual = "TRANS_WAND.3DS";
+            m.Create();
+
+            vobDef = new VobDef("invwall");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+            m = new ModelDef("planks");
+            m.Visual = "OW_LOB_WOODPLANKS_V1.3DS";
+            m.Create();
+
+            vobDef = new VobDef("planks");
             vobDef.Model = m;
             vobDef.CDDyn = vobDef.CDStatic = true;
             vobDef.Create();

@@ -50,7 +50,7 @@
             <Button x:Name="bRefresh" Content="Aktualisieren" Style="{StaticResource MainButton}" Height="40" Margin="209,324,209,116" Width="222" Click="bRefresh_Click"/>
             <Button x:Name="bConnect" Content="Verbinden" Style="{StaticResource MainButton}" Height="40" Margin="209,284,209,156" Click="bConnect_Click"/>
             <Button x:Name="bAddServer" Content="Hinzufügen" Style="{StaticResource MainButton}" Height="40" Margin="209,369,209,71" Click="bAddServer_Click"/>
-            <Button x:Name="bRemoveServer" Content="Entfernen" Style="{StaticResource MainButton}" Height="40" Margin="209,414,209,26" Click="bRemoveServer_Click"/>
+            <Button x:Name="bRemoveServer" Content="Entfernen" Style="{StaticResource MainButton}" Height="40" Margin="173,414,173,26" Click="bRemoveServer_Click"/>
         </Grid>
         <Grid x:Name="projectGrid" Visibility="Hidden">
             <Image x:Name="image" Stretch="Fill" HorizontalAlignment="Left" Height="400" Margin="6,8,0,0" VerticalAlignment="Top" Width="628"/>

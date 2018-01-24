@@ -22,6 +22,7 @@ namespace GUCLauncher
         public InfoBox()
         {
             InitializeComponent();
+            button.Content = GUC.LangStrings.Get("Input_Accept");
         }
 
         public static void Show(Window parent, string title)

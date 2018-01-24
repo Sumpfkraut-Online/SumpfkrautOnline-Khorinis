@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.IO;
 using System.Security.Cryptography;
+using GUC;
 
 namespace GUCLauncher
 {
@@ -34,8 +35,6 @@ namespace GUCLauncher
             items = coll;
 
             Load();
-
-            CheckGothicPath();
         }
 
         #region Add & Remove Servers
@@ -70,7 +69,12 @@ namespace GUCLauncher
             {
                 using (StreamReader sr = new StreamReader(ConfigFile))
                 {
-                    gothicPath = Path.GetFullPath(sr.ReadLine());
+                    if (int.TryParse(sr.ReadLine().Trim().Substring("Language=".Length), out int language))
+                        LangStrings.LanguageIndex = language;
+                    
+                    gothicPath = Path.GetFullPath(sr.ReadLine().Trim().Substring("Path=".Length));
+
+                    sr.ReadLine();
                     while (!sr.EndOfStream)
                     {
                         var item = ServerListItem.ReadNew(sr);
@@ -95,7 +99,9 @@ namespace GUCLauncher
         {
             using (StreamWriter sw = new StreamWriter(ConfigFile))
             {
-                sw.WriteLine(gothicPath);
+                sw.WriteLine("Language=" + LangStrings.LanguageIndex);
+                sw.WriteLine("Path=" + gothicPath);
+                sw.WriteLine();
                 foreach (ServerListItem item in items)
                 {
                     item.Write(sw);
@@ -148,10 +154,10 @@ namespace GUCLauncher
 
         static void ShowMessageBox(string text, params object[] args)
         {
-            MessageBox.Show(args.Length == 0 ? text : string.Format(text, args), "Gothic 2 - Verzeichnis suchen.", MessageBoxButton.OK);
+            MessageBox.Show(args.Length == 0 ? text : string.Format(text, args), LangStrings.Get("Config_Search"), MessageBoxButton.OK);
         }
 
-        static void CheckGothicPath()
+        public static void CheckGothicPath()
         {
             System.Windows.Forms.FolderBrowserDialog dlg = null;
             string path = gothicPath;
@@ -160,7 +166,7 @@ namespace GUCLauncher
             {
                 if (path == null)
                 { // no launcher.cfg, first start?
-                    ShowMessageBox("Bitte wähle dein Gothic 2 DNDR - Verzeichnis aus.");
+                    ShowMessageBox(LangStrings.Get("Config_Search_Long"));
                 }
                 else
                 {
@@ -173,15 +179,14 @@ namespace GUCLauncher
                         case FailCode.GothicNotFound:
                         case FailCode.VDFS32NotFound:
                         case FailCode.SHW32NotFound:
-                            ShowMessageBox("Gothic konnte nicht gefunden werden ({0}).\nBitte wähle dein Gothic 2 DNDR - Verzeichnis aus.", code);
+                            ShowMessageBox("{0} ({1})\n{2}", LangStrings.Get("Config_NotFound"), code, LangStrings.Get("Config_Search_Long"));
                             break;
                         case FailCode.GothicWrongVersion:
-                            ShowMessageBox("Falsche Version gefunden.\nEs wird 'Gothic 2 Die Nacht des Raben - Report-Version 2.6.0.0' benötigt!");
+                            ShowMessageBox(LangStrings.Get("Config_WrongVersion"));
                             break;
                         case FailCode.VDFS32WrongVersion:
                         case FailCode.SHW32WrongVersion:
-                            ShowMessageBox("Eine wichtige Datei ist modifiziert wodurch der GUC nicht gestartet werden kann ({0}). Dies kann z.B. durch das Systempack erfolgt sein. "
-                                            + "Bitte deinstalliere die Modifikation oder wähle eine andere Installation.", code);
+                            ShowMessageBox("{0} ({1})", code);
                             break;
                         case FailCode.IsValid:
                             gothicPath = path;
@@ -195,7 +200,7 @@ namespace GUCLauncher
                     dlg = new System.Windows.Forms.FolderBrowserDialog();
                     dlg.ShowNewFolderButton = false;
                     dlg.SelectedPath = Directory.Exists(path) ? path : Directory.GetCurrentDirectory();
-                    dlg.Description = "Verzeichnis von 'Gothic 2 - Die Nacht des Raben' suchen.";
+                    dlg.Description = LangStrings.Get("Config_Search_Long");
                 }
 
                 if (dlg.ShowDialog(MainWindow.Self.GetIWin32Window()) != System.Windows.Forms.DialogResult.OK)

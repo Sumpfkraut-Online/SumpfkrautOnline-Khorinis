@@ -13,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using GUC;
 
 namespace GUCLauncher
 {
@@ -50,8 +51,34 @@ namespace GUCLauncher
         {
             try
             {
+                const string LanguageFile = "launcher.languages";
+                if (!File.Exists(LanguageFile))
+                {
+                    using (var s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("GUCLauncher.Resources." + LanguageFile))
+                    using (var fs = new FileStream(LanguageFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                    {
+                        s.CopyTo(fs);
+                    }
+                }
+
+                LangStrings.LoadFile(LanguageFile);
+
                 InitializeComponent();
                 self = this;
+
+                Configuration.Init(lvServerList.Items);
+                Configuration.Save();
+
+                #region Set Contents
+                bConnect.Content = LangStrings.Get("List_Connect");
+                bRefresh.Content = LangStrings.Get("List_Refresh");
+                bAddServer.Content = LangStrings.Get("List_Add");
+                bRemoveServer.Content = LangStrings.Get("List_Remove");
+                ((GridView)lvServerList.View).Columns[2].Header = LangStrings.Get("List_Players");
+                bBack1.Content = LangStrings.Get("Project_Back");
+                bWebsite.Content = LangStrings.Get("Project_Website");
+
+                #endregion
             }
             catch (Exception e)
             {
@@ -64,7 +91,7 @@ namespace GUCLauncher
         {
             try
             {
-                Configuration.Init(lvServerList.Items);
+                Configuration.CheckGothicPath();
                 overshadow.Visibility = Visibility.Hidden;
                 Dispatcher.Invoke(() => { }, DispatcherPriority.Render);
 
@@ -99,7 +126,7 @@ namespace GUCLauncher
 
         void bAddServer_Click(object sender, RoutedEventArgs e)
         {
-            var address = ShowInputBox("Server hinzufügen");
+            var address = InputBox.Show(self, LangStrings.Get("List_Add_Long"));
             if (!string.IsNullOrWhiteSpace(address))
             {
                 Configuration.AddServer(address);
@@ -214,7 +241,7 @@ namespace GUCLauncher
 
         void ShowPasswordPage(ServerListItem item, bool wrongPW = false)
         {
-            var pw = ShowInputBox(wrongPW ? "Falsches Passwort!" : "Passwort benötigt!");
+            var pw = ShowInputBox(LangStrings.Get(wrongPW ? "Password_Wrong" : "Password_Needed"));
             if (pw == null)
                 return;
 
@@ -289,7 +316,7 @@ namespace GUCLauncher
 
             //Could not connect
             if (!initload)
-                ShowInfoBox("Verbindung konnte nicht hergestellt werden.");
+                ShowInfoBox(LangStrings.Get("Connection_Failed"));
         }
 
         void ShowProjectPage(ServerListItem item)
@@ -338,19 +365,19 @@ namespace GUCLauncher
             {
                 case StartButtonSetting.Disabled:
                     bStart.IsEnabled = false;
-                    bStart.Content = "Start";
+                    bStart.Content = LangStrings.Get("Project_Start");
                     bStart.Click -= ClickStart;
                     bStart.Click -= ClickUpdate;
                     break;
                 case StartButtonSetting.Update:
                     bStart.IsEnabled = true;
-                    bStart.Content = "Update";
+                    bStart.Content = LangStrings.Get("Project_Update");
                     bStart.Click -= ClickStart;
                     bStart.Click += ClickUpdate;
                     break;
                 case StartButtonSetting.Start:
                     bStart.IsEnabled = true;
-                    bStart.Content = "Start";
+                    bStart.Content = LangStrings.Get("Project_Start");
                     bStart.Click += ClickStart;
                     bStart.Click -= ClickUpdate;
                     break;
@@ -407,14 +434,14 @@ namespace GUCLauncher
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        lUpdate.Content = "Der Server hat automatische Updates deaktiviert.";
+                        lUpdate.Content = LangStrings.Get("Update_Disabled");
                         SetStartButton(StartButtonSetting.Start);
                         progressBar.Value = 100;
                     });
                     return;
                 }
 
-                Dispatcher.Invoke(() => lUpdate.Content = "Verbinde zum Update-Host...");
+                Dispatcher.Invoke(() => lUpdate.Content = LangStrings.Get("Update_Connecting"));
                 // load the information file
                 float percent = 0;
                 using (var response = Download.GetResponse(dlLink, value =>
@@ -426,7 +453,7 @@ namespace GUCLauncher
                     Stream stream;
                     if (response != null && (stream = response.GetResponseStream()) != null)
                     {
-                        Dispatcher.Invoke(() => lUpdate.Content = "Lade Update-Infos...");
+                        Dispatcher.Invoke(() => lUpdate.Content = LangStrings.Get("Update_Infos"));
                         current = new InfoPack();
                         current.Read(stream, Configuration.ActiveProject.GetFolder(), UpdateUI,
                         value =>
@@ -443,12 +470,12 @@ namespace GUCLauncher
                             if (current.NeedsUpdate())
                             {
                                 SetStartButton(StartButtonSetting.Update);
-                                lUpdate.Content = "Update benötigt.";
+                                lUpdate.Content = LangStrings.Get("Update_Needed");
                             }
                             else
                             {
                                 SetStartButton(StartButtonSetting.Start);
-                                lUpdate.Content = "Fertig.";
+                                lUpdate.Content = LangStrings.Get("Update_Finished");
                             }
                         });
                     }
@@ -456,7 +483,7 @@ namespace GUCLauncher
                     {
                         Dispatcher.Invoke(() =>
                         {
-                            lUpdate.Content = "Update-Host konnte nicht erreicht werden.";
+                            lUpdate.Content = LangStrings.Get("Update_Failed");
                             progressBar.Value = 100;
                         });
                     }
@@ -490,8 +517,7 @@ namespace GUCLauncher
         {
             if (!string.IsNullOrWhiteSpace(current.Website))
             {
-                Uri uri;
-                if (Uri.TryCreate(current.Website, UriKind.Absolute, out uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                if (Uri.TryCreate(current.Website, UriKind.Absolute, out Uri uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
                 {
                     return true;
                 }
@@ -513,7 +539,7 @@ namespace GUCLauncher
         {
             SetStartButton(StartButtonSetting.Disabled);
             progressBar.Value = 0;
-            lUpdate.Content = "Update vorbereiten...";
+            lUpdate.Content = LangStrings.Get("Update_Prepare");
 
             updateThread = new Thread(() =>
             {

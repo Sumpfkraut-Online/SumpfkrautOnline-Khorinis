@@ -15,9 +15,31 @@ namespace GUC.Scripts.Arena
         public string Definition;
     }
 
+    class HordeEnemy
+    {
+        public string NPCDef;
+        public float CountScale;
+        public string WeaponDef;
+        public string ArmorDef;
+        public int Protection;
+        public int Damage;
+        public int Health;
+
+        public HordeEnemy(string npcDef, float countScale, string wep = null, string armor = null, int prot = 0, int dam = 0, int hp = 100)
+        {
+            this.NPCDef = npcDef;
+            this.CountScale = countScale;
+            this.WeaponDef = wep;
+            this.ArmorDef = armor;
+            this.Protection = prot;
+            this.Damage = dam;
+            this.Health = hp;
+        }
+    }
+
     class HordeGroup
     {
-        public List<string, float> npcs;
+        public List<HordeEnemy> npcs;
         public Vec3f Position;
         public float Range;
     }
@@ -25,6 +47,7 @@ namespace GUC.Scripts.Arena
     class HordeSection
     {
         public List<HordeBarrier> barriers;
+        public List<HordeBarrier> bridges;
         public List<HordeGroup> groups;
 
         public HordeSection Next;

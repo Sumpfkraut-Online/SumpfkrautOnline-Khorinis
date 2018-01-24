@@ -12,6 +12,6 @@
     <Grid>
         <Image Source="Resources/empty_menu_border.png" Stretch="Fill"/>
         <TextBlock Name="tbText" Margin="15,15,15,110" FontSize="25" Foreground="#FFE07D06" FontFamily="Resources/#G2Font" TextWrapping="Wrap" TextAlignment="Center"/>
-        <Button Content="Akzeptieren" Style="{StaticResource MainButton}" Margin="36,176,36.4,27.6" Click="Click_Accept"/>
+        <Button x:Name="button" Content="Akzeptieren" Style="{StaticResource MainButton}" Margin="36,176,36.4,27.6" Click="Click_Accept"/>
     </Grid>
 </Window>

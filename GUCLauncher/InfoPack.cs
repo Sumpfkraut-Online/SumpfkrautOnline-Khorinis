@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using System.IO.Compression;
+using GUC;
 
 namespace GUCLauncher
 {
@@ -38,15 +39,15 @@ namespace GUCLauncher
 
                 using (PacketStream header = new PacketStream(ds, fileSize, value => SetPercent(0.4f * value)))
                 {
-                    SetStatus("Reading website...");
+                    SetStatus(LangStrings.Get("Update_Website"));
                     this.Website = header.ReadStringShort();
                     UpdateUI(UpdateUIEnum.Website);
 
-                    SetStatus("Reading information text...");
+                    SetStatus(LangStrings.Get("Update_Text"));
                     this.InfoText = header.ReadStringLong();
                     UpdateUI(UpdateUIEnum.InfoText);
 
-                    SetStatus("Reading background image...");
+                    SetStatus(LangStrings.Get("Update_Background"));
                     int len = header.ReadInt();
                     ImageData = header.ReadBytes(len);
                     UpdateUI(UpdateUIEnum.Image);
@@ -55,7 +56,7 @@ namespace GUCLauncher
                     int checkBytes = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        SetStatus(string.Format("Reading data packs ({0}/{1})...", i + 1, count));
+                        SetStatus(string.Format("{0} ({1}/{2})...", LangStrings.Get("Update_Data"), i + 1, count));
                         DataPack pack = new DataPack();
                         checkBytes += pack.Read(header, path);
                         Packs.Add(pack);
@@ -64,7 +65,7 @@ namespace GUCLauncher
                     int doneBytes = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        SetStatus(string.Format("Checking data packs ({0}/{1})...", i + 1, count));
+                        SetStatus(string.Format("{0} ({1}/{2})...", LangStrings.Get("Update_Check"), i + 1, count));
                         Packs[i].EndCheck(value =>
                         {
                             doneBytes += value;
@@ -103,12 +104,12 @@ namespace GUCLauncher
                     int currentUpdate = doneBytes / 100000;
                     if (currentUpdate > lastUpdate)
                     {
-                        SetStatus(string.Format("Updating... ({0:0.0}MB / {1:0.0}MB)", currentUpdate / 10f, bytesToLoad / 1000000f));
+                        SetStatus(string.Format("{0} ({1:0.0}MB / {2:0.0}MB)", LangStrings.Get("Update_Download"), currentUpdate / 10f, bytesToLoad / 1000000f));
                         lastUpdate = currentUpdate;
                     }
                 });
 
-            SetStatus("Finished.");
+            SetStatus(LangStrings.Get("Update_Finished"));
         }
     }
 

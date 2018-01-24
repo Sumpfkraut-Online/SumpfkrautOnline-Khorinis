@@ -118,9 +118,7 @@ namespace GUCLauncher
             string addressLine = sr.ReadLine();
             string passwordLine = sr.ReadLine();
 
-            string address;
-            ushort port;
-            if (TryGetAddress(addressLine, out address, out port))
+            if (TryGetAddress(addressLine, out string address, out ushort port))
             {
                 ServerListItem item = new ServerListItem(address, port);
                 item.Password = string.IsNullOrEmpty(passwordLine) ? null : Convert.FromBase64String(passwordLine);

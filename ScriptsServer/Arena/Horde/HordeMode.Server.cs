@@ -58,6 +58,7 @@ namespace GUC.Scripts.Arena
         static WorldInst activeWorld;
 
         static List<VobInst> barriers = new List<VobInst>(10);
+        static List<VobInst> bridges = new List<VobInst>(10);
         static HashSet<NPCInst> enemies = new HashSet<NPCInst>();
         public static HashSet<NPCInst> Enemies { get { return enemies; } }
 
@@ -98,6 +99,9 @@ namespace GUC.Scripts.Arena
             });
 
             players.Clear();
+
+            bridges.ForEach(b => b.Despawn());
+            bridges.Clear();
 
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.HordeStart);
@@ -183,6 +187,17 @@ namespace GUC.Scripts.Arena
                 barriers.RemoveRange(0, oldBars.Count);
             }
 
+            var newBridges = activeDef.Sections[activeSectionIndex - 1].bridges;
+            if (newBridges != null)
+            {
+                foreach (var bridge in newBridges)
+                {
+                    VobInst vob = new VobInst(VobDef.Get(bridge.Definition));
+                    vob.Spawn(activeWorld, bridge.Position, bridge.Angles);
+                    bridges.Add(vob);
+                }                
+            }
+
             CheckSectionClear();
         }
 
@@ -196,10 +211,28 @@ namespace GUC.Scripts.Arena
                     List<VobInst> vobs = new List<VobInst>(group.npcs.Count);
                     foreach (var bots in group.npcs)
                     {
-                        int maxNum = (int)Math.Ceiling(bots.Item2 * players.Count);
+                        int maxNum = (int)Math.Ceiling(bots.CountScale * players.Count);
                         for (int i = 0; i < maxNum; i++)
                         {
-                            NPCInst npc = new NPCInst(NPCDef.Get(bots.Item1));
+                            NPCInst npc = new NPCInst(NPCDef.Get(bots.NPCDef));
+
+                            if (bots.WeaponDef != null)
+                            {
+                                ItemInst item = new ItemInst(ItemDef.Get(bots.WeaponDef));
+                                npc.Inventory.AddItem(item);
+                                npc.EffectHandler.TryEquipItem(item);
+                            }
+
+                            if (bots.ArmorDef != null)
+                            {
+                                ItemInst item = new ItemInst(ItemDef.Get(bots.ArmorDef));
+                                npc.Inventory.AddItem(item);
+                                npc.EffectHandler.TryEquipItem(item);
+                            }
+
+                            npc.SetHealth(bots.Health, bots.Health);
+                            
+
                             Vec3f spawnPos = Randomizer.GetVec3fRad(group.Position, group.Range);
                             Angles spawnAng = new Angles(0, Randomizer.GetFloat(-Angles.PI, Angles.PI), 0);
                             npc.BaseInst.SetNeedsClientGuide(true);

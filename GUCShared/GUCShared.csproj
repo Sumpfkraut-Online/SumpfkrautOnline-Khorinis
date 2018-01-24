@@ -47,6 +47,7 @@
     <Compile Include="Animations\Animation.cs" />
     <Compile Include="Animations\FrameActionPair.cs" />
     <Compile Include="Animations\Overlay.cs" />
+    <Compile Include="LangStrings.cs" />
     <Compile Include="Network\ClientMessages.cs" />
     <Compile Include="Network\PacketEnums.cs" />
     <Compile Include="Types\Angles.cs" />

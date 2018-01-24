@@ -13,7 +13,7 @@
         <Image Source="Resources/empty_menu_border.png" Stretch="Fill"/>
         <Label Name="lbTitle" Content="Text" Height="50" Margin="10,10,10.4,189.6" HorizontalContentAlignment="Center" FontSize="25" Foreground="#FFE07D06" FontFamily="Resources/#G2Font" VerticalContentAlignment="Center"/>
         <TextBox Name="tbInput" Margin="36,82,36,138" TextWrapping="Wrap" Text="TextBox" FontFamily="Resources/#G2Font" VerticalContentAlignment="Center"  HorizontalContentAlignment="Center" Background="#D8EDE5E1" KeyDown="Window_KeyDown"/>
-        <Button Content="Akzeptieren" Style="{StaticResource MainButton}" Margin="36,137,36.4,66.6" Click="Click_Accept"/>
-        <Button Content="Zurück" Style="{StaticResource MainButton}" Margin="36,183,36,20.6" Click="Click_Return"/>
+        <Button x:Name="bAccept" Content="Akzeptieren" Style="{StaticResource MainButton}" Margin="36,137,36.4,66.6" Click="Click_Accept"/>
+        <Button x:Name="bBack" Content="Zurück" Style="{StaticResource MainButton}" Margin="36,183,36,20.6" Click="Click_Return"/>
     </Grid>
 </Window>

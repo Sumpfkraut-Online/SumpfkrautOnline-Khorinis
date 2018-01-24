@@ -22,6 +22,8 @@ namespace GUCLauncher
         public InputBox()
         {
             InitializeComponent();
+            bAccept.Content = GUC.LangStrings.Get("Input_Accept");
+            bBack.Content = GUC.LangStrings.Get("Input_Back");
         }
         
         public static string Show(Window parent, string title, string input = "")

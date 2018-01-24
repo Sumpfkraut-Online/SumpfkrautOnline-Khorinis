@@ -1,0 +1,69 @@
+﻿{Deutsch}
+List_Connect: Verbinden
+List_Refresh: Aktualisieren
+List_Add: Hinzufügen
+List_Add_Long: Server hinzufügen
+List_Remove: Entfernen
+List_Players: Spieler
+Project_Start: Start
+Project_Update: Update
+Project_Website: Website
+Project_Back: Zurück
+Password_Wrong: Falsches Passwort!
+Password_Needed: Password benötigt!
+Connection_Failed: Verbindung konnte nicht hergestellt werden!
+Update_Disabled: Der Server hat automatische Updates deaktiviert.
+Update_Connecting: Verbinde mit Update-Host...
+Update_Infos: Lade Update-Informationen...
+Update_Needed: Update benötigt.
+Update_Finished: Fertig.
+Update_Failed: Update-Host konnte nicht erreicht werden.
+Update_Prepare: Update vorbereiten...
+Update_Website: Lade Website-Link...
+Update_Text: Lade Server-Text...
+Update_Background: Lade Hintergrundbild...
+Update_Data: Lade Datei-Informationen...
+Update_Check: Überprüfe Dateien...
+Update_Download: Lade...
+Config_Search: Gothic 2 - Verzeichnis suchen.
+Config_Search_Long: Bitte wähle dein Gothic 2 DNDR - Verzeichnis aus.
+Config_NotFound: Gothic konnte nicht gefunden werden.
+Config_WrongVersion: Falsche Version gefunden. Es wird 'Gothic 2 Die Nacht des Raben - Report-Version 2.6.0.0' benötigt!
+Config_ModFound: Eine für den GUC wichtige Gothic-System-Datei scheint modifiziert zu sein. Bitte deinstalliere die Modifikation oder wähle eine andere Installation. Dies kann z.B. durch das Systempack erfolgt sein.
+Input_Accept: Akzeptieren
+Input_Back: Zurück
+
+{English}
+List_Connect: Connect
+List_Refresh: Refresh
+List_Add: Add Server
+List_Add_Long: Add Server
+List_Remove: Remove Server
+List_Players: Players
+Project_Start: Start
+Project_Update: Update
+Project_Website: Website
+Project_Back: Back
+Password_Wrong: Wrong password!
+Password_Needed: Password needed!
+Connection_Failed: Connection could not be established!
+Update_Disabled: This server has disabled automatic updates.
+Update_Connecting: Connecting to update host...
+Update_Infos: Downloading update information...
+Update_Needed: Update needed.
+Update_Finished: Finished.
+Update_Failed: Connection to update host could not be established.
+Update_Prepare: Preparing update...
+Update_Website: Loading website reference...
+Update_Text: Loading server text...
+Update_Background: Loading background image...
+Update_Data: Loading file information...
+Update_Check: Verifying files...
+Update_Download: Downloading...
+Config_Search: Gothic 2 folder search.
+Config_Search_Long: Please select your Gothic 2 - NOTR installation path.
+Config_NotFound: Gothic could not be found.
+Config_WrongVersion: Wrong version detected. 'Gothic 2 Night of the Raven - Report-Patch 2.6.0.0' is needed!
+Config_ModFound: An important Gothic system file seems to be modified. Please uninstall this modification or choose a different installtion path. This could be caused by the Systempack.
+Input_Accept: Accept
+Input_Back: Back

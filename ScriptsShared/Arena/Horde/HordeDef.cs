@@ -38,6 +38,12 @@ namespace GUC.Scripts.Arena
                     Equipment = new List<string>() { "ITAR_miliz_s", "1hschwert", "light_xbow" },
                     NeedsBolts = true,
                 },
+                new HordeClassDef()
+                {
+                    Name = "Ritter",
+                    Equipment = new List<string>() { "ITAR_ritter", "2hschwert" },
+                    NeedsBolts = false,
+                },
              };
 
             // INTRO SEKTION, EINGANG PASS
@@ -45,16 +51,17 @@ namespace GUC.Scripts.Arena
             {
                 SpawnPos = new Vec3f(7695, 6509, 42836),
                 SpawnRange = 100,
-                SecsTillNext = 30,
+                SecsTillNext = 3,
                 SpecPos = new Vec3f(0, 400, 0),
                 SpecAng = new Angles(0, 0, 0),
-                FinishedMessage = "Test und so",
+                FinishedMessage = "Ihr bereitet euch darauf vor, den Weg zur Burg freizukämpfen.",
+
             };
 
             section.barriers = new List<HordeBarrier>()
             {
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(6414, 6426, 41209), Angles = new Angles(0.162, -2.997, 0.042) },
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(6877, 6446, 41255), Angles = new Angles(0.156, -3.039, 0.035) },
+                new HordeBarrier() { Definition = "invwall", Position = new Vec3f(6551, 6447, 40913), Angles = new Angles(0.000, 3.032, 0.000) },
+                new HordeBarrier() { Definition = "trollpalisade", Position = new Vec3f(6555, 6544, 40671), Angles = new Angles(0.313, 3.054, 0.035) },
             };
             section.groups = new List<HordeGroup>();
             def.Sections.Add(section);
@@ -64,31 +71,32 @@ namespace GUC.Scripts.Arena
             {
                 SpawnPos = new Vec3f(0, 400, 0),
                 SpawnRange = 500,
-                SecsTillNext = 30,
+                SecsTillNext = 3,
                 SpecPos = new Vec3f(0, 400, 0),
                 SpecAng = new Angles(0, 0, 0),
+                FinishedMessage = "Ihr beginnt die Palisade einzureissen.",
             };
 
             section.barriers = new List<HordeBarrier>()
             {
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(4584, 6042, 30454), Angles = new Angles(0.211, -2.902, -0.040) },
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(4160, 6027, 30361), Angles = new Angles(0.175, -2.888, 0.052) },
+                new HordeBarrier() { Definition = "invwall", Position = new Vec3f(4389, 6038, 30560), Angles = new Angles(0.000, -2.832, 0.000) },
+                new HordeBarrier() { Definition = "trollpalisade", Position = new Vec3f(4413, 6067, 30325), Angles = new Angles(0.226, -2.840, -0.017) },
             };
             section.groups = new List<HordeGroup>()
             {
-                new HordeGroup() { Position = new Vec3f(8094, 5626, 36860), Range = 600, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(8094, 5626, 36860), Range = 600, npcs = new List<HordeEnemy>()
                     { // plattform
-                        { "orc_scout", 0.3f },
+                        new HordeEnemy("orc_scout", 0.3f, "krush_pach"),
                     }
                 },
-                new HordeGroup() { Position = new Vec3f(5581, 5510, 35969), Range = 400, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(5581, 5510, 35969), Range = 400, npcs = new List<HordeEnemy>()
                     { // see
-                        { "orc_scout", 0.5f },
+                        new HordeEnemy("orc_scout", 0.5f, "krush_pach"),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(4227, 6145, 31128), Range = 500, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(4227, 6145, 31128), Range = 500, npcs = new List<HordeEnemy>()
                     { // vor barrikaden, steindurchgang
-                        { "orc_scout", 1 },
+                        new HordeEnemy("orc_scout", 1, "krush_pach"),
                     },
                 },
             };
@@ -99,44 +107,45 @@ namespace GUC.Scripts.Arena
             {
                 SpawnPos = new Vec3f(0, 400, 0),
                 SpawnRange = 500,
-                SecsTillNext = 30,
+                SecsTillNext = 3,
                 SpecPos = new Vec3f(0, 400, 0),
                 SpecAng = new Angles(0, 0, 0),
+                FinishedMessage = "Ihr beginnt die Palisade einzureissen.",
             };
 
             section.barriers = new List<HordeBarrier>()
             {
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(2940, 1839, 19263), Angles = new Angles(0.175, 2.977, -0.017) },
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(2499, 1837, 19337), Angles = new Angles(0.192, 2.980, 0.035) },
+                new HordeBarrier() { Definition = "invwall", Position = new Vec3f(2989, 1915, 19515), Angles = new Angles(0.000, 2.945, 0.000) },
+                new HordeBarrier() { Definition = "trollpalisade", Position = new Vec3f(2655, 2004, 19422), Angles = new Angles(0.000, 2.976, 0.000) },
             };
 
             section.groups = new List<HordeGroup>()
             {
-                new HordeGroup() { Position = new Vec3f(4603, 6076, 28529), Range = 400, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(4603, 6076, 28529), Range = 400, npcs = new List<HordeEnemy>()
                     { // verlassene mine
-                        { "orc_scout", 1 },
+                        new HordeEnemy("orc_scout", 1, "krush_pach" ),
                     }
                 },
-                new HordeGroup() { Position = new Vec3f(4102, 5888, 27445), Range = 500, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(4102, 5888, 27445), Range = 500, npcs = new List<HordeEnemy>()
                     { // verlassene mine 2
-                        { "orc_scout", 1 },
+                        new HordeEnemy("orc_scout", 1, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(678, 6235, 27186), Range = 500, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(678, 6235, 27186), Range = 500, npcs = new List<HordeEnemy>()
                     { // bei teleport rune
-                        { "orc_warrior", 0.2f },
-                        { "orc_scout", 0.3f },
+                        new HordeEnemy("orc_warrior", 0.2f, "krush_pach" ),
+                        new HordeEnemy("orc_scout", 0.3f, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(1555, 2900, 21881), Range = 700, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(1555, 2900, 21881), Range = 700, npcs = new List<HordeEnemy>()
                     { // vor barrikade, toter paladin
-                        { "orc_warrior", 0.3f },
-                        { "orc_scout", 1 },
+                        new HordeEnemy("orc_warrior", 0.3f, "krush_pach" ),
+                        new HordeEnemy("orc_scout", 1, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(3531, 2400, 20153), Range = 200, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(3531, 2400, 20153), Range = 200, npcs = new List<HordeEnemy>()
                     { // vor barrikade, abgrund
-                        { "orc_scout", 0.2f },
+                        new HordeEnemy("orc_scout", 0.2f, "krush_pach" ),
                     },
                 },
             };
@@ -147,52 +156,57 @@ namespace GUC.Scripts.Arena
             {
                 SpawnPos = new Vec3f(0, 400, 0),
                 SpawnRange = 500,
-                SecsTillNext = 30,
+                SecsTillNext = 3,
                 SpecPos = new Vec3f(0, 400, 0),
                 SpecAng = new Angles(0, 0, 0),
+                FinishedMessage = "Ihr beginnt eine Brücke zu bauen.",
             };
 
-            section.barriers = new List<HordeBarrier>()
+            section.bridges = new List<HordeBarrier>()
             {
-                new HordeBarrier() { Definition = "barrier", Position = new Vec3f(-10966, -925, 9085), Angles = new Angles(0.000, 2.980, 0.000) },
+                new HordeBarrier() { Definition = "planks", Position = new Vec3f(-11011, -947, 9555), Angles = new Angles(0.000, 1.607, 0.122) },
+                new HordeBarrier() { Definition = "planks", Position = new Vec3f(-11007, -948, 9339), Angles = new Angles(0.000, 1.716, 0.000) },
+                new HordeBarrier() { Definition = "planks", Position = new Vec3f(-10994, -977, 9052), Angles = new Angles(-0.017, 1.714, 0.070) },
+                new HordeBarrier() { Definition = "planks", Position = new Vec3f(-10969, -984, 8762), Angles = new Angles(0.000, 1.716, 0.000) },
+                new HordeBarrier() { Definition = "planks", Position = new Vec3f(-10948, -1002, 8471), Angles = new Angles(0.000, 1.716, 0.000) },
             };
             section.groups = new List<HordeGroup>()
             {
-                new HordeGroup() { Position = new Vec3f(2370, 1665, 18719), Range = 200, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(2370, 1665, 18719), Range = 200, npcs = new List<HordeEnemy>()
                     { // weg am hang 1
-                        { "orc_scout", 0.2f },
+                        new HordeEnemy( "orc_scout", 0.2f, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(709, 880, 17312), Range = 200, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(709, 880, 17312), Range = 200, npcs = new List<HordeEnemy>()
                     { // weg am hang 2
-                        { "orc_scout", 0.2f },
+                        new HordeEnemy( "orc_scout", 0.2f, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(-516, -280, 14668), Range = 200, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(-516, -280, 14668), Range = 200, npcs = new List<HordeEnemy>()
                     { // weg am hang 3
-                        { "orc_scout", 0.2f },
+                        new HordeEnemy("orc_scout", 0.2f, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(-5903, -900, 14530), Range = 1500, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(-5903, -900, 14530), Range = 1500, npcs = new List<HordeEnemy>()
                     { // bei drax / jaegern
-                        { "orc_warrior", 0.5f },
-                        { "orc_scout", 2 },
+                        new HordeEnemy("orc_warrior", 0.5f, "krush_pach" ),
+                        new HordeEnemy( "orc_scout", 2, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(-7665, -435, 11474), Range = 500, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(-7665, -435, 11474), Range = 500, npcs = new List<HordeEnemy>()
                     { // auf huegel
-                        { "orc_warrior", 0.25f },
+                        new HordeEnemy( "orc_warrior", 0.25f, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(-11240, -705, 12303), Range = 1500, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(-11240, -705, 12303), Range = 1500, npcs = new List<HordeEnemy>()
                     { // vor brücke
-                        { "orc_warrior", 0.75f },
-                        { "orc_scout", 2 },
+                        new HordeEnemy( "orc_warrior", 0.75f, "krush_pach" ),
+                        new HordeEnemy( "orc_scout", 2, "krush_pach" ),
                     },
                 },
-                new HordeGroup() { Position = new Vec3f(-10975, -810, 9333), Range = 150, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(-10975, -810, 9333), Range = 150, npcs = new List<HordeEnemy>()
                     { // vor barrikade, auf brücke
-                        { "orc_elite", 0.2f },
+                        new HordeEnemy( "orc_elite", 0.2f, "orc_sword" ),
                     },
                 },
             };
@@ -206,6 +220,7 @@ namespace GUC.Scripts.Arena
                 SecsTillNext = 30,
                 SpecPos = new Vec3f(0, 400, 0),
                 SpecAng = new Angles(0, 0, 0),
+                FinishedMessage = "Ziel erreicht.",
             };
 
             section.barriers = new List<HordeBarrier>()
@@ -214,10 +229,10 @@ namespace GUC.Scripts.Arena
             };
             section.groups = new List<HordeGroup>()
             {
-                new HordeGroup() { Position = new Vec3f(0, 400, 0), Range = 400, npcs = new List<string, float>()
+                new HordeGroup() { Position = new Vec3f(0, 400, 0), Range = 400, npcs = new List<HordeEnemy>()
                     {
-                        { "skeleton", 3 },
-                        { "skeleton_lord", 1 }
+                        new HordeEnemy( "skeleton", 3 ),
+                        new HordeEnemy( "skeleton_lord", 1 )
                     }
                 }
             };
