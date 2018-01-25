@@ -39,16 +39,15 @@ namespace GUC.Scripts.Arena
 
     class HordeGroup
     {
-        public List<HordeEnemy> npcs;
+        public HordeEnemy[] npcs;
         public Vec3f Position;
         public float Range;
     }
 
-    class HordeSection
+    abstract class HordeSection
     {
         public List<HordeBarrier> barriers;
         public List<HordeBarrier> bridges;
-        public List<HordeGroup> groups;
 
         public HordeSection Next;
         public Vec3f SpawnPos;
@@ -60,5 +59,17 @@ namespace GUC.Scripts.Arena
         public Angles SpecAng;
 
         public string FinishedMessage;
+    }
+
+    class HordePath : HordeSection
+    {
+        public List<HordeGroup> groups;
+    }
+
+    class HordeHill : HordeSection
+    {
+        public Vec3f[] npcSpawns;
+        public Vec3f npcTarget;
+        public List<HordeEnemy[]> groups;
     }
 }

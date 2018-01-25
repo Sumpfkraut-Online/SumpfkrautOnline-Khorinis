@@ -36,8 +36,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             this.turnAroundVelocity = value;
         }
 
-
-
         public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
         {
             this.aggressionRadius = aggressionRadius;

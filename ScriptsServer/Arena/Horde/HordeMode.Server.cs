@@ -151,6 +151,12 @@ namespace GUC.Scripts.Arena
 
         static void CheckSectionClear()
         {
+            if (ActiveSection is HordeHill hill && enemies.Count < 3 && hillIndex < hill.groups.Count)
+            {
+                SpawnNPCGroup(hill.groups[hillIndex++], hill.npcSpawns, attackRadius: 5000);
+                return;
+            }
+
             if (enemies.Count > 0 || players.Count == 0)
                 return;
 
@@ -195,61 +201,78 @@ namespace GUC.Scripts.Arena
                     VobInst vob = new VobInst(VobDef.Get(bridge.Definition));
                     vob.Spawn(activeWorld, bridge.Position, bridge.Angles);
                     bridges.Add(vob);
-                }                
+                }
             }
 
             CheckSectionClear();
         }
 
+        static int hillIndex;
         static void SpawnSection(HordeSection section)
         {
-            if (section.groups != null)
+            if (section is HordePath path)
             {
-                var manager = Sumpfkraut.AI.SimpleAI.AIManager.aiManagers[0];
-                foreach (var group in section.groups)
+                if (path.groups != null)
                 {
-                    List<VobInst> vobs = new List<VobInst>(group.npcs.Count);
-                    foreach (var bots in group.npcs)
-                    {
-                        int maxNum = (int)Math.Ceiling(bots.CountScale * players.Count);
-                        for (int i = 0; i < maxNum; i++)
-                        {
-                            NPCInst npc = new NPCInst(NPCDef.Get(bots.NPCDef));
-
-                            if (bots.WeaponDef != null)
-                            {
-                                ItemInst item = new ItemInst(ItemDef.Get(bots.WeaponDef));
-                                npc.Inventory.AddItem(item);
-                                npc.EffectHandler.TryEquipItem(item);
-                            }
-
-                            if (bots.ArmorDef != null)
-                            {
-                                ItemInst item = new ItemInst(ItemDef.Get(bots.ArmorDef));
-                                npc.Inventory.AddItem(item);
-                                npc.EffectHandler.TryEquipItem(item);
-                            }
-
-                            npc.SetHealth(bots.Health, bots.Health);
-                            
-
-                            Vec3f spawnPos = Randomizer.GetVec3fRad(group.Position, group.Range);
-                            Angles spawnAng = new Angles(0, Randomizer.GetFloat(-Angles.PI, Angles.PI), 0);
-                            npc.BaseInst.SetNeedsClientGuide(true);
-                            npc.Spawn(activeWorld, spawnPos, spawnAng);
-                            enemies.Add(npc);
-                            vobs.Add(npc);
-                        }
-                    }
-                    var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800, 1);
-                    pers.Init(null, null);
-                    var agent = new Sumpfkraut.AI.SimpleAI.AIAgent(vobs, pers);
-                    manager.SubscribeAIAgent(agent);
+                    foreach (var group in path.groups)
+                        SpawnNPCGroup(group.npcs, new Vec3f[] { group.Position }, group.Range);
                 }
+            }
+            else if (section is HordeHill hill)
+            {
+                hillIndex = 0;
+                if (hill.groups != null)
+                    SpawnNPCGroup(hill.groups[hillIndex++], hill.npcSpawns, attackRadius:5000, targetPos:hill.npcTarget);
             }
 
             if (enemies.Count > 0)
                 SetPhase(HordePhase.Fight);
+        }
+
+        static void SpawnNPCGroup(HordeEnemy[] group, Vec3f[] spawnPoints, float spawnRange = 100, float attackRadius = 800, Vec3f targetPos = default(Vec3f))
+        {
+            List<VobInst> vobs = new List<VobInst>(group.Length);
+            var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(attackRadius, 1);
+            pers.Init(null, null);
+            foreach (var bots in group)
+            {
+                int maxNum = (int)Math.Ceiling(bots.CountScale * players.Count);
+                for (int i = 0; i < maxNum; i++)
+                {
+                    NPCInst npc = new NPCInst(NPCDef.Get(bots.NPCDef));
+
+                    if (bots.WeaponDef != null)
+                    {
+                        ItemInst item = new ItemInst(ItemDef.Get(bots.WeaponDef));
+                        npc.Inventory.AddItem(item);
+                        npc.EffectHandler.TryEquipItem(item);
+                    }
+
+                    if (bots.ArmorDef != null)
+                    {
+                        ItemInst item = new ItemInst(ItemDef.Get(bots.ArmorDef));
+                        npc.Inventory.AddItem(item);
+                        npc.EffectHandler.TryEquipItem(item);
+                    }
+
+                    npc.SetHealth(bots.Health, bots.Health);
+
+                    var spawn = spawnPoints[Randomizer.GetInt(spawnPoints.Length)];
+                    Vec3f spawnPos = Randomizer.GetVec3fRad(spawn, spawnRange);
+                    Angles spawnAng = new Angles(0, Randomizer.GetFloat(-Angles.PI, Angles.PI), 0);
+
+                    npc.BaseInst.SetNeedsClientGuide(true);
+                    npc.Spawn(activeWorld, spawnPos, spawnAng);
+                    enemies.Add(npc);
+                    vobs.Add(npc);
+                    if (targetPos != default(Vec3f))
+                    {
+                        pers.GoTo(npc, targetPos);
+                    }
+                }
+            }
+            var agent = new Sumpfkraut.AI.SimpleAI.AIAgent(vobs, pers);
+            Sumpfkraut.AI.SimpleAI.AIManager.aiManagers[0].SubscribeAIAgent(agent);
         }
 
         static void SetPhase(HordePhase phase)
