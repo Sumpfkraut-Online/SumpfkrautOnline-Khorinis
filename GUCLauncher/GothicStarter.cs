@@ -44,7 +44,7 @@ namespace GUCLauncher
                 ProcessStartInfo zSpyPsi = new ProcessStartInfo(zSpyApp);
                 zSpyPsi.WorkingDirectory = logFolder;
                 Process.Start(zSpyPsi);
-                g2Psi.Arguments = "-zlog:6,s";
+                g2Psi.Arguments = string.Format("-zlog:{0},s", Configuration.zSpyLevel);
             }
 
             g2Psi.UseShellExecute = false;

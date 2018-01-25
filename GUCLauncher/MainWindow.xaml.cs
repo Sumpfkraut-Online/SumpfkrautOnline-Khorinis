@@ -51,52 +51,43 @@ namespace GUCLauncher
         {
             try
             {
-                const string LanguageFile = "launcher.languages";
-                if (!File.Exists(LanguageFile))
-                {
-                    using (var s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("GUCLauncher.Resources." + LanguageFile))
-                    using (var fs = new FileStream(LanguageFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                    {
-                        s.CopyTo(fs);
-                    }
-                }
-
-                LangStrings.LoadFile(LanguageFile);
-
                 InitializeComponent();
                 self = this;
+                serverGrid.Visibility = projectGrid.Visibility = settingsGrid.Visibility = Visibility.Hidden;
 
-                Configuration.Init(lvServerList.Items);
-                Configuration.Save();
+                Configuration.Init();
 
-                #region Set Contents
-                bConnect.Content = LangStrings.Get("List_Connect");
-                bRefresh.Content = LangStrings.Get("List_Refresh");
-                bAddServer.Content = LangStrings.Get("List_Add");
-                bRemoveServer.Content = LangStrings.Get("List_Remove");
-                ((GridView)lvServerList.View).Columns[2].Header = LangStrings.Get("List_Players");
-                bBack1.Content = LangStrings.Get("Project_Back");
-                bWebsite.Content = LangStrings.Get("Project_Website");
+                cbLanguage.SelectedIndex = LangStrings.LanguageIndex;
+                foreach (var t in LangStrings.GetNames())
+                    cbLanguage.Items.Add(t);
+                
+                lSpy.Content = "zSpy-Level: " + Configuration.zSpyLevel;
+                spySlider.Value = Configuration.zSpyLevel;
 
-                #endregion
-            }
-            catch (Exception e)
-            {
-                MessageBox.Show(string.Format("{0}: {1}\r\n{2}", e.Source, e.Message, e.StackTrace), e.GetType().ToString(), MessageBoxButton.OK);
-                Application.Current.Shutdown();
-            }
-        }
-
-        void Window_ContentRendered(object sender, EventArgs args)
-        {
-            try
-            {
-                Configuration.CheckGothicPath();
-                overshadow.Visibility = Visibility.Hidden;
-                Dispatcher.Invoke(() => { }, DispatcherPriority.Render);
-
-                if (Configuration.ActiveProject != null)
-                    TryOpenProjectPage(Configuration.ActiveProject, Configuration.ActiveProject.Password, true);
+                lvServerList.ItemsSource = Configuration.Servers;
+                string path = Configuration.GothicPath;
+                if (string.IsNullOrWhiteSpace(path))
+                {
+                    // check for steam installation
+                    const string RegKey = @"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 39510";
+                    const string RegValue = @"InstallLocation";
+                    tbPath.Text = (string)Microsoft.Win32.Registry.GetValue(RegKey, RegValue, null);
+                    ShowSettings();
+                }
+                else
+                {
+                    tbPath.Text = path;
+                    if (!Configuration.CheckGothicPath(path))
+                    {
+                        ShowSettings();
+                    }
+                    else
+                    {
+                        ShowServerList();
+                        if (Configuration.ActiveProject != null)
+                            TryOpenProjectPage(Configuration.ActiveProject, Configuration.ActiveProject.Password, true);
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -651,5 +642,78 @@ namespace GUCLauncher
                 obj = VisualTreeHelper.GetParent(obj);
             }
         }
+
+        #region Settings
+
+        Grid lastGrid = null;
+
+        void mini_settings_Click(object sender, RoutedEventArgs e)
+        {
+            ShowSettings();
+        }
+
+        void ShowSettings()
+        {
+            lastGrid = projectGrid.Visibility == Visibility.Visible ? projectGrid : serverGrid;
+
+            lastGrid.Visibility = Visibility.Hidden;
+            settingsGrid.Visibility = Visibility.Visible;
+        }
+
+        void bSettingsAccept_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Configuration.CheckGothicPath(tbPath.Text))
+                return;
+
+            (lastGrid ?? serverGrid).Visibility = Visibility.Visible;
+            settingsGrid.Visibility = Visibility.Hidden;
+        }
+
+        void UpdateLanguage()
+        {
+            bConnect.Content = LangStrings.Get("List_Connect");
+            bRefresh.Content = LangStrings.Get("List_Refresh");
+            bAddServer.Content = LangStrings.Get("List_Add");
+            bRemoveServer.Content = LangStrings.Get("List_Remove");
+            ((GridView)lvServerList.View).Columns[2].Header = LangStrings.Get("List_Players");
+            bBack1.Content = LangStrings.Get("Project_Back");
+            bWebsite.Content = LangStrings.Get("Project_Website");
+            lSettings.Content = LangStrings.Get("Config_Settings");
+            bSettingsAccept.Content = LangStrings.Get("Input_Accept");
+            lLanguage.Content = LangStrings.Get("Config_Language");
+            lPath.Content = LangStrings.Get("Config_InstallPath");
+            bPathChange.Content = LangStrings.Get("Config_ChangePath");
+        }
+
+        void cbLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            LangStrings.LanguageIndex = cbLanguage.SelectedIndex;
+            Configuration.Save();
+            UpdateLanguage();
+        }
+
+        void bPathChange_Click(object sender, RoutedEventArgs e)
+        {
+            using (var dlg = new System.Windows.Forms.FolderBrowserDialog())
+            {
+                dlg.ShowNewFolderButton = false;
+                dlg.SelectedPath = Directory.Exists(tbPath.Text) ? tbPath.Text : Directory.GetCurrentDirectory();
+                dlg.Description = LangStrings.Get("Config_Search_Long");
+                
+                if (dlg.ShowDialog(MainWindow.Self.GetIWin32Window()) == System.Windows.Forms.DialogResult.OK)
+                {
+                    tbPath.Text = dlg.SelectedPath;
+                }
+            }
+        }
+
+        void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Configuration.zSpyLevel = (int)spySlider.Value;
+            lSpy.Content = "zSpy-Level: " + Configuration.zSpyLevel;
+            Configuration.Save();
+        }
+
+        #endregion
     }
 }

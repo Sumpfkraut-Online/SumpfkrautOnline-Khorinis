@@ -6,14 +6,14 @@
         xmlns:local="clr-namespace:GUCLauncher"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2" x:Class="GUCLauncher.MainWindow"
         mc:Ignorable="d"
-        Title="Gothic: Untold Chapters - Launcher" Height="480" Width="640" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp" KeyDown="Window_KeyDown" ContentRendered="Window_ContentRendered" >
+        Title="Gothic: Untold Chapters - Launcher" Height="480" Width="640" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowStyle="None" AllowsTransparency="True" Foreground="{x:Null}" MouseDown="Window_MouseDown" MouseMove="Window_MouseMove" MouseUp="Window_MouseUp" KeyDown="Window_KeyDown" >
     <Window.Background>
         <ImageBrush ImageSource="Resources/empty_menu_back.png"/>
     </Window.Background>
     <Grid>
-        <Grid x:Name="serverGrid" Visibility="Visible">
+        <Grid x:Name="serverGrid" Visibility="Hidden">
             <Image Source="Resources/empty_menu_border.png"/>
-            <ListView x:Name="lvServerList" BorderThickness="0" HorizontalAlignment="Left" Height="227" Margin="20,34,0,0" VerticalAlignment="Top" Width="602" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#BF3F3B37" MouseDoubleClick="lvServerList_MouseDoubleClick">
+            <ListView x:Name="lvServerList" BorderThickness="0" HorizontalAlignment="Left" Height="227" Margin="20,34,0,0" VerticalAlignment="Top" Width="600" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Background="#BF3F3B37" MouseDoubleClick="lvServerList_MouseDoubleClick">
                 <ListView.ItemContainerStyle>
                     <Style BasedOn="{StaticResource ServerListViewItem}" TargetType="{x:Type ListViewItem}"/>
                 </ListView.ItemContainerStyle>
@@ -47,10 +47,10 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button x:Name="bRefresh" Content="Aktualisieren" Style="{StaticResource MainButton}" Height="40" Margin="209,324,209,116" Width="222" Click="bRefresh_Click"/>
-            <Button x:Name="bConnect" Content="Verbinden" Style="{StaticResource MainButton}" Height="40" Margin="209,284,209,156" Click="bConnect_Click"/>
-            <Button x:Name="bAddServer" Content="Hinzufügen" Style="{StaticResource MainButton}" Height="40" Margin="209,369,209,71" Click="bAddServer_Click"/>
-            <Button x:Name="bRemoveServer" Content="Entfernen" Style="{StaticResource MainButton}" Height="40" Margin="173,414,173,26" Click="bRemoveServer_Click"/>
+            <Button x:Name="bRefresh" Content="Aktualisieren" Style="{StaticResource MainButton}" Height="40" Margin="20,329,20,111" Click="bRefresh_Click"/>
+            <Button x:Name="bConnect" Content="Verbinden" Style="{StaticResource MainButton}" Height="40" Margin="20,284,20,156" Click="bConnect_Click"/>
+            <Button x:Name="bAddServer" Content="Hinzufügen" Style="{StaticResource MainButton}" Height="40" Margin="20,374,20,66" Click="bAddServer_Click"/>
+            <Button x:Name="bRemoveServer" Content="Entfernen" Style="{StaticResource MainButton}" Height="40" Margin="20,419,20,21" Click="bRemoveServer_Click"/>
         </Grid>
         <Grid x:Name="projectGrid" Visibility="Hidden">
             <Image x:Name="image" Stretch="Fill" HorizontalAlignment="Left" Height="400" Margin="6,8,0,0" VerticalAlignment="Top" Width="628"/>
@@ -68,9 +68,21 @@
             <Button x:Name="bBack1" Content="Zurück" Style="{StaticResource MainButton}" HorizontalAlignment="Left" Height="43" Margin="42,310,0,0" VerticalAlignment="Top" Width="156" Click="bBack_Click"/>
             <Label x:Name="lUpdate" Foreground="#FFFFB137" FontFamily="Resources/#G2Font" HorizontalAlignment="Left" Height="22" Margin="20,413,0,0" VerticalAlignment="Top" Width="595"/>
         </Grid>
-        <Button x:Name="mini_settings" Style="{StaticResource SmallButton}" Content="?" HorizontalAlignment="Right" Height="20" Margin="0,7,77,0" Width="35" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial Black" FontWeight="Bold" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="1,0,1,1"/>
+        <Grid x:Name="settingsGrid" Visibility="Visible">
+            <Image Source="Resources/empty_menu_border.png"/>
+            <Label x:Name="lSettings" Content="Einstellungen" HorizontalAlignment="Center" Height="91" Margin="10,10,10,0" VerticalAlignment="Top" Width="620" HorizontalContentAlignment="Center" FontSize="30" Foreground="#FFE07D06" FontFamily="Resources/#G2Font" VerticalContentAlignment="Center"/>
+            <Button x:Name="bSettingsAccept" Content="Akzeptieren" Style="{StaticResource MainButton}" Height="40" Margin="10,420,10,20" Click="bSettingsAccept_Click"/>
+            <Label x:Name="lLanguage" Content="Sprache" Foreground="#FFFFB137" FontFamily="Resources/#G2Font" HorizontalAlignment="Left" Margin="43,282,0,0" VerticalAlignment="Top" Height="32" Width="206" FontSize="16" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
+            <ComboBox x:Name="cbLanguage" FontFamily="Resources/#G2Font" HorizontalAlignment="Left" Margin="254,282,0,0" VerticalAlignment="Top" Width="252" Height="32" SelectionChanged="cbLanguage_SelectionChanged" FontSize="14" VerticalContentAlignment="Center"/>
+            <Label x:Name="lPath" Content="Gothic-Installation" Foreground="#FFFFB137" FontFamily="Resources/#G2Font" HorizontalAlignment="Left" Margin="40,106,0,0" VerticalAlignment="Top" Height="32" Width="558" FontSize="16" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+            <TextBox x:Name="tbPath" HorizontalAlignment="Left" Height="32" Margin="40,140,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="558" VerticalContentAlignment="Center" FontSize="14" Background="#CFFFFFFF"/>
+            <Button x:Name="bPathChange" Content="Ändern" Style="{StaticResource MainButton}" Height="40" Margin="43,175,42,265" Click="bPathChange_Click"/>
+            <Slider x:Name="spySlider" HorizontalAlignment="Left" Margin="254,333,0,0" VerticalAlignment="Top" Width="252" Maximum="9" Minimum="-1" IsSnapToTickEnabled="True" Height="19" ValueChanged="Slider_ValueChanged"/>
+            <Label x:Name="lSpy" Content="zSpy-Level" Foreground="#FFFFB137" FontFamily="Resources/#G2Font" HorizontalAlignment="Left" Margin="40,328,0,0" VerticalAlignment="Top" Height="32" Width="209" FontSize="16" HorizontalContentAlignment="Right" VerticalContentAlignment="Center"/>
+        </Grid>
+        <Button x:Name="mini_settings" Style="{StaticResource SmallButton}" Content="?" HorizontalAlignment="Right" Height="20" Margin="0,7,77,0" Width="35" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial Black" FontWeight="Bold" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="1,0,1,1" Click="mini_settings_Click"/>
         <Button x:Name="mini_minimize" Style="{StaticResource SmallButton}" Content="_" HorizontalAlignment="Right" Height="20" Margin="0,7,42,0" Width="35" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial Black" FontWeight="Bold" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Top" Padding="1,0,1,1" Click="Click_Minimize"/>
         <Button x:Name="mini_close" Style="{StaticResource SmallButton}" Content="x" Height="20" Margin="0,7,7,0" Foreground="#FFE07D06" BorderBrush="#FFE07D06" FontFamily="Arial" BorderThickness="2" VerticalAlignment="Top" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="1,1.4,1,1" FontWeight="Bold" Click="Click_Close" HorizontalAlignment="Right" Width="35"/>
-        <Rectangle x:Name="overshadow" Fill="#99000000" Visibility="Visible"/>
+        <Rectangle x:Name="overshadow" Fill="#99000000" Visibility="Hidden"/>
     </Grid>
 </Window>

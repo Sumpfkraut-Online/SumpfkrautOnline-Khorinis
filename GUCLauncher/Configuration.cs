@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.IO;
 using System.Security.Cryptography;
 using GUC;
+using System.Collections.ObjectModel;
 
 namespace GUCLauncher
 {
@@ -28,11 +29,24 @@ namespace GUCLauncher
         public static string GothicApp { get { return Path.Combine(gothicPath, @"System\Gothic2.exe"); } }
         public static string zSpyApp { get { return Path.Combine(gothicPath, @"_work\tools\zSpy\zSpy.exe"); } }
 
-        static ItemCollection items;
+        public static int zSpyLevel = 5;
 
-        public static void Init(ItemCollection coll)
+        static ObservableCollection<ServerListItem> servers = new ObservableCollection<ServerListItem>();
+        public static ObservableCollection<ServerListItem> Servers { get { return servers; } }
+
+        public static void Init()
         {
-            items = coll;
+            const string LanguageFile = "launcher.languages";
+            if (!File.Exists(LanguageFile))
+            {
+                using (var s = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("GUCLauncher.Resources." + LanguageFile))
+                using (var fs = new FileStream(LanguageFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    s.CopyTo(fs);
+                }
+            }
+
+            LangStrings.LoadFile(LanguageFile);
 
             Load();
         }
@@ -41,20 +55,18 @@ namespace GUCLauncher
 
         public static void AddServer(string address)
         {
-            string ip;
-            ushort port;
-            if (ServerListItem.TryGetAddress(address, out ip, out port))
+            if (ServerListItem.TryGetAddress(address, out string ip, out ushort port))
             {
-                items.Add(new ServerListItem(ip, port));
+                servers.Add(new ServerListItem(ip, port));
                 Save();
             }
         }
 
         public static void RemoveServer(int index)
         {
-            if (index >= 0 && index < items.Count)
+            if (index >= 0 && index < servers.Count)
             {
-                items.RemoveAt(index);
+                servers.RemoveAt(index);
                 Save();
             }
         }
@@ -65,33 +77,46 @@ namespace GUCLauncher
 
         static void Load()
         {
-            if (File.Exists(ConfigFile))
+            servers.Clear();
+
+            if (!File.Exists(ConfigFile))
+                return;
+
+            using (StreamReader sr = new StreamReader(ConfigFile))
             {
-                using (StreamReader sr = new StreamReader(ConfigFile))
+                string line = sr.ReadLine();
+                if (line != null && (line = line.Trim()).Length > "Language=".Length)
                 {
-                    if (int.TryParse(sr.ReadLine().Trim().Substring("Language=".Length), out int language))
+                    if (int.TryParse(line.Substring("Language=".Length), out int language))
                         LangStrings.LanguageIndex = language;
-                    
-                    gothicPath = Path.GetFullPath(sr.ReadLine().Trim().Substring("Path=".Length));
-
-                    sr.ReadLine();
-                    while (!sr.EndOfStream)
-                    {
-                        var item = ServerListItem.ReadNew(sr);
-
-                        if (string.Compare(sr.ReadLine(), "active", true) == 0)
-                        {
-                            activeProject = item;
-                        }
-
-                        if (item != null)
-                            items.Add(item);
-                    }
                 }
-            }
-            else
-            {
-                gothicPath = "1234";
+
+                line = sr.ReadLine();
+                if (line != null && (line = line.Trim()).Length > "Path=".Length)
+                {
+                    gothicPath = Path.GetFullPath(line.Substring("Path=".Length));
+                }
+
+                line = sr.ReadLine();
+                if (line != null && (line = line.Trim()).Length > "zSpy=".Length)
+                {
+                    if (int.TryParse(line.Substring("zSpy=".Length), out int spy))
+                        zSpyLevel = spy;                        
+                }
+
+                sr.ReadLine();
+                while (!sr.EndOfStream)
+                {
+                    var item = ServerListItem.ReadNew(sr);
+
+                    if (string.Compare(sr.ReadLine(), "active", true) == 0)
+                    {
+                        activeProject = item;
+                    }
+
+                    if (item != null)
+                        servers.Add(item);
+                }
             }
         }
 
@@ -101,8 +126,9 @@ namespace GUCLauncher
             {
                 sw.WriteLine("Language=" + LangStrings.LanguageIndex);
                 sw.WriteLine("Path=" + gothicPath);
+                sw.WriteLine("zSpy=" + zSpyLevel);
                 sw.WriteLine();
-                foreach (ServerListItem item in items)
+                foreach (ServerListItem item in servers)
                 {
                     item.Write(sw);
                     if (activeProject == item)
@@ -157,60 +183,44 @@ namespace GUCLauncher
             MessageBox.Show(args.Length == 0 ? text : string.Format(text, args), LangStrings.Get("Config_Search"), MessageBoxButton.OK);
         }
 
-        public static void CheckGothicPath()
+        public static void ShowSearchPathMessage()
         {
-            System.Windows.Forms.FolderBrowserDialog dlg = null;
-            string path = gothicPath;
+            ShowMessageBox(LangStrings.Get("Config_Search_Long"));
+        }
 
-            while (true)
+        public static bool CheckGothicPath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
             {
-                if (path == null)
-                { // no launcher.cfg, first start?
-                    ShowMessageBox(LangStrings.Get("Config_Search_Long"));
-                }
-                else
-                {
-                    if (string.Equals(Path.GetFileName(path), "SYSTEM", StringComparison.OrdinalIgnoreCase))
-                        path = Path.GetDirectoryName(path); // move up to base
-
-                    FailCode code = CheckGothicVersion(path);
-                    switch (code)
-                    {
-                        case FailCode.GothicNotFound:
-                        case FailCode.VDFS32NotFound:
-                        case FailCode.SHW32NotFound:
-                            ShowMessageBox("{0} ({1})\n{2}", LangStrings.Get("Config_NotFound"), code, LangStrings.Get("Config_Search_Long"));
-                            break;
-                        case FailCode.GothicWrongVersion:
-                            ShowMessageBox(LangStrings.Get("Config_WrongVersion"));
-                            break;
-                        case FailCode.VDFS32WrongVersion:
-                        case FailCode.SHW32WrongVersion:
-                            ShowMessageBox("{0} ({1})", code);
-                            break;
-                        case FailCode.IsValid:
-                            gothicPath = path;
-                            Save();
-                            return;
-                    }
-                }
-
-                if (dlg == null)
-                {
-                    dlg = new System.Windows.Forms.FolderBrowserDialog();
-                    dlg.ShowNewFolderButton = false;
-                    dlg.SelectedPath = Directory.Exists(path) ? path : Directory.GetCurrentDirectory();
-                    dlg.Description = LangStrings.Get("Config_Search_Long");
-                }
-
-                if (dlg.ShowDialog(MainWindow.Self.GetIWin32Window()) != System.Windows.Forms.DialogResult.OK)
-                {
-                    Application.Current.Shutdown();
-                    return;
-                }
-
-                path = dlg.SelectedPath;
+                ShowSearchPathMessage();
             }
+            else
+            {
+                if (string.Equals(Path.GetFileName(path), "SYSTEM", StringComparison.OrdinalIgnoreCase))
+                    path = Path.GetDirectoryName(path); // move up to base
+
+                FailCode code = CheckGothicVersion(path);
+                switch (code)
+                {
+                    case FailCode.GothicNotFound:
+                    case FailCode.VDFS32NotFound:
+                    case FailCode.SHW32NotFound:
+                        ShowMessageBox("{0} ({1})\n{2}", LangStrings.Get("Config_NotFound"), code, LangStrings.Get("Config_Search_Long"));
+                        break;
+                    case FailCode.GothicWrongVersion:
+                        ShowMessageBox(LangStrings.Get("Config_WrongVersion"));
+                        break;
+                    case FailCode.VDFS32WrongVersion:
+                    case FailCode.SHW32WrongVersion:
+                        ShowMessageBox("{0} ({1})", code);
+                        break;
+                    case FailCode.IsValid:
+                        gothicPath = path;
+                        Save();
+                        return true;
+                }
+            }
+            return false;
         }
 
         enum FailCode

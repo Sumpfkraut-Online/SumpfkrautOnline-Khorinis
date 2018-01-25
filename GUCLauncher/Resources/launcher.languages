@@ -30,6 +30,10 @@ Config_Search_Long: Bitte wähle dein Gothic 2 DNDR - Verzeichnis aus.
 Config_NotFound: Gothic konnte nicht gefunden werden.
 Config_WrongVersion: Falsche Version gefunden. Es wird 'Gothic 2 Die Nacht des Raben - Report-Version 2.6.0.0' benötigt!
 Config_ModFound: Eine für den GUC wichtige Gothic-System-Datei scheint modifiziert zu sein. Bitte deinstalliere die Modifikation oder wähle eine andere Installation. Dies kann z.B. durch das Systempack erfolgt sein.
+Config_Settings: Einstellungen
+Config_Language: Sprache
+Config_InstallPath: Gothic-Installation
+Config_ChangePath: Pfad ändern
 Input_Accept: Akzeptieren
 Input_Back: Zurück
 
@@ -65,5 +69,9 @@ Config_Search_Long: Please select your Gothic 2 - NOTR installation path.
 Config_NotFound: Gothic could not be found.
 Config_WrongVersion: Wrong version detected. 'Gothic 2 Night of the Raven - Report-Patch 2.6.0.0' is needed!
 Config_ModFound: An important Gothic system file seems to be modified. Please uninstall this modification or choose a different installtion path. This could be caused by the Systempack.
+Config_Settings: Settings
+Config_Language: Language
+Config_InstallPath: Gothic installation
+Config_ChangePath: change path
 Input_Accept: Accept
 Input_Back: Back

@@ -17,6 +17,7 @@ namespace GUC
 
         static List<LanguageInfo> texts = new List<LanguageInfo>();
         public static int LanguageCount { get { return texts.Count; } }
+        public static IEnumerable<string> GetNames() { return texts.Select(t => t.Name); }
 
         public static void LoadFile(string filePath)
         {
@@ -91,7 +92,18 @@ namespace GUC
             get { return currentLanguage != null ? currentLanguage.Index : -1; }
             set
             {
-                currentLanguage = (value >= 0 && value < texts.Count) ? texts[value] : null;
+                if (value >= 0 && value < texts.Count)
+                {
+                    currentLanguage = texts[value];
+                }
+                else if (texts.Count > 0)
+                {
+                    currentLanguage = texts[0];
+                }
+                else
+                {
+                    currentLanguage = null;
+                }
             }
         }
 
