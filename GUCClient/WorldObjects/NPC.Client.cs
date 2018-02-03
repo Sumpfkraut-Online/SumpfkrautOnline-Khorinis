@@ -68,8 +68,7 @@ namespace GUC.WorldObjects
 
             public static void ReadPlayerEquipMessage(PacketReader stream)
             {
-                Item item;
-                if (Hero.Inventory.TryGetItem(stream.ReadByte(), out item))
+                if (Hero.Inventory.TryGetItem(stream.ReadByte(), out Item item))
                 {
                     Hero.ScriptObject.EquipItem(stream.ReadByte(), item);
                 }
@@ -83,8 +82,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                NPC npc;
-                if (World.Current.TryGetVob(id, out npc))
+                if (World.Current.TryGetVob(id, out NPC npc))
                 {
                     int hpmax = stream.ReadUShort();
                     int hp = stream.ReadUShort();
@@ -98,8 +96,7 @@ namespace GUC.WorldObjects
 
             public static void ReadFightMode(PacketReader stream, bool fightMode)
             {
-                NPC npc;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc))
                 {
                     npc.ScriptObject.SetFightMode(fightMode);
                 }
@@ -588,7 +585,7 @@ namespace GUC.WorldObjects
 
         void DoStrafe(bool right)
         {
-            if (this.Model.GetActiveAniFromLayerID(1) != null || this.Environment.InAir 
+            if (this.Model.GetActiveAniFromLayerID(1) != null || this.Environment.InAir
                 || (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0)
                 return;
 
@@ -622,8 +619,13 @@ namespace GUC.WorldObjects
 
         public override void Throw(Vec3f velocity)
         {
-            velocity.SetGVec(gAI.Velocity);
-            base.Throw(velocity);
+            var gVel = gAI.Velocity;
+            velocity.SetGVec(gVel);
+
+            SetPhysics(true);
+
+            var rb = Process.ReadInt(gVob.Address + 224);
+            Process.THISCALL<NullReturnCall>(rb, 0x5B66D0, gVel);
         }
 
         public BaseVob GetFocusVob()

@@ -18,6 +18,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
         public event Action<NPCInst, ItemInst> OnDrawWeapon;
         public event Action<NPCInst, FightMoves> OnFightMove;
         public event Action<NPCInst, ItemInst, int> OnDropItem;
+        public event Action<NPCInst, ItemInst> OnTakeItem;
         public event Action<NPCInst, ItemInst> OnEquipItem;
         public event Action<NPCInst, ItemInst> OnUnequipItem;
         public event Action<NPCInst, ItemInst> OnUseItem;
@@ -78,6 +79,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 
                 case RequestMessageIDs.DropItem:
                     OnDropItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()), stream.ReadUShort());
+                    break;
+                case RequestMessageIDs.TakeItem:
+                    if (npc.World.TryGetVob(stream.ReadUShort(), out ItemInst item))
+                        OnTakeItem?.Invoke(npc, item);
                     break;
 
                 case RequestMessageIDs.EquipItem:

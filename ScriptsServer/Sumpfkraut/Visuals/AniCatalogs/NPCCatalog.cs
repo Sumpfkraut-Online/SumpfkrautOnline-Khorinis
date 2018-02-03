@@ -100,10 +100,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "unaim_xbow", "FightXBow.Unaim" },
 
             // item handling
-            { "t_IGet_2_Stand", "ItemHandling.TakeItem" },
-            { "t_IDrop_2_Stand", "ItemHandling.DropItem" },
+            { "take_item", "ItemHandling.TakeItem" },
+            { "drop_item", "ItemHandling.DropItem" },
+            { "chug_potion", "ItemHandling.DrinkPotion" },
+
+            // gestures
+            { "gesture_dontknow", "Gestures.DontKnow" },
+
+
             { "t_HORN_Stand_2_S0", "ItemHandling.BlowHorn" },
-            { "t_potionfast_Stand_2_S0", "ItemHandling.DrinkPotion" },
             { "t_Food_S0_2_Stand", "ItemHandling.EatSmall" },
             { "t_FoodHuge_S0_2_Stand", "ItemHandling.EatLarge" },
             { "t_RICE_Stand_2_S0", "ItemHandling.EatRice" },
@@ -220,6 +225,16 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob StandUpBack { get; private set; }
         }
         public UnconsciousAnis Unconscious { get; private set; }
+
+        #endregion
+
+        #region Gestures
+
+        public class GestureAnis : AniCatalog
+        {
+            public ScriptAniJob DontKnow { get; private set; }
+        }
+        public GestureAnis Gestures { get; private set; }
 
         #endregion
     }

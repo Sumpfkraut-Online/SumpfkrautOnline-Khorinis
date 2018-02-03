@@ -101,5 +101,20 @@ namespace GUC.Utilities
         {
             return new Vec3f(pos.X + (float)GetDouble(-xLen, xLen), pos.Y, pos.Z + (float)GetDouble(-yLen, yLen));
         }
+
+        public static Angles GetYaw()
+        {
+            return new Angles(0, GetFloat(-Angles.PI, Angles.PI), 0);
+        }
+
+        public static T Get<T>(T[] array)
+        {
+            return array[GetInt(array.Length)];
+        }
+
+        public static T Get<T>(List<T> list)
+        {
+            return list[GetInt(list.Count)];
+        }
     }
 }

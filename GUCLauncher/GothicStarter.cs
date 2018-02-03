@@ -53,12 +53,12 @@ namespace GUCLauncher
             g2Psi.EnvironmentVariables.Add("GUCServerPassword", Convert.ToBase64String(pw == null ? new byte[0] : pw));
             g2Psi.EnvironmentVariables.Add("GUCServerPort", port.ToString());
             g2Psi.EnvironmentVariables.Add("GUCGothicPath", Configuration.GothicPath);
-
+            
             Process process = Process.Start(g2Psi);
             SuspendProcess(process);
 
             Inject(process, dllName);
-            
+
             ResumeProcess(process);
         }
 

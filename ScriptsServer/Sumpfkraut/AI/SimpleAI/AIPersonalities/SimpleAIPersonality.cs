@@ -358,26 +358,33 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public override void MakeActiveObservation (AIAgent aiAgent)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
-            VobInst currVob;
             List<VobInst> enemies = new List<VobInst>();
 
+            int despawnedCount = 0;
             for (int c = 0; c < aiClients.Count; c++)
             {
-                if (aiClients[c].GetType() == typeof(NPCInst))
+                if (aiClients[c] is NPCInst npc)
                 {
-                    currVob = aiClients[c];
+                    if (!npc.IsSpawned)
+                    {
+                        despawnedCount++;
+                        continue;
+                    }
+
+                    if (npc.IsDead || npc.IsUnconscious)
+                        continue;
 
                     // find all enemies in the radius of aggression
-                    currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, aggressionRadius, 
+                    npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, aggressionRadius, 
                         delegate (WorldObjects.NPC nearNPC)
                     {
-                        var npc = (NPCInst)nearNPC.ScriptObject;
+                        var otherNpc = (NPCInst)nearNPC.ScriptObject;
                         /*if (!aiAgent.HasAIClient(nearNPC))
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }*/
 
-                        if (nearNPC.IsPlayer && !nearNPC.IsDead && !npc.IsUnconscious)
+                        if (nearNPC.IsPlayer && !nearNPC.IsDead && !otherNpc.IsUnconscious)
                         {
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }
@@ -388,6 +395,11 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             if (enemies.Count > 0)
             {
                 aiMemory.AddAIObservation(new EnemyAIObservation(new AITarget(enemies)));
+            }
+
+            if (despawnedCount == aiClients.Count)
+            {
+                AIManager.aiManagers[0].UnsubscribeAIAgent(aiAgent);
             }
         }
 

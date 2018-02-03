@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected object attributeLock;
 
-        protected List<VobInst> aiClients;
+        public List<VobInst> aiClients;
         public List<VobInst> AIClients { get { return aiClients; } }
 
 

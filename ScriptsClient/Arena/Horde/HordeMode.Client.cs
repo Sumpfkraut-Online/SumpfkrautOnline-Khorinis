@@ -13,7 +13,6 @@ namespace GUC.Scripts.Arena
         {
             string name = stream.ReadString();
             activeDef = HordeDef.GetDef(name);
-            activeSectionIndex = stream.ReadByte();
             SetPhase((HordePhase)stream.ReadByte());
         }
 
@@ -21,12 +20,10 @@ namespace GUC.Scripts.Arena
         {
             string name = stream.ReadString();
             activeDef = HordeDef.GetDef(name);
-            activeSectionIndex = 0;
         }
 
         public static void ReadPhaseMessage(PacketReader stream)
         {
-            activeSectionIndex = stream.ReadByte();
             SetPhase((HordePhase)stream.ReadByte());
         }
 
@@ -35,11 +32,8 @@ namespace GUC.Scripts.Arena
             string screenMsg;
             switch (phase)
             {
-                case HordePhase.Intermission:
-                    screenMsg = ActiveSection.FinishedMessage;
-                    break;
                 case HordePhase.Fight:
-                    screenMsg = "Der Kampf beginnt!";
+                    screenMsg = "Fight!";
                     break;
                 case HordePhase.Victory:
                     screenMsg = "Sieg!";

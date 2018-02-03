@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const int MaxNPCCorpses = 500000;
+        const int MaxNPCCorpses = 500;
 
         public bool AllowHit(NPCInst target)
         {
@@ -65,7 +65,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 if (dmg > 0)
                 {
                     Logger.Log("Damage: " + dmg);
-                    this.SetHealth(this.HP - (int)dmg);
+                    //this.SetHealth(this.HP - (int)dmg);
                     highestY = 0;
                 }
             }
@@ -99,7 +99,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     ((Arena.ArenaClient)this.Client).KillCharacter();
                 }
             }
-            
+
             if (env.InAir && !this.isClimbing)
             {
                 var aa = this.ModelInst.GetActiveAniFromLayer(1);
@@ -228,84 +228,56 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        #region Drop & Take
+        #region Drop & Take items
 
-        /// <summary>
-        /// Starts a drop animation and drops any item in front of the npc
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="amount"></param>
-        public void DropItem(ItemInst item, int amount, float offset = 50)
+        public void DoDropItem(ItemInst item, int amount, Vec3f position, Angles angles)
         {
-            if (item == null)
-                return;
-
-            //if (item.Container != this)
-            //    return;
-
             item = item.Split(amount);
+            
+            ScriptAniJob job = AniCatalog?.ItemHandling.DropItem;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
+                    frame = float.MaxValue;
 
-            Vec3f spawnPos = this.GetPosition();
-            //Angles spawnAng = this.GetAngles();
-            //spawnPos += spawnDir * offset;
-
-            // fixme: drop item at the item drop frame
-            ModelInst.StartAniJob(this.AniCatalog.ItemHandling.DropItem, () => item.Spawn(this.World, spawnPos, Angles.Null));
+                var pair = new Animations.FrameActionPair(frame, () => this.DropItem(item, position, angles));
+                this.ModelInst.StartAniJob(job, 0.8f, 0, pair);
+                return;
+            }
+            DropItem(item, position, angles);
         }
 
-        public void UseItem(byte itemID)
+        void DropItem(ItemInst item, Vec3f position, Angles angles)
         {
-            ItemInst item = Inventory.GetItem(itemID);
-            if (item == null)
-                return;
+            item.Spawn(this.World, position, angles);
+            item.BaseInst.SetNeedsClientGuide(true);
+            item.Throw(Vec3f.Null);
+        }
 
-            if (this.ModelInst.BaseInst.IsInAnimation())
-                return;
-
-            if (this.Environment.InAir)
-                return;
-
-            if (this.Movement != NPCMovement.Stand)
-                return;
-
-            switch (item.ItemType)
+        public void DoTakeItem(ItemInst item)
+        {
+            ScriptAniJob job = AniCatalog?.ItemHandling.TakeItem;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
             {
-                case ItemTypes.SmallEatable:
-                    // TODO: eat item zu bestimmtem frame aufrufen
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatSmall, () => { this.UnequipItem(item); this.EatItem(item); });
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.LargeEatable:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatLarge, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Mutton:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatMutton, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Rice:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatRice, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Drinkable:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.DrinkPotion, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Readable:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.ReadScroll, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Torch:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.UseTorch, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
+                if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
+                    frame = float.MaxValue;
+                
+                var pair = new Animations.FrameActionPair(frame, () => this.TakeItem(item));
+                this.ModelInst.StartAniJob(job, 0.8f, 0, pair);
+                return;
+            }
+            TakeItem(item);
+        }
+
+        void TakeItem(ItemInst item)
+        {
+            if (item != null && item.IsSpawned)
+            {
+                item.Despawn();
+                this.Inventory.AddItem(item);
             }
         }
 
-        public void EatItem(ItemInst item)
-        {
-
-        }
         #endregion
 
         #region Fight Moves
@@ -382,8 +354,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var comboPair = new Animations.FrameActionPair(comboFrame, () => OpenCombo());
 
             // hit frame
-            float hitFrame;
-            if (!ani.TryGetSpecialFrame(SpecialFrame.Hit, out hitFrame))
+            if (!ani.TryGetSpecialFrame(SpecialFrame.Hit, out float hitFrame))
                 hitFrame = comboFrame;
 
             if (hitFrame > comboFrame)
@@ -426,8 +397,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            ScriptAni ani;
-            if (!ModelInst.TryGetAniFromJob(job, out ani))
+            if (!ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
                 return;
 
             // end of animation
@@ -444,8 +414,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            ScriptAni ani;
-            if (!ModelInst.TryGetAniFromJob(job, out ani))
+            if (!ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
                 return;
 
             // end of animation
@@ -969,6 +938,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        #region Unconsciousness
+
         public void DropUnconscious(bool toFront = true)
         {
             var cat = AniCatalog.Unconscious;
@@ -1004,6 +975,51 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             strm.Write((byte)ScriptVobMessageIDs.Uncon);
             strm.Write((byte)uncon);
             this.BaseInst.SendScriptVobStream(strm);
+
+            int hp = this.HP + 25;
+            this.SetHealth(hp > HPMax ? HPMax : hp);
+        }
+
+        #endregion
+
+        #region Use Items
+
+        public void UseItem(ItemInst item)
+        {
+            if (item.ItemType != ItemTypes.Drinkable)
+                return;
+
+            ScriptAniJob job = AniCatalog?.ItemHandling.DrinkPotion;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
+                    frame = float.MaxValue;
+
+                this.EquipItem(NPCSlots.RightHand, item);
+                var pair = new Animations.FrameActionPair(frame, () => ChugPotion(item));
+                ModelInst.StartAniJob(job, pair);
+                return;
+            }
+
+            ChugPotion(item);
+        }
+
+        void ChugPotion(ItemInst item)
+        {
+            if (item == null) return;
+
+            int hp = this.HP + 50;
+            this.SetHealth(hp > HPMax ? HPMax : hp);
+            if (item.IsEquipped)
+                this.UnequipItem(item);
+            item.SetAmount(item.Amount - 1);
+        }
+
+        #endregion
+
+        public bool IsObstructed()
+        {
+            return IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || HasItemInHands() || IsUnconscious;
         }
     }
 }

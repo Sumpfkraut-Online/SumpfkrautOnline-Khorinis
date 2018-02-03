@@ -24,8 +24,9 @@ namespace GUC.Scripts.Arena
         {
             ArenaClient.ForEach(c =>
             {
-                if (c.IsCharacter && ((ArenaClient)c).DuelEnemy == null)
-                    RegeneratePlayer(c.Character);
+                ArenaClient client = (ArenaClient)c;
+                if (client.IsCharacter && client.DuelEnemy == null && client.HordeClass == null)
+                    RegeneratePlayer(client.Character);
             });
         }
 

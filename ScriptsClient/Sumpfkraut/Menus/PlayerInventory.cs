@@ -114,7 +114,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                 case VirtualKeys.Tab:
                     Close();
                     break;
-                case VirtualKeys.L: // DROP
+                case VirtualKeys.Menu: // DROP
                     if (player != null)
                     {
                         ItemInst selectedItem = inv.GetSelectedItem();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using Gothic.Types;
+using Gothic.Objects;
 using GUC.Network;
 
 namespace GUC.WorldObjects
@@ -35,10 +36,15 @@ namespace GUC.WorldObjects
 
         partial void pThrow(Vec3f velocity)
         {
-            SetPhysics(true);
+            /*SetPhysics(true);
             var rb = WinApi.Process.ReadInt(gVob.Address + 224);
             using (zVec3 vec = velocity.CreateGVec())
-                WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);
+                WinApi.Process.THISCALL<WinApi.NullReturnCall>(rb, 0x5B66D0, vec);*/
+
+            var ovob = new oCVob(gVob.Address);
+            var ai = ovob.GetAIVobMove();
+            using (var pos = this.Position.CreateGVec())
+                ai.Init(ovob, new zCVob(0), pos, 0, 0, ovob.TrafoObjToWorld);
         }
     }
 }

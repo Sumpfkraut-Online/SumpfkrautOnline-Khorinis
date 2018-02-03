@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.WorldObjects;
 using GUC.WorldObjects.ItemContainers;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
 {
@@ -28,10 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
 
         public ScriptInventory(IContainer owner)
         {
-            if (owner == null)
-                throw new ArgumentNullException("Owner is null!");
-
-            this.owner = owner;
+            this.owner = owner ?? throw new ArgumentNullException("Owner is null!");
         }
 
         #endregion
@@ -108,5 +106,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
         }
 
         #endregion
+
+        public bool Contains(ItemDef def)
+        {
+            bool result = false;
+            this.ForEachItemPredicate(i =>
+            {
+                if (i.Definition == def)
+                {
+                    result = true;
+                    return false;
+                }
+                return true;
+            });
+            return result;
+        }
     }
 }

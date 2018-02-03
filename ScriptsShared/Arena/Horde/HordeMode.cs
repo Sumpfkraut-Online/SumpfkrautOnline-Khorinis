@@ -8,8 +8,9 @@ namespace GUC.Scripts.Arena
 {
     enum HordePhase
     {
-        Intermission,
+        WarmUp,
         Fight,
+        Stand,
         Victory,
         Lost,
     }
@@ -21,8 +22,5 @@ namespace GUC.Scripts.Arena
 
         static HordeDef activeDef;
         public static HordeDef ActiveDef { get { return activeDef; } }
-        
-        static int activeSectionIndex;
-        static HordeSection ActiveSection { get { return activeDef.Sections[activeSectionIndex]; } }
     }
 }

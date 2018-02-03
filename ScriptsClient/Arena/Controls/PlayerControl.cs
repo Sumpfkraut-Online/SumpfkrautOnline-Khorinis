@@ -200,11 +200,15 @@ namespace GUC.Scripts.Arena.Controls
             }
             else if (down)
             {
-                if (hero.TeamID == -1)
+                var focusVob = hero.GetFocusVob();
+                if (focusVob is ItemInst item)
                 {
-                    var focusVob = hero.GetFocusVob();
-                    if (focusVob is NPCInst)
-                        DuelMode.SendRequest((NPCInst)focusVob);
+                    NPCInst.Requests.TakeItem(hero, item);
+                }
+                else if (hero.TeamID == -1 && ArenaClient.Client.HordeClass == null)
+                {
+                    if (focusVob is NPCInst npc)
+                        DuelMode.SendRequest(npc);
                 }
             }
         }

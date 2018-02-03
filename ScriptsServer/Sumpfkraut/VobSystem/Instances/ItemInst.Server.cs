@@ -25,6 +25,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         /// <returns></returns>
         public ItemInst Split(int amount)
         {
+            if (amount <= 0 || this.Amount <= 0)
+                return null;
+
             int newAmount = this.Amount - amount;
 
             if (newAmount > 0)
@@ -35,12 +38,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 newItem.SetAmount(amount);
                 return newItem;
             }
-            else if (newAmount < 0)
+            else
             {
                 this.Remove();
                 return this;
             }
-            return null;
         }
     }
 }

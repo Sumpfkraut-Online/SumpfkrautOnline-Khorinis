@@ -73,6 +73,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryDrawWeapon(ItemInst item)
         {
+            if (item == null) return;
             if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS")
                 return;
 
@@ -91,6 +92,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryUndrawWeapon(ItemInst item)
         {
+            if (item == null) return;
             if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS")
                 return;
 
@@ -140,8 +142,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         /// <summary> Player equips item through inventory </summary>
         public void TryEquipItem(ItemInst item)
         {
-            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation() || this.Host.Environment.InAir 
-                || this.Host.IsInFightMode || this.Host.HasItemInHands())
+            if (item == null || Host.IsObstructed())
                 return;
 
             NPCSlots slot;
@@ -203,9 +204,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
         public void TryUnequipItem(ItemInst item)
         {
-            if (this.Host.IsDead || this.Host.ModelInst.IsInAnimation()
-                || this.Host.Environment.InAir || this.Host.HasItemInHands()
-                || this.Host.IsInFightMode)
+            if (item == null || Host.IsObstructed())
                 return;
 
             Host.UnequipItem(item);
@@ -250,11 +249,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             if (ammo == null || !ammo.IsAmmo)
                 return;
 
-            ProjInst inst = new ProjInst(ProjDef.Get<ProjDef>("arrow"));
-            inst.Item = new ItemInst(ammo.Definition);
-            inst.Damage = drawnWeapon.Damage;
-            inst.Velocity = 0.0004f;
-            inst.Model = ammo.ModelDef;
+            ProjInst inst = new ProjInst(ProjDef.Get<ProjDef>("arrow"))
+            {
+                Item = new ItemInst(ammo.Definition),
+                Damage = drawnWeapon.Damage,
+                Velocity = 0.0004f,
+                Model = ammo.ModelDef
+            };
 
             /*if (ammo.Amount == 1)
             {
@@ -267,6 +268,43 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
             end = end - (end - start).Normalise() * (ammo.ItemType == ItemTypes.AmmoBow ? 40 : 10); // so arrows' bodies aren't 90% inside walls
             Host.DoShoot(start, end, inst);
+        }
+
+
+        public void TryUse(ItemInst item)
+        {
+            if (item == null || this.Host.IsObstructed())
+                return;
+
+            this.Host.UseItem(item);
+        }
+
+        public void TryDropItem(ItemInst item, int amount)
+        {
+            if (item == null || this.Host.IsObstructed())
+                return;
+
+            var pos = this.Host.GetPosition();
+            var ang = this.Host.GetAngles();
+
+            pos += ang.ToAtVector() * 100f;
+
+            this.Host.DoDropItem(item, amount, pos, ang);
+        }
+
+        public void TryTakeItem(ItemInst item)
+        {
+            if (item == null || !item.IsSpawned || this.Host.IsObstructed())
+                return;
+
+            var potion = ItemDef.Get("hptrank");
+            if (item.Definition == potion && Host.Inventory.Contains(potion))
+            {
+                Host.ModelInst.StartAniJob(Host.AniCatalog.Gestures.DontKnow);
+                return;
+            }
+            
+            this.Host.DoTakeItem(item);
         }
     }
 }

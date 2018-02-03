@@ -13,5 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
         // Attack Animation, Hit must be <= Combo!
         Combo = 1,
         Hit = 2,
+        
+        ItemHandle = 3,
     }
 }

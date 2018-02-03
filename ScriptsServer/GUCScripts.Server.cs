@@ -145,6 +145,9 @@ namespace GUC.Scripts
             NPCInst.Requests.OnAim += npc => npc.EffectHandler.TryAim();
             NPCInst.Requests.OnUnaim += npc => npc.EffectHandler.TryUnaim();
             NPCInst.Requests.OnShoot += (npc, s, e) => npc.EffectHandler.TryShoot(s, e);
+            NPCInst.Requests.OnUseItem += (npc, item) => npc.EffectHandler.TryUse(item);
+            NPCInst.Requests.OnDropItem += (npc, item, amount) => npc.EffectHandler.TryDropItem(item, amount);
+            NPCInst.Requests.OnTakeItem += (npc, item) => npc.EffectHandler.TryTakeItem(item);
 
             AddSomeDefs();
 
@@ -182,7 +185,7 @@ namespace GUC.Scripts
             var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.Start();
             
-            for (int i = 0; i < 100; i++)
+            /*for (int i = 0; i < 100; i++)
             {
                 NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
                 if (testNPC.ModelDef.TryGetOverlay("humans_skeleton", out ScriptOverlay ov))
@@ -199,7 +202,7 @@ namespace GUC.Scripts
                 aiPersonality.Init(aiMemory, aiRoutine);
                 var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
                 aiManager01.SubscribeAIAgent(aiAgent);
-            }
+            }*/
 
             world = new WorldInst(null);
             world.Path = "G1-OLDMINE.ZEN";
@@ -252,6 +255,8 @@ namespace GUC.Scripts
             AddBowAnis(m);
             AddXBowAnis(m);
             AddUnconsciousAnis(m);
+            AddItemAnis(m);
+            AddGestureAnis(m);
 
             m.AddOverlay(new ScriptOverlay("Humans_Skeleton", "Humans_Skeleton.mds"));
 
@@ -325,14 +330,14 @@ namespace GUC.Scripts
             vobDef.CDDyn = vobDef.CDStatic = true;
             vobDef.Create();
 
-            m = new ModelDef("planks");
+            /*m = new ModelDef("planks");
             m.Visual = "OW_LOB_WOODPLANKS_V1.3DS";
             m.Create();
 
             vobDef = new VobDef("planks");
             vobDef.Model = m;
             vobDef.CDDyn = vobDef.CDStatic = true;
-            vobDef.Create();
+            vobDef.Create();*/
 
             m = new ModelDef("gate");
             m.Visual = "OC_LOB_GATE_BIG.3DS";
@@ -662,6 +667,70 @@ namespace GUC.Scripts
             itemDef.Protection = 40;
             itemDef.Model = m;
             itemDef.Create();
+            
+            // trank
+            m = new ModelDef("hptrank", "ItPo_Health_01.3ds");
+            m.Create();
+            itemDef = new ItemDef("hptrank");
+            itemDef.Name = "Heiltrank";
+            itemDef.ItemType = ItemTypes.Drinkable;
+            itemDef.Material = ItemMaterials.Glass;
+            itemDef.Model = m;
+            itemDef.Create();
+        }
+
+        #endregion
+
+        #region Gestures
+
+        void AddGestureAnis(ModelDef m)
+        {
+            m.AddAniJob(new ScriptAniJob("gesture_dontknow", "t_dontknow", new ScriptAni(0, 10)));
+        }
+
+        #endregion
+
+        #region Take & Drop Items
+
+        void AddItemAnis(ModelDef m)
+        {
+            // take item
+            ScriptAniJob aniJob1 = new ScriptAniJob("take_item", "t_Stand_2_IGet", new ScriptAni(0, 9) { { SpecialFrame.ItemHandle, 9 } });
+            m.AddAniJob(aniJob1);
+
+            ScriptAniJob aniJob2 = new ScriptAniJob("take_item2", "s_IGet", new ScriptAni(0, 1));
+            m.AddAniJob(aniJob2);
+            aniJob1.NextAni = aniJob2;
+
+            ScriptAniJob aniJob3 = new ScriptAniJob("take_item3", "t_IGet_2_Stand", new ScriptAni(0, 9));
+            m.AddAniJob(aniJob3);
+            aniJob2.NextAni = aniJob3;
+
+
+            // drop item
+            aniJob1 = new ScriptAniJob("drop_item", "t_Stand_2_IDrop", new ScriptAni(0, 6) { { SpecialFrame.ItemHandle, 6 } });
+            m.AddAniJob(aniJob1);
+
+            aniJob2 = new ScriptAniJob("drop_item2", "s_IDrop", new ScriptAni(0, 1));
+            m.AddAniJob(aniJob2);
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("drop_item3", "t_IDrop_2_Stand", new ScriptAni(0, 6));
+            m.AddAniJob(aniJob3);
+            aniJob2.NextAni = aniJob3;
+
+
+            // drink potion
+            aniJob1 = new ScriptAniJob("chug_potion", "t_potionfast_Stand_2_S0", new ScriptAni(0, 5) { { SpecialFrame.ItemHandle, 30 } });
+            m.AddAniJob(aniJob1);
+
+            aniJob2 = new ScriptAniJob("chug_potion2", "s_potionfast_S0", new ScriptAni(0, 1));
+            m.AddAniJob(aniJob2);
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("chug_potion3", "t_potionfast_S0_2_Stand", new ScriptAni(0, 32));
+            m.AddAniJob(aniJob3);
+            aniJob2.NextAni = aniJob3;
         }
 
         #endregion

@@ -85,22 +85,22 @@ namespace GUCLauncher
             using (StreamReader sr = new StreamReader(ConfigFile))
             {
                 string line = sr.ReadLine();
-                if (line != null && (line = line.Trim()).Length > "Language=".Length)
+                if (line != null && (line = line.Trim()).StartsWith("Language="))
                 {
-                    if (int.TryParse(line.Substring("Language=".Length), out int language))
+                    if (int.TryParse(line.Substring("Language=".Length).TrimStart(), out int language))
                         LangStrings.LanguageIndex = language;
                 }
 
                 line = sr.ReadLine();
-                if (line != null && (line = line.Trim()).Length > "Path=".Length)
+                if (line != null && (line = line.Trim()).StartsWith("Path="))
                 {
-                    gothicPath = Path.GetFullPath(line.Substring("Path=".Length));
+                    gothicPath = Path.GetFullPath(line.Substring("Path=".Length).TrimStart());
                 }
 
                 line = sr.ReadLine();
-                if (line != null && (line = line.Trim()).Length > "zSpy=".Length)
+                if (line != null && (line = line.Trim()).StartsWith("zSpy="))
                 {
-                    if (int.TryParse(line.Substring("zSpy=".Length), out int spy))
+                    if (int.TryParse(line.Substring("zSpy=".Length).TrimStart(), out int spy))
                         zSpyLevel = spy;                        
                 }
 

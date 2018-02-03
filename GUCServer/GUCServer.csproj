@@ -144,6 +144,9 @@
     <Compile Include="..\GUCShared\Types\NPCMovement.cs">
       <Link>Types\NPCMovement.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Types\PosAng.cs">
+      <Link>Types\PosAng.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Types\Vec2i.cs">
       <Link>Types\Vec2i.cs</Link>
     </Compile>
