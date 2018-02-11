@@ -41,11 +41,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        public override void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine)
+        public new void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine, 
+            List<BaseAIPersonality> superPersonalities)
         {
-            this.aiMemory = aiMemory ?? new AIMemory();
-            this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
-            this.lastTick = DateTime.Now;
+            base.Init(aiMemory, aiRoutine, superPersonalities);
             this.guideCommandByVobInst = new Dictionary<VobInst, GuideCommandInfo>();
         }
 

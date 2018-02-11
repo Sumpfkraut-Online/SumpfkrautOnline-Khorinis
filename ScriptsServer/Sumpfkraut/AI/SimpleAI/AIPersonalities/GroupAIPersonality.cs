@@ -17,18 +17,18 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        public void Init (AIMemory aIMemory, BaseAIRoutine aiRoutine, List<BaseAIPersonality> groupMembers)
+        public new void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine,
+            List<BaseAIPersonality> superPersonalities)
         {
-            Init(aiMemory, aiRoutine);
-            this.groupMembers = groupMembers ?? new List<BaseAIPersonality>();
-            this.memberLock = new object();
+            Init(aiMemory, aiRoutine, superPersonalities, new List<BaseAIPersonality>());
         }
 
-        public override void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine)
+        public void Init(AIMemory aiMemory, BaseAIRoutine aiRoutine,
+            List<BaseAIPersonality> superPersonalities, List<BaseAIPersonality> groupMembers)
         {
-            this.aiMemory = aiMemory ?? new AIMemory();
-            this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
-            this.lastTick = DateTime.Now;
+            base.Init(aiMemory, aiRoutine, superPersonalities);
+            this.groupMembers = groupMembers ?? new List<BaseAIPersonality>();
+            this.memberLock = new object();
         }
 
 
@@ -61,7 +61,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public override void MakeActiveObservation(AIAgent aiAgent)
         {
             var enemies = DetectEnemies();
-
+            // !!! TO DO !!!
         }
 
         public override void ProcessActions(AIAgent aiAgent)

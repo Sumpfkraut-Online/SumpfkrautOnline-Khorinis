@@ -11,6 +11,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
     public abstract class BaseAIPersonality : ExtendedObject
     {
 
+        protected List<BaseAIPersonality> superPersonalities;
+        public List<BaseAIPersonality> SuperPersonalities { get { return superPersonalities; } }
+
         protected AIMemory aiMemory;
         public AIMemory AIMemory { get { return aiMemory; } }
 
@@ -26,7 +29,15 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        abstract public void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine);
+        public void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine, 
+            List<BaseAIPersonality> superPersonalities)
+        {
+            this.superPersonalities = superPersonalities ?? new List<BaseAIPersonality>();
+            this.aiMemory = aiMemory ?? new AIMemory();
+            this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
+            this.lastTick = DateTime.Now;
+        }
+
         abstract public void MakeActiveObservation (AIAgent aiAgent);
         abstract public void ProcessActions (AIAgent aiAgent);
         abstract public void ProcessObservations (AIAgent aiAgent);
