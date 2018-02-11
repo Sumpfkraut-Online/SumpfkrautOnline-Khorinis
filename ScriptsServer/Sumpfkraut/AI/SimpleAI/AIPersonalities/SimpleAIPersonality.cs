@@ -19,15 +19,17 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public List<SimpleAIPersonality> Group = new List<SimpleAIPersonality>();
 
 
-        // maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
-        // movement paths to a destination and guide the vob to it
+        /// <summary>
+        /// Maps VobInst to GuideCmd which is used by the GUC to let clients calculate 
+        /// movement paths to a destination and guide the vob to it.
+        /// </summary>
         protected Dictionary<VobInst, GuideCommandInfo> guideCommandByVobInst;
 
         protected float aggressionRadius;
-        public float AggressionRadius { get { return this.aggressionRadius; } }
+        public float AggressionRadius { get { return aggressionRadius; } }
         public void SetAggressionRadius (float value)
         {
-            this.aggressionRadius = value;
+            aggressionRadius = value;
         }
 
 
@@ -46,7 +48,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             this.lastTick = DateTime.Now;
             this.guideCommandByVobInst = new Dictionary<VobInst, GuideCommandInfo>();
         }
-
 
 
         
@@ -128,22 +129,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         
         // moving around
 
-        public void RunMode (AIAgent aiAgent)
-        {
-            throw new NotImplementedException();
-
-            //List<VobInst> aiClients = aiAgent.AIClients;
-            //for (int i = 0; i < aiClients.Count; i++)
-            //{
-            //    //aiClients[i]....
-            //}
-        }
-
-        public void WalkMode (AIAgent aiAgent)
-        {
-            throw new NotImplementedException();
-        }
-
         public void GoTo (VobInst guided, Vec3f position)
         {
             // find out if there already is an existing, similar guide-command 
@@ -195,7 +180,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         
         public void GoTo (AIAgent aiAgent, Vec3f position)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
+            List<VobInst> aiClients = aiAgent.AIHosts;
             for (int i = 0; i < aiClients.Count; i++)
             {
                 GoTo(aiClients[i], position);
@@ -204,7 +189,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void GoTo (AIAgent aiAgent, VobInst target)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
+            List<VobInst> aiClients = aiAgent.AIHosts;
             for (int i = 0; i < aiClients.Count; i++)
             {
                 GoTo(aiClients[i], target);
@@ -214,7 +199,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public void GoTo (AIAgent aiAgent, AITarget aiTarget)
         {
             // let each client follow its nearest VobInst from aiTarget respectively
-            List<VobInst> followers = aiAgent.AIClients;
+            List<VobInst> followers = aiAgent.AIHosts;
             VobInst closestTarget = null;
             for (int f = 0; f < followers.Count; f++)
             {
@@ -222,30 +207,6 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 {
                     GoTo(followers[f], closestTarget);
                 }
-            }
-        }
-
-        public void Jump (AIAgent aiAgent, int forwardVelocity, int upVelocity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClimbLedge (AIAgent aiAgent, WorldObjects.NPC.ClimbingLedge ledge)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TurnAround (VobInst guided, Vec3f direction, float angularVelocity)
-        {
-            //guided.BaseInst.SetDirection(direction);
-        }
-
-        public void TurnAround (AIAgent aiAgent, Vec3f direction, float angularVelocity)
-        {
-            List<VobInst> aiClients = aiAgent.AIClients;
-            for (int c = 0; c < aiClients.Count; c++)
-            {
-                TurnAround(aiClients[c], direction, angularVelocity);
             }
         }
 
@@ -302,7 +263,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void Attack (AIAgent aiAgent, AITarget aiTarget)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
+            List<VobInst> aiClients = aiAgent.AIHosts;
             List<VobInst> targets = aiTarget.VobTargets;
             VobInst closestTarget = null;
             
@@ -350,36 +311,49 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
         /// <summary>
+        /// Detect enemies in the vicinity.
+        /// </summary>
+        /// <param name="aiAgent"></param>
+        /// <returns></returns>
+        public List<VobInst> DetectEnemies (AIAgent aiAgent)
+        {
+            var aiHosts = aiAgent.AIHosts;
+            VobInst currVob;
+            var enemies = new List<VobInst>();
+
+            for (int c = 0; c < aiHosts.Count; c++)
+            {
+                if (aiHosts[c].GetType() == typeof(NPCInst))
+                {
+                    currVob = aiHosts[c];
+
+                    // find all enemies in the radius of aggression
+                    currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, AggressionRadius,
+                        delegate (WorldObjects.NPC nearNPC)
+                        {
+                            var npc = (NPCInst)nearNPC.ScriptObject;
+
+                            if (nearNPC.IsPlayer && !nearNPC.IsDead && !npc.IsUnconscious)
+                            {
+                                enemies.Add((VobInst)nearNPC.ScriptObject);
+                            }
+                        });
+                }
+            }
+
+            return enemies;
+        }
+
+
+
+        /// <summary>
         /// Force active observation of the environment. 
         /// Can be run anytime to let the aiClients recognize their surrounding actively.
         /// </summary>
         /// <param name="aiAgent"></param>
         public override void MakeActiveObservation (AIAgent aiAgent)
         {
-            var aiClients = aiAgent.AIClients;
-            VobInst currVob;
-            var enemies = new List<VobInst>();
-
-            for (int c = 0; c < aiClients.Count; c++)
-            {
-                if (aiClients[c].GetType() == typeof(NPCInst))
-                {
-                    currVob = aiClients[c];
-
-                    // find all enemies in the radius of aggression
-                    currVob.World.BaseWorld.ForEachNPCRough(currVob.BaseInst, AggressionRadius, 
-                        delegate (WorldObjects.NPC nearNPC)
-                    {
-                        var npc = (NPCInst)nearNPC.ScriptObject;
-
-                        if (nearNPC.IsPlayer && !nearNPC.IsDead && !npc.IsUnconscious)
-                        {
-                            enemies.Add((VobInst) nearNPC.ScriptObject);
-                        }
-                    });
-                }
-            }
-
+            var enemies = DetectEnemies(aiAgent);
             if (enemies.Count > 0)
             {
                 aiMemory.AddAIObservation(new EnemyAIObservation(new AITarget(enemies)));
@@ -411,7 +385,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public override void ProcessObservations (AIAgent aiAgent)
         {
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)
-            if (aiAgent.AIClients.Count < 1) { return; }
+            if (aiAgent.AIHosts.Count < 1) { return; }
 
             // search all observations for enemies nearby and add them to the list of targets
             var aiObservations = aiMemory.GetAIObservations();

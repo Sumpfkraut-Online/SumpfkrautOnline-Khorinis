@@ -39,6 +39,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public delegate void NPCInstMoveHandler(NPCInst npc, Vec3f oldPos, Angles oldAng, NPCMovement oldMovement);
         public static event NPCInstMoveHandler sOnNPCInstMove;
+        /// <summary>
+        /// Not invoked at the moment.
+        /// </summary>
+        public event NPCInstMoveHandler OnNPCInstMove;
         static NPCInst()
         {
             WorldObjects.NPC.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
@@ -736,6 +740,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             this.SetHealth(resultingHP);
             sOnHit?.Invoke(attacker, this, damage);
+            OnHit?.Invoke(attacker, this, damage);
             lastHitMoveTime = GameTime.Ticks;
         }
 
@@ -747,6 +752,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
+        public event OnHitHandler OnHit;
 
         void CalcHit()
         {

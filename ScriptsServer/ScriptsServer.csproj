@@ -447,6 +447,7 @@
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\EnemyAIObservation.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIObservations\TargetedObservation.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\BaseAIPersonality.cs" />
+    <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\GroupAIPersonality.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIPersonalities\SimpleAIPersonality.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIRoutines\BaseAIRoutine.cs" />
     <Compile Include="Sumpfkraut\AI\SimpleAI\AIRoutines\SimpleAIRoutine.cs" />

@@ -21,7 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public DateTime LastTick { get { return lastTick; } }
 
 
-        public BaseAIPersonality ()
+        protected BaseAIPersonality ()
         { }
 
 

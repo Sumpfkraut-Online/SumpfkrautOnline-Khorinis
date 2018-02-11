@@ -10,9 +10,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines
     public abstract class BaseAIRoutine : ExtendedObject
     {
 
-        public BaseAIRoutine ()
-        {
-        }
+        protected BaseAIRoutine ()
+        { }
 
 
 

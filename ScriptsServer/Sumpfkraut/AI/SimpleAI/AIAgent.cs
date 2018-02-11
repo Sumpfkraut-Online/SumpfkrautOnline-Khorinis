@@ -15,8 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected object attributeLock;
 
-        protected List<VobInst> aiClients;
-        public List<VobInst> AIClients { get { return aiClients; } }
+        protected List<VobInst> aiHosts;
+        public List<VobInst> AIHosts { get { return aiHosts; } }
 
 
         protected BaseAIPersonality aiPersonality;
@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
         public AIAgent (List<VobInst> aiClients, BaseAIPersonality aiPersonality = null)
         {
             this.attributeLock = new object();
-            this.aiClients = aiClients ?? new List<VobInst>();
+            this.aiHosts = aiClients ?? new List<VobInst>();
             if (aiPersonality == null)
             {
                 this.aiPersonality = new SimpleAIPersonality(0f);
@@ -41,23 +41,23 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
 
 
-        public bool HasAIClient (VobInst aiClient)
+        public bool HasAIHost (VobInst aiHost)
         {
-            return aiClients.Contains(aiClient);
+            return aiHosts.Contains(aiHost);
         }
 
-        public bool HasAIClient (WorldObjects.Vob baseVob)
+        public bool HasAIHost(WorldObjects.Vob baseVob)
         {
-            bool hasAIClient = false;
-            for (int i = 0; i < aiClients.Count; i++)
+            bool hasAIHost = false;
+            for (int i = 0; i < aiHosts.Count; i++)
             {
-                if (aiClients[i].BaseInst == baseVob)
+                if (aiHosts[i].BaseInst == baseVob)
                 {
-                    hasAIClient = true;
+                    hasAIHost = true;
                     break;
                 }
             }
-            return hasAIClient;
+            return hasAIHost;
         }
 
 
