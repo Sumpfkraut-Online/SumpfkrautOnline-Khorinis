@@ -90,6 +90,21 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             }
         }
 
+        /// <summary>
+        /// Get all obervations which are of same or subcass of given type t.
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public List<T> GetAIObservations<T> () where T: BaseAIObservation
+        {
+            var obs = new List<T>();
+            foreach (var o in aiObservations)
+            {
+                if (o.GetType().IsSubclassOf(typeof(T))) { obs.Add(o); }
+            }
+            return obs;
+        }
+
         public void RemoveAIAction (BaseAIAction aiAction)
         {
             lock (aiActionLock)

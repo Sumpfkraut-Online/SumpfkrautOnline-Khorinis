@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 {
@@ -44,9 +46,22 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
+        public List<VobInst> DetectEnemies ()
+        {
+            var enemies = new List<VobInst>();
+            foreach (var member in groupMembers)
+            {
+                var obs = member.AIMemory.GetAIObservations<EnemyAIObservation>();
+                foreach (var o in obs) { enemies.AddRange(o.Enemies.VobTargets);  }
+            }
+            enemies = enemies.Distinct().ToList();
+            return enemies;
+        }
+
         public override void MakeActiveObservation(AIAgent aiAgent)
         {
-            
+            var enemies = DetectEnemies();
+
         }
 
         public override void ProcessActions(AIAgent aiAgent)
