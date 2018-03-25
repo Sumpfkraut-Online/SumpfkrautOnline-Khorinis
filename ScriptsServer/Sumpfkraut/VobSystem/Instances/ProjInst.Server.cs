@@ -68,7 +68,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             NPCInst target = null;
             this.World.BaseWorld.ForEachNPCRoughPredicate(position, GUCScripts.BiggestNPCRadius, npc =>
             {
-                if (!npc.IsDead && npc != Shooter.BaseInst && Shooter.AllowHit((NPCInst)npc.ScriptObject))
+                if (!npc.IsDead && npc != Shooter.BaseInst && NPCInst.AllowHit(Shooter, (NPCInst)npc.ScriptObject))
                 {
                     var npcPos = npc.Position;
                     if (npc.ModelInstance.Visual == "CRAWLER.MDS") // fixme

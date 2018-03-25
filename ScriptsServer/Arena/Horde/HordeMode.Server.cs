@@ -10,6 +10,8 @@ using GUC.Types;
 using GUC.Utilities;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
 
 namespace GUC.Scripts.Arena
 {
@@ -25,19 +27,19 @@ namespace GUC.Scripts.Arena
         {
             if (npc.IsDead || !npc.IsPlayer || npc.IsUnconscious)
                 return;
-            
+
             ArenaClient client = (ArenaClient)npc.Client;
             if (client.HordeClass == null)
                 return;
 
-            if (ActiveHordeStand != null)
+            if (ActiveStandInst != null)
                 return;
-            
-            foreach (var pair in ActiveStands)
+
+            foreach (var s in ActiveStands)
             {
-                if (npc.GetPosition().GetDistance(pair.Item1.Position) < pair.Item1.Range)
+                if (npc.GetPosition().GetDistance(s.Stand.Position) < s.Stand.Range)
                 {
-                    StartStand(pair.Item1);
+                    StartStand(s);
                     break;
                 }
             }
@@ -79,8 +81,17 @@ namespace GUC.Scripts.Arena
         static WorldInst activeWorld;
         static List<VobInst> spawnBarriers = new List<VobInst>(10);
 
-        static List<HordeStand, VobInst[]> ActiveStands = new List<HordeStand, VobInst[]>(3);
-        static HordeStand ActiveHordeStand;
+        class StandInst
+        {
+            public int Index;
+            public HordeStand Stand;
+            public List<VobInst> Barriers;
+            public NPCInst Boss;
+            public AIAgent Agent;
+        }
+
+        static List<StandInst> ActiveStands = new List<StandInst>();
+        static StandInst ActiveStandInst;
 
         static List<ArenaClient> players = new List<ArenaClient>(10);
         public static List<ArenaClient> Players { get { return players; } }
@@ -105,6 +116,11 @@ namespace GUC.Scripts.Arena
             return true;
         }
 
+        static bool BossProtection(NPCInst attacker, NPCInst target)
+        {
+            return false;
+        }
+
         public static void StartHorde(HordeDef def)
         {
             if (def == null) return;
@@ -119,6 +135,7 @@ namespace GUC.Scripts.Arena
                 client.HordeKills = 0;
                 client.HordeClass = null;
             });
+            players.ForEach(c => c.Spectate());
             players.Clear();
 
             if (activeWorld != null)
@@ -140,16 +157,29 @@ namespace GUC.Scripts.Arena
             }
 
             ActiveStands.Clear();
-            foreach (var stand in activeDef.Stands)
+            for (int i = 0; i < activeDef.Stands.Length; i++)
             {
-                VobInst[] barriers = new VobInst[stand.Barriers.Length];
-                for (int i = 0; i < barriers.Length; i++)
+                var stand = activeDef.Stands[i];
+                StandInst inst = new StandInst()
                 {
-                    var bar = stand.Barriers[i];
-                    if (!bar.AddAfterEvent)
-                        barriers[i] = CreateBarrier(bar);
+                    Index = i,
+                    Stand = stand,
+                };
+
+                if (stand.Boss != null)
+                {
+                    inst.Boss = SpawnEnemy(stand.Boss, stand.Position);
+                    inst.Boss.CanGetHit += BossProtection;
                 }
-                ActiveStands.Add(stand, barriers);
+
+                inst.Barriers = new List<VobInst>(stand.Barriers.Length);
+                foreach (var bar in stand.Barriers)
+                {
+                    if (!bar.AddAfterEvent)
+                        inst.Barriers.Add(CreateBarrier(bar));
+                }
+
+                ActiveStands.Add(inst);
             }
 
             foreach (var hi in activeDef.Items)
@@ -158,8 +188,8 @@ namespace GUC.Scripts.Arena
                 item.Spawn(activeWorld, hi.Position, hi.Angles);
             }
 
-            standEnemies.Clear();
-            standAgent = null;
+            standEnemyCount = 0;
+            ActiveStandInst = null;
 
             gameTimer.SetInterval(30 * TimeSpan.TicksPerSecond);
             gameTimer.SetCallback(Start);
@@ -168,22 +198,26 @@ namespace GUC.Scripts.Arena
             SetPhase(HordePhase.WarmUp);
         }
 
-        static void StartStand(HordeStand stand)
+        static void StartStand(StandInst inst)
         {
             Log.Logger.Log("Start stand");
-            ActiveHordeStand = stand;
-            standEnemies.Clear();
+            ActiveStandInst = inst;
+            standEnemyCount = 0;
 
-            var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(2000, 1);
-            standAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst>(), pers);
-            Sumpfkraut.AI.SimpleAI.AIManager.aiManagers[0].SubscribeAIAgent(standAgent);
-            pers.Init(null, null);
-            pers.GoTo(standAgent, ActiveHordeStand.Position);
-
-            gameTimer.SetInterval(stand.Duration * TimeSpan.TicksPerSecond);
-            gameTimer.SetCallback(EndStand);
-            gameTimer.Start();
-
+            inst.Agent = CreateAgent(2 * inst.Stand.Range);
+            if (inst.Boss != null)
+            {
+                inst.Agent.aiClients.Add(inst.Boss);
+                inst.Boss.CanGetHit -= BossProtection;
+                inst.Boss.OnDeath += boss => EndStand();
+                
+            }
+            else
+            {
+                gameTimer.SetInterval(inst.Stand.Duration * TimeSpan.TicksPerSecond);
+                gameTimer.SetCallback(EndStand);
+                gameTimer.Start();
+            }
             FillUpStandEnemies();
 
             SetPhase(HordePhase.Stand);
@@ -191,30 +225,48 @@ namespace GUC.Scripts.Arena
 
         static void EndStand()
         {
-            ActiveHordeStand = null;
-            SetPhase(HordePhase.Fight);
+            var inst = ActiveStandInst;
+            ActiveStands.Remove(inst);
+            foreach (var v in inst.Barriers)
+                v.Despawn();
+
+            foreach (var bar in inst.Stand.Barriers)
+                if (bar.AddAfterEvent)
+                    CreateBarrier(bar);
+
+            ActiveStandInst = null;
+            if (ActiveStands.Count == 0)
+            {
+                EndHorde(true);
+            }
+            else
+            {
+                SetPhase(HordePhase.Fight);
+            }
             Log.Logger.Log("end stand");
         }
 
-        static List<NPCInst> standEnemies = new List<NPCInst>(20);
-        static Sumpfkraut.AI.SimpleAI.AIAgent standAgent;
+        static int standEnemyCount = 0;
 
         static void FillUpStandEnemies()
         {
-            if (ActiveHordeStand == null)
+            if (ActiveStandInst == null)
                 return;
 
-            int maxCount = (int)Math.Ceiling(ActiveHordeStand.MaxEnemies * players.Count);
-            for (int i = standEnemies.Count; i < maxCount; i++)
+            var def = ActiveStandInst.Stand;
+
+            int maxCount = (int)Math.Ceiling(def.MaxEnemies * players.Count);
+            for (int i = standEnemyCount; i < maxCount; i++)
             {
                 float prob = Randomizer.GetFloat();
-                foreach (var e in ActiveHordeStand.Enemies)
+                foreach (var e in def.Enemies)
                     if (prob <= e.CountScale)
                     {
-                        var npc = SpawnEnemy(e.Enemy, Randomizer.Get(ActiveHordeStand.EnemySpawns));
+                        var npc = SpawnEnemy(e.Enemy, Randomizer.Get(def.EnemySpawns));
                         npc.OnDeath += OnStandEnemyDeath;
-                        standAgent.aiClients.Add(npc);
-                        standEnemies.Add(npc);
+                        ActiveStandInst.Agent.aiClients.Add(npc);
+                        ((SimpleAIPersonality)ActiveStandInst.Agent.AIPersonality).GoTo(npc, ActiveStandInst.Stand.Position);
+                        standEnemyCount++;
                         break;
                     }
             }
@@ -222,7 +274,7 @@ namespace GUC.Scripts.Arena
 
         static void OnStandEnemyDeath(NPCInst npc)
         {
-            standEnemies.Remove(npc);
+            standEnemyCount--;
             FillUpStandEnemies();
         }
 
@@ -244,23 +296,17 @@ namespace GUC.Scripts.Arena
                 if (bar.AddAfterEvent)
                     CreateBarrier(bar);
 
-            var aiManager = Sumpfkraut.AI.SimpleAI.AIManager.aiManagers[0];
             foreach (var group in activeDef.Enemies)
             {
-                List<VobInst> vobs = new List<VobInst>();
+                var agent = CreateAgent();
                 foreach (var pair in group.npcs)
                 {
                     int maxCount = (int)Math.Ceiling(pair.CountScale * players.Count);
-                    vobs.Capacity += maxCount;
                     for (int i = 0; i < maxCount; i++)
                     {
-                        vobs.Add(SpawnEnemy(pair.Enemy, group.Position, group.Range));
+                        agent.aiClients.Add(SpawnEnemy(pair.Enemy, group.Position, group.Range));
                     }
                 }
-
-                var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800, 1);
-                aiManager.SubscribeAIAgent(new Sumpfkraut.AI.SimpleAI.AIAgent(vobs, pers));
-                pers.Init(null, null);
             }
 
             SetPhase(HordePhase.Fight);
@@ -280,17 +326,8 @@ namespace GUC.Scripts.Arena
             }
 
             gameTimer.SetCallback(StartHorde);
-            gameTimer.SetInterval(60 * TimeSpan.TicksPerSecond);
+            gameTimer.SetInterval(30 * TimeSpan.TicksPerSecond);
             gameTimer.Start();
-        }
-
-        static void SpawnGroup()
-        {
-            /*var pers = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(attackRadius, 1);
-            pers.Init(null, null);
-            pers.GoTo(npc, targetPos);
-            var agent = new Sumpfkraut.AI.SimpleAI.AIAgent(vobs, pers);
-            Sumpfkraut.AI.SimpleAI.AIManager.aiManagers[0].SubscribeAIAgent(agent);*/
         }
 
         static NPCInst SpawnEnemy(HordeEnemy enemy, Vec3f spawnPoint, float spawnRange = 100)
@@ -330,6 +367,9 @@ namespace GUC.Scripts.Arena
             var stream = ArenaClient.GetScriptMessageStream();
             stream.Write((byte)ScriptMessages.HordePhase);
             stream.Write((byte)Phase);
+            if (Phase == HordePhase.Stand)
+                stream.Write((byte)ActiveStandInst.Index);
+
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
 
             OnPhaseChange?.Invoke(phase);
@@ -374,6 +414,8 @@ namespace GUC.Scripts.Arena
         {
             stream.Write(activeDef.Name);
             stream.Write((byte)Phase);
+            if (Phase == HordePhase.Stand)
+                stream.Write((byte)ActiveStandInst.Index);
         }
 
         public static void JoinClass(PacketReader stream, ArenaClient client)
@@ -420,6 +462,15 @@ namespace GUC.Scripts.Arena
                 }
             }
             client.SetToSpectator(activeWorld, specPA.Position, specPA.Angles);
+        }
+
+        static AIAgent CreateAgent(float aggressionRad = 800)
+        {
+            var pers = new SimpleAIPersonality(aggressionRad, 1);
+            var agent = new AIAgent(new List<VobInst>(), pers);
+            AIManager.aiManagers[0].SubscribeAIAgent(agent);
+            pers.Init(null, null);
+            return agent;
         }
     }
 }

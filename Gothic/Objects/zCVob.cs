@@ -11,6 +11,8 @@ namespace Gothic.Objects
 {
     public class zCVob : zCObject, IDisposable
     {
+        public static readonly zCVob NullVob = new zCVob(0);
+
         new public abstract class VarOffsets : zCObject.VarOffsets
         {
             public const int globalVobTreeNode = 0x0024,

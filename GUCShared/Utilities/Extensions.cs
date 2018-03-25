@@ -30,4 +30,23 @@ namespace GUC
             return false;
         }
     }
+
+    public static class ArrayExtensions
+    {
+        public static bool TryGet<T>(this T[] array, int index, out T result)
+        {
+            if (index < array.Length && index >= 0)
+            {
+                result = array[index];
+                return true;
+            }
+            result = default(T);
+            return false;
+        }
+
+        public static T TryGet<T>(this T[] array, int index)
+        {
+            return (index < array.Length && index >= 0) ? array[index] : default(T);
+        }
+    }
 }

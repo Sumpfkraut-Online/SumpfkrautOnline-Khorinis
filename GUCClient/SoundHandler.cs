@@ -15,8 +15,11 @@ namespace GUC
     {
         public zCSndFX_MSS zSFX { get; private set; }
 
+        string name;
+        public string Name { get { return name; } }
         public SoundDefinition(string sfxName)
         {
+            this.name = sfxName;
             this.zSFX = zCSndSys_MSS.LoadSoundFX(sfxName);
         }
     }
@@ -146,18 +149,19 @@ namespace GUC
             vobSounds.Add(new ActiveSound(idPtr, param, sound));
         }
 
-        public static void PlaySound3D(SoundDefinition sound, Vec3f location, float range = 2500, float volume = 1.0f)
+        public static SoundInstance PlaySound3D(SoundDefinition sound, Vec3f location, float range = 2500, float volume = 1.0f, bool loop = false)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");
 
             if (!CanPlay(sound)) // don't play too many sounds at once
-                return;
+                return null;
 
             var param = zTSound3DParams.Create();
             param.Volume = volume;
             param.Radius = range;
             param.Reverb = 0.15f;
+            param.LoopType = loop ? 1 : 0;
             param.IsAmbient = true;
 
             zCVob vob;
@@ -177,9 +181,11 @@ namespace GUC
             vob.SetPositionWorld(location.X, location.Y, location.Z);
 
             int idPtr = Process.Alloc(4).ToInt32();
-            Process.Write(idPtr, zCSndSys_MSS.PlaySound3D(sound.zSFX, vob, 0, param));
+            int id = zCSndSys_MSS.PlaySound3D(sound.zSFX, vob, 0, param);
+            Process.Write(idPtr, id);
 
             locSounds.Add(new ActiveSound(idPtr, param, sound, vob));
+            return new SoundInstance(sound, id);
         }
 
         static int frame = 0;
@@ -187,9 +193,9 @@ namespace GUC
         {
             try
             {
-                if (frame % 3 == 0) // only every third frame
+                if (frame++ % 3 == 0) // only every third frame
                     return;
-
+                
                 for (int i = vobSounds.Count - 1; i >= 0; i--)
                 {
                     var tup = vobSounds[i];
@@ -205,7 +211,7 @@ namespace GUC
                 for (int i = locSounds.Count - 1; i >= 0; i--)
                 {
                     var tup = locSounds[i];
-
+                    
                     if (!zCSndSys_MSS.UpdateSound3D(tup.idPtr, tup.sndParams) && !zCSndSys_MSS.IsSoundActive(tup.idPtr))
                     {
                         Process.Free(new IntPtr(tup.idPtr), 4);
@@ -219,8 +225,6 @@ namespace GUC
                         locSounds.RemoveAt(i);
                     }
                 }
-
-                frame++;
             }
             catch (Exception e)
             {

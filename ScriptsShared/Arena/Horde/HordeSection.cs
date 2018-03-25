@@ -104,6 +104,14 @@ namespace GUC.Scripts.Arena
         public float MaxEnemies;
         public HordePair[] Enemies; // enemy + probability
         public Vec3f[] EnemySpawns;
+
+        public HordeEnemy Boss;
+
+        public string SFXStart;
+        public string SFXLoop;
+        public string SFXStop;
+
+        public string[] Messages;
     }
 
     struct HordeZone

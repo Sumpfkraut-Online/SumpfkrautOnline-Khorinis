@@ -1432,9 +1432,9 @@ namespace GUC.Scripts
             NPCDef npcDef = new NPCDef("orc_scout");
             npcDef.Name = "Ork-Späher";
             npcDef.Model = m;
-            npcDef.BodyMesh = "Orc_BodyScout";
+            npcDef.BodyMesh = "Orc_BodyWarrior";
             npcDef.BodyTex = 0;
-            npcDef.HeadMesh = "Orc_HeadScout";
+            npcDef.HeadMesh = "Orc_HeadWarrior";
             npcDef.HeadTex = 0;
             npcDef.Create();
 

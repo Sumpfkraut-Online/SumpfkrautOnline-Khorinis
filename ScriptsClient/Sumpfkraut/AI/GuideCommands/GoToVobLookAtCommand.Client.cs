@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
                 return;
 
             if (!Cast.Try(vob.ScriptObject, out NPCInst npc))
-                throw new Exception("Vob used with GoToPosLookAtCommand is no NPC!");
+                throw new Exception("Vob used with GoToVobLookAtCommand is no NPC!");
 
             if (npc.IsDead)
                 return;
@@ -25,6 +25,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 
             gNpc.RbtTimer = 500;
             gNpc.RbtTargetVob = Target.BaseInst.gVob;
+            gNpc.RbtBitfield = gNpc.RbtBitfield | (1 << 4); // stand when reached
             Target.GetPosition().SetGVec(gNpc.RbtTargetPos);
             gNpc.RbtMaxTargetDist = Distance * Distance;
             gNpc.RbtGotoFollowPosition();

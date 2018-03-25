@@ -13,21 +13,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         const int MaxNPCCorpses = 500;
 
-        public bool AllowHit(NPCInst target)
+        public static bool AllowHit(NPCInst attacker, NPCInst target)
         {
             if (!target.IsPlayer)
             {
-                return this.IsPlayer;
+                return attacker.IsPlayer;
             }
-            else if (this.IsPlayer) // pvp
+            else if (attacker.IsPlayer) // pvp
             {
-                if (this.TeamID == -1)
+                if (attacker.TeamID == -1)
                 {
-                    return target.TeamID == -1 && ((Arena.ArenaClient)this.Client).DuelEnemy == target.Client;
+                    return target.TeamID == -1 && ((Arena.ArenaClient)attacker.Client).DuelEnemy == target.Client;
                 }
                 else
                 {
-                    return this.TeamID != target.TeamID;
+                    return attacker.TeamID != target.TeamID;
                 }
             }
 
@@ -43,6 +43,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             WorldObjects.NPC.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
             sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
+            sCanHit += AllowHit;
         }
 
         float highestY = 0;
@@ -752,6 +753,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
         public static event OnHitHandler sOnHit;
+        public event OnHitHandler OnHit;
+
+        public delegate bool CanHitHandler(NPCInst attacker, NPCInst target);
+        public static event CanHitHandler sCanHit;
+        public event CanHitHandler CanHit;
+        public event CanHitHandler CanGetHit;
 
         void CalcHit()
         {
@@ -772,7 +779,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target == this || target.IsDead || target.IsUnconscious)
                           return;
 
-                      if (!AllowHit(target))
+                      if (sCanHit != null && !sCanHit(this, target))
+                          return;
+
+                      if (CanHit != null && !CanHit(this, target))
+                          return;
+
+                      if (target.CanGetHit != null && !target.CanGetHit(this, target))
                           return;
 
                       float realRange = weaponRange + target.ModelDef.Radius;

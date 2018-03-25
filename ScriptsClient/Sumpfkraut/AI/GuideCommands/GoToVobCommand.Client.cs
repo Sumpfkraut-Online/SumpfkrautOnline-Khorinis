@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
                 return;
 
             if (!Cast.Try(vob.ScriptObject, out NPCInst npc))
-                throw new Exception("Vob used with GoToPosCommand is no NPC!");
+                throw new Exception("Vob used with GoToVobCommand is no NPC!");
 
             if (npc.IsDead)
                 return;

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.WorldObjects.VobGuiding;
-using Gothic.Objects.EventManager;
-using Gothic.Types;
-using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using Gothic.Objects;
 
 namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 {
@@ -17,28 +16,25 @@ namespace GUC.Scripts.Sumpfkraut.AI.GuideCommands
 
         public override void Update(GuidedVob vob, long now)
         {
-            if (!(vob is NPC))
-                throw new Exception("Vob used with GoToPosCommand is no NPC!");
+            if (!Cast.Try(vob.ScriptObject, out NPCInst npc))
+                throw new Exception("Vob used with GoToPos is no NPC!");
 
-            if (((NPC)vob).IsDead)
+            if (npc.IsDead)
                 return;
 
-            if (vob.Position.GetDistance(this.destination) < 50)
-                return;
+            var gNpc = npc.BaseInst.gVob;
 
-            var gVob = vob.gVob;
-            var em = gVob.GetEM(0);
+            gNpc.RbtTimer = 500;
+            gNpc.RbtTargetVob = zCVob.NullVob;
+            gNpc.RbtBitfield = gNpc.RbtBitfield | (1 << 4); // stand when reached
+            this.Destination.SetGVec(gNpc.RbtTargetPos);
+            gNpc.RbtMaxTargetDist = 100 * 100;
 
-            if (em.GetActiveMsg().Address == 0)
-            {
-                using (zVec3 vec = destination.CreateGVec())
-                    em.OnMessage(oCMsgMovement.Create(oCMsgMovement.SubTypes.RobustTrace, vec), gVob);
-            }
+            gNpc.RobustTrace();
         }
 
         public override void Stop(GuidedVob vob)
         {
-            vob.gVob.GetEM(0).KillMessages();
         }
     }
 }
