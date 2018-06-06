@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Arena\Scoreboard\" />
     <Folder Include="Properties\" />
     <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
     <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
@@ -55,15 +54,19 @@
     <Compile Include="Arena\Chat\Chat.cs" />
     <Compile Include="Arena\Chat\ChatMode.cs" />
     <Compile Include="Arena\Duel\DuelMode.cs" />
-    <Compile Include="Arena\Horde\HordeDef.cs" />
-    <Compile Include="Arena\Horde\HordeMode.cs" />
-    <Compile Include="Arena\Horde\HordeClassDef.cs" />
-    <Compile Include="Arena\Horde\HordeSection.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRRandomizer.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRScenario.cs" />
+    <Compile Include="Arena\GameModes\GameMode.cs" />
+    <Compile Include="Arena\GameModes\GamePhase.cs" />
+    <Compile Include="Arena\GameModes\GameScenario.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeMode.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeScenario.cs" />
+    <Compile Include="Arena\GameModes\PlayerClass.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRMode.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMMode.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMScenario.cs" />
     <Compile Include="Arena\ScriptMessages.cs" />
-    <Compile Include="Arena\TeamObjective\TeamMode.cs" />
-    <Compile Include="Arena\TeamObjective\TOClassDef.cs" />
-    <Compile Include="Arena\TeamObjective\TODef.cs" />
-    <Compile Include="Arena\TeamObjective\TOTeamDef.cs" />
+    <Compile Include="Arena\GameModes\TeamIdent.cs" />
     <Compile Include="GUCScripts.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\CommandType.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.cs" />

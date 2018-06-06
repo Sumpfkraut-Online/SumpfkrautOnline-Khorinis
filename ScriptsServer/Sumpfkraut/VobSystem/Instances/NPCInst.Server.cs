@@ -1,4 +1,5 @@
 ﻿using GUC.Log;
+using System.Collections.Generic;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Visuals;
@@ -6,34 +7,13 @@ using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using System;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
         const int MaxNPCCorpses = 500;
-
-        public static bool AllowHit(NPCInst attacker, NPCInst target)
-        {
-            if (!target.IsPlayer)
-            {
-                return attacker.IsPlayer;
-            }
-            else if (attacker.IsPlayer) // pvp
-            {
-                if (attacker.TeamID == -1)
-                {
-                    return target.TeamID == -1 && ((Arena.ArenaClient)attacker.Client).DuelEnemy == target.Client;
-                }
-                else
-                {
-                    return attacker.TeamID != target.TeamID;
-                }
-            }
-
-            return true;
-        }
-
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
@@ -43,7 +23,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             WorldObjects.NPC.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
             sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
-            sCanHit += AllowHit;
         }
 
         float highestY = 0;
@@ -83,13 +62,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.ModelInst.StopAnimation(this.fightAni, false);
             }
 
-            if (this.TeamID != -1 && this.Client != null)
+            if (Arena.GameModes.GameMode.ActiveMode != null && Cast.Try(this.Client, out Arena.ArenaClient ac) && ac.GMJoined)
             {
-                if (pos.GetDistancePlanar(Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
-                    || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
-                    || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
+                var gm = Arena.GameModes.GameMode.ActiveMode;
+                if (pos.GetDistancePlanar(Vec3f.Null) > gm.Scenario.MaxWorldDistance
+                    || pos.Y > gm.Scenario.MaxHeight
+                    || pos.Y < gm.Scenario.MaxDepth)
                 {
-                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                    ac.KillCharacter();
                 }
             }
 
@@ -105,7 +85,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 var aa = this.ModelInst.GetActiveAniFromLayer(1);
                 if (aa != null)
+                {
                     this.ModelInst.StopAnimation(aa, false);
+                }
             }
 
 
@@ -145,6 +127,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pConstruct()
         {
+        }
+
+        partial void pDespawn()
+        {
+            if (unconTimer != null && unconTimer.Started)
+                unconTimer.Stop();
         }
 
         #endregion
@@ -688,26 +676,35 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (hp <= 0)
             {
                 npcDespawnList.AddVob(this);
+
+                if (unconTimer != null && unconTimer.Started)
+                    unconTimer.Stop();
             }
         }
 
 
         #region Hit Detection
 
+        public int Damage;
+        public int Protection;
+
+
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
+
+
+        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
+        public static event OnHitHandler sOnHit;
+        public event OnHitHandler OnHit;
 
         public void Hit(NPCInst attacker, int damage, bool fromFront = true)
         {
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.HitMessage);
-            strm.Write((ushort)this.ID);
+            strm.Write((ushort)attacker.ID);
             this.BaseInst.SendScriptVobStream(strm);
 
-            if (Cast.Try(attacker.Client, out Arena.ArenaClient att) && attacker.TeamID != -1 && att.TOClass != null)
-                damage += att.TOClass.Damage;
-
-            int protection = 0;
+            int protection = this.Protection;
             var armor = this.GetArmor();
             if (armor != null)
                 protection += armor.Protection;
@@ -717,16 +714,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if ((otherMelee = this.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
                 protection -= otherMelee.Damage / 4;
 
-            if ((otherMelee = attacker.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
-                damage += otherMelee.Damage / 4;
-
-            if (Cast.Try(this.Client, out Arena.ArenaClient tar) && this.TeamID != -1 && tar.TOClass != null)
-                protection += tar.TOClass.Protection;
-
             damage -= protection;
 
             // ARENA
-            if (this.TeamID != -1 && attacker.TeamID == this.TeamID) // same team
+            if (this.TeamID >= 0 && attacker.TeamID == this.TeamID) // same team
                 damage /= 2;
 
             if (damage <= 0)
@@ -734,10 +725,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             int resultingHP = this.GetHealth() - damage;
 
-            if (resultingHP <= 0 && !attacker.IsPlayer && tar != null && tar.HordeClass != null)
+            if (DropUnconsciousOnDeath && resultingHP <= 1)
             {
                 resultingHP = 1;
-                this.DropUnconscious(!fromFront);
+                this.DropUnconscious(UnconsciousDuration, !fromFront);
             }
 
             this.SetHealth(resultingHP);
@@ -750,15 +741,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ItemInst drawnWeapon = GetDrawnWeapon();
             return this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
         }
+        
+        /// <summary> Skips hit determination if false is returned. Arguments: Attacker, Target </summary>
+        public static BoolEvent<NPCInst, NPCInst> AllowHitEvent;
 
-        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
-        public static event OnHitHandler sOnHit;
-        public event OnHitHandler OnHit;
+        /// <summary> Skips hit determination if attacker returns false. Arguments: Attacker, Target </summary>
+        public BoolEvent<NPCInst, NPCInst> AllowHitAttacker;
 
-        public delegate bool CanHitHandler(NPCInst attacker, NPCInst target);
-        public static event CanHitHandler sCanHit;
-        public event CanHitHandler CanHit;
-        public event CanHitHandler CanGetHit;
+        // <summary> Skips hit determination if target returns false. Arguments: Attacker, Target </summary>
+        public BoolEvent<NPCInst, NPCInst> AllowHitTarget;
 
         void CalcHit()
         {
@@ -770,8 +761,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 Vec3f attPos = this.GetPosition();
                 Angles attAng = this.GetAngles();
 
-                ItemInst drawnWeapon = GetDrawnWeapon();
-                int baseDamage = drawnWeapon == null ? 10 : drawnWeapon.Damage;
+                int baseDamage = 5 + this.Damage;
+
+                ItemInst weapon;
+                if ((weapon = this.GetDrawnWeapon()) != null)
+                    baseDamage += weapon.Damage;
+
+                // two weapons
+                if ((weapon = this.GetLeftHand()) != null && weapon.ItemType == ItemTypes.Wep1H)
+                    baseDamage += weapon.Damage / 4;
+
                 float weaponRange = GetFightRange();
                 this.BaseInst.World.ForEachNPCRough(attPos, GUCScripts.BiggestNPCRadius + weaponRange, npc => // fixme: enemy model radius
                   {
@@ -779,15 +778,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target == this || target.IsDead || target.IsUnconscious)
                           return;
 
-                      if (sCanHit != null && !sCanHit(this, target))
+                      if (!AllowHitEvent.TrueForAll(this, target) 
+                      || !this.AllowHitAttacker.TrueForAll(this, target) || !target.AllowHitTarget.TrueForAll(this, target))
                           return;
-
-                      if (CanHit != null && !CanHit(this, target))
-                          return;
-
-                      if (target.CanGetHit != null && !target.CanGetHit(this, target))
-                          return;
-
+                      
                       float realRange = weaponRange + target.ModelDef.Radius;
                       if (target.CurrentFightMove == FightMoves.Dodge)
                           realRange /= 3.0f; // decrease radius if target is backing up
@@ -799,8 +793,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       }
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
-
-
+                      
                       float hitHeight;
                       float hitYaw;
                       if (CurrentFightMove == FightMoves.Left || CurrentFightMove == FightMoves.Right)
@@ -953,7 +946,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Unconsciousness
 
-        public void DropUnconscious(bool toFront = true)
+        public bool DropUnconsciousOnDeath = false;
+        public long UnconsciousDuration = 15 * TimeSpan.TicksPerSecond;
+        GUCTimer unconTimer;
+
+        public void DropUnconscious(long duration = -1, bool toFront = true)
         {
             var cat = AniCatalog.Unconscious;
             ScriptAniJob job = toFront ? cat.DropFront : cat.DropBack;
@@ -966,6 +963,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             strm.Write((byte)ScriptVobMessageIDs.Uncon);
             strm.Write((byte)uncon);
             this.BaseInst.SendScriptVobStream(strm);
+
+            if (duration >= 0)
+            {
+                if (unconTimer == null)
+                    unconTimer = new GUCTimer(LiftUnconsciousness);
+
+                unconTimer.SetInterval(duration);
+                unconTimer.Start();
+            }
         }
 
         public void LiftUnconsciousness()
@@ -979,6 +985,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.ModelInst.StartAniJob(job, DoLiftUncon);
             else
                 DoLiftUncon();
+
+            if (unconTimer != null && unconTimer.Started)
+                unconTimer.Stop();
         }
 
         void DoLiftUncon()

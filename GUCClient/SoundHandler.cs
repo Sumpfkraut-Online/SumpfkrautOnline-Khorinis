@@ -128,6 +128,9 @@ namespace GUC
         static readonly List<ActiveSound> locSounds = new List<ActiveSound>();
         static readonly List<zCVob> sndVobs = new List<zCVob>();
 
+        internal static int VobSoundCount { get { return vobSounds.Count; } }
+        internal static int PosSoundCount { get { return locSounds.Count; } }
+
         public static void PlaySound3D(SoundDefinition sound, BaseVob vob, float range = 2500, float volume = 1.0f)
         {
             if (sound == null)

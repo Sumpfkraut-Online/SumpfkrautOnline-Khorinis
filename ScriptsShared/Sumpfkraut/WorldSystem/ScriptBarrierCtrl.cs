@@ -16,9 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         partial void pConstruct();
         public ScriptBarrierCtrl(WorldInst world)
         {
-            if (world == null)
-                throw new ArgumentNullException("World is null!");
-            this.world = world;
+            this.world = world ?? throw new ArgumentNullException("World is null!");
             pConstruct();
         }
 
@@ -32,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         #endregion
 
-        public void SetNextWeight(WorldTime time, float weight)
+        public void SetNextWeight(long time, float weight)
         {
             BaseBarrier.SetNextWeight(time, weight);
         }

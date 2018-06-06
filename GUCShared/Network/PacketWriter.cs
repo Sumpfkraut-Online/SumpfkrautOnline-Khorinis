@@ -147,7 +147,7 @@ namespace GUC.Network
 
         #region Writing Methods
 
-        public void Write(bool val)
+        public bool Write(bool val)
         {
             if (currentBitByte == -1)
             {
@@ -169,6 +169,7 @@ namespace GUC.Network
                 bitByte |= (1 << bitsWritten);
             }
             bitsWritten++;
+            return val;
         }
 
         void FlushBits()

@@ -118,24 +118,40 @@ namespace Gothic.Objects
             movementMode = 1 << 12; // 2 bits
         }
 
-       /* public enum zTMovementMode
+
+        public zColor LightColorStat
         {
-            None,
-            /// <summary> Vob's movement is currently being calculated. </summary>
-            InMovement,
-            InMovementNOCD,
+            get { return new zColor(Address + VarOffsets.lightColorStat); }
         }
 
-        /// <summary>
-        /// Whether the vob's movement is being calculated
-        /// </summary>
-        public zTMovementMode MovementMode
+        public zColor LightColorDyn
         {
-            get { return (zTMovementMode)((BitField1 & 0x3000) >> 12); }
+            get { return new zColor(Address + VarOffsets.lightColorDyn); }
+        }
 
-            // use BeginMovement & EndMovement instead
-            //set { BitField1 = (BitField1 & ~0x3000) | (((int)value << 12) & 0x3000); }
-        }*/
+        public zVec3 LightColorStatDir
+        {
+            get { return new zVec3(Address + VarOffsets.lightDirectionStat); }
+        }
+
+        /* public enum zTMovementMode
+         {
+             None,
+             /// <summary> Vob's movement is currently being calculated. </summary>
+             InMovement,
+             InMovementNOCD,
+         }
+
+         /// <summary>
+         /// Whether the vob's movement is being calculated
+         /// </summary>
+         public zTMovementMode MovementMode
+         {
+             get { return (zTMovementMode)((BitField1 & 0x3000) >> 12); }
+
+             // use BeginMovement & EndMovement instead
+             //set { BitField1 = (BitField1 & ~0x3000) | (((int)value << 12) & 0x3000); }
+         }*/
 
         /// <summary>
         /// Whether the vob's movement is being calculated
@@ -319,6 +335,11 @@ namespace Gothic.Objects
             set { TrafoObjToWorld.Direction = value; }
         }
 
+        public float FarZClipScale
+        {
+            get { return Process.ReadFloat(Address + VarOffsets.vobFarClipZScale); }
+            set { Process.Write(Address + VarOffsets.vobFarClipZScale, value); }
+        }
 
         public zCAIBase callback_ai
         {

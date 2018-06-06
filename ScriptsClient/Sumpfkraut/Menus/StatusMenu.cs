@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using WinApi.User.Enumeration;
 using GUC.GUI;
+using GUC.Scripts.Sumpfkraut.Menus.MainMenus;
 
-namespace GUC.Scripts.Sumpfkraut.Menus
+namespace GUC.Scripts.Arena.Menus
 {
-    /*class StatusMenu : GUCMainMenu
+    class StatusMenu : GUCMainMenu
     {
-        public VirtualKeys Hotkey = VirtualKeys.C;
+        public readonly static StatusMenu Instance = new StatusMenu();
 
         GUCVisual stat;
 
@@ -46,7 +47,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             title.Format = GUCVisualText.TextFormat.Center;
             const int cpyoffset = 84;
             const int cpx1 = 39; const int cpx2 = 180;
-            guild = stat.CreateText("Gildenlos", cpx1, cpyoffset); stat.CreateText("Stufe", cpx2, cpyoffset); level = stat.CreateText("0", cpx2+55, cpyoffset);
+            guild = stat.CreateText("Gildenlos", cpx1, cpyoffset); stat.CreateText("Stufe", cpx2, cpyoffset); level = stat.CreateText("0", cpx2 + 55, cpyoffset);
             stat.CreateText("Erfahrung", cpx1, cpyoffset + dist); exp = stat.CreateText("0", cpx2, cpyoffset + dist);
             stat.CreateText("Nächste Stufe", cpx1, cpyoffset + dist * 2); nextExp = stat.CreateText("500", cpx2, cpyoffset + dist * 2);
             stat.CreateText("Lernpunkte", cpx1, cpyoffset + dist * 3); LP = stat.CreateText("0", cpx2, cpyoffset + dist * 3);
@@ -77,11 +78,11 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
             const int tx = 450; const int ty1 = 80;
             title = stat.CreateText("TALENTE", tx, 59);
-            title.Format = GUCVisualText.TextFormat.Center;      
+            title.Format = GUCVisualText.TextFormat.Center;
             AddButton("Kampf", "", tx, ty1, null);
             AddButton("Magie", "", tx, ty1 + dist2, null);
-            AddButton("Diebeskunst", "", tx, ty1 + 2*dist2, null);
- 
+            AddButton("Diebeskunst", "", tx, ty1 + 2 * dist2, null);
+
             title = stat.CreateText("FERTIGKEITEN", tx, 191);
             title.Format = GUCVisualText.TextFormat.Center;
             const int ty2 = 217;
@@ -93,5 +94,5 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             AddButton("Alchemist", "", tx, ty2 + 5 * dist2, null);
             AddButton("Gelehrter", "", tx, ty2 + 6 * dist2, null);
         }
-    }*/
+    }
 }

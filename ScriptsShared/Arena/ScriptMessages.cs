@@ -19,33 +19,28 @@ namespace GUC.Scripts.Arena
         DuelWin,
         DuelEnd,
 
-        TOWarmup,
-        TOStart,
-        TOFinish,
-        TOEnd,
-
-        TOJoinTeam,
-        TOSelectClass,
-        SpectateTeam,
-
-        TOTeamCount,
-
         ChatMessage,
         ChatTeamMessage,
         ChatPrivateMessage,
 
         ScoreDuelMessage,
-        ScoreTOMessage,
-        ScoreHordeMessage,
 
         PlayerInfoMessage,
+        PlayerInfoTeam,
         PlayerQuitMessage,
 
         PointsMessage,
+        
+        ModeStart,
+        ModePhase,
+        ModeSpectate,
+        ModeClassSelect,
 
-        HordeJoin,
-        HordeSpectate,
-        HordeStart,
-        HordePhase,
+        TDMTeamSelect,
+        TDMScoreMessage,
+        TDMWinMessage,
+
+        BRJoinMessage,
+
     }
 }

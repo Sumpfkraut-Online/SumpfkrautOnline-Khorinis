@@ -15,17 +15,6 @@ namespace GUC.Scripts.Arena
 {
     static partial class TeamMode
     {
-        public const int MinClientsToStart = 2;
-
-        static List<TOTeamInst> teams = new List<TOTeamInst>(3);
-        public static ReadOnlyList<TOTeamInst> Teams { get { return teams; } }
-
-        static GUCTimer phaseTimer = new GUCTimer();
-
-        static WorldInst world = null;
-        public static WorldInst World { get { return world; } }
-
-        public static uint RemainingPhaseMsec { get { return (uint)(phaseTimer.GetRemainingTicks() / TimeSpan.TicksPerMillisecond); } }
 
         public static void AddScore(ArenaClient client)
         {
@@ -39,91 +28,8 @@ namespace GUC.Scripts.Arena
                 PhaseFinish();
             }
         }
-
-        public static void SpawnCharacter(ArenaClient player)
-        {
-            if (player.Team == null || player.TOClass == null)
-                return;
-
-            player.KillCharacter();
-
-            var classDef = player.TOClass;
-            NPCInst npc;
-            if (classDef.NPCDef == null)
-            {
-                var charInfo = player.CharInfo;
-                npc = new NPCInst(NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"));
-                npc.UseCustoms = true;
-                npc.CustomBodyTex = charInfo.BodyTex;
-                npc.CustomHeadMesh = charInfo.HeadMesh;
-                npc.CustomHeadTex = charInfo.HeadTex;
-                npc.CustomVoice = charInfo.Voice;
-                npc.CustomFatness = charInfo.Fatness;
-                npc.CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth);
-                npc.CustomName = charInfo.Name;
-            }
-            else
-            {
-                npc = new NPCInst(NPCDef.Get(classDef.NPCDef));
-            }
-
-            foreach (var eqPair in classDef.ItemDefs)
-            {
-                var item = new ItemInst(ItemDef.Get(eqPair.Item1));
-                item.SetAmount(eqPair.Item2);
-                npc.Inventory.AddItem(item);
-                npc.EffectHandler.TryEquipItem(item);
-            }
-
-            foreach (var overlay in classDef.Overlays)
-            {
-                ScriptOverlay ov;
-                if (npc.ModelDef.TryGetOverlay(overlay, out ov))
-                    npc.ModelInst.ApplyOverlay(ov);
-            }
-
-            npc.TeamID = teams.IndexOf(player.Team);
-
-            var spawnPoint = player.Team.GetSpawnPoint();
-            npc.SetHealth(100, 100);
-            npc.Spawn(world, spawnPoint.Item1, spawnPoint.Item2);
-            player.SetControl(npc);
-        }
-
-        public static bool CheckStartTO()
-        {
-            if (activeTODef != null)
-                return false;
-
-            if (ArenaClient.GetCount() < MinClientsToStart)
-                return false;
-
-            StartNextTO();
-            return true;
-        }
-
-        static int toLoopIndex = 0;
-        public static void StartNextTO()
-        {
-            var todef = TODef.GetAll().ElementAtOrDefault(toLoopIndex++);
-
-            if (toLoopIndex >= TODef.GetAll().Count())
-                toLoopIndex = 0;
-
-            StartTO(todef);
-        }
-
-        public static void StartTO(string name)
-        {
-            var to = TODef.TryGet(name);
-            if (to == null)
-            {
-                Log.Logger.Log("StartTO '{0}' not found.", name);
-                return;
-            }
-            StartTO(to);
-        }
-
+       
+        
         public static void StartTO (TODef def)
         {
             if (def == null)

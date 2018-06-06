@@ -115,7 +115,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     Close();
                     break;
                 case VirtualKeys.Menu: // DROP
-                    if (player != null)
+                    if (player != null && !Arena.ArenaClient.GMJoined)
                     {
                         ItemInst selectedItem = inv.GetSelectedItem();
                         if (selectedItem != null)
@@ -143,10 +143,11 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                         case ItemTypes.WepBow:
                         case ItemTypes.WepXBow:
                         case ItemTypes.Armor:
-                            if (selItem.IsEquipped)
-                                NPCInst.Requests.UnequipItem(player, selItem);
-                            else
-                                NPCInst.Requests.EquipItem(player, selItem);
+                            if (!Arena.ArenaClient.GMJoined)
+                                if (selItem.IsEquipped)
+                                    NPCInst.Requests.UnequipItem(player, selItem);
+                                else
+                                    NPCInst.Requests.EquipItem(player, selItem);
                             break;
                         default:
                             NPCInst.Requests.UseItem(player, selItem);

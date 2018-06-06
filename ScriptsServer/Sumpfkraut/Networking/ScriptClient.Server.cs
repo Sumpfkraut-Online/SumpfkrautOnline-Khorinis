@@ -12,6 +12,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 {
     public partial class ScriptClient : ExtendedObject, GameClient.IScriptClient
     {
+        public bool IsConnected { get { return this.baseClient.IsConnected; } }
+
         public bool IsAllowedToConnect()
         {
             return true;

@@ -21,11 +21,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         {
             if (Randomizer.GetInt(0, 5) == 0)
             {
-                SetNextWeight(this.World.Clock.Time + Randomizer.GetInt(60, 360), (float)Randomizer.GetDouble()); // rain
+                SetNextWeight(Randomizer.GetInt(60, 360) * TimeSpan.TicksPerSecond, (float)Randomizer.GetDouble()); // rain
             }
             else
             {
-                SetNextWeight(this.World.Clock.Time + Randomizer.GetInt(60, 360), 0.0f); // sun
+                SetNextWeight(Randomizer.GetInt(60, 360) * TimeSpan.TicksPerSecond, 0.0f); // sun
             }
         }
 

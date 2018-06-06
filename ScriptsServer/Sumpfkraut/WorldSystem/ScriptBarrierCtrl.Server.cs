@@ -15,23 +15,25 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         const long VisibleTimeMin = 1 * TimeSpan.TicksPerSecond;
         const long VisibleTimeMax = 20 * TimeSpan.TicksPerSecond;
 
-        const int TransitionSecondsMin = 1;
-        const int TransitionSecondsMax = 20;
+        const int TransitionSecondsMin = 2;
+        const int TransitionSecondsMax = 10;
 
         GUCTimer timer = new GUCTimer();
 
         void ShowBarrier()
         {
-            int transition = (int)(Randomizer.GetInt(TransitionSecondsMin, TransitionSecondsMax) * this.World.Clock.Rate);
-            SetNextWeight(this.World.Clock.Time + transition, 1.0f); // barrier visible
+            long transition = Randomizer.GetInt(TransitionSecondsMin, TransitionSecondsMax) * TimeSpan.TicksPerSecond;
+            SetNextWeight(GameTime.Ticks + transition, 1.0f); // barrier visible
+
             timer.SetInterval(VisibleTimeMin + (long)(Randomizer.GetDouble() * VisibleTimeMax));
             timer.SetCallback(HideBarrier);
         }
 
         void HideBarrier()
         {
-            int transition = (int)(Randomizer.GetInt(TransitionSecondsMin, TransitionSecondsMax) * this.World.Clock.Rate);
-            SetNextWeight(this.World.Clock.Time + transition, 0); // barrier invisible
+            long transition = Randomizer.GetInt(TransitionSecondsMin, TransitionSecondsMax) * TimeSpan.TicksPerSecond;
+            SetNextWeight(GameTime.Ticks + transition, 0.0f); // barrier invisible
+
             timer.SetInterval(InvisibleTimeMin + (long)(Randomizer.GetDouble() * InvisibleTimeMax));
             timer.SetCallback(ShowBarrier);
         }

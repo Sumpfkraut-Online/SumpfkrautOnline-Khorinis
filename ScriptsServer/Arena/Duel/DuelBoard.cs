@@ -19,7 +19,7 @@ namespace GUC.Scripts.Arena
         {
             ArenaClient.ForEach(c =>
             {
-                if (Cast.Try(c, out ArenaClient client) && client.Team == null)
+                if (Cast.Try(c, out ArenaClient client))
                     list.Add(client);
             });
             stream.Write((byte)list.Count);

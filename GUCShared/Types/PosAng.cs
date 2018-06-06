@@ -10,6 +10,14 @@ namespace GUC.Types
         public Vec3f Position;
         public Angles Angles;
 
+        public PosAng(Vec3f position) : this(position, new Angles(0, 0, 0))
+        {
+        }
+
+        public PosAng(Vec3f position, float yaw) : this(position, new Angles(0, yaw, 0))
+        {
+        }
+
         public PosAng(Vec3f position, Angles angles)
         {
             this.Position = position;

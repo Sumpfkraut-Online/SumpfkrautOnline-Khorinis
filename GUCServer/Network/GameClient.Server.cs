@@ -204,6 +204,8 @@ namespace GUC.Network
 
         #region Collection
 
+        public bool IsConnected { get { return this.isCreated; } }
+
         static StaticCollection<GameClient> idColl = new StaticCollection<GameClient>(200); // slots
         static DynamicCollection<GameClient> clients = new DynamicCollection<GameClient>();
 

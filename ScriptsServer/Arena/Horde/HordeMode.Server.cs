@@ -323,11 +323,12 @@ namespace GUC.Scripts.Arena
             else
             {
                 SetPhase(HordePhase.Lost);
+                players.ForEach(p => p.Character.SetHealth(0));
             }
 
             gameTimer.SetCallback(StartHorde);
             gameTimer.SetInterval(30 * TimeSpan.TicksPerSecond);
-            gameTimer.Start();
+            gameTimer.Restart();
         }
 
         static NPCInst SpawnEnemy(HordeEnemy enemy, Vec3f spawnPoint, float spawnRange = 100)
@@ -353,6 +354,7 @@ namespace GUC.Scripts.Arena
             Vec3f spawnPos = Randomizer.GetVec3fRad(spawnPoint, spawnRange);
             Angles spawnAng = Randomizer.GetYaw();
 
+            //npc.TeamID = 1;
             npc.BaseInst.SetNeedsClientGuide(true);
             npc.Spawn(activeWorld, spawnPos, spawnAng);
             return npc;
@@ -406,6 +408,7 @@ namespace GUC.Scripts.Arena
 
             Vec3f spawnPos = Randomizer.GetVec3fRad(activeDef.SpawnPos, activeDef.SpawnRange);
             Angles spawnAng = Randomizer.GetYaw();
+            //npc.TeamID = 0;
             npc.Spawn(activeWorld, spawnPos, spawnAng);
             client.SetControl(npc);
         }

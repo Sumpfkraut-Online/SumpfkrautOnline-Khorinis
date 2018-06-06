@@ -46,6 +46,9 @@ namespace GUC.Scripts
             OnUpdate?.Invoke(ticks);
             CheckMusic();
             CheckPosition();
+
+            //if (Sumpfkraut.WorldSystem.WorldInst.Current != null)
+            //    Sumpfkraut.WorldSystem.WorldInst.Current.Barrier.SetNextWeight(Sumpfkraut.WorldSystem.WorldInst.Current.Clock.Time, 1);
         }
 
         SoundInstance menuTheme = null;
@@ -68,9 +71,6 @@ namespace GUC.Scripts
             WinApi.Process.Write(0x006B7772, 0xEB, 0x69);
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
 
-
-            GUCMenu.CloseActiveMenus();
-
             if (menuTheme != null)
             {
                 SoundHandler.StopSound(menuTheme);
@@ -91,7 +91,7 @@ namespace GUC.Scripts
                     SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
                     return;
                 }
-                else if (Arena.TeamMode.TeamDef != null && Arena.TeamMode.Phase == Arena.TOPhases.Battle)
+                else if (client.Character.TeamID >= 0)
                 {
                     bool enemyCloseBy = false;
                     var heroPos = client.Character.GetPosition();
@@ -139,7 +139,7 @@ namespace GUC.Scripts
             {
                 if (!hero.IsUnconscious && env.WaterLevel > 0.3f && swimTimer.IsReady)
                 {
-                    ScreenScrollText.AddText("Deine Rüstung ist zu schwer zum schwimmen!");
+                    ScreenScrollText.AddText("Du kannst ja gar nicht schwimmen!?!");
                 }
 
                 if (!hero.IsUnconscious)
@@ -164,21 +164,6 @@ namespace GUC.Scripts
             if (hero != null && !hero.IsDead)
             {
                 DoUnconstuff(hero);
-
-                if (Arena.TeamMode.TeamDef == null && Arena.ArenaClient.Client.HordeClass == null)
-                {
-                    if (hero.GetPosition().GetDistancePlanar(Vec3f.Null) > 10000)
-                        if (Randomizer.GetInt(2) == 0)
-                        {
-                            hero.SetPosition(new Vec3f(-1969.563f, -120.6398f, 2707.328f));
-                            hero.SetAngles(Angles.Null);
-                        }
-                        else
-                        {
-                            hero.SetPosition(new Vec3f(-4550.162f, -98.70279f, 1392.133f));
-                            hero.SetAngles(Angles.Null);
-                        }
-                }
             }
         }
     }

@@ -31,7 +31,7 @@ namespace GUC.Scripts.Arena
             SendMessage(builder.ToString());
         }
 
-        public static void ReadTeamMessage(ArenaClient sender, PacketReader stream)
+        /*public static void ReadTeamMessage(ArenaClient sender, PacketReader stream)
         {
             if (sender.Team == null)
                 return;
@@ -44,7 +44,7 @@ namespace GUC.Scripts.Arena
             builder.Append(message);
 
             SendTeamMessage(sender.Team, builder.ToString());
-        }
+        }*/
 
         public static void SendMessage(string message)
         {
@@ -54,7 +54,7 @@ namespace GUC.Scripts.Arena
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
         }
 
-        public static void SendTeamMessage(TOTeamInst team, string message)
+        /*public static void SendTeamMessage(TOTeamInst team, string message)
         {
             if (team == null)
                 return;
@@ -63,6 +63,6 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.ChatTeamMessage);
             stream.Write(message);
             team.Players.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
-        }
+        }*/
     }
 }

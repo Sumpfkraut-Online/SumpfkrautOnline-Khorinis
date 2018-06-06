@@ -14,7 +14,7 @@ namespace GUC.WorldObjects.WorldGlobals
 
         public partial interface IScriptSkyController : IScriptGameObject
         {
-            void SetNextWeight(WorldTime time, float weight);
+            void SetNextWeight(long time, float weight);
             void OnWriteSetWeight(PacketWriter stream);
             void OnReadSetWeight(PacketReader stream);
         }
@@ -28,31 +28,27 @@ namespace GUC.WorldObjects.WorldGlobals
 
         internal SkyController(World world, IScriptSkyController scriptObject) : base(scriptObject)
         {
-            if (world == null)
-                throw new ArgumentNullException("World is null!");
-
             this.world = world;
         }
 
         #endregion
 
         #region Properties
-        
-        World world;
-        /// <summary> The World of this SkyController. </summary>
-        public World World { get { return this.world; } }
 
-        WorldTime startTime;
-        /// <summary> The WorldTime from which the interpolation started. </summary>
-        public WorldTime StartTime { get { return this.startTime; } }
+        World world;
+        public World World { get { return world; } }
+
+        long startTime;
+        /// <summary> The time in ticks from which the interpolation started. </summary>
+        public long StartTime { get { return this.startTime; } }
 
         float startWeight;
         /// <summary> The weight from which the interpolation started. </summary>
         public float StartWeight { get { return this.startWeight; } }
 
-        WorldTime endTime;
-        /// <summary> The WorldTime at which the interpolation reaches its EndWeight. </summary>
-        public WorldTime EndTime { get { return this.endTime; } }
+        long endTime;
+        /// <summary> The time in ticks at which the interpolation reaches its EndWeight. </summary>
+        public long EndTime { get { return this.endTime; } }
         
         float endWeight;
         /// <summary> The weight reached at the EndTime. </summary>
@@ -67,14 +63,14 @@ namespace GUC.WorldObjects.WorldGlobals
         #region Set Weight
         
         /// <summary> Sets the next interpolated weight and time. </summary>
-        /// <param name="time"> The point in time when the given weight should be reached. </param>
+        /// <param name="ticks"> The point in time when the given weight should be reached. </param>
         /// <param name="weight">[0..1]</param>
-        public virtual void SetNextWeight(WorldTime time, float weight)
+        public virtual void SetNextWeight(long ticks, float weight)
         {
-            startTime = world.Clock.Time;
+            startTime = GameTime.Ticks;
             startWeight = currentWeight;
 
-            endTime = time;
+            endTime = ticks;
             if (weight < 0)
                 endWeight = 0;
             else if (weight > 1)
@@ -93,21 +89,19 @@ namespace GUC.WorldObjects.WorldGlobals
             {
                 float percent;
 
-                long currentTicks = world.Clock.GetPreciseTicks();
-                long startTicks = this.startTime.GetTotalSeconds() * TimeSpan.TicksPerSecond;
-                long endTicks = this.endTime.GetTotalSeconds() * TimeSpan.TicksPerSecond;
-                
-                if (currentTicks > endTicks)
+                long currentTime = GameTime.Ticks;
+                                
+                if (currentTime >= endTime)
                 {
                     percent = 1;
                 }
-                else if (currentTicks < startTicks)
+                else if (currentTime <= startTime)
                 {
                     percent = 0;
-                }
+                } 
                 else
                 {
-                    percent = (float)((double)(currentTicks - startTicks) / (endTicks - startTicks));
+                    percent = (float)((double)(currentTime - startTime) / (endTime - startTime));
                 }
 
                 this.currentWeight = startWeight + (endWeight - startWeight) * percent;
@@ -124,26 +118,39 @@ namespace GUC.WorldObjects.WorldGlobals
 
         protected override void ReadProperties(PacketReader stream)
         {
-            this.endTime = new WorldTime(stream.ReadInt());
+            this.endTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
             this.endWeight = stream.ReadFloat();
         }
 
         protected override void WriteProperties(PacketWriter stream)
         {
-            stream.Write(this.endTime.GetTotalSeconds());
+            stream.Write(GetMsecToEnd());
             stream.Write(this.endWeight);
+        }
+
+        protected uint GetMsecToEnd()
+        {
+            long current = GameTime.Ticks;
+            if (current >= endTime)
+            {
+                return 0;
+            }
+            else
+            {
+                return (uint)((this.EndTime - current) / TimeSpan.TicksPerMillisecond);
+            }
         }
 
         public void WriteNextWeight(PacketWriter stream)
         {
-            stream.Write(this.endTime.GetTotalSeconds());
+            stream.Write(GetMsecToEnd());
             stream.Write(this.endWeight);
             this.ScriptObject.OnWriteSetWeight(stream);
         }
 
         public void ReadSetNextWeight(PacketReader stream)
         {
-            this.endTime = new WorldTime(stream.ReadInt());
+            this.endTime = GameTime.Ticks + stream.ReadUInt() * TimeSpan.TicksPerMillisecond;
             this.endWeight = stream.ReadFloat();
             this.ScriptObject.OnReadSetWeight(stream);
         }

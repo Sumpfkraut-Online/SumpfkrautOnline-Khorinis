@@ -131,7 +131,7 @@ namespace GUC
                 hGame.AddHooks();
                 hPlayerVob.AddHooks();
                 hWeather.AddHooks();
-                hView.AddHooks();
+                VobRenderArgs.AddHooks();
                 hNpc.AddHooks();
                 hModel.AddHooks();
 

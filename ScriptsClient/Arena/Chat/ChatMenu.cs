@@ -92,7 +92,7 @@ namespace GUC.Scripts.Arena
 
         public void OpenTeamChat()
         {
-            if (TeamMode.TeamDef == null)
+            //if (TeamMode.TeamDef == null)
             {
                 //AddMessage(ChatMode.All, "Du musst erst einem Team beitreten bevor du den Teamchat verwenden kannst!");
                 // OpenAllChat();
@@ -156,6 +156,19 @@ namespace GUC.Scripts.Arena
                 {
                     Log.Logger.Log("not found");
                 }
+                return;
+            }
+            else if (message.StartsWith("/scale"))
+            {
+                string[] strs = message.Substring(7).Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (strs.Length <= 0 || !float.TryParse(strs[0], out float x))
+                    x = 1;
+                if (strs.Length <= 1 || !float.TryParse(strs[1], out float y))
+                    y = 1;
+                if (strs.Length <= 2 || !float.TryParse(strs[2], out float z))
+                    z = 1;
+
+                Log.Logger.Log(x + " " + y + " " + z);
                 return;
             }
 
@@ -248,11 +261,11 @@ namespace GUC.Scripts.Arena
                 index++;
             }
 
-            if (chatMode == ChatMode.Team && TeamMode.TeamDef != null)
-            {
-                chatBackground.Texts[index].SetColor(TeamMode.TeamDef.Color);
-            }
-            else if (chatMode == ChatMode.Private)
+            //if (chatMode == ChatMode.Team && TeamMode.TeamDef != null)
+            //{
+            //    chatBackground.Texts[index].SetColor(TeamMode.TeamDef.Color);
+            //}
+            if (chatMode == ChatMode.Private)
             {
                 chatBackground.Texts[index].SetColor(ColorRGBA.Pink);
             }

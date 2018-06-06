@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
-using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 {
@@ -24,19 +24,19 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         protected float aggressionRadius;
         public float AggressionRadius { get { return this.aggressionRadius; } }
-        public void SetAggressionRadius (float value)
+        public void SetAggressionRadius(float value)
         {
             this.aggressionRadius = value;
         }
 
         protected float turnAroundVelocity;
         public float TurnAroundVelocity { get { return this.turnAroundVelocity; } }
-        public void SetAroundTurnVelocity (float value)
+        public void SetAroundTurnVelocity(float value)
         {
             this.turnAroundVelocity = value;
         }
 
-        public SimpleAIPersonality (float aggressionRadius, float turnAroundVelocity)
+        public SimpleAIPersonality(float aggressionRadius, float turnAroundVelocity)
         {
             this.aggressionRadius = aggressionRadius;
             this.turnAroundVelocity = turnAroundVelocity;
@@ -44,7 +44,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        public override void Init (AIMemory aiMemory, BaseAIRoutine aiRoutine)
+        public override void Init(AIMemory aiMemory, BaseAIRoutine aiRoutine)
         {
             this.aiMemory = aiMemory ?? new AIMemory();
             this.aiRoutine = aiRoutine ?? new SimpleAIRoutine();
@@ -54,10 +54,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        
+
         // utility
 
-        public static bool TryFindClosestTarget (VobInst vob, AITarget aiTarget, out VobInst closestTarget)
+        public static bool TryFindClosestTarget(VobInst vob, AITarget aiTarget, out VobInst closestTarget)
         {
             closestTarget = null;
             List<VobInst> vobTargets = aiTarget.VobTargets;
@@ -86,7 +86,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public static bool TryFindClosestTarget (VobInst vob, List<VobInst> vobTargets, out VobInst closestTarget)
+        public static bool TryFindClosestTarget(VobInst vob, List<VobInst> vobTargets, out VobInst closestTarget)
         {
             closestTarget = null;
             int closestTargetIndex = -1;
@@ -114,26 +114,26 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        protected void SubscribeGuideCommand (GuideCommandInfo guideCmdInfo)
+        protected void SubscribeGuideCommand(GuideCommandInfo guideCmdInfo)
         {
             guideCommandByVobInst[guideCmdInfo.GuidedVobInst] = guideCmdInfo;
         }
 
-        protected void UnsubscribeGuideCommand (GuideCommandInfo guideCmdInfo)
+        protected void UnsubscribeGuideCommand(GuideCommandInfo guideCmdInfo)
         {
             guideCommandByVobInst.Remove(guideCmdInfo.GuidedVobInst);
         }
 
-        protected void UnsubscribeGuideCommand (VobInst guided)
+        protected void UnsubscribeGuideCommand(VobInst guided)
         {
             guideCommandByVobInst.Remove(guided);
         }
-        
-        
-        
+
+
+
         // moving around
 
-        public void RunMode (AIAgent aiAgent)
+        public void RunMode(AIAgent aiAgent)
         {
             throw new NotImplementedException();
 
@@ -144,12 +144,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             //}
         }
 
-        public void WalkMode (AIAgent aiAgent)
+        public void WalkMode(AIAgent aiAgent)
         {
             throw new NotImplementedException();
         }
 
-        public void GoTo (VobInst guided, Vec3f position)
+        public void GoTo(VobInst guided, Vec3f position)
         {
             // find out if there already is an existing, similar guide-command 
             // and recycle it if possible before assigning a new one (costly on client-side)
@@ -173,7 +173,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             SubscribeGuideCommand(info);
         }
 
-        public void GoTo (VobInst guided, VobInst target)
+        public void GoTo(VobInst guided, VobInst target)
         {
             // find out if there already is an existing, similar guide-command 
             // and recycle it if possible before assigning a new one (costly on client-side)
@@ -192,13 +192,13 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             // initialize new guide and remove old one from GUC-memory automatically
             GoToVobCommand cmd = new GoToVobCommand(target);
             guided.BaseInst.SetGuideCommand(cmd);
-            
+
             // replace possible old guide from script-memory or insert new value
             GuideCommandInfo info = new GuideCommandInfo(cmd, guided);
             SubscribeGuideCommand(info);
         }
-        
-        public void GoTo (AIAgent aiAgent, Vec3f position)
+
+        public void GoTo(AIAgent aiAgent, Vec3f position)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
             for (int i = 0; i < aiClients.Count; i++)
@@ -207,7 +207,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public void GoTo (AIAgent aiAgent, VobInst target)
+        public void GoTo(AIAgent aiAgent, VobInst target)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
             for (int i = 0; i < aiClients.Count; i++)
@@ -216,7 +216,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public void GoTo (AIAgent aiAgent, AITarget aiTarget)
+        public void GoTo(AIAgent aiAgent, AITarget aiTarget)
         {
             // let each client follow its nearest VobInst from aiTarget respectively
             List<VobInst> followers = aiAgent.AIClients;
@@ -230,22 +230,22 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public void Jump (AIAgent aiAgent, int forwardVelocity, int upVelocity)
+        public void Jump(AIAgent aiAgent, int forwardVelocity, int upVelocity)
         {
             throw new NotImplementedException();
         }
 
-        public void ClimbLedge (AIAgent aiAgent, WorldObjects.NPC.ClimbingLedge ledge)
+        public void ClimbLedge(AIAgent aiAgent, WorldObjects.NPC.ClimbingLedge ledge)
         {
             throw new NotImplementedException();
         }
 
-        public void TurnAround (VobInst guided, Vec3f direction, float angularVelocity)
+        public void TurnAround(VobInst guided, Vec3f direction, float angularVelocity)
         {
             //guided.BaseInst.SetDirection(direction);
         }
 
-        public void TurnAround (AIAgent aiAgent, Vec3f direction, float angularVelocity)
+        public void TurnAround(AIAgent aiAgent, Vec3f direction, float angularVelocity)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
             for (int c = 0; c < aiClients.Count; c++)
@@ -258,12 +258,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         // combat actions
 
-        public void Attack (AIAgent aiAgent, Vec3f direction)
+        public void Attack(AIAgent aiAgent, Vec3f direction)
         {
             throw new NotImplementedException();
         }
 
-        public void Attack (VobInst aggressor, VobInst target)
+        public void Attack(VobInst aggressor, VobInst target)
         {
             if (aggressor is NPCInst aggressorNPC)
             {
@@ -289,14 +289,42 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                     aggressorNPC.BaseInst.SetGuideCommand(new GoToVobLookAtCommand(target, fightRange - 20f)); // -20 cm for safety
                 }
 
-                float distance = aggressorNPC.GetPosition().GetDistance(target.GetPosition());
-                if (distance < fightRange)
+                if ((aggressorNPC.CurrentFightMove == FightMoves.None || aggressorNPC.CanCombo) && target is NPCInst enemy)
                 {
-                    aggressorNPC.EffectHandler.TryFightMove(FightMoves.Fwd);
-                }
-                else if (distance < fightRange + 100f)
-                {
-                    aggressorNPC.EffectHandler.TryFightMove(FightMoves.Run);
+                    FightMoves move = FightMoves.Fwd;
+                    float distance = aggressorNPC.GetPosition().GetDistance(enemy.GetPosition());
+                    if (distance < fightRange + 20f)
+                    {
+                        if (enemy.FightAnimation != null && enemy.CurrentFightMove >= FightMoves.Fwd && enemy.CurrentFightMove <= FightMoves.Run) // in attack
+                        {
+                            if (enemy.CurrentFightMove == FightMoves.Run)
+                            {
+                                // strafe
+                                move = Randomizer.GetInt(3) == 0 ? FigureAttackCombo(aggressorNPC) : FightMoves.Parry;
+                            }
+                            else
+                            {
+                                float progress = enemy.FightAnimation.GetProgress();
+                                if (progress < 0.15)
+                                    move = Randomizer.GetInt(4) == 0 ? FigureAttackCombo(aggressorNPC) : FightMoves.Dodge;
+                                else if (progress < 0.5)
+                                    move = Randomizer.GetInt(4) == 0 ? FigureAttackCombo(aggressorNPC) : FightMoves.Parry;
+                                else
+                                    move = FigureAttackCombo(aggressorNPC);
+                            }
+                        }
+                        else
+                            move = FigureAttackCombo(aggressorNPC);
+                    }
+                    else if (distance < fightRange + 100f)
+                    {
+                        move = FightMoves.Run;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                    aggressorNPC.EffectHandler.TryFightMove(move);
                 }
             }
             else
@@ -305,12 +333,34 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public void Attack (AIAgent aiAgent, AITarget aiTarget)
+        FightMoves FigureAttackCombo(NPCInst npc)
+        {
+            if (npc.CurrentFightMove == FightMoves.Left)
+            {
+                return Randomizer.GetInt(2) == 0 ? FightMoves.Right : FightMoves.Fwd;
+            }
+            else if (npc.CurrentFightMove == FightMoves.Right)
+            {
+                return Randomizer.GetInt(2) == 0 ? FightMoves.Left : FightMoves.Fwd;
+            }
+
+            switch (Randomizer.GetInt(4))
+            {
+                case 0: return FightMoves.Right;
+                case 1: return FightMoves.Left;
+                case 2:
+                case 3:
+                default:
+                    return FightMoves.Fwd;
+            }
+        }
+
+        public void Attack(AIAgent aiAgent, AITarget aiTarget)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
             List<VobInst> targets = aiTarget.VobTargets;
             VobInst closestTarget = null;
-            
+
             if (aiTarget.VobTargets.Count < 1) { return; }
 
             // for now, let each aiClient attack its closest foe
@@ -323,7 +373,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public void DefendAgainst (AIAgent aiAgent, VobInst defendedVob, VobInst aggressor)
+        public void DefendAgainst(AIAgent aiAgent, VobInst defendedVob, VobInst aggressor)
         {
             throw new NotImplementedException();
         }
@@ -332,22 +382,22 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         // non-hostile actions
 
-        public void Idle (AIAgent aiAgent)
+        public void Idle(AIAgent aiAgent)
         {
             throw new NotImplementedException();
         }
 
-        public void EquipItem (AIAgent aiAgent, ItemInst item)
+        public void EquipItem(AIAgent aiAgent, ItemInst item)
         {
             throw new NotImplementedException();
         }
 
-        public void UnequipItem (AIAgent aiAgent, ItemInst item)
+        public void UnequipItem(AIAgent aiAgent, ItemInst item)
         {
             throw new NotImplementedException();
         }
 
-        public void DrawWeapon (AIAgent aiAgent, ItemInst item)
+        public void DrawWeapon(AIAgent aiAgent, ItemInst item)
         {
             throw new NotImplementedException();
         }
@@ -355,7 +405,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
         // can be run anytime to let the aiClients recognize their surrounding actively
-        public override void MakeActiveObservation (AIAgent aiAgent)
+        public override void MakeActiveObservation(AIAgent aiAgent)
         {
             List<VobInst> aiClients = aiAgent.AIClients;
             List<VobInst> enemies = new List<VobInst>();
@@ -375,7 +425,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                         continue;
 
                     // find all enemies in the radius of aggression
-                    npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, aggressionRadius, 
+                    npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, aggressionRadius,
                         delegate (WorldObjects.NPC nearNPC)
                     {
                         var otherNpc = (NPCInst)nearNPC.ScriptObject;
@@ -386,7 +436,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
                         if (nearNPC.IsPlayer && !nearNPC.IsDead && !otherNpc.IsUnconscious)
                         {
-                            enemies.Add((VobInst) nearNPC.ScriptObject);
+                            enemies.Add((VobInst)nearNPC.ScriptObject);
                         }
                     });
                 }
@@ -403,7 +453,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             }
         }
 
-        public override void ProcessActions (AIAgent aiAgent)
+        public override void ProcessActions(AIAgent aiAgent)
         {
             List<BaseAIAction> aiActions = aiMemory.GetAIActions();
 
@@ -411,7 +461,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
             BaseAIAction aiAction = aiActions[0]; // current action
             AIActions.Enumeration.AiActionType actionType = aiAction.ActionType;
-            
+
             switch (actionType)
             {
                 case AIActions.Enumeration.AiActionType.GoToAIAction:
@@ -469,7 +519,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
         // create AIAction- from AIObservation-objects
-        public override void ProcessObservations (AIAgent aiAgent)
+        public override void ProcessObservations(AIAgent aiAgent)
         {
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)
             if (aiAgent.AIClients.Count < 1) { return; }
@@ -494,7 +544,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             {
                 List<BaseAIAction> newAIActions = new List<BaseAIAction> { new AttackAIAction(
                         new AITarget( enemies )) };
-                    aiMemory.SetAIActions(newAIActions);
+                aiMemory.SetAIActions(newAIActions);
             }
         }
 

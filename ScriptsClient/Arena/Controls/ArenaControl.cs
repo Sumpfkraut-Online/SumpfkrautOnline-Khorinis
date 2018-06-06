@@ -51,7 +51,6 @@ namespace GUC.Scripts.Arena.Controls
 
             showScreenInfo = !showScreenInfo;
             Network.GameClient.ShowInfo = showScreenInfo;
-            Menus.TOInfoScreen.Shown = showScreenInfo;
         }
 
 

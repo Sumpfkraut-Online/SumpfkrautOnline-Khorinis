@@ -30,9 +30,9 @@ namespace GUC.WorldObjects.WorldGlobals
         #region SetNextWeight
 
         partial void pSetNextWeight();
-        public override void SetNextWeight(WorldTime time, float weight)
+        public override void SetNextWeight(long ticks, float weight)
         {
-            base.SetNextWeight(time, weight);
+            base.SetNextWeight(ticks, weight);
             pSetNextWeight();
         }
 

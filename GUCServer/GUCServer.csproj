@@ -165,6 +165,9 @@
     <Compile Include="..\GUCShared\Utilities\Alg.cs">
       <Link>Utilities\Alg.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Utilities\BoolEvent.cs">
+      <Link>Utilities\BoolEvent.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
     </Compile>
@@ -182,6 +185,9 @@
     </Compile>
     <Compile Include="..\GUCShared\Utilities\LockTimer.cs">
       <Link>Utilities\LockTimer.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\Randomizer.cs">
+      <Link>Utilities\Randomizer.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\ReadOnlyList.cs">
       <Link>Utilities\ReadOnlyList.cs</Link>
@@ -333,7 +339,6 @@
     <Compile Include="Scripting\ScriptInterface.Server.cs" />
     <Compile Include="TCPListener.cs" />
     <Compile Include="Utilities\ExtendedObject.Server.cs" />
-    <Compile Include="Utilities\Randomizer.cs" />
     <Compile Include="Utilities\Threading\TestRun.cs" />
     <Compile Include="WorldObjects\BaseVob.Server.cs" />
     <Compile Include="WorldObjects\Cells\BigCell.cs" />

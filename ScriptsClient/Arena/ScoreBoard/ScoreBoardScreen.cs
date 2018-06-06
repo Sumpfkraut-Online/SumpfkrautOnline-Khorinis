@@ -69,10 +69,10 @@ namespace GUC.Scripts.Arena
             if (shown)
                 return;
 
-            SendToggleMessage();
+            SendToggleMessage(true);
+            OnOpen?.Invoke();
             for (int i = 0; i < usedCount; i++)
                 boards[i].Show();
-            OnOpen?.Invoke();
             openTime = GameTime.Ticks;
             closeTimer.Stop();
             shown = true;
@@ -100,17 +100,17 @@ namespace GUC.Scripts.Arena
         public event Action OnClose;
         void DoClose()
         {
-            SendToggleMessage();
+            SendToggleMessage(false);
             boards.ForEach(b => b.Hide());
             OnClose?.Invoke();
             closeTimer.Stop();
             shown = false;
         }
 
-        void SendToggleMessage()
+        void SendToggleMessage(bool open)
         {
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)msgID);
+            var stream = ArenaClient.GetStream(msgID);
+            stream.Write(open);
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 

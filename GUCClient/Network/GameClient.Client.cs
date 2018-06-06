@@ -310,6 +310,9 @@ namespace GUC.Network
 
                     devInfo.Texts[devIndex++].Text = "Weather: " + World.Current.WeatherCtrl.CurrentWeight + " " + World.Current.Clock.Time.ToString(false);
                     devInfo.Texts[devIndex++].Text = "Barrier: " + World.Current.BarrierCtrl.CurrentWeight + " " + World.Current.BarrierCtrl.EndWeight;
+
+                    devInfo.Texts[devIndex++].Text = "VobSounds: " + SoundHandler.VobSoundCount;
+                    devInfo.Texts[devIndex++].Text = "PosSounds: " + SoundHandler.PosSoundCount;
                 }
             }
 

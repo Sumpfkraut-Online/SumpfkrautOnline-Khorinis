@@ -75,32 +75,44 @@
     <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
       <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeClassDef.cs">
-      <Link>Arena\Horde\HordeClassDef.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\BattleRoyale\BRMode.cs">
+      <Link>Arena\GameModes\BattleRoyale\BRMode.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeDef.cs">
-      <Link>Arena\Horde\HordeDef.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\BattleRoyale\BRRandomizer.cs">
+      <Link>Arena\GameModes\BattleRoyale\BRRandomizer.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeMode.cs">
-      <Link>Arena\Horde\HordeMode.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\BattleRoyale\BRScenario.cs">
+      <Link>Arena\GameModes\BattleRoyale\BRScenario.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeSection.cs">
-      <Link>Arena\Horde\HordeSection.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\GameMode.cs">
+      <Link>Arena\GameModes\GameMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\GamePhase.cs">
+      <Link>Arena\GameModes\GamePhase.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\GameScenario.cs">
+      <Link>Arena\GameModes\GameScenario.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\Horde\HordeMode.cs">
+      <Link>Arena\GameModes\Horde\HordeMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\Horde\HordeScenario.cs">
+      <Link>Arena\GameModes\Horde\HordeScenario.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\PlayerClass.cs">
+      <Link>Arena\GameModes\PlayerClass.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\TDM\TDMMode.cs">
+      <Link>Arena\GameModes\TDM\TDMMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\TDM\TDMScenario.cs">
+      <Link>Arena\GameModes\TDM\TDMScenario.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\TeamIdent.cs">
+      <Link>Arena\GameModes\TeamIdent.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TeamMode.cs">
-      <Link>Arena\TeamObjective\TeamMode.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOClassDef.cs">
-      <Link>Arena\TeamObjective\TOClassDef.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TODef.cs">
-      <Link>Arena\TeamObjective\TODef.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOTeamDef.cs">
-      <Link>Arena\TeamObjective\TOTeamDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
@@ -418,15 +430,15 @@
     <Compile Include="Arena\Chat\Chat.Server.cs" />
     <Compile Include="Arena\Duel\DuelBoard.cs" />
     <Compile Include="Arena\Duel\DuelMode.Server.cs" />
-    <Compile Include="Arena\Horde\HordeBoard.cs" />
-    <Compile Include="Arena\Horde\HordeDef.Server.cs" />
-    <Compile Include="Arena\Horde\HordeMode.Server.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRMode.Server.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRWorldLoader.cs" />
+    <Compile Include="Arena\GameModes\GameMode.Server.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeMode.Server.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMMode.Server.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMScoreBoard.cs" />
     <Compile Include="Arena\Regeneration.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMTeamInst.cs" />
     <Compile Include="Arena\ScoreBoard\ScoreBoard.cs" />
-    <Compile Include="Arena\TeamObjective\TeamMenu.cs" />
-    <Compile Include="Arena\TeamObjective\TeamMode.Server.cs" />
-    <Compile Include="Arena\TeamObjective\TOBoard.cs" />
-    <Compile Include="Arena\TeamObjective\TOTeamInst.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sqlite.cs" />
     <Compile Include="GUCScripts.Server.cs" />

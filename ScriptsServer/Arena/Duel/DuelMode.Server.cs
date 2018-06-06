@@ -11,53 +11,53 @@ namespace GUC.Scripts.Arena
 {
     static partial class DuelMode
     {
-
-        const long DuelRequestDuration = 20 * 1000 * 10000; // 20 secs
+        const long DuelRequestDuration = 20 * TimeSpan.TicksPerSecond;
         const float DuelMaxDistance = 150000.0f; // distance between players for the duel to automatically end
 
         static DuelMode()
         {
-            Logger.Log("Duel mode initialised.");
-
-            NPCInst.sOnHit += (NPCInst a, NPCInst t, int d) =>
-            {
-                if (a == null)
-                    return;
-
-                var attacker = (ArenaClient)a.Client;
-                var target = (ArenaClient)t.Client;
-
-                if (attacker != null && target != null)
-                {
-                    if (t.GetHealth() <= 0)
-                    {
-                        if (attacker.Team != null && target.Team != null)
-                            TeamMode.Kill(attacker, target);
-                        else if (attacker.DuelEnemy == target)
-                            DuelWin(attacker);
-                    }
-                }
-            };
-
+            NPCInst.AllowHitEvent.Add(CheckHitDetection);
             NPCInst.sOnNPCInstMove += (npc, p, d, m) =>
             {
-                if (npc.Client != null)
+                if (npc.Client is ArenaClient client)
                 {
-                    var client = (ArenaClient)npc.Client;
                     var enemy = client.DuelEnemy;
                     if (enemy != null && enemy.Character != null
                     && npc.GetPosition().GetDistance(enemy.Character.GetPosition()) > DuelMaxDistance)
                         DuelEnd(client);
                 }
             };
+            NPCInst.sOnHit += NPCInst_sOnHit;
+            Logger.Log("Duel mode initialised.");
         }
+
+        static void NPCInst_sOnHit(NPCInst attacker, NPCInst target, int damage)
+        {
+            if (target.HP <= 1 &&
+                attacker.Client is ArenaClient attClient && target.Client is ArenaClient tarClient
+                && attClient.DuelEnemy == tarClient)
+            {
+                DuelWin(attClient);
+            }
+        }
+
+        static bool CheckHitDetection(NPCInst attacker, NPCInst target)
+        {
+            if (attacker.Client is ArenaClient attClient && target.Client is ArenaClient tarClient)
+            {
+                if (attClient.DuelEnemy != tarClient)
+                    return false;
+            }
+            return true;
+        }
+
 
         public static void Init()
         { /* trigger the static constructor */ }
 
         public static void ReadRequest(ArenaClient requester, PacketReader stream)
         {
-            if (requester.Character == null || requester.IsDueling || requester.Character.IsDead || requester.Team != null)
+            if (requester.Character == null || requester.IsDueling || requester.Character.IsDead || requester.GMJoined)
                 return;
 
             if (!requester.Character.World.TryGetVob(stream.ReadUShort(), out NPCInst target))
@@ -67,7 +67,7 @@ namespace GUC.Scripts.Arena
                 return;
 
             var targetClient = (ArenaClient)target.Client;
-            if (targetClient.IsDueling || targetClient.Team != null)
+            if (targetClient.IsDueling || targetClient.GMJoined)
                 return;
 
             int index;
@@ -122,14 +122,11 @@ namespace GUC.Scripts.Arena
             if (!winner.IsDueling)
                 return;
 
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.DuelWin);
+            var stream = ArenaClient.GetStream(ScriptMessages.DuelWin);
             stream.Write((ushort)winner.Character.ID);
             winner.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-            if (winner.DuelEnemy.ID != -1)
-            {
+            if (winner.DuelEnemy.IsConnected)
                 winner.DuelEnemy.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
-            }
 
             winner.DuelEnemy.DuelDeaths++;
             winner.DuelEnemy.DuelScore--;

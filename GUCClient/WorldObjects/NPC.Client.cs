@@ -184,14 +184,14 @@ namespace GUC.WorldObjects
             if (hero == null)
                 return;
 
-            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 10, 0.01f); // update our hero better
+            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 15, 0.01f); // update our hero better
         }
 
         #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
-            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 14, 0.02f);
+            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 15, 0.02f);
         }
 
         NPCMovement guidedLastMovement;

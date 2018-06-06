@@ -117,7 +117,7 @@ namespace GUC.Scripts.Arena
         void SetText(GUCVisualText visText, object text, int playerID)
         {
             visText.Text = text.ToString();
-            visText.Font = playerID == PlayerInfo.HeroID ? GUCView.Fonts.Default_Hi : GUCView.Fonts.Default;
+            visText.Font = playerID == PlayerInfo.HeroInfo.ID ? GUCView.Fonts.Default_Hi : GUCView.Fonts.Default;
         }
 
         public void SetPos(int x, int y)

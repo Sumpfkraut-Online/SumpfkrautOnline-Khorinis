@@ -164,12 +164,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             switch (msgID)
             {
                 case ScriptVobMessageIDs.HitMessage:
-                    var targetID = stream.ReadUShort();
-                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out NPC target))
+                    var attackerID = stream.ReadUShort();
+                    if (WorldInst.Current.BaseWorld.TryGetVob(attackerID, out NPC attacker))
                     {
-                        //this.BaseInst.gAI.CreateHit(target.gVob);
                         int index = Randomizer.GetInt(hitSounds.Count);
-                        SoundHandler.PlaySound3D(hitSounds[index], target);
+                        SoundHandler.PlaySound3D(hitSounds[index], this.BaseInst);
 
                         if (screamTimer.IsReady)
                         {
@@ -182,19 +181,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                                     scream = new SoundDefinition(str);
                                     hitScreams.Add(str, scream);
                                 }
-                                SoundHandler.PlaySound3D(scream, target);
+                                SoundHandler.PlaySound3D(scream, attacker);
                             }
                         }
 
-                        if (!target.Model.IsInAnimation())
-                            target.gModel.StartAni("T_GOTHIT", 0);
+                        if (!attacker.Model.IsInAnimation())
+                            attacker.gModel.StartAni("T_GOTHIT", 0);
 
                         // fixme: transmit hit direction and use stumble animation
                     }
                     break;
                 case ScriptVobMessageIDs.ParryMessage:
-                    targetID = stream.ReadUShort();
-                    if (WorldInst.Current.BaseWorld.TryGetVob(targetID, out NPC targetNPC))
+                    attackerID = stream.ReadUShort();
+                    if (WorldInst.Current.BaseWorld.TryGetVob(attackerID, out NPC targetNPC))
                     {
                         this.BaseInst.gAI.StartParadeEffects(targetNPC.gVob);
                     }

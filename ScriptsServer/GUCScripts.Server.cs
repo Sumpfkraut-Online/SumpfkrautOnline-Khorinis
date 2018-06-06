@@ -162,14 +162,14 @@ namespace GUC.Scripts
             CreateTestWorld();
 
             Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
-            new Sumpfkraut.AI.SimpleAI.AIManager(true, true, new TimeSpan(0, 0, 0, 0, 500));
+            new Sumpfkraut.AI.SimpleAI.AIManager(true, true, new TimeSpan(0, 0, 0, 0, 400));
 
             Arena.DuelMode.Init();
             Arena.Regeneration.Init();
 
-            Arena.HordeMode.StartHorde();
-
             Logger.Log("######################## Finished #########################");
+
+            Arena.GameModes.GameMode.StartNextScenario();
         }
 
         void CreateTestWorld()
@@ -203,43 +203,8 @@ namespace GUC.Scripts
                 var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
                 aiManager01.SubscribeAIAgent(aiAgent);
             }*/
-
-            world = new WorldInst(null);
-            world.Path = "G1-OLDMINE.ZEN";
-            world.Create();
-            world.Clock.SetTime(new WorldTime(0, 12), 1.0f);
-            world.Clock.Stop();
-            world.Barrier.StopTimer();
-            world.Weather.StopRainTimer();
-            WorldInst.List.Add(world);
-
-            world = new WorldInst(null);
-            world.Path = "G2-PASS.ZEN";
-            world.Create();
-            world.Clock.SetTime(new WorldTime(0, 20), 1.0f);
-            world.Clock.Stop();
-            world.Barrier.StopTimer();
-            world.Weather.StopRainTimer();
-            world.Weather.SetNextWeight(world.Clock.Time, 1.0f);
-            WorldInst.List.Add(world);
-
-            world = new WorldInst(null);
-            world.Path = "ADDON-TEMPLE.ZEN";
-            world.Create();
-            world.Clock.SetTime(new WorldTime(0, 12), 1.0f);
-            world.Clock.Stop();
-            world.Barrier.StopTimer();
-            WorldInst.List.Add(world);
-
-            world = new WorldInst(null);
-            world.Path = "H_PASS.ZEN";
-            world.Create();
-            world.Clock.SetTime(new WorldTime(0, 20), 1.0f);
-            world.Clock.Stop();
-            world.Barrier.StopTimer();
-            world.Weather.StopRainTimer();
-            world.Weather.SetNextWeight(world.Clock.Time, 1.0f);
-            WorldInst.List.Add(world);
+            
+            
         }
 
         void AddSomeDefs()
@@ -310,7 +275,13 @@ namespace GUC.Scripts
             AddItems();
 
             AddCrawlers();
-            AddOrcs();            
+            AddOrcs();
+            AddBloodflies();
+            AddDragonsnappers();
+            AddDragons();
+            AddRats();
+            AddLurkers();
+           
 
             m = new ModelDef("trollpalisade");
             m.Visual = "OW_TROLLPALISSADE.3DS";
@@ -1646,6 +1617,210 @@ namespace GUC.Scripts
             aniJob1.AddOverlayAni(new ScriptAni(0, 6), ov2);
 
             #endregion
+        }
+
+        #endregion
+        
+        #region Bloodfly
+
+        public void AddBloodflies()
+        {
+            // Bloodfly
+            ModelDef m = new ModelDef("Bloodfly", "Bloodfly.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 59));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 19));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 80;
+            m.HalfHeight = 40;
+            m.FistRange = 40;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("bloodfly");
+            npcDef.Name = "Blutfliege";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Blo_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+        }
+
+        #endregion
+        
+        #region Dragonsnapper
+
+        public void AddDragonsnappers()
+        {
+            ModelDef m = new ModelDef("DragonSnapper", "DragonSnapper.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 24));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 15));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 20));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 60;
+            m.HalfHeight = 60;
+            m.FistRange = 60;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("dragonsnapper");
+            npcDef.Name = "Drachensnapper";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Razor_Demon_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+        }
+
+        #endregion
+
+        #region Dragons
+
+        public void AddDragons()
+        {
+            // Dragon
+            ModelDef m = new ModelDef("Dragon", "Dragon.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 100));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 20));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 120;
+            m.HalfHeight = 120;
+            m.FistRange = 120;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("dragon_fire");
+            npcDef.Name = "Feuerdrache";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Dragon_FIRE_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+        }
+
+        #endregion
+
+        #region Rats
+
+        public void AddRats()
+        {
+            // Giant_Rat
+            ModelDef m = new ModelDef("Giant_Rat", "Giant_Rat.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 10));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 10));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 20));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 60;
+            m.HalfHeight = 30;
+            m.FistRange = 40;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("rat");
+            npcDef.Name = "Riesenratte";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Giant_Rat_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+        }
+
+        #endregion
+
+        #region Rats
+
+        public void AddLurkers()
+        {
+            // Lurker
+            ModelDef m = new ModelDef("Lurker", "Lurker.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 20));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(1, 15));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 20));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 60;
+            m.HalfHeight = 30;
+            m.FistRange = 40;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("lurker");
+            npcDef.Name = "Lurker";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Lur_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
         }
 
         #endregion
