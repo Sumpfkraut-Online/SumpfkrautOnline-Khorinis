@@ -99,11 +99,14 @@ namespace GUC.WorldObjects
             this.isCreated = true;
         }
 
+        partial void pBeforeDelete();
         /// <summary> Removes this object from the static World collection. </summary>
         public void Delete()
         {
             if (!this.isCreated)
                 throw new ArgumentException("World is not in the collection!");
+
+            pBeforeDelete();
 
             this.isCreated = false;
 

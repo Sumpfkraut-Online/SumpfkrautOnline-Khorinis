@@ -7,6 +7,7 @@ using GUC.Network;
 using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Arena.GameModes;
 using GUC.Scripts.Arena.GameModes.TDM;
+using GUC.Scripts.Arena.GameModes.Horde;
 
 namespace GUC.Scripts.Arena
 {
@@ -69,6 +70,7 @@ namespace GUC.Scripts.Arena
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
+            Log.Logger.Log(id);
             switch (id)
             {
                 case ScriptMessages.GameInfo:
@@ -92,7 +94,7 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ChatTeamMessage:
                     Chat.ReadTeamMessage(stream);
                     break;
-                case ScriptMessages.DuelScore:
+                case ScriptMessages.DuelScoreBoard:
                     DuelBoardScreen.Instance.ReadMessage(stream);
                     break;
                 case ScriptMessages.PlayerInfo:
@@ -117,12 +119,23 @@ namespace GUC.Scripts.Arena
                     GameMode.ReadPhase(stream);
                     break;
 
-                case ScriptMessages.TDMScore:
+                case ScriptMessages.TDMScoreBoard:
                     TDMScoreBoard.Instance.ReadMessage(stream);
                     break;
                 case ScriptMessages.TDMWin:
                     TDMMode.ReadWinMessage(stream);
                     break;
+
+                case ScriptMessages.HordeScoreBoard:
+                    HordeScoreBoard.Instance.ReadMessage(stream);
+                    break;
+                case ScriptMessages.HordeWin:
+                    HordeMode.End(true);
+                    break;
+                case ScriptMessages.HordeLoss:
+                    HordeMode.End(false);
+                    break;
+                    
 
             }
         }

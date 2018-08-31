@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
-using GUC.GUI;
 
 namespace GUC.Scripts.Arena.GameModes.Horde
 {
@@ -13,7 +12,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
         
         ScoreBoard board;
 
-        private HordeScoreBoard() : base(ScriptMessages.HordeScore)
+        private HordeScoreBoard() : base(ScriptMessages.HordeScoreBoard)
         {
             SetBoardCount(1);
             this.board = Boards[0];
@@ -29,7 +28,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         void UpdateCountdown(long now)
         {
-            this.board.SetTitle(new TimeSpan(HordeMode.ActiveMode.PhaseEndTime - now).ToString(@"mm\:ss"));
+            this.board.SetTitle(HordeMode.ActiveMode.Phase == GamePhase.None ? "" : new TimeSpan(HordeMode.ActiveMode.PhaseEndTime - now).ToString(@"mm\:ss"));
         }
 
         void StopCountdown()
@@ -42,6 +41,35 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             if (!HordeMode.IsActive)
                 return;
             
+            board.Reset();
+
+            // players
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                board.AddEntry(new ScoreBoard.Entry()
+                {
+                    ID = stream.ReadByte(),
+                    Score = stream.ReadShort(),
+                    Kills = stream.ReadShort(),
+                    Deaths = stream.ReadShort(),
+                    Ping = stream.ReadShort()
+                }, false);
+            }
+
+            // spectators
+            count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                board.AddEntry(new ScoreBoard.Entry()
+                {
+                    ID = stream.ReadByte(),
+                    Score = stream.ReadShort(),
+                    Kills = stream.ReadShort(),
+                    Deaths = stream.ReadShort(),
+                    Ping = stream.ReadShort()
+                }, true);
+            }
         }
     }
 }

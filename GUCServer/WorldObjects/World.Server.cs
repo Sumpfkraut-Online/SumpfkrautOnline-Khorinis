@@ -501,5 +501,11 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
+
+        partial void pBeforeDelete()
+        {
+            ForEachClient(c => c.SetControl(null));
+            ForEachVob(v => v.Despawn());
+        }
     }
 }

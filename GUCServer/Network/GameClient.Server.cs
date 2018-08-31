@@ -295,8 +295,7 @@ namespace GUC.Network
         Dictionary<int, IntBox> guideTargets = new Dictionary<int, IntBox>(5);
         internal void AddGuideTarget(BaseVob vob)
         {
-            IntBox box;
-            if (guideTargets.TryGetValue(vob.ID, out box))
+            if (guideTargets.TryGetValue(vob.ID, out IntBox box))
             {
                 box.Count++;
             }
@@ -312,8 +311,7 @@ namespace GUC.Network
 
         internal void RemoveGuideTarget(BaseVob vob)
         {
-            IntBox box;
-            if (guideTargets.TryGetValue(vob.ID, out box))
+            if (guideTargets.TryGetValue(vob.ID, out IntBox box))
             {
                 box.Count--;
                 if (box.Count == 0)

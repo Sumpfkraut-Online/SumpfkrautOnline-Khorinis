@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
     {
         public static readonly TDMScoreBoard Instance = new TDMScoreBoard();
 
-        private TDMScoreBoard() : base(ScriptMessages.TDMScore)
+        private TDMScoreBoard() : base(ScriptMessages.TDMScoreBoard)
         {
         }
 

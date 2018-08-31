@@ -19,13 +19,7 @@ namespace GUC.Scripts.Arena.GameModes
     {
         // Lists
         protected List<ArenaClient> players = new List<ArenaClient>(10);
-        public readonly ReadOnlyList<ArenaClient> Players;
-
-        public GameMode()
-        {
-            this.Players = new ReadOnlyList<ArenaClient>(players);
-        }
-        
+        public ReadOnlyList<ArenaClient> Players { get { return players; } }        
 
         public static int NextScenarioIndex = 0;
         public static void StartNextScenario()
@@ -147,6 +141,7 @@ namespace GUC.Scripts.Arena.GameModes
 
         protected virtual void End()
         {
+            // Reset game mode stats of players
             ArenaClient.ForEach(c =>
             {
                 c.GMClass = null;
@@ -155,23 +150,24 @@ namespace GUC.Scripts.Arena.GameModes
                 c.GMDeaths = 0;
             });
 
-            this.World.Delete();
-            this.World = null;
+            var oldWorld = this.World;
 
+            // initialize next scenario, creates a new world
             InitScenario(GameScenario.Get(NextScenarioIndex));
 
-            foreach (var player in players)
-            {
-                JoinAsSpectator(player);
-            }
+            // move players to next scenario
+            this.players.ForEach(p => JoinAsSpectator(p));
+            this.players.Clear();
 
-            players.Clear();
+            // delete old world
+            oldWorld.Delete();
         }
 
         protected void SetPhase(GamePhase phase)
         {
             this.Phase = phase;
 
+            // send phase update to clients
             var stream = ArenaClient.GetStream(ScriptMessages.ModePhase);
             stream.Write((byte)Phase);
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
@@ -184,9 +180,11 @@ namespace GUC.Scripts.Arena.GameModes
 
         protected virtual void SpawnCharacter(ArenaClient client, PosAng spawnPoint)
         {
+            // only spawn if player has joined the game mode and chosen a class
             if (client == null || !client.GMJoined || client.GMClass == null)
                 return;
 
+            // get rid of old character if there is one
             client.KillCharacter();
 
             NPCClass classDef = client.GMClass;
@@ -212,6 +210,7 @@ namespace GUC.Scripts.Arena.GameModes
                 npc = new NPCInst(NPCDef.Get(classDef.Definition));
             }
 
+            // add inventory items
             if (classDef.ItemDefs != null)
                 foreach (var invItem in classDef.ItemDefs)
                 {
@@ -221,6 +220,7 @@ namespace GUC.Scripts.Arena.GameModes
                     npc.EffectHandler.TryEquipItem(item);
                 }
 
+            // add overlays
             if (classDef.Overlays != null)
                 foreach (var overlay in classDef.Overlays)
                 {
@@ -234,6 +234,7 @@ namespace GUC.Scripts.Arena.GameModes
             npc.Spawn(World, spawnPoint.Position, spawnPoint.Angles);
             client.SetControl(npc);
 
+            // start the warm up phase as soon as the first player joins
             if (Phase == GamePhase.None && players.Count(p => p.IsCharacter) == 1)
             {
                 SetPhase(GamePhase.WarmUp);
@@ -243,12 +244,8 @@ namespace GUC.Scripts.Arena.GameModes
             }
         }
 
-        public virtual void SelectClass(ArenaClient client, int index)
-        {
-        }
-        public virtual void OnSuicide(ArenaClient client)
-        {
-        }
+        public virtual void SelectClass(ArenaClient client, int index) { }
+        public virtual void OnSuicide(ArenaClient client) { }
 
         protected NPCInst SpawnEnemy(NPCClass enemy, Vec3f spawnPoint, float spawnRange = 100, int teamID = 1)
         {

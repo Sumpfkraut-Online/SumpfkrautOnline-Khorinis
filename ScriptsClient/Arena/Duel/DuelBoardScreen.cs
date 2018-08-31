@@ -12,7 +12,7 @@ namespace GUC.Scripts.Arena.Duel
 
         ScoreBoard board;
 
-        private DuelBoardScreen() : base(ScriptMessages.DuelScore)
+        private DuelBoardScreen() : base(ScriptMessages.DuelScoreBoard)
         {
             SetBoardCount(1);
             this.board = Boards[0];

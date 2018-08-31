@@ -13,7 +13,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
         GUCVisual countdown;
 
-        private TDMScoreBoard() : base(ScriptMessages.TDMScore)
+        private TDMScoreBoard() : base(ScriptMessages.TDMScoreBoard)
         {
             OnOpen += UpdateScenario;
 

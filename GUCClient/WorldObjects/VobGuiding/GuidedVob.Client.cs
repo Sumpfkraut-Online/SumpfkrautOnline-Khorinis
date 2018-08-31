@@ -47,8 +47,7 @@ namespace GUC.WorldObjects.VobGuiding
                 GameClient.Client.guidedIDs.Add(id, null);
 
                 // check if the vob is in the world
-                GuidedVob vob;
-                if (World.Current.TryGetVob(id, out vob))
+                if (World.Current.TryGetVob(id, out GuidedVob vob))
                 {
                     vob.guide = GameClient.Client;
                 }
@@ -205,11 +204,8 @@ namespace GUC.WorldObjects.VobGuiding
 
         partial void pDespawn()
         {
-            // GameClient.Client.guidedIDs.Remove(id);  is already done in the VobDespawnMessage
-            if (GameClient.Client.guidedIDs.ContainsKey(this.ID))
-            {
-                this.guide = null;
-            }
+            GameClient.Client.guidedIDs.Remove(this.ID);
+            this.guide = null;
         }
 
         #endregion

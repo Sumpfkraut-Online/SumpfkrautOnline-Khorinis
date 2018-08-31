@@ -13,6 +13,7 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Arena.GameModes;
 using GUC.Scripts.Arena.GameModes.TDM;
+using GUC.Scripts.Arena.GameModes.Horde;
 using GUC.Scripts.Arena.GameModes.BattleRoyale;
 
 namespace GUC.Scripts.Arena
@@ -41,7 +42,7 @@ namespace GUC.Scripts.Arena
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
 
-        public int GMScore;
+        public float GMScore;
         public int GMKills;
         public int GMDeaths;
 
@@ -122,6 +123,7 @@ namespace GUC.Scripts.Arena
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
             TDMScoreBoard.Instance.Remove(this);
+            HordeBoard.Instance.Remove(this);
         }
 
         public override void ReadScriptMessage(PacketReader stream)
@@ -149,7 +151,7 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ChatMessage:
                     Chat.ReadMessage(this, stream);
                     break;
-                case ScriptMessages.DuelScore:
+                case ScriptMessages.DuelScoreBoard:
                     DuelBoard.Instance.Toggle(this, stream.ReadBit());
                     break;
 
@@ -162,9 +164,8 @@ namespace GUC.Scripts.Arena
                     if (TDMMode.IsActive)
                         TDMMode.ActiveMode.JoinTeam(this, stream.ReadByte());
                     break;
-                case ScriptMessages.TDMScore:
-                    if (TDMMode.IsActive)
-                        TDMScoreBoard.Instance.Toggle(this, stream.ReadBit());
+                case ScriptMessages.TDMScoreBoard:
+                    TDMScoreBoard.Instance.Toggle(this, TDMMode.IsActive ? stream.ReadBit() : false);
                     break;
 
                 case ScriptMessages.ModeClassSelect:
@@ -175,6 +176,10 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.BRJoin:
                     if (BRMode.IsActive)
                         BRMode.ActiveMode.Join(this);
+                    break;
+
+                case ScriptMessages.HordeScoreBoard:
+                    HordeBoard.Instance.Toggle(this, HordeMode.IsActive ? stream.ReadBit() : false);
                     break;
             }
         }

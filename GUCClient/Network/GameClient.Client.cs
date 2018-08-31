@@ -390,6 +390,10 @@ namespace GUC.Network
                     World.Messages.ReadLoadWorld(stream);
                     break;
 
+                case ServerMessages.WorldLeaveMessage:
+                    throw new NotImplementedException();
+                    break;
+
                 // client becomes a spectator
                 case ServerMessages.SpectatorMessage:
                     Client.ReadSpectatorMessage(stream);

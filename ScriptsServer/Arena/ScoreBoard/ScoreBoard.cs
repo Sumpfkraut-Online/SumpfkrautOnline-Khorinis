@@ -45,11 +45,7 @@ namespace GUC.Scripts.Arena
             }
             else
             {
-                if (clients.TryGetValue(client, out GUCTimer timer))
-                {
-                    timer.Stop();
-                    clients.Remove(client);
-                }
+                Remove(client);
             }
         }
 
@@ -59,6 +55,9 @@ namespace GUC.Scripts.Arena
             {
                 timer.Stop();
                 clients.Remove(client);
+
+                if (clients.Count == 0)
+                    packetTimer.Stop();
             }
         }
 
@@ -67,6 +66,7 @@ namespace GUC.Scripts.Arena
             foreach (GUCTimer timer in clients.Values)
                 timer.Stop();
             clients.Clear();
+            packetTimer.Stop();
         }
 
         void SendUpdate(ArenaClient client)

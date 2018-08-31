@@ -112,7 +112,7 @@ namespace GUC.Scripts.Arena
         {
             if (index >= vis.Texts.Count)
                 return;
-
+            
             var arr = vis.Texts;
 
             bool hero = entry.ID == PlayerInfo.HeroInfo.ID;

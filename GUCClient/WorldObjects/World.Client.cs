@@ -102,10 +102,13 @@ namespace GUC.WorldObjects
 
                 if (current.TryGetVob(id, out BaseVob vob))
                 {
+                    // despawn also removes guided id
                     vob.ScriptObject.Despawn();
                 }
-
-                GameClient.Client.guidedIDs.Remove(id);
+                else
+                {
+                    GameClient.Client.guidedIDs.Remove(id);
+                }
             }
 
             #endregion

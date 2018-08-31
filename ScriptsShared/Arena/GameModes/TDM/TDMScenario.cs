@@ -35,6 +35,10 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                 FightDuration = 10 * TimeSpan.TicksPerMinute,
                 MaxDepth = -400,
                 SpecPoint = new PosAng(-2442.949f, 676.9498f, 412.3001f, -0.2303832f, -1.818634f, 0f),
+                WorldTime = new WorldTime(0, 18),
+                WorldTimeScale = 2.0f,
+                WorldBarrier = -1,
+                WorldWeather = -1,
                 Teams = new TeamDef[]
                 {
                     // ALTES LAGER

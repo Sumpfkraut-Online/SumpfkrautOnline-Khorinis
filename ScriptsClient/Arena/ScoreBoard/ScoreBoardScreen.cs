@@ -16,8 +16,8 @@ namespace GUC.Scripts.Arena
 
         GUCTimer closeTimer;
         ScriptMessages msgID;
-        List<ScoreBoard> boards;
-        protected readonly ReadOnlyList<ScoreBoard> Boards;
+        List<ScoreBoard> boards = new List<ScoreBoard>();
+        protected ReadOnlyList<ScoreBoard> Boards { get { return boards; } }
 
         int boardCount;
         public int BoardCount { get { return boardCount; } }
@@ -55,8 +55,6 @@ namespace GUC.Scripts.Arena
         {
             this.msgID = messageID;
             this.closeTimer = new GUCTimer(DoClose);
-            this.boards = new List<ScoreBoard>();
-            this.Boards = new ReadOnlyList<ScoreBoard>(this.boards);
         }
 
         bool shown = false;

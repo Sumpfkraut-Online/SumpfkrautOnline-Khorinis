@@ -10,29 +10,45 @@ namespace GUC.Scripts.Arena.GameModes.Horde
     {
         public static readonly HordeBoard Instance = new HordeBoard();
 
-        private HordeBoard() : base(ScriptMessages.DuelScore)
+        private HordeBoard() : base(ScriptMessages.HordeScoreBoard)
         {
         }
-
-        List<ArenaClient> list = new List<ArenaClient>(20);
+        
         protected override void WriteBoard(PacketWriter stream)
         {
+            // players
+            byte count = 0;
+            int countPos = stream.Position++;
             ArenaClient.ForEach(c =>
             {
-                if (Cast.Try(c, out ArenaClient client))
-                    list.Add(client);
+                if (c.GMTeamID >= TeamIdent.GMPlayer)
+                {
+                    WritePlayer(c, stream);
+                    count++;
+                }
             });
-            stream.Write((byte)list.Count);
-            list.ForEach(c => WritePlayer(c, stream));
-            list.Clear();
+            stream.Edit(countPos, count);
+
+            // spectators
+            count = 0;
+            countPos = stream.Position++;
+            ArenaClient.ForEach(c =>
+            {
+                if (c.GMTeamID == TeamIdent.GMSpectator)
+                {
+                    WritePlayer(c, stream);
+                    count++;
+                }
+            });
+            stream.Edit(countPos, count);
         }
 
         void WritePlayer(ArenaClient client, PacketWriter stream)
         {
             stream.Write((byte)client.ID);
-            stream.Write((short)client.DuelScore);
-            stream.Write((short)client.DuelKills);
-            stream.Write((short)client.DuelDeaths);
+            stream.Write((short)client.GMScore);
+            stream.Write((short)client.GMKills);
+            stream.Write((short)client.GMDeaths);
 
             int ping = client.BaseClient.GetLastPing();
             if (ping < 0) ping = -1;

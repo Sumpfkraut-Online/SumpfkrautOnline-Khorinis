@@ -138,8 +138,11 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 SpawnPos = new Vec3f(7695, 6509, 42836),
                 SpawnRange = 100,
                 SpecPoint = new PosAng(7583, 6759, 42869, -0.1745329f, 2.446952f, 0),
-                FightDuration = TimeSpan.TicksPerHour,
-
+                FightDuration = 30 * TimeSpan.TicksPerMinute,
+                WorldTime = new WorldTime(0, 22),
+                WorldTimeScale = 5,
+                WorldBarrier = 0,
+                WorldWeather = -1,
                 PlayerClasses = new NPCClass[]
                 {
                     new NPCClass()
@@ -240,7 +243,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     {
                         Barriers = new Barrier[] { new Barrier("gate", -3069, -496, 1800, 0, -2.793f, 0) },
                         Position = new Vec3f(-3352, -500, 2491),
-                        Range = 1000,
+                        Range = 2000,
                         MaxEnemies = 3,
                         Duration = 180,
                         SFXStart = "TRUMPET_01.WAV",

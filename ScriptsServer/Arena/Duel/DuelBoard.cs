@@ -11,7 +11,7 @@ namespace GUC.Scripts.Arena.Duel
     {
         public static readonly DuelBoard Instance = new DuelBoard();
 
-        private DuelBoard() : base(ScriptMessages.DuelScore)
+        private DuelBoard() : base(ScriptMessages.DuelScoreBoard)
         {
         }
         
