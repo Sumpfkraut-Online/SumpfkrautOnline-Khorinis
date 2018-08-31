@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Network;
+using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Arena.GameModes;
 using GUC.Scripts.Arena.GameModes.TDM;
 
@@ -20,7 +21,7 @@ namespace GUC.Scripts.Arena
         
         static ArenaClient()
         {
-            Sumpfkraut.WorldSystem.WorldInst.OnFinishedLoading += () =>
+            GUCScripts.OnWorldEnter += () =>
             {
                 if (FFAJoined)
                     Menus.FreeModeMenu.Instance.Open();
@@ -91,16 +92,16 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ChatTeamMessage:
                     Chat.ReadTeamMessage(stream);
                     break;
-                case ScriptMessages.ScoreDuelMessage:
+                case ScriptMessages.DuelScore:
                     DuelBoardScreen.Instance.ReadMessage(stream);
                     break;
-                case ScriptMessages.PlayerInfoMessage:
+                case ScriptMessages.PlayerInfo:
                     PlayerInfo.ReadPlayerInfoMessage(stream);
                     break;
                 case ScriptMessages.PlayerInfoTeam:
                     PlayerInfo.ReadPlayerInfoTeam(stream);
                     break;
-                case ScriptMessages.PlayerQuitMessage:
+                case ScriptMessages.PlayerQuit:
                     PlayerInfo.ReadPlayerQuitMessage(stream);
                     break;
                 case ScriptMessages.PointsMessage:
@@ -116,10 +117,10 @@ namespace GUC.Scripts.Arena
                     GameMode.ReadPhase(stream);
                     break;
 
-                case ScriptMessages.TDMScoreMessage:
+                case ScriptMessages.TDMScore:
                     TDMScoreBoard.Instance.ReadMessage(stream);
                     break;
-                case ScriptMessages.TDMWinMessage:
+                case ScriptMessages.TDMWin:
                     TDMMode.ReadWinMessage(stream);
                     break;
 

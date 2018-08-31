@@ -8,7 +8,7 @@ using GUC.Log;
 using GUC.Utilities;
 using GUC.GUI;
 
-namespace GUC.Scripts.Arena.GameModes.TDM
+namespace GUC.Scripts.Arena.GameModes.Horde
 {
     class MenuClassSelect : GUCMainMenu
     {
@@ -30,21 +30,21 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                 AddButton("CLASS", "", y, () => SelectClass(index));
                 i++;
             }
-            AddButton("Zurück", "Zurück ins Team-Menü.", backButtonOffset, MenuTeamSelect.Instance.Open);
-            OnEscape = MenuTeamSelect.Instance.Open;
+            AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, Menus.MainMenu.Menu.Open);
+            OnEscape = Menus.MainMenu.Menu.Open;
         }
 
         public override void Open()
         {
-            if (!TDMMode.IsActive || PlayerInfo.HeroInfo.TeamID < 0 || GameMode.ActiveMode.Phase == GamePhase.FadeOut)
+            if (!HordeMode.IsActive || PlayerInfo.HeroInfo.TeamID < TeamIdent.GMSpectator || GameMode.ActiveMode.Phase == GamePhase.FadeOut)
                 return;
 
             base.Open();
 
-            title.Text = string.Format("Klasse für '{0}' auswählen.", TDMMode.HeroTeam.Name);
+            title.Text = "Klasse auswählen.";
 
             int index = 0;
-            foreach (var classDef in TDMMode.HeroTeam.Classes)
+            foreach (var classDef in HordeMode.ActiveMode.Scenario.PlayerClasses)
             {
                 if (index >= items.Count - 1)
                 {
@@ -67,25 +67,25 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                 items[index].Hide();
             }
 
-            GameMode.OnPhaseChange += TOPhaseChanged;
+            GameMode.OnPhaseChange += PhaseChanged;
         }
 
         public override void Close()
         {
             base.Close();
-            GameMode.OnPhaseChange -= TOPhaseChanged;
+            GameMode.OnPhaseChange -= PhaseChanged;
         }
 
         LockTimer lockTimer = new LockTimer(500);
         void SelectClass(int index)
         {
-            if (!TDMMode.IsActive || PlayerInfo.HeroInfo.TeamID < 0 || GameMode.ActiveMode.Phase == GamePhase.FadeOut)
+            if (!HordeMode.IsActive || PlayerInfo.HeroInfo.TeamID < TeamIdent.GMSpectator || GameMode.ActiveMode.Phase == GamePhase.FadeOut)
             {
                 Close();
                 return;
             }
 
-            if (!TDMMode.HeroTeam.Classes.TryGet(index, out NPCClass classDef))
+            if (!HordeMode.ActiveMode.Scenario.PlayerClasses.TryGet(index, out NPCClass classDef))
                 return;
 
             if (classDef == NPCClass.Hero)
@@ -102,13 +102,13 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
 
             NPCClass.Hero = classDef;
-
+            
             Close();
         }
 
-        void TOPhaseChanged()
+        void PhaseChanged()
         {
-            if (!TDMMode.IsActive || GameMode.ActiveMode.Phase == GamePhase.FadeOut)
+            if (!HordeMode.IsActive || GameMode.ActiveMode.Phase == GamePhase.FadeOut)
             {
                 Close();
                 return;

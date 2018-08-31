@@ -18,16 +18,15 @@ namespace GUC.Scripts.Arena
         DuelStart,
         DuelWin,
         DuelEnd,
+        DuelScore,
 
         ChatMessage,
         ChatTeamMessage,
         ChatPrivateMessage,
 
-        ScoreDuelMessage,
-
-        PlayerInfoMessage,
+        PlayerInfo,
         PlayerInfoTeam,
-        PlayerQuitMessage,
+        PlayerQuit,
 
         PointsMessage,
         
@@ -37,10 +36,12 @@ namespace GUC.Scripts.Arena
         ModeClassSelect,
 
         TDMTeamSelect,
-        TDMScoreMessage,
-        TDMWinMessage,
+        TDMScore,
+        TDMWin,
 
-        BRJoinMessage,
+        BRJoin,
+
+        HordeScore,
 
     }
 }

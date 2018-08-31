@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena.GameModes
     {
         static GameMode()
         {
-            Sumpfkraut.WorldSystem.WorldInst.OnFinishedLoading += () =>
+            GUCScripts.OnWorldEnter += () =>
             {
                 if (IsActive && ArenaClient.GMJoined)
                     ActiveMode.OpenJoinMenu();
@@ -53,11 +53,11 @@ namespace GUC.Scripts.Arena.GameModes
         protected virtual void Start(GameScenario scenario)
         {
             this.Scenario = scenario;
-            this.SetPhase(GamePhase.WarmUp);
+            //this.SetPhase(GamePhase.WarmUp);
 
             OnModeStart?.Invoke();
 
-            Log.Logger.Log(scenario.Name + " startet in wenigen Sekunden");
+            Log.Logger.Log(scenario.Name + " startet.");
         }
 
         public static void ReadPhase(PacketReader stream)

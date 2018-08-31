@@ -12,8 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     {
         public static WorldInst Current { get { return (WorldInst)WorldObjects.World.Current?.ScriptObject; } }
 
-        public static event Action OnFinishedLoading;
-
         public void Load()
         {
             GUCMenu.CloseActiveMenus();
@@ -49,8 +47,6 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
             
             GothicGlobals.Game.CloseLoadscreen();
             //Gothic.CGameManager.InitScreen_Close();
-
-            OnFinishedLoading?.Invoke();
         }
     }
 }

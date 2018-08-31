@@ -10,6 +10,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Utilities;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Arena.GameModes;
 using GUC.Scripts.Arena.GameModes.TDM;
 using GUC.Scripts.Arena.GameModes.BattleRoyale;
@@ -18,11 +19,15 @@ namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
+        public static void ForEach(Action<ArenaClient> action)
+        {
+            GameClient.ForEach(c => action((ArenaClient)c.ScriptObject));
+        }
+
         #region GameModes
 
         public NPCClass GMClass;
         public bool GMJoined { get { return GMTeamID >= TeamIdent.GMSpectator; } }
-        public bool FFAJoined { get { return GMTeamID == TeamIdent.FFAPlayer || GMTeamID == TeamIdent.FFASpectator; } }
         public TeamIdent GMTeamID = TeamIdent.None;
         public void SetTeamID(TeamIdent id)
         {
@@ -57,11 +62,6 @@ namespace GUC.Scripts.Arena
 
         #endregion
 
-        public static void ForEach(Action<ArenaClient> action)
-        {
-            GameClient.ForEach(c => action((ArenaClient)c.ScriptObject));
-        }
-
         public static PacketWriter GetStream(ScriptMessages id)
         {
             var s = GameClient.GetScriptMessageStream();
@@ -76,7 +76,7 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)client.ID);
 
             stream.Write((byte)ArenaClient.GetCount());
-            ArenaClient.ForEach(c => ((ArenaClient)c).WritePlayerInfo(stream));
+            ArenaClient.ForEach(c => c.WritePlayerInfo(stream));
 
             GameMode.WriteGameInfo(stream);
 
@@ -93,7 +93,7 @@ namespace GUC.Scripts.Arena
         void SendPlayerInfoMessage()
         {
             var stream = GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.PlayerInfoMessage);
+            stream.Write((byte)ScriptMessages.PlayerInfo);
             WritePlayerInfo(stream);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
@@ -117,7 +117,7 @@ namespace GUC.Scripts.Arena
             if (!GameMode.IsActive || !GameMode.ActiveMode.Leave(this))
                 KillCharacter();
 
-            var stream = GetStream(ScriptMessages.PlayerQuitMessage);
+            var stream = GetStream(ScriptMessages.PlayerQuit);
             stream.Write((byte)id);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
@@ -149,7 +149,7 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.ChatMessage:
                     Chat.ReadMessage(this, stream);
                     break;
-                case ScriptMessages.ScoreDuelMessage:
+                case ScriptMessages.DuelScore:
                     DuelBoard.Instance.Toggle(this, stream.ReadBit());
                     break;
 
@@ -162,17 +162,17 @@ namespace GUC.Scripts.Arena
                     if (TDMMode.IsActive)
                         TDMMode.ActiveMode.JoinTeam(this, stream.ReadByte());
                     break;
-                case ScriptMessages.TDMScoreMessage:
+                case ScriptMessages.TDMScore:
                     if (TDMMode.IsActive)
                         TDMScoreBoard.Instance.Toggle(this, stream.ReadBit());
                     break;
 
                 case ScriptMessages.ModeClassSelect:
-                    if (GameMode.IsActive && GMTeamID >= TeamIdent.GMPlayer)
+                    if (GameMode.IsActive)
                         GameMode.ActiveMode.SelectClass(this, stream.ReadByte());
                     break;
 
-                case ScriptMessages.BRJoinMessage:
+                case ScriptMessages.BRJoin:
                     if (BRMode.IsActive)
                         BRMode.ActiveMode.Join(this);
                     break;

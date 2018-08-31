@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
     {
         public static readonly TDMScoreBoard Instance = new TDMScoreBoard();
 
-        private TDMScoreBoard() : base(ScriptMessages.TDMScoreMessage)
+        private TDMScoreBoard() : base(ScriptMessages.TDMScore)
         {
         }
 
@@ -25,6 +25,19 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                 stream.Write((byte)players.Count);
                 players.ForEach(p => WritePlayer(p, stream));
             }
+
+            // spectators
+            byte count = 0;
+            int countPos = stream.Position++;
+            TDMMode.ActiveMode.Players.ForEach(c =>
+            {
+                if (c.GMTeamID == TeamIdent.GMSpectator)
+                {
+                    WritePlayer(c, stream);
+                    count++;
+                }
+            });
+            stream.Edit(countPos, count);
         }
 
         void WritePlayer(ArenaClient client, PacketWriter stream)

@@ -150,7 +150,7 @@ namespace GUC.Hooks
                     barrier.RenderLayer(context, 0, ptrArg);
                     barrier.RenderLayer(context, 1, ptrArg);
 
-                    //zCRenderer.FlushPolys();
+                    zCRenderer.FlushPolys(); // comment for real size
 
                     activeCam.SetFarClipZ(farClipZ);
                     zCRenderer.SetZBufferWriteEnabled(zBufferWriteEnabled);

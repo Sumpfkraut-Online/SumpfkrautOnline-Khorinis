@@ -433,6 +433,7 @@
     <Compile Include="Arena\GameModes\BattleRoyale\BRMode.Server.cs" />
     <Compile Include="Arena\GameModes\BattleRoyale\BRWorldLoader.cs" />
     <Compile Include="Arena\GameModes\GameMode.Server.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeBoard.cs" />
     <Compile Include="Arena\GameModes\Horde\HordeMode.Server.cs" />
     <Compile Include="Arena\GameModes\TDM\TDMMode.Server.cs" />
     <Compile Include="Arena\GameModes\TDM\TDMScoreBoard.cs" />

@@ -3,28 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.Scripts.Arena.GameModes;
 
-namespace GUC.Scripts.Arena
+namespace GUC.Scripts.Arena.Duel
 {
     class DuelBoard : ScoreBoard
     {
         public static readonly DuelBoard Instance = new DuelBoard();
 
-        private DuelBoard() : base(ScriptMessages.ScoreDuelMessage)
+        private DuelBoard() : base(ScriptMessages.DuelScore)
         {
         }
-
-        List<ArenaClient> list = new List<ArenaClient>(20);
+        
         protected override void WriteBoard(PacketWriter stream)
         {
+            // players
+            byte count = 0;
+            int countPos = stream.Position++;
             ArenaClient.ForEach(c =>
             {
-                if (Cast.Try(c, out ArenaClient client))
-                    list.Add(client);
+                if (c.GMTeamID == TeamIdent.FFAPlayer)
+                {
+                    WritePlayer(c, stream);
+                    count++;
+                }
             });
-            stream.Write((byte)list.Count);
-            list.ForEach(c => WritePlayer(c, stream));
-            list.Clear();
+            stream.Edit(countPos, count);
+
+            // spectators
+            count = 0;
+            countPos = stream.Position++;
+            ArenaClient.ForEach(c =>
+            {
+                if (c.GMTeamID == TeamIdent.FFASpectator)
+                {
+                    WritePlayer(c, stream);
+                    count++;
+                }
+            });
+            stream.Edit(countPos, count);
         }
 
         void WritePlayer(ArenaClient client, PacketWriter stream)

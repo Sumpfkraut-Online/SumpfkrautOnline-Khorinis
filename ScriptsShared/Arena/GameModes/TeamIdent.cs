@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace GUC.Scripts.Arena.GameModes
 {
-    enum TeamIdent : sbyte
+    enum TeamIdent
     {
         None = -4,
-
         FFAPlayer = -3,
         FFASpectator = -2,
-
         GMSpectator = -1,
-        /// <summary> and above </summary>
-        GMPlayer = 0,
+        GMPlayer = 0, // and above
     }
 }

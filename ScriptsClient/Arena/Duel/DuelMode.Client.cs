@@ -8,7 +8,7 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.GUI;
 
-namespace GUC.Scripts.Arena
+namespace GUC.Scripts.Arena.Duel
 {
     static partial class DuelMode
     {

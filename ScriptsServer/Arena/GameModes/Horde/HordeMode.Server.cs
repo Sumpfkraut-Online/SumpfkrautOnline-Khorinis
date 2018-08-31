@@ -70,6 +70,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
                 Stands.Add(inst);
             }
+
+
         }
 
         protected override void End()
@@ -207,6 +209,18 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             }
 
             base.FadeOut();
+        }
+
+        public override void SelectClass(ArenaClient client, int index)
+        {
+            if (!Scenario.PlayerClasses.TryGet(index, out NPCClass pc))
+                return;
+
+            client.GMClass = pc;
+            client.GMTeamID = 0;
+
+            if (client.Character == null || Phase == GamePhase.WarmUp)
+                SpawnCharacter(client, Scenario.SpawnPos, Scenario.SpawnRange);
         }
     }
 }

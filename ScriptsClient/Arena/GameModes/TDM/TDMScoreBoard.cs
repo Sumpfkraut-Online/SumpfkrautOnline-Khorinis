@@ -13,7 +13,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
         GUCVisual countdown;
 
-        private TDMScoreBoard() : base(ScriptMessages.TDMScoreMessage)
+        private TDMScoreBoard() : base(ScriptMessages.TDMScore)
         {
             OnOpen += UpdateScenario;
 
@@ -34,7 +34,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
         void UpdateCountdown(long now)
         {
-            countdown.Texts[0].Text = new TimeSpan(TDMMode.ActiveMode.PhaseEndTime - now).ToString(@"mm\:ss");
+            countdown.Texts[0].Text = TDMMode.ActiveMode.Phase == GamePhase.None ? "" : new TimeSpan(TDMMode.ActiveMode.PhaseEndTime - now).ToString(@"mm\:ss");
         }
 
         void StopCountdown()
@@ -50,35 +50,44 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
             UpdateScenario();
 
-            var list = new List<ScoreBoard.Entry>(10);
-
             int teamCount = stream.ReadByte();
             for (int t = 0; t < teamCount; t++)
             {
-                if (t >= UsedCount)
+                if (t >= BoardCount)
                     return;
 
-                list.Clear();
-                int teamScore = stream.ReadShort();
-                int count = stream.ReadByte();
-                if (count > list.Capacity)
-                    list.Capacity = count;
+                ScoreBoard board = Boards[t];
+                board.Reset();
 
+                int teamScore = stream.ReadShort();
+                board.SetTitle(string.Format("{0} ({1}/{2})", activeScenario.Teams[t].Name, teamScore, TDMMode.ScoreLimit));
+
+                int count = stream.ReadByte();
                 for (int i = 0; i < count; i++)
                 {
-                    list.Add(new ScoreBoard.Entry()
+                    board.AddEntry(new ScoreBoard.Entry()
                     {
                         ID = stream.ReadByte(),
                         Score = stream.ReadShort(),
                         Kills = stream.ReadShort(),
                         Deaths = stream.ReadShort(),
                         Ping = stream.ReadShort()
-                    });
+                    }, false);
                 }
+            }
 
-                var board = GetBoard(t);
-                board.Fill(list);
-                board.SetTitle(string.Format("{0} ({1}/{2})", activeScenario.Teams[t].Name, teamScore, TDMMode.ScoreLimit));
+            int spectators = stream.ReadByte();
+            for (int i = 0; i < spectators; i++)
+            {
+                var lowest = Boards.Aggregate((c1, c2) => c1.EntryCount < c2.EntryCount ? c1 : c2);
+                lowest.AddEntry(new ScoreBoard.Entry()
+                {
+                    ID = stream.ReadByte(),
+                    Score = stream.ReadShort(),
+                    Kills = stream.ReadShort(),
+                    Deaths = stream.ReadShort(),
+                    Ping = stream.ReadShort()
+                }, true);
             }
         }
 
@@ -90,11 +99,11 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
             activeScenario = TDMMode.ActiveMode.Scenario;
 
-            SetUsedCount(activeScenario.Teams.Length);
-            for (int i = 0; i < UsedCount; i++)
+            SetBoardCount(activeScenario.Teams.Length);
+            for (int i = 0; i < BoardCount; i++)
             {
                 var team = activeScenario.Teams[i];
-                GetBoard(i).SetTitle(team.Name, team.Color);
+                Boards[i].SetTitle(team.Name, team.Color);
             }
         }
     }

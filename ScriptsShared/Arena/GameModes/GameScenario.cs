@@ -18,7 +18,8 @@ namespace GUC.Scripts.Arena.GameModes
         {
             Log.Logger.Log("Load Game Scenarios...");
             //TDM.TDMScenario.Init();
-            BattleRoyale.BRScenario.Init();
+            //BattleRoyale.BRScenario.Init();
+            Horde.HordeScenario.Init();
 
             Random rand = new Random("Scenarios".GetHashCode());
             scenarios = scenarios.OrderBy(o => rand.Next()).ToList();

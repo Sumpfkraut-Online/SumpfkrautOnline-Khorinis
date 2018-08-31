@@ -11,11 +11,22 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Arena.GameModes
 {
     partial class GameMode
     {
+        // Lists
+        protected List<ArenaClient> players = new List<ArenaClient>(10);
+        public readonly ReadOnlyList<ArenaClient> Players;
+
+        public GameMode()
+        {
+            this.Players = new ReadOnlyList<ArenaClient>(players);
+        }
+        
+
         public static int NextScenarioIndex = 0;
         public static void StartNextScenario()
         {
@@ -71,7 +82,6 @@ namespace GUC.Scripts.Arena.GameModes
             ActiveMode.Start(scenario);
         }
 
-        protected List<ArenaClient> players = new List<ArenaClient>(10);
         public WorldInst World { get; private set; }
 
         protected GUCTimer phaseTimer = new GUCTimer();
@@ -114,11 +124,7 @@ namespace GUC.Scripts.Arena.GameModes
             var stream = ArenaClient.GetStream(ScriptMessages.ModeStart);
             stream.Write(scenario.Name);
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
-            Phase = GamePhase.WarmUp;
-
-            phaseTimer.SetInterval(Scenario.WarmUpDuration);
-            phaseTimer.SetCallback(Fight);
-            phaseTimer.Start();
+            Phase = GamePhase.None;
         }
 
         protected virtual void Fight()
@@ -151,13 +157,15 @@ namespace GUC.Scripts.Arena.GameModes
 
             this.World.Delete();
             this.World = null;
-            
+
             InitScenario(GameScenario.Get(NextScenarioIndex));
 
             foreach (var player in players)
             {
                 JoinAsSpectator(player);
             }
+
+            players.Clear();
         }
 
         protected void SetPhase(GamePhase phase)
@@ -167,6 +175,11 @@ namespace GUC.Scripts.Arena.GameModes
             var stream = ArenaClient.GetStream(ScriptMessages.ModePhase);
             stream.Write((byte)Phase);
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
+        }
+
+        protected void SpawnCharacter(ArenaClient client, Vec3f position, float range)
+        {
+            SpawnCharacter(client, new PosAng(Randomizer.GetVec3fRad(position, range), Randomizer.GetYaw()));
         }
 
         protected virtual void SpawnCharacter(ArenaClient client, PosAng spawnPoint)
@@ -220,6 +233,14 @@ namespace GUC.Scripts.Arena.GameModes
             npc.SetHealth(100, 100);
             npc.Spawn(World, spawnPoint.Position, spawnPoint.Angles);
             client.SetControl(npc);
+
+            if (Phase == GamePhase.None && players.Count(p => p.IsCharacter) == 1)
+            {
+                SetPhase(GamePhase.WarmUp);
+                phaseTimer.SetInterval(Scenario.WarmUpDuration);
+                phaseTimer.SetCallback(Fight);
+                phaseTimer.Start();
+            }
         }
 
         public virtual void SelectClass(ArenaClient client, int index)

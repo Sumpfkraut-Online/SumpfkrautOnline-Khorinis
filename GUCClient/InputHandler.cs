@@ -35,7 +35,7 @@ namespace GUC
             },
             { VirtualKeys.F8, () =>
                 {
-                    WorldObjects.World.Current.BarrierCtrl.SetNextWeight(0, 1.0f);
+                    //WorldObjects.World.Current.BarrierCtrl.SetNextWeight(0, 1.0f);
                     return;
                     try
                     {

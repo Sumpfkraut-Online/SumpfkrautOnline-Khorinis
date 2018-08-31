@@ -7,7 +7,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripting;
 using GUC.Log;
 
-namespace GUC.Scripts.Arena
+namespace GUC.Scripts.Arena.Duel
 {
     static partial class DuelMode
     {

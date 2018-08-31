@@ -99,7 +99,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
         {
             int max = teams.Max(t => t.Score);
             int count = teams.Count(t => t.Score == max);
-            var stream = ArenaClient.GetStream(ScriptMessages.TDMWinMessage);
+            var stream = ArenaClient.GetStream(ScriptMessages.TDMWin);
             stream.Write((byte)count);
             for (byte i = 0; i < teams.Count; i++)
                 if (teams[i].Score == max)
@@ -153,7 +153,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
         public override void SelectClass(ArenaClient client, int index)
         {
-            if (client.TDMTeam == null)
+            if (client.TDMTeam == null || client.GMTeamID < 0)
                 return;
 
             if (!client.TDMTeam.Definition.Classes.TryGet(index, out NPCClass pc))

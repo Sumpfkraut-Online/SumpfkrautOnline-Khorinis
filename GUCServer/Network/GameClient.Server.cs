@@ -383,7 +383,7 @@ namespace GUC.Network
             if (visibleVobs.Count > 0)
             {
                 // save the position where the count is written
-                int removeCountBytePos = stream.CurrentByte;
+                int removeCountBytePos = stream.Position;
                 stream.Write(ushort.MinValue);
 
                 visibleVobs.ForEach(vob =>
@@ -401,10 +401,10 @@ namespace GUC.Network
                 // vobs were removed, write the count at the start
                 if (removeCount > 0)
                 {
-                    int currentByte = stream.CurrentByte;
-                    stream.CurrentByte = removeCountBytePos;
+                    int currentByte = stream.Position;
+                    stream.Position = removeCountBytePos;
                     stream.Write((ushort)removeCount);
-                    stream.CurrentByte = currentByte;
+                    stream.Position = currentByte;
                 }
             }
             else
@@ -413,7 +413,7 @@ namespace GUC.Network
             }
 
             // save the position where we wrote the count of new vobs
-            int countBytePos = stream.CurrentByte;
+            int countBytePos = stream.Position;
             stream.Write(ushort.MinValue);
 
             // then look for new vobs
@@ -454,10 +454,10 @@ namespace GUC.Network
             // vobs were added, write the correct count at the start
             if (addCount > 0)
             {
-                int currentByte = stream.CurrentByte;
-                stream.CurrentByte = countBytePos;
+                int currentByte = stream.Position;
+                stream.Position = countBytePos;
                 stream.Write((ushort)addCount);
-                stream.CurrentByte = currentByte;
+                stream.Position = currentByte;
             }
             else if (removeCount == 0) // nothing changed
             {
@@ -472,7 +472,7 @@ namespace GUC.Network
             PacketWriter stream = GameServer.SetupStream(ServerMessages.WorldJoinMessage);
 
             // save vob count position for later
-            int countBytePos = stream.CurrentByte;
+            int countBytePos = stream.Position;
             stream.Write(ushort.MinValue);
 
             // check for vobs
@@ -491,10 +491,10 @@ namespace GUC.Network
             if (visibleVobs.Count > 0)
             {
                 // write correct vob count to the front
-                int currentByte = stream.CurrentByte;
-                stream.CurrentByte = countBytePos;
+                int currentByte = stream.Position;
+                stream.Position = countBytePos;
                 stream.Write((ushort)visibleVobs.Count);
-                stream.CurrentByte = currentByte;
+                stream.Position = currentByte;
                 this.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
             }
         }

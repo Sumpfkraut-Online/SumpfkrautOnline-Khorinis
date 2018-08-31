@@ -398,6 +398,8 @@
     <Compile Include="Arena\GameModes\BattleRoyale\BRStatusMenu.cs" />
     <Compile Include="Arena\GameModes\GameMode.Client.cs" />
     <Compile Include="Arena\GameModes\Horde\HordeMode.Client.cs" />
+    <Compile Include="Arena\GameModes\Horde\MenuClassSelect.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeScoreBoard.cs" />
     <Compile Include="Arena\GameModes\TDM\MenuClassSelect.cs" />
     <Compile Include="Arena\GameModes\TDM\MenuTeamSelect.cs" />
     <Compile Include="Arena\GameModes\TDM\RespawnNote.cs" />

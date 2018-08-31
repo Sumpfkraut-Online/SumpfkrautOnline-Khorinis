@@ -8,6 +8,7 @@ namespace GUC.Scripts.Arena.GameModes
 {
     public enum GamePhase
     {
+        None,
         WarmUp,
         Fight,
         FadeOut,

@@ -41,6 +41,7 @@ namespace GUC.WorldObjects
                 current.WeatherCtrl.ScriptObject.SetNextWeight(current.WeatherCtrl.EndTime, current.WeatherCtrl.EndWeight);
                 current.BarrierCtrl.ScriptObject.SetNextWeight(current.BarrierCtrl.EndTime, current.BarrierCtrl.EndWeight);
 
+                Hooks.hGame.FirstRenderDone = false;
                 current.ScriptObject.Load();
 
                 var hero = oCNpc.GetPlayer();

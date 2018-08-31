@@ -8,6 +8,7 @@ using System;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Arena.GameModes;
+using GUC.Scripts.Arena.Duel;
 
 namespace GUC.Scripts.Arena.Controls
 {

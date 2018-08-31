@@ -25,7 +25,7 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
         {
             if (PlayerInfo.HeroInfo.TeamID < TeamIdent.GMPlayer)
             {
-                var stream = ArenaClient.GetStream(ScriptMessages.BRJoinMessage);
+                var stream = ArenaClient.GetStream(ScriptMessages.BRJoin);
                 ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
             }
             Close();

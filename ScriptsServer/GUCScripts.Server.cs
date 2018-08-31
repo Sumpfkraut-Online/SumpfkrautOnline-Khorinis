@@ -12,6 +12,7 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Utilities;
 using GUC.Types;
 using GUC.WorldObjects;
+using GUC.Scripts.Arena.Duel;
 
 namespace GUC.Scripts
 {
@@ -164,7 +165,7 @@ namespace GUC.Scripts
             Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
             new Sumpfkraut.AI.SimpleAI.AIManager(true, true, new TimeSpan(0, 0, 0, 0, 400));
 
-            Arena.DuelMode.Init();
+            DuelMode.Init();
             Arena.Regeneration.Init();
 
             Logger.Log("######################## Finished #########################");

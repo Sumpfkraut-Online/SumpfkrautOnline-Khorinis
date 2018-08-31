@@ -10,6 +10,7 @@ using System.IO;
 using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Scripts.Sumpfkraut.Controls;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Arena.Duel;
 using GUC.Types;
 
 namespace GUC.Scripts
@@ -52,6 +53,7 @@ namespace GUC.Scripts
         }
 
         SoundInstance menuTheme = null;
+        public static event Action OnOutgame;
         public void StartOutgame()
         {
             var theme = new SoundDefinition("INSTALLER_LOOP.WAV");
@@ -62,9 +64,11 @@ namespace GUC.Scripts
 
             Arena.Menus.MainMenu.Menu.Open();
 
+            OnOutgame?.Invoke();
             Logger.Log("Outgame started.");
         }
 
+        public static event Action OnIngame;
         public void StartIngame()
         {
             // stop oCAniCtrl_Human::_Stand from canceling the s_bowaim animation
@@ -78,6 +82,8 @@ namespace GUC.Scripts
             }
 
             Ingame = true;
+
+            OnIngame?.Invoke();
             Logger.Log("Ingame started.");
         }
 
@@ -86,7 +92,7 @@ namespace GUC.Scripts
             var client = Arena.ArenaClient.Client;
             if (Ingame && client.IsCharacter && !client.Character.IsDead)
             {
-                if (Arena.DuelMode.Enemy != null)
+                if (DuelMode.Enemy != null)
                 {
                     SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
                     return;
@@ -165,6 +171,12 @@ namespace GUC.Scripts
             {
                 DoUnconstuff(hero);
             }
+        }
+
+        public static event Action OnWorldEnter;
+        public void FirstWorldRender()
+        {
+            OnWorldEnter?.Invoke();
         }
     }
 }

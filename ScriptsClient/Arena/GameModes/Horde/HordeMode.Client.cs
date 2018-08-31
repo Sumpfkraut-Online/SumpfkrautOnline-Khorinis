@@ -8,8 +8,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
     partial class HordeMode
     {
 
-        public override Action OpenJoinMenu => throw new NotImplementedException();
+        public override Action OpenJoinMenu { get { return MenuClassSelect.Instance.Open; } }
 
-        public override ScoreBoardScreen ScoreBoard => throw new NotImplementedException();
+        public override ScoreBoardScreen ScoreBoard { get { return HordeScoreBoard.Instance; } }
     }
 }
