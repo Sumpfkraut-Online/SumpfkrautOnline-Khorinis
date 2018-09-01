@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena.GameModes
     {
         None,
         WarmUp,
-        Fight,
         FadeOut,
+        Fight,
     }
 }

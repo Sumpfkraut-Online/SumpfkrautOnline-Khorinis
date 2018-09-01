@@ -242,7 +242,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     new Stand()
                     {
                         Barriers = new Barrier[] { new Barrier("gate", -3069, -496, 1800, 0, -2.793f, 0) },
-                        Position = new Vec3f(-3352, -500, 2491),
+                        Position = new Vec3f(-3106, 100, 1912),
                         Range = 2000,
                         MaxEnemies = 3,
                         Duration = 180,

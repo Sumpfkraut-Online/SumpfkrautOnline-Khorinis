@@ -98,7 +98,7 @@ namespace GUC
 
         static bool CanPlay(SoundDefinition sound)
         {
-            for (int i = 0; i < vobSounds.Count; i++)
+            /*for (int i = 0; i < vobSounds.Count; i++)
             {
                 if (vobSounds[i].sfx == sound || vobSounds[i].sfx.zSFX.Address == sound.zSFX.Address)
                 {
@@ -114,7 +114,7 @@ namespace GUC
                     if (GameTime.Ticks - locSounds[i].startTime < 50 * TimeSpan.TicksPerMillisecond)
                         return false;
                 }
-            }
+            }*/
 
             return true;
         }
@@ -141,6 +141,7 @@ namespace GUC
             if (!CanPlay(sound)) // don't play too many sounds at once
                 return;
 
+            Logger.Log("PlayVobSound: " + sound.Name);
             var param = zTSound3DParams.Create();
             param.Volume = volume;
             param.Radius = range;
@@ -160,6 +161,7 @@ namespace GUC
             if (!CanPlay(sound)) // don't play too many sounds at once
                 return null;
 
+            Logger.Log("PlayLocSound: " + sound.Name);
             var param = zTSound3DParams.Create();
             param.Volume = volume;
             param.Radius = range;

@@ -30,16 +30,18 @@ namespace GUC.Scripts.Arena.GameModes
                 InitScenario(GameScenario.Get(NextScenarioIndex));
         }
 
-        public static void InitScenario(GameScenario scenario)
+        public static GameMode InitScenario(GameScenario scenario)
         {
             if (scenario == null)
-                return;
+                return null;
+
+            Log.Logger.Log("Init game scenario " + scenario.Name);
 
             if (++NextScenarioIndex >= GameScenario.Count)
                 NextScenarioIndex = 0;
 
-            Log.Logger.Log("Init game scenario " + scenario.Name);
-            ActiveMode = scenario.GetMode();
+            var mode = scenario.GetMode();
+            ActiveMode = mode;
 
             var world = new WorldInst(null)
             {
@@ -50,6 +52,7 @@ namespace GUC.Scripts.Arena.GameModes
             if (scenario.WorldTimeScale > 0)
             {
                 world.Clock.SetTime(scenario.WorldTime, scenario.WorldTimeScale);
+                world.Clock.Start();
             }
             else
             {
@@ -71,9 +74,10 @@ namespace GUC.Scripts.Arena.GameModes
                     world.Weather.SetNextWeight(0, scenario.WorldWeather);
             }
 
-            ActiveMode.World = world;
+            mode.World = world;
+            mode.Start(scenario);
 
-            ActiveMode.Start(scenario);
+            return mode;
         }
 
         public WorldInst World { get; private set; }
@@ -86,7 +90,7 @@ namespace GUC.Scripts.Arena.GameModes
             client.KillCharacter();
             if (!players.Contains(client))
                 players.Add(client);
-
+            
             client.SetTeamID(TeamIdent.GMSpectator);
             client.SetToSpectator(World, Scenario.SpecPoint.Position, Scenario.SpecPoint.Angles);
         }
@@ -98,6 +102,7 @@ namespace GUC.Scripts.Arena.GameModes
                 return false;
 
             client.KillCharacter();
+            client.GMClass = null;
             return players.Remove(client);
         }
 
@@ -119,6 +124,8 @@ namespace GUC.Scripts.Arena.GameModes
             stream.Write(scenario.Name);
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             Phase = GamePhase.None;
+
+            phaseTimer.Stop();
         }
 
         protected virtual void Fight()
@@ -127,7 +134,7 @@ namespace GUC.Scripts.Arena.GameModes
 
             phaseTimer.SetInterval(Scenario.FightDuration);
             phaseTimer.SetCallback(FadeOut);
-            phaseTimer.Start();
+            phaseTimer.Restart();
         }
 
         protected virtual void FadeOut()
@@ -136,11 +143,15 @@ namespace GUC.Scripts.Arena.GameModes
 
             phaseTimer.SetInterval(FadeOutDuration);
             phaseTimer.SetCallback(End);
-            phaseTimer.Start();
+            phaseTimer.Restart();
         }
-
+        
         protected virtual void End()
         {
+            Log.Logger.Log("End");
+
+            phaseTimer.Stop();
+
             // Reset game mode stats of players
             ArenaClient.ForEach(c =>
             {
@@ -151,13 +162,14 @@ namespace GUC.Scripts.Arena.GameModes
             });
 
             var oldWorld = this.World;
+            var oldPlayers = new List<ArenaClient>(players);
+            this.players.Clear();
 
             // initialize next scenario, creates a new world
-            InitScenario(GameScenario.Get(NextScenarioIndex));
+            var newMode = InitScenario(GameScenario.Get(NextScenarioIndex));
 
             // move players to next scenario
-            this.players.ForEach(p => JoinAsSpectator(p));
-            this.players.Clear();
+            oldPlayers.ForEach(p => newMode.JoinAsSpectator(p));
 
             // delete old world
             oldWorld.Delete();
@@ -166,6 +178,7 @@ namespace GUC.Scripts.Arena.GameModes
         protected void SetPhase(GamePhase phase)
         {
             this.Phase = phase;
+            Log.Logger.Log("Set Phase " + phase);
 
             // send phase update to clients
             var stream = ArenaClient.GetStream(ScriptMessages.ModePhase);
@@ -240,7 +253,7 @@ namespace GUC.Scripts.Arena.GameModes
                 SetPhase(GamePhase.WarmUp);
                 phaseTimer.SetInterval(Scenario.WarmUpDuration);
                 phaseTimer.SetCallback(Fight);
-                phaseTimer.Start();
+                phaseTimer.Restart();
             }
         }
 

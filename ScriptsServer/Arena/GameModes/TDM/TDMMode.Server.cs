@@ -51,7 +51,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
         public override void OnSuicide(ArenaClient client)
         {
-            if (Phase != GamePhase.Fight)
+            if (Phase < GamePhase.Fight)
                 return;
 
             client.GMScore--;
@@ -61,7 +61,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
         static void OnHit(NPCInst attacker, NPCInst target, int damage)
         {
-            if (!IsActive || ActiveMode.Phase != GamePhase.Fight)
+            if (!IsActive || ActiveMode.Phase < GamePhase.Fight)
                 return;
 
             if (target.HP <= 0 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Log;
-using GUC.GameObjects.Collections;
 
 namespace GUC.Scripting
 {
@@ -69,15 +68,6 @@ namespace GUC.Scripting
 
         static void AddTimer(GUCAbstractTimer timer)
         {
-            /*for (int i = 0; i < activeTimers.Count; i++)
-                if (activeTimers[i].nextCallTime <= timer.nextCallTime)
-                {
-                    activeTimers.Insert(i, timer);
-                    return;
-                }
-
-            activeTimers.Add(timer);*/
-
             activeTimers.Insert(FindIndex(timer.NextCallTime), timer);
         }
 
@@ -163,7 +153,10 @@ namespace GUC.Scripting
                 if (this.callback == null)
                     throw new NullReferenceException("Callback is null!");
 
-                this.SetNextCallTime(GameTime.Ticks);
+                // don't insert timer twice during timed Fire event
+                if (currentTimer != this)
+                    this.SetNextCallTime(GameTime.Ticks);
+
                 this.started = true;
             }
         }
@@ -174,7 +167,9 @@ namespace GUC.Scripting
             {
                 started = false;
 
-                RemoveTimer(this);
+                // because it's already taken out before the timed Fire event
+                if (currentTimer != this)
+                    RemoveTimer(this);
 
                 if (fire)
                     this.Fire();
@@ -183,7 +178,8 @@ namespace GUC.Scripting
 
         public void Restart(bool fire = false)
         {
-            Stop(fire); Start();
+            Stop(fire);
+            Start();
         }
 
         #endregion
@@ -202,7 +198,7 @@ namespace GUC.Scripting
             this.interval = interval;
             if (this.started && currentTimer != this) // don't double the calculation
             {
-                activeTimers.Remove(this);
+                RemoveTimer(this);
                 SetNextCallTime(this.startTime);
             }
         }

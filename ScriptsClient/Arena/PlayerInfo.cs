@@ -48,6 +48,11 @@ namespace GUC.Scripts.Arena
             pi.name = stream.ReadString();
             pi.teamID = (TeamIdent)stream.ReadSByte();
 
+            if (id == heroInfo.ID && pi.teamID < TeamIdent.GMPlayer)
+            {
+                NPCClass.Hero = null;
+            }
+
             OnPlayerListChange?.Invoke();
         }
 

@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena
     abstract class ScoreBoard
     {
         const long UpdateInterval = 1000 * TimeSpan.TicksPerMillisecond;
-        
+
         Dictionary<ArenaClient, GUCTimer> clients;
         GUCTimer packetTimer;
         byte[] packet;
@@ -71,7 +71,8 @@ namespace GUC.Scripts.Arena
 
         void SendUpdate(ArenaClient client)
         {
-            client.SendScriptMessage(packet, packet.Length, NetPriority.Low, NetReliability.Unreliable);
+            if (client.IsConnected)
+                client.SendScriptMessage(packet, packet.Length, NetPriority.Low, NetReliability.Unreliable);
         }
 
         void WriteUpdate()

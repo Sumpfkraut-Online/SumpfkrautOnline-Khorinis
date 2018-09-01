@@ -89,6 +89,26 @@ namespace GUC.Scripts
 
         static void CheckMusic()
         {
+            if (Arena.ArenaClient.GMJoined && Arena.GameModes.GameMode.IsActive)
+            {
+                var phase = Arena.GameModes.GameMode.ActiveMode.Phase;
+                if (phase == Arena.GameModes.GamePhase.WarmUp)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Threat;
+                    return;
+                }
+                else if (phase == Arena.GameModes.GamePhase.FadeOut)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
+                    return;
+                }
+                if (Arena.GameModes.Horde.HordeMode.IsActive && phase > Arena.GameModes.GamePhase.Fight)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
+                    return;
+                }
+            }
+
             var client = Arena.ArenaClient.Client;
             if (Ingame && client.IsCharacter && !client.Character.IsDead)
             {

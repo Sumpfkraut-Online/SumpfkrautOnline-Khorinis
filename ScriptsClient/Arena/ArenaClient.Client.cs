@@ -135,8 +135,6 @@ namespace GUC.Scripts.Arena
                 case ScriptMessages.HordeLoss:
                     HordeMode.End(false);
                     break;
-                    
-
             }
         }
     }

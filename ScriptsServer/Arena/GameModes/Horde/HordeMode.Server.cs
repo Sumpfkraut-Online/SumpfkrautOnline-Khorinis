@@ -67,12 +67,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             {
                 phaseTimer.SetInterval(inst.Stand.Duration * TimeSpan.TicksPerSecond);
                 phaseTimer.SetCallback(EndStand);
-                phaseTimer.Start();
+                phaseTimer.Restart();
             }
 
             FillUpStandEnemies();
 
-            SetPhase(GamePhase.FadeOut + 1 + inst.Index);
+            SetPhase(GamePhase.Fight + 1 + inst.Index);
         }
 
         void EndStand()
@@ -230,7 +230,6 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         void HordeFadeOut(bool playersWon)
         {
-            Log.Logger.Log("FadeOut: won = " + playersWon);
             if (playersWon)
             {
                 var stream = ArenaClient.GetStream(ScriptMessages.HordeWin);
@@ -257,7 +256,6 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         protected override void End()
         {
-            Log.Logger.Log("End");
             spawnBarriers.Clear();
             Stands.Clear();
             standTimer.Stop();
@@ -309,10 +307,21 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 return;
 
             client.GMClass = pc;
-            client.GMTeamID = 0;
+            client.SetTeamID(TeamIdent.GMPlayer);
 
-            if (client.Character == null || Phase == GamePhase.WarmUp)
+            if (client.Character == null || Phase == GamePhase.WarmUp || Phase == GamePhase.None)
+            {
                 SpawnCharacter(client, Scenario.SpawnPos, Scenario.SpawnRange);
+            }
         }
+
+        public override void OnSuicide(ArenaClient client)
+        {
+            client.GMDeaths++;
+            if (players.TrueForAll(p => !p.IsCharacter || p.Character.HP <= 1))
+                HordeFadeOut(false);
+        }
+
+
     }
 }

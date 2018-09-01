@@ -153,9 +153,9 @@ namespace GUC.Scripts
             AddSomeDefs();
 
             // -- Websocket-Server --
-            Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
-            wsServer.Init();
-            wsServer.Start();
+            //Sumpfkraut.Web.WS.WSServer wsServer = new Sumpfkraut.Web.WS.WSServer();
+            //wsServer.Init();
+            //wsServer.Start();
 
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();

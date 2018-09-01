@@ -29,13 +29,17 @@ namespace GUC.Scripts.Arena
 
         public NPCClass GMClass;
         public bool GMJoined { get { return GMTeamID >= TeamIdent.GMSpectator; } }
-        public TeamIdent GMTeamID = TeamIdent.None;
+
+        TeamIdent gmTeamID = TeamIdent.None;
+        public TeamIdent GMTeamID { get { return gmTeamID; } }
         public void SetTeamID(TeamIdent id)
         {
-            if (GMTeamID == id)
+            if (gmTeamID == id)
                 return;
 
-            GMTeamID = id;
+            gmTeamID = id;
+            if (id < TeamIdent.GMPlayer)
+                GMClass = null;
             var stream = GetStream(ScriptMessages.PlayerInfoTeam);
             stream.Write((byte)this.ID);
             stream.Write((sbyte)this.GMTeamID);
@@ -129,6 +133,7 @@ namespace GUC.Scripts.Arena
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
+            Log.Logger.Log(id);
             switch (id)
             {
                 case ScriptMessages.JoinGame:

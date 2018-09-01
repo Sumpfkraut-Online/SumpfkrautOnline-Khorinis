@@ -30,8 +30,19 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 AddButton("CLASS", "", y, () => SelectClass(index));
                 i++;
             }
+            AddButton("Zuschauen", "Dem Spielmodus zuschauen.", 300, Spectate);
             AddButton("Zurück", "Zurück ins Hauptmenü.", backButtonOffset, Menus.MainMenu.Menu.Open);
             OnEscape = Menus.MainMenu.Menu.Open;
+        }
+
+        void Spectate()
+        {
+            if (PlayerInfo.HeroInfo.TeamID != TeamIdent.GMSpectator)
+            {
+                var stream = ArenaClient.GetStream(ScriptMessages.ModeSpectate);
+                ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
+            }
+            Close();
         }
 
         public override void Open()
@@ -46,7 +57,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             int index = 0;
             foreach (var classDef in HordeMode.ActiveMode.Scenario.PlayerClasses)
             {
-                if (index >= items.Count - 1)
+                if (index >= items.Count - 2)
                 {
                     Logger.LogWarning("Too many classes to show in the menu!");
                     break;
@@ -61,7 +72,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 index++;
             }
 
-            for (; index < items.Count - 1; index++)
+            for (; index < items.Count - 2; index++)
             {
                 items[index].Enabled = false;
                 items[index].Hide();
@@ -87,7 +98,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
             if (!HordeMode.ActiveMode.Scenario.PlayerClasses.TryGet(index, out NPCClass classDef))
                 return;
-
+            
             if (classDef == NPCClass.Hero)
             {
                 Close();
@@ -102,7 +113,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
 
             NPCClass.Hero = classDef;
-            
+
             Close();
         }
 

@@ -32,7 +32,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             RespawnNote.Toggle(false);
             base.End();
         }
-        
+
         public static void ReadWinMessage(PacketReader stream)
         {
             var teams = ActiveMode.Scenario.Teams;
@@ -44,28 +44,19 @@ namespace GUC.Scripts.Arena.GameModes.TDM
 
             if (winnerCount == teams.Length)
             {
-                PrintMessage("UNENTSCHIEDEN!", ColorRGBA.White);
+                DoVictoryStuff(true, "UNENTSCHIEDEN!");
                 return;
             }
             else
             {
                 if (PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer)
-                    PrintMessage(winners.Contains((int)PlayerInfo.HeroInfo.TeamID) ? "SIEG!" : "NIEDERLAGE!", ColorRGBA.White);
+                    DoVictoryStuff(winners.Contains((int)PlayerInfo.HeroInfo.TeamID));
 
-                foreach (int i in winners)
-                    if (i < teams.Length)
-                        PrintMessage(teams[i].Name + " hat gewonnen.", teams[i].Color);
+                if (winners.Count > 1)
+                    foreach (int i in winners)
+                        if (i < teams.Length)
+                            ScreenScrollText.AddText(teams[i].Name + " hat gewonnen.", GUI.GUCView.Fonts.Menu, teams[i].Color, 20 * TimeSpan.TicksPerSecond);
             }
-
-            //if (TDMMode.IsActive)
-            //    TDMScoreBoard.Instance.Open();
-        }
-
-        static void PrintMessage(string text, ColorRGBA color)
-        {
-            //ChatMenu.Menu.AddMessage(ChatMode.Private, text);
-            ScreenScrollText.AddText(text, GUI.GUCView.Fonts.Menu, color, 20 * TimeSpan.TicksPerSecond);
-            Log.Logger.Log(text);
         }
     }
 }
