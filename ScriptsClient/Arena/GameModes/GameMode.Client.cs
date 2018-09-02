@@ -10,7 +10,8 @@ namespace GUC.Scripts.Arena.GameModes
     partial class GameMode
     {
         static GUCVisual VictoryVis;
-        static SoundDefinition VictoryWin = new SoundDefinition("SFX_INNOSEYE.WAV");
+        //static SoundDefinition VictoryWin = new SoundDefinition("SFX_INNOSEYE.WAV");
+        static SoundDefinition VictoryWin = new SoundDefinition("LEVELUP.WAV");
         static SoundDefinition VictoryLoss = new SoundDefinition("CHAPTER_01.WAV");
 
         protected static void DoVictoryStuff(bool win, string winText = "SIEG!", string lossText = "NIEDERLAGE!")

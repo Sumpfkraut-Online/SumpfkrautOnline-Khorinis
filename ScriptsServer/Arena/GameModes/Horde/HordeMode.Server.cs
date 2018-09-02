@@ -7,11 +7,14 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
 using GUC.Scripting;
+using GUC.Types;
 
 namespace GUC.Scripts.Arena.GameModes.Horde
 {
     partial class HordeMode
     {
+        AIManager aiMan = new AIManager(true);
+
         #region Stands
 
         class StandInst
@@ -26,7 +29,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
         List<StandInst> Stands = new List<StandInst>();
         StandInst ActiveStand;
 
-        GUCTimer standTimer = new GUCTimer(TimeSpan.TicksPerSecond);
+        List<NPCInst> AmbientNPCs = new List<NPCInst>();
+
+        GUCTimer standTimer = new GUCTimer();
+        GUCTimer standSpawnTimer = new GUCTimer();
         void CheckStandDistance()
         {
             if (ActiveStand != null)
@@ -48,13 +54,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             }
         }
 
-        int standEnemyCount = 0;
         void StartStand(StandInst inst)
         {
             Log.Logger.Log("Start stand");
-            standTimer.Stop();
             ActiveStand = inst;
-            standEnemyCount = 0;
 
             inst.Agent = CreateAgent(2 * inst.Stand.Range);
             if (inst.Boss != null)
@@ -63,20 +66,47 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 inst.Boss.AllowHitTarget.Remove(BossProtection);
                 inst.Boss.OnDeath += boss => EndStand();
             }
-            else
-            {
-                phaseTimer.SetInterval(inst.Stand.Duration * TimeSpan.TicksPerSecond);
-                phaseTimer.SetCallback(EndStand);
-                phaseTimer.Restart();
-            }
 
-            FillUpStandEnemies();
+            standSpawnTimer.SetInterval(inst.Stand.EnemySpawnInterval);
+            standSpawnTimer.SetCallback(StandSpawn);
+            standSpawnTimer.Start();
+            StandSpawn();
 
             SetPhase(GamePhase.Fight + 1 + inst.Index);
+            standTimer.SetInterval(inst.Stand.Duration);
+            standTimer.SetCallback(EndStand);
+        }
+
+        void StandSpawn()
+        {
+            if (ActiveStand == null || Phase < GamePhase.Fight)
+                return;
+
+            var def = ActiveStand.Stand;
+            var agent = ActiveStand.Agent;
+
+            int max = (int)Math.Ceiling(def.EnemyCountPerGroup * players.Count);
+            for (int g = 0; g < def.EnemyGroupsPerSpawn; g++)
+            {
+                var spawnPos = Randomizer.Get(def.EnemySpawns);
+                for (int i = 0; i < max; i++)
+                {
+                    float prob = Randomizer.GetFloat();
+                    var e = def.Enemies.Last(n => prob <= n.CountScale);
+
+                    var npc = SpawnNPC(e.Enemy, spawnPos);
+                    agent.aiClients.Add(npc);
+                    ((SimpleAIPersonality)agent.AIPersonality).Attack(npc, Randomizer.Get(players.Where(p => p.IsCharacter && p.Character.HP > 1)).Character);
+                }
+            }
         }
 
         void EndStand()
         {
+            if (ActiveStand == null)
+                return;
+
+            standSpawnTimer.Stop();
             Stands.Remove(ActiveStand);
             foreach (var v in ActiveStand.Barriers)
                 v.Despawn();
@@ -88,46 +118,17 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             ActiveStand = null;
             if (Stands.Count == 0)
             {
-                FadeOut();
+                HordeFadeOut(true);
             }
             else
             {
-                standTimer.Start();
+                standTimer.SetInterval(TimeSpan.TicksPerSecond);
+                standTimer.SetCallback(CheckStandDistance);
                 SetPhase(GamePhase.Fight);
             }
             Log.Logger.Log("end stand");
         }
 
-        void FillUpStandEnemies()
-        {
-            if (ActiveStand == null)
-                return;
-
-            var def = ActiveStand.Stand;
-
-            int maxCount = (int)Math.Ceiling(def.MaxEnemies * players.Count);
-            for (int i = standEnemyCount; i < maxCount; i++)
-            {
-                float prob = Randomizer.GetFloat();
-                foreach (var e in def.Enemies)
-                    if (prob <= e.CountScale)
-                    {
-                        var npc = SpawnEnemy(e.Enemy, Randomizer.Get(def.EnemySpawns));
-                        npc.OnDeath += OnStandEnemyDeath;
-                        ActiveStand.Agent.aiClients.Add(npc);
-                        ((SimpleAIPersonality)ActiveStand.Agent.AIPersonality).GoTo(npc, ActiveStand.Stand.Position);
-                        standEnemyCount++;
-                        break;
-                    }
-            }
-        }
-
-        void OnStandEnemyDeath(NPCInst npc)
-        {
-            standEnemyCount--;
-            FillUpStandEnemies();
-        }
-        
         static bool BossProtection(NPCInst attacker, NPCInst target)
         {
             return false;
@@ -177,7 +178,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
                 if (stand.Boss != null)
                 {
-                    inst.Boss = SpawnEnemy(stand.Boss, stand.Position);
+                    inst.Boss = SpawnNPC(stand.Boss, stand.Position);
                     inst.Boss.AllowHitTarget.Add(BossProtection);
                 }
 
@@ -210,11 +211,27 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     int maxCount = (int)Math.Ceiling(pair.CountScale * players.Count);
                     for (int i = 0; i < maxCount; i++)
                     {
-                        agent.aiClients.Add(SpawnEnemy(pair.Enemy, group.Position, group.Range));
+                        agent.aiClients.Add(SpawnNPC(pair.Enemy, group.Position, group.Range));
                     }
                 }
             }
 
+            foreach (var group in Scenario.AmbientNPCs)
+            {
+                foreach (var pair in group.npcs)
+                {
+                    for (int i = 0; i < pair.CountScale; i++)
+                    {
+                        var npc = SpawnNPC(pair.Enemy, group.Position, new Angles(0, group.Yaw, 0), group.Range, 0, false);
+                        ItemInst weapon = npc.GetEquipmentBySlot(NPCSlots.TwoHanded);
+                        if (weapon == null) weapon = npc.GetEquipmentBySlot(NPCSlots.OneHanded1);
+                        if (weapon != null) npc.DoDrawWeapon(weapon);
+                        AmbientNPCs.Add(npc);
+                    }
+                }
+            }
+
+            standTimer.SetInterval(TimeSpan.TicksPerSecond);
             standTimer.SetCallback(CheckStandDistance);
             standTimer.Start();
 
@@ -225,11 +242,15 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         protected override void FadeOut()
         {
-            HordeFadeOut(players.TrueForAll(p => !p.IsCharacter || p.Character.HP > 1));
+            HordeFadeOut(Stands.Count == 0 && players.TrueForAll(p => !p.IsCharacter || p.Character.HP > 1));
         }
 
         void HordeFadeOut(bool playersWon)
         {
+            if (Phase == GamePhase.FadeOut)
+                return;
+
+            standSpawnTimer.Stop();
             if (playersWon)
             {
                 var stream = ArenaClient.GetStream(ScriptMessages.HordeWin);
@@ -251,6 +272,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 });
             }
 
+            var agent = CreateAgent();
+            foreach (var npc in AmbientNPCs)
+            {
+                npc.BaseInst.SetNeedsClientGuide(true);
+                agent.aiClients.Add(npc);
+            }
             base.FadeOut();
         }
 
@@ -258,15 +285,17 @@ namespace GUC.Scripts.Arena.GameModes.Horde
         {
             spawnBarriers.Clear();
             Stands.Clear();
-            standTimer.Stop();
+            standSpawnTimer.Stop();
             NPCInst.sOnHit -= OnHit;
             HordeBoard.Instance.RemoveAll();
+            AmbientNPCs.Clear();
+
 
             base.End();
         }
 
         #endregion
- 
+
         void OnHit(NPCInst attacker, NPCInst target, int damage)
         {
             if (!IsActive || ActiveMode.Phase < GamePhase.Fight)

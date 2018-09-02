@@ -171,6 +171,7 @@ namespace GUC.Scripts.Arena.GameModes
             // move players to next scenario
             oldPlayers.ForEach(p => newMode.JoinAsSpectator(p));
 
+            ClearAgents();
             // delete old world
             oldWorld.Delete();
         }
@@ -186,6 +187,60 @@ namespace GUC.Scripts.Arena.GameModes
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
 
+        protected NPCInst CreateNPC(NPCClass def, int teamID, CharCreationInfo cInfo = null)
+        {
+            if (def == null)
+                return null;
+
+            NPCInst npc;
+            if (def.Definition == null)
+            {
+                if (cInfo == null)
+                    cInfo = new CharCreationInfo(); // default one, should not happen anyway
+
+                npc = new NPCInst(NPCDef.Get(cInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"))
+                {
+                    UseCustoms = true,
+                    CustomBodyTex = cInfo.BodyTex,
+                    CustomHeadMesh = cInfo.HeadMesh,
+                    CustomHeadTex = cInfo.HeadTex,
+                    CustomVoice = cInfo.Voice,
+                    CustomFatness = cInfo.Fatness,
+                    CustomScale = new Vec3f(cInfo.BodyWidth, 1.0f, cInfo.BodyWidth),
+                    CustomName = cInfo.Name
+                };
+            }
+            else
+            {
+                npc = new NPCInst(NPCDef.Get(def.Definition));
+            }
+
+            // add inventory items
+            if (def.ItemDefs != null)
+                foreach (var invItem in def.ItemDefs)
+                {
+                    var item = new ItemInst(ItemDef.Get(invItem.DefName));
+                    item.SetAmount(invItem.Amount);
+                    npc.Inventory.AddItem(item);
+                    npc.EffectHandler.TryEquipItem(item);
+                }
+
+            // add overlays
+            if (def.Overlays != null)
+                foreach (var overlay in def.Overlays)
+                {
+                    if (npc.ModelDef.TryGetOverlay(overlay, out ScriptOverlay ov))
+                        npc.ModelInst.ApplyOverlay(ov);
+                }
+
+            npc.TeamID = teamID;
+
+            npc.Protection = def.Protection;
+            npc.Damage = def.Damage;
+            npc.SetHealth(def.HP, def.HP);
+            return npc;
+        }
+
         protected void SpawnCharacter(ArenaClient client, Vec3f position, float range)
         {
             SpawnCharacter(client, new PosAng(Randomizer.GetVec3fRad(position, range), Randomizer.GetYaw()));
@@ -199,51 +254,8 @@ namespace GUC.Scripts.Arena.GameModes
 
             // get rid of old character if there is one
             client.KillCharacter();
-
-            NPCClass classDef = client.GMClass;
-
-            NPCInst npc;
-            if (classDef.Definition == null)
-            {
-                var charInfo = client.CharInfo;
-                npc = new NPCInst(NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"))
-                {
-                    UseCustoms = true,
-                    CustomBodyTex = charInfo.BodyTex,
-                    CustomHeadMesh = charInfo.HeadMesh,
-                    CustomHeadTex = charInfo.HeadTex,
-                    CustomVoice = charInfo.Voice,
-                    CustomFatness = charInfo.Fatness,
-                    CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth),
-                    CustomName = charInfo.Name
-                };
-            }
-            else
-            {
-                npc = new NPCInst(NPCDef.Get(classDef.Definition));
-            }
-
-            // add inventory items
-            if (classDef.ItemDefs != null)
-                foreach (var invItem in classDef.ItemDefs)
-                {
-                    var item = new ItemInst(ItemDef.Get(invItem.DefName));
-                    item.SetAmount(invItem.Amount);
-                    npc.Inventory.AddItem(item);
-                    npc.EffectHandler.TryEquipItem(item);
-                }
-
-            // add overlays
-            if (classDef.Overlays != null)
-                foreach (var overlay in classDef.Overlays)
-                {
-                    if (npc.ModelDef.TryGetOverlay(overlay, out ScriptOverlay ov))
-                        npc.ModelInst.ApplyOverlay(ov);
-                }
-
-            npc.TeamID = (int)client.GMTeamID;
-
-            npc.SetHealth(100, 100);
+            
+            NPCInst npc = CreateNPC(client.GMClass, (int)client.GMTeamID, client.CharInfo);
             npc.Spawn(World, spawnPoint.Position, spawnPoint.Angles);
             client.SetControl(npc);
 
@@ -260,44 +272,39 @@ namespace GUC.Scripts.Arena.GameModes
         public virtual void SelectClass(ArenaClient client, int index) { }
         public virtual void OnSuicide(ArenaClient client) { }
 
-        protected NPCInst SpawnEnemy(NPCClass enemy, Vec3f spawnPoint, float spawnRange = 100, int teamID = 1)
+        protected NPCInst SpawnNPC(NPCClass classDef, Vec3f pos, float posOffset = 100, int teamID = 1, bool giveAI = true)
         {
-            NPCInst npc = new NPCInst(NPCDef.Get(enemy.Definition));
+            return SpawnNPC(classDef, pos, Randomizer.GetYaw(), posOffset, teamID, giveAI);
+        }
 
-            if (enemy.ItemDefs != null)
-                foreach (var invItem in enemy.ItemDefs)
-                {
-                    var item = new ItemInst(ItemDef.Get(invItem.DefName));
-                    item.SetAmount(invItem.Amount);
-                    npc.Inventory.AddItem(item);
-                    npc.EffectHandler.TryEquipItem(item);
-                }
+        protected NPCInst SpawnNPC(NPCClass classDef, Vec3f pos, Angles ang, float posOffset = 100, int teamID = 1, bool giveAI = true)
+        {
+            NPCInst npc = CreateNPC(classDef, teamID);
 
-            if (enemy.Overlays != null)
-                foreach (var overlay in enemy.Overlays)
-                {
-                    if (npc.ModelDef.TryGetOverlay(overlay, out ScriptOverlay ov))
-                        npc.ModelInst.ApplyOverlay(ov);
-                }
+            Vec3f spawnPos = posOffset > 0 ? Randomizer.GetVec3fRad(pos, posOffset) : pos;
 
-            npc.SetHealth(enemy.HP, enemy.HP);
-
-            Vec3f spawnPos = Randomizer.GetVec3fRad(spawnPoint, spawnRange);
-            Angles spawnAng = Randomizer.GetYaw();
-
-            npc.TeamID = teamID;
-            npc.BaseInst.SetNeedsClientGuide(true);
-            npc.Spawn(World, spawnPos, spawnAng);
+            npc.BaseInst.SetNeedsClientGuide(giveAI);
+            npc.Spawn(World, spawnPos, ang);
             return npc;
         }
 
-        protected static AIAgent CreateAgent(float aggressionRad = 800)
+        protected AIAgent CreateAgent(float aggressionRad = 800)
         {
             var pers = new SimpleAIPersonality(aggressionRad, 1);
             var agent = new AIAgent(new List<VobInst>(), pers);
             AIManager.aiManagers[0].SubscribeAIAgent(agent);
+            agents.Add(agent);
             pers.Init(null, null);
             return agent;
+        }
+
+        List<AIAgent> agents = new List<AIAgent>(100);
+
+        void ClearAgents()
+        {
+            var aiMan = AIManager.aiManagers[0];
+            agents.ForEach(a => aiMan.UnsubscribeAIAgent(a));
+            agents.Clear();
         }
     }
 }

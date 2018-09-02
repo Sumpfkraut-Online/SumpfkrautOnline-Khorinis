@@ -116,5 +116,10 @@ namespace GUC
         {
             return list[GetInt(list.Count)];
         }
+
+        public static T Get<T>(IEnumerable<T> enumerable)
+        {
+            return enumerable.ElementAt(GetInt(enumerable.Count()));
+        }
     }
 }

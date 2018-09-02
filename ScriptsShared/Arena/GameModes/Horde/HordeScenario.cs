@@ -56,12 +56,18 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             public Pair[] npcs;
             public Vec3f Position;
             public float Range;
+            public float Yaw;
 
-            public Group(float x, float y, float z, float range, params Pair[] npcs)
+            public Group(float x, float y, float z, float range, params Pair[] npcs) : this(x, y, z, range, 0, npcs)
+            {
+            }
+
+            public Group(float x, float y, float z, float range, float yaw, params Pair[] npcs)
             {
                 this.Position = new Vec3f(x, y, z);
                 this.Range = range;
                 this.npcs = npcs;
+                this.Yaw = yaw;
             }
         }
 
@@ -72,9 +78,11 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             public Vec3f Position;
             public float Range;
 
-            public int Duration; // sec
+            public long Duration;
 
-            public float MaxEnemies;
+            public float EnemyCountPerGroup; // how many enemies per group
+            public int EnemyGroupsPerSpawn; // how many groups per spawn wave
+            public long EnemySpawnInterval; // 
             public Pair[] Enemies; // enemy + probability
             public Vec3f[] EnemySpawns;
 
@@ -92,13 +100,16 @@ namespace GUC.Scripts.Arena.GameModes.Horde
         public Vec3f SpawnPos;
         public float SpawnRange;
         public Barrier[] SpawnBarriers;
-        
+
         public Item[] Items;
 
         public NPCClass[] PlayerClasses;
 
         public Group[] Enemies;
         public Stand[] Stands;
+
+        public Group[] AmbientNPCs;
+
 
         public static void Init()
         {
@@ -131,6 +142,41 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 }
             };
 
+
+            var Miliz = new NPCClass()
+            {
+                Name = "Miliz",
+                Definition = null,
+                Protection = 45,
+                Damage = 0,
+                HP = 100,
+                Overlays = new string[] { "1HST1" },
+                ItemDefs = new NPCClass.InvItem[]
+                {
+                      new NPCClass.InvItem("1hschwert"),
+                      new NPCClass.InvItem("ITAR_miliz_s"),
+                      new NPCClass.InvItem("light_xbow"),
+                      new NPCClass.InvItem("itrw_bolt", 20),
+                },
+            };
+
+            var Ritter = new NPCClass()
+            {
+                Name = "Ritter",
+                Definition = null,
+                Protection = 50,
+                Damage = 0,
+                HP = 100,
+                Overlays = new string[] { "2HST1" },
+                ItemDefs = new NPCClass.InvItem[]
+                {
+                      new NPCClass.InvItem("2hschwert"),
+                      new NPCClass.InvItem("ITAR_ritter"),
+                      new NPCClass.InvItem("light_xbow"),
+                      new NPCClass.InvItem("itrw_bolt", 20),
+                },
+            };
+
             scenarios.Add(new HordeScenario()
             {
                 Name = "h_pass",
@@ -145,38 +191,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 WorldWeather = -1,
                 PlayerClasses = new NPCClass[]
                 {
-                    new NPCClass()
-                    {
-                        Name = "Miliz",
-                        Definition = null,
-                        Protection = 0,
-                        Damage = 0,
-                        HP = 100,
-                        Overlays = new string[] {"1HST1"},
-                        ItemDefs = new NPCClass.InvItem[]
-                        {
-                            new NPCClass.InvItem("1hschwert"),
-                            new NPCClass.InvItem("ITAR_miliz_s"),
-                            new NPCClass.InvItem("light_xbow"),
-                            new NPCClass.InvItem("itrw_bolt", 20),
-                        },
-                    },
-                    new NPCClass()
-                    {
-                        Name = "Ritter",
-                        Definition = null,
-                        Protection = 0,
-                        Damage = 0,
-                        HP = 100,
-                        Overlays = new string[] {"2HST1"},
-                        ItemDefs = new NPCClass.InvItem[]
-                        {
-                            new NPCClass.InvItem("2hschwert"),
-                            new NPCClass.InvItem("ITAR_ritter"),
-                            new NPCClass.InvItem("light_xbow"),
-                            new NPCClass.InvItem("itrw_bolt", 20),
-                        },
-                    }
+                    Miliz,
+                    Ritter,
                 },
 
                 SpawnBarriers = new Barrier[]
@@ -207,8 +223,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     new Group(-11240, -705, 12303, 1500, new Pair(OrcWarrior, 0.75f), // vor brücke
                                                          new Pair(OrcScout, 2.0f)),
                     new Group(-11003, -820, 9127, 140, new Pair(OrcElite, 0.2f)), // auf brücke
-                },     
-                
+                },
+
                 Items = new Item[]
                 {
                     new Item("hptrank", 2892.88354f, 6425.26074f, 31699.8496f), // austauschstelle brücke
@@ -244,8 +260,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         Barriers = new Barrier[] { new Barrier("gate", -3069, -496, 1800, 0, -2.793f, 0) },
                         Position = new Vec3f(-3106, 100, 1912),
                         Range = 2000,
-                        MaxEnemies = 3,
-                        Duration = 180,
+                        EnemyCountPerGroup = 1,
+                        EnemyGroupsPerSpawn = 2,
+                        EnemySpawnInterval = 15 * TimeSpan.TicksPerSecond,
+                        Duration = 180 * TimeSpan.TicksPerSecond,
                         SFXStart = "TRUMPET_01.WAV",
                         SFXLoop = "GATE_LOOP.WAV",
                         SFXStop = "GATE_STOP.WAV",
@@ -258,7 +276,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                             "\"Bei Innos, der Hebel ist abgebrochen. Gebt uns einen Augenblick\"",
                             "\"Na los! Irgendwer soll bei Engor mir einen Hebel besorgen!\"",
                             "\"Alles klar dort unten?\"",
-                            "\"Brutus, helf mal mit deinen fetten Arme aus!\"",
+                            "\"Brutus, helf mal mit deinen fetten Armen aus!\"",
                             "\"Tor ist offen!\"",
                         },
                         EnemySpawns = new Vec3f[]
@@ -277,9 +295,16 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                             new Pair(OrcElite, 0.5f),
                         }
                     }
-                }
+                },
+
+                AmbientNPCs = new Group[]
+                {                
+                    // hinter Burgtor            
+                    new Group(-2844, -230, 1227, 400, 0.4244f, new Pair(Miliz, 6),
+                                                               new Pair(Ritter, 4)),
+                },
             });
-            
+
             /*section.bridges = new List<HordeBarrier>()
             {
                 new HordeBarrier() { Definition = "planks", Position = new Vec3f(-11011, -947, 9555), Angles = new Angles(0.000, 1.607, 0.122) },

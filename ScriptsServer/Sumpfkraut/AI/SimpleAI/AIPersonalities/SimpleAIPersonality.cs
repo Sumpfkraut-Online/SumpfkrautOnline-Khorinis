@@ -434,7 +434,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                             enemies.Add((VobInst) nearNPC.ScriptObject);
                         }*/
 
-                        if (nearNPC.IsPlayer && !nearNPC.IsDead && !otherNpc.IsUnconscious)
+                        if (!nearNPC.IsDead && !otherNpc.IsUnconscious && otherNpc.TeamID != npc.TeamID)
                         {
                             enemies.Add((VobInst)nearNPC.ScriptObject);
                         }

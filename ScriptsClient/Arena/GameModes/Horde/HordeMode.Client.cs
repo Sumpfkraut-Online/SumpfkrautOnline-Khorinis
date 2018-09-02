@@ -51,7 +51,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 NextMessage();
                 if (stand.Messages.Length > 1 && stand.Duration > 0)
                 {
-                    messageTimer.SetInterval(stand.Duration * TimeSpan.TicksPerSecond / (stand.Messages.Length - 1));
+                    messageTimer.SetInterval(stand.Duration / (stand.Messages.Length - 1));
                     messageTimer.SetCallback(NextMessage);
                     messageTimer.Start();
                 }
