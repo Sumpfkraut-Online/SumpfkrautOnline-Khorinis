@@ -149,6 +149,8 @@ namespace GUC.Scripts
             NPCInst.Requests.OnUseItem += (npc, item) => npc.EffectHandler.TryUse(item);
             NPCInst.Requests.OnDropItem += (npc, item, amount) => npc.EffectHandler.TryDropItem(item, amount);
             NPCInst.Requests.OnTakeItem += (npc, item) => npc.EffectHandler.TryTakeItem(item);
+            NPCInst.Requests.OnVoice += (npc, cmd) => npc.EffectHandler.TryVoice(cmd);
+            NPCInst.Requests.OnHelpUp += (npc, target) => npc.EffectHandler.TryHelpUp(target);
 
             AddSomeDefs();
 
@@ -658,6 +660,8 @@ namespace GUC.Scripts
         void AddGestureAnis(ModelDef m)
         {
             m.AddAniJob(new ScriptAniJob("gesture_dontknow", "t_dontknow", new ScriptAni(0, 10)));
+
+            m.AddAniJob(new ScriptAniJob("plunder", "t_plunder", new ScriptAni(0, 75)));
         }
 
         #endregion

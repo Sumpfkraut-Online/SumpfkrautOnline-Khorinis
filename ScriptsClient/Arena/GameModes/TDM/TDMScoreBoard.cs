@@ -62,32 +62,14 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                 int teamScore = stream.ReadShort();
                 board.SetTitle(string.Format("{0} ({1}/{2})", activeScenario.Teams[t].Name, teamScore, TDMMode.ScoreLimit));
 
-                int count = stream.ReadByte();
-                for (int i = 0; i < count; i++)
-                {
-                    board.AddEntry(new ScoreBoard.Entry()
-                    {
-                        ID = stream.ReadByte(),
-                        Score = stream.ReadShort(),
-                        Kills = stream.ReadShort(),
-                        Deaths = stream.ReadShort(),
-                        Ping = stream.ReadShort()
-                    }, false);
-                }
+                board.ReadEntries(stream, false);
             }
 
             int spectators = stream.ReadByte();
             for (int i = 0; i < spectators; i++)
             {
                 var lowest = Boards.Aggregate((c1, c2) => c1.EntryCount < c2.EntryCount ? c1 : c2);
-                lowest.AddEntry(new ScoreBoard.Entry()
-                {
-                    ID = stream.ReadByte(),
-                    Score = stream.ReadShort(),
-                    Kills = stream.ReadShort(),
-                    Deaths = stream.ReadShort(),
-                    Ping = stream.ReadShort()
-                }, true);
+                lowest.AddEntry(new ScoreBoard.Entry(stream), true);
             }
         }
 

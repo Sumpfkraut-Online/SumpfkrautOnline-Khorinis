@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Arena.GameModes.Horde
 {
@@ -110,6 +111,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         public Group[] AmbientNPCs;
 
+        public Vec3f[] Respawns;
+
 
         public static void Init()
         {
@@ -147,7 +150,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             {
                 Name = "Miliz",
                 Definition = null,
-                Protection = 45,
+                Protection = 0,
                 Damage = 0,
                 HP = 100,
                 Overlays = new string[] { "1HST1" },
@@ -158,6 +161,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                       new NPCClass.InvItem("light_xbow"),
                       new NPCClass.InvItem("itrw_bolt", 20),
                 },
+                Guild = Allegiance.MIL,
             };
 
             var Ritter = new NPCClass()
@@ -175,6 +179,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                       new NPCClass.InvItem("light_xbow"),
                       new NPCClass.InvItem("itrw_bolt", 20),
                 },
+                Guild = Allegiance.PAL,
             };
 
             scenarios.Add(new HordeScenario()
@@ -302,6 +307,13 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     // hinter Burgtor            
                     new Group(-2844, -230, 1227, 400, 0.4244f, new Pair(Miliz, 6),
                                                                new Pair(Ritter, 4)),
+                },
+
+                Respawns = new Vec3f[]
+                {
+                    new Vec3f(692.55f, 2824.994f, 21342.08f),
+                    new Vec3f(-8501.721f, -1131.424f, 12540.28f),
+                    new Vec3f(-3193.676f, -552.6367f, 3412.632f),
                 },
             });
 

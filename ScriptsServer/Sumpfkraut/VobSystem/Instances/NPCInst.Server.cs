@@ -8,6 +8,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using System;
 using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -77,7 +78,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 if (this.IsPlayer)
                 {
-                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                    var client = ((Arena.ArenaClient)this.Client);
+                    client.KillCharacter();
+                    if (Arena.GameModes.Horde.HordeMode.IsActive && this.TeamID >= 0)
+                    {
+                        Arena.GameModes.Horde.HordeMode.ActiveMode.RespawnClient(client);
+                    }
+                }
+                else
+                {
+                    this.SetHealth(0);
                 }
             }
 
@@ -222,7 +232,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public void DoDropItem(ItemInst item, int amount, Vec3f position, Angles angles)
         {
             item = item.Split(amount);
-            
+
             ScriptAniJob job = AniCatalog?.ItemHandling.DropItem;
             if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
             {
@@ -250,7 +260,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
                     frame = float.MaxValue;
-                
+
                 var pair = new Animations.FrameActionPair(frame, () => this.TakeItem(item));
                 this.ModelInst.StartAniJob(job, 0.8f, 0, pair);
                 return;
@@ -741,7 +751,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ItemInst drawnWeapon = GetDrawnWeapon();
             return this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
         }
-        
+
         /// <summary> Skips hit determination if false is returned. Arguments: Attacker, Target </summary>
         public static BoolEvent<NPCInst, NPCInst> AllowHitEvent;
 
@@ -778,10 +788,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target == this || target.IsDead || target.IsUnconscious)
                           return;
 
-                      if (!AllowHitEvent.TrueForAll(this, target) 
+                      if (!AllowHitEvent.TrueForAll(this, target)
                       || !this.AllowHitAttacker.TrueForAll(this, target) || !target.AllowHitTarget.TrueForAll(this, target))
                           return;
-                      
+
                       float realRange = weaponRange + target.ModelDef.Radius;
                       if (target.CurrentFightMove == FightMoves.Dodge)
                           realRange /= 3.0f; // decrease radius if target is backing up
@@ -793,7 +803,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       }
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
-                      
+
                       float hitHeight;
                       float hitYaw;
                       if (CurrentFightMove == FightMoves.Left || CurrentFightMove == FightMoves.Right)
@@ -1042,6 +1052,52 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public bool IsObstructed()
         {
             return IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || HasItemInHands() || IsUnconscious;
+        }
+
+        public void RandomizeCustomVisuals(string name, bool male)
+        {
+            if (male)
+            {
+                CustomBodyTex = (HumBodyTexs)Randomizer.GetInt(0, 4);
+                CustomHeadMesh = (HumHeadMeshs)Randomizer.GetInt(6);
+                CustomVoice = (HumVoices)Randomizer.GetInt(15);
+                switch (CustomBodyTex)
+                {
+                    case HumBodyTexs.M_Pale:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(41, 58);
+                        break;
+                    case HumBodyTexs.M_Normal:
+                    case HumBodyTexs.G1Hero:
+                    case HumBodyTexs.G2Hero:
+                    case HumBodyTexs.M_Tattooed:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(58, 120);
+                        break;
+                    case HumBodyTexs.M_Latino:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(120, 129);
+                        break;
+                    case HumBodyTexs.M_Black:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(129, 137);
+                        break;
+                }
+            }
+            else
+            {
+
+            }
+
+            var size = Randomizer.GetFloat(0.95f, 1.05f);
+            CustomFatness = Randomizer.GetFloat(-1, 1);
+            CustomScale = new Vec3f(size, 1.0f, size);
+            CustomName = name;
+            UseCustoms = true;
+        }
+
+        public void DoVoice(VoiceCmd cmd, bool shout = false)
+        {
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)(shout ? ScriptVobMessageIDs.VoiceShout : ScriptVobMessageIDs.Voice));
+            strm.Write((byte)cmd);
+            this.BaseInst.SendScriptVobStream(strm);
         }
     }
 }

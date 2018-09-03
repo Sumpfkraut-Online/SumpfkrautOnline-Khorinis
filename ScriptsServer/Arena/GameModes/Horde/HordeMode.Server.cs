@@ -307,7 +307,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     return;
 
                 ArenaClient player = (ArenaClient)attacker.Client;
-                if (player.GMClass == null) return;
+                if (player.GMTeamID < TeamIdent.GMPlayer) return;
 
                 player.GMScore += damage / 10.0f;
                 if (target.HP <= 0)
@@ -319,12 +319,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             else if (target.IsPlayer)
             {
                 ArenaClient player = (ArenaClient)target.Client;
-                if (player.GMClass == null) return;
+                if (player.GMTeamID < TeamIdent.GMPlayer) return;
 
                 if (target.HP <= 1)
                 {
                     player.GMDeaths++;
-                    if (players.TrueForAll(p => !p.IsCharacter || p.Character.HP <= 1))
+                    if (players.TrueForAll(p => !p.IsCharacter || p.Character.IsDead || p.Character.IsUnconscious))
                         HordeFadeOut(false);
                 }
             }
@@ -338,19 +338,47 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             client.GMClass = pc;
             client.SetTeamID(TeamIdent.GMPlayer);
 
-            if (client.Character == null || Phase == GamePhase.WarmUp || Phase == GamePhase.None)
+            if (Phase == GamePhase.WarmUp || Phase == GamePhase.None)
             {
-                SpawnCharacter(client, Scenario.SpawnPos, Scenario.SpawnRange);
+                var npc = SpawnCharacter(client, Scenario.SpawnPos, Scenario.SpawnRange);
+                npc.DropUnconsciousOnDeath = true;
+                npc.UnconsciousDuration = -1;
+            }
+            else if (Phase != GamePhase.FadeOut)
+            {
+                RespawnClient(client);
             }
         }
 
         public override void OnSuicide(ArenaClient client)
         {
             client.GMDeaths++;
-            if (players.TrueForAll(p => !p.IsCharacter || p.Character.HP <= 1))
+            if (players.TrueForAll(p => !p.IsCharacter || p.Character.IsDead || p.Character.IsUnconscious))
                 HordeFadeOut(false);
         }
 
+        public void RespawnClient(ArenaClient client)
+        {
+            if (Phase < GamePhase.Fight)
+                return;
 
+            Vec3f nextStand = Stands[0].Stand.Position;
+            // find player closest to next stand
+            IEnumerable<Vec3f> positions = players.Where(p => p.IsCharacter && !p.Character.IsDead && !p.Character.IsUnconscious).Select(p => p.Character.GetPosition());
+            if (!Vec3f.FindClosest(Stands[0].Stand.Position, positions, out Vec3f best))
+                return;
+
+            // two closest respawns to player
+            IEnumerable<Vec3f> x = Scenario.Respawns.OrderBy(p => p.GetDistance(best)).Take(2);
+            
+            // closest of the two respawns to next stand
+            if (!Vec3f.FindClosest(best, x, out Vec3f result))
+                return;
+
+            var npc = SpawnCharacter(client, result, 100);
+            npc.DropUnconsciousOnDeath = true;
+            npc.UnconsciousDuration = -1;
+            npc.DropUnconscious();
+        }
     }
 }

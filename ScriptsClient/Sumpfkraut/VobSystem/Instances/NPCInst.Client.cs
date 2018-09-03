@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Utilities;
 using GUC.Types;
 using Gothic.Objects;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.WorldObjects;
@@ -45,10 +46,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.BaseInst.gVob.Name.Set(CustomName);
             }
 
+            doDrawItemSound = false;
             this.BaseInst.ForEachEquippedItem(i => this.pAfterEquip((NPCSlots)i.Slot, (ItemInst)i.ScriptObject));
+            doDrawItemSound = true;
 
             if (this.HP <= 0)
-                this.BaseInst.gVob.Name.Clear();
+                this.BaseInst.gVob.Name.Clear(); // Hides focus of dead npcs
             else
             {
                 // because monsters were looking at some weird angle
@@ -155,7 +158,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             new SoundDefinition("CS_IAM_ME_FL_A4")
         };
 
-        static readonly Dictionary<string, SoundDefinition> hitScreams = new Dictionary<string, SoundDefinition>();
+        static readonly Dictionary<string, SoundDefinition> cachedVoices = new Dictionary<string, SoundDefinition>(100);
 
         LockTimer screamTimer = new LockTimer(1000);
         public override void OnReadScriptVobMsg(PacketReader stream)
@@ -170,23 +173,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         int index = Randomizer.GetInt(hitSounds.Count);
                         SoundHandler.PlaySound3D(hitSounds[index], this.BaseInst);
 
-                        if (screamTimer.IsReady)
+                        if (this.CustomVoice > 0 && screamTimer.IsReady)
                         {
                             index = Randomizer.GetInt(6) - 2;
                             if (index > 0)
                             {
                                 string str = string.Format("SVM_{0}_AARGH_{1}.WAV", (int)this.CustomVoice, index);
-                                if (!hitScreams.TryGetValue(str, out SoundDefinition scream))
+                                if (!cachedVoices.TryGetValue(str, out SoundDefinition scream))
                                 {
                                     scream = new SoundDefinition(str);
-                                    hitScreams.Add(str, scream);
+                                    cachedVoices.Add(str, scream);
                                 }
-                                SoundHandler.PlaySound3D(scream, attacker);
+                                SoundHandler.PlaySound3D(scream, this.BaseInst, 3000, 0.8f);
                             }
                         }
 
-                        if (!attacker.Model.IsInAnimation())
-                            attacker.gModel.StartAni("T_GOTHIT", 0);
+                        if (!this.ModelInst.IsInAnimation())
+                            this.BaseInst.gModel.StartAni("T_GOTHIT", 0);
 
                         // fixme: transmit hit direction and use stumble animation
                     }
@@ -205,12 +208,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case ScriptVobMessageIDs.Uncon:
                     SetUnconsciousness((Unconsciousness)stream.ReadByte());
                     break;
+                case ScriptVobMessageIDs.Voice:
+                    DoVoice((VoiceCmd)stream.ReadByte());
+                    break;
+                case ScriptVobMessageIDs.VoiceShout:
+                    DoVoice((VoiceCmd)stream.ReadByte(), 6000, 0.8f);
+                    break;
                 default:
                     break;
             }
         }
 
-        static SoundDefinition[] ohmyhead = new SoundDefinition[20];
+        public void DoVoice(VoiceCmd cmd, float range = 3000, float volume = 0.7f)
+        {
+            if (this.CustomVoice <= 0)
+                return;
+
+            string str = string.Format("SVM_{0}_{1}.WAV", (int)this.CustomVoice, cmd);
+            if (!cachedVoices.TryGetValue(str, out SoundDefinition scream))
+            {
+                scream = new SoundDefinition(str);
+                cachedVoices.Add(str, scream);
+            }
+            SoundHandler.PlaySound3D(scream, this.BaseInst, range, volume);
+        }
 
         public void SetUnconsciousness(Unconsciousness unconsciousness)
         {
@@ -219,13 +240,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 int voice = (int)this.CustomVoice;
                 if (voice > 0 && voice < 20)
                 {
-                    SoundDefinition def = ohmyhead[voice];
-                    if (def == null)
+                    string str = string.Format("SVM_{0}_OHMYHEAD.WAV", voice);
+                    if (!cachedVoices.TryGetValue(str, out SoundDefinition scream))
                     {
-                        def = new SoundDefinition(string.Format("SVM_{0}_OHMYHEAD.WAV", voice));
-                        ohmyhead[voice] = def;
+                        scream = new SoundDefinition(str);
+                        cachedVoices.Add(str, scream);
                     }
-                    SoundHandler.PlaySound3D(def, this.BaseInst);
+                    SoundHandler.PlaySound3D(scream, this.BaseInst, 3000, 0.7f);
                 }
             }
             this.uncon = unconsciousness;
@@ -349,8 +370,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         static SoundDefinition sfx_UndrawMetal = new SoundDefinition("Undrawsound_ME.wav");
         static SoundDefinition sfx_UndrawWood = new SoundDefinition("Undrawsound_WO.wav");
 
+        static bool doDrawItemSound = true; //improveme
         void PlayDrawItemSound(ItemInst item, bool undraw)
         {
+            if (!doDrawItemSound) return;
+
             SoundDefinition sound;
             switch (item.Definition.Material)
             {

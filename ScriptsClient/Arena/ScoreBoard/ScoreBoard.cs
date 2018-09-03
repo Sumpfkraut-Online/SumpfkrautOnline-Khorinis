@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.GUI;
 using GUC.Types;
+using GUC.Network;
 
 namespace GUC.Scripts.Arena
 {
@@ -16,6 +17,15 @@ namespace GUC.Scripts.Arena
             public int Kills;
             public int Deaths;
             public int Ping;
+
+            public Entry(PacketReader stream)
+            {
+                ID = stream.ReadByte();
+                Score = stream.ReadShort();
+                Kills = stream.ReadShort();
+                Deaths = stream.ReadShort();
+                Ping = stream.ReadShort();
+            }
         }
 
         const string BackTex = "MENU_INGAME.TGA";
@@ -97,24 +107,13 @@ namespace GUC.Scripts.Arena
         int entryCount;
         public int EntryCount { get { return entryCount; } }
 
-        int index = 5;
-        public void Reset()
-        {
-            entryCount = 0;
-            index = 5; // column specifier offset
-            for (int i = index; i < vis.Texts.Count; i++)
-                vis.Texts[i].Text = string.Empty;
-        }
-
         static readonly ColorRGBA SpectatorColor = new ColorRGBA(250, 250, 250, 100);
 
         public void AddEntry(Entry entry, bool spectator)
         {
-            if (index >= vis.Texts.Count)
-                return;
-            
             var arr = vis.Texts;
 
+            int index = 5 * (entryCount + 1);
             bool hero = entry.ID == PlayerInfo.HeroInfo.ID;
             for (int i = 0; i < 5; i++)
             {
@@ -135,6 +134,30 @@ namespace GUC.Scripts.Arena
         public void SetPos(int x, int y)
         {
             titleVis.SetPos(x, y);
+        }
+
+        List<Entry> entries = new List<Entry>(10);
+        public void ReadEntries(PacketReader stream, bool spectator)
+        {
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                entries.Add(new Entry(stream));
+            }
+
+            foreach (var e in entries.OrderByDescending(o => o.Score))
+            {
+                AddEntry(e, spectator);
+            }
+
+            entries.Clear();
+        }
+
+        public void Reset()
+        {
+            entryCount = 0;
+            for (int i = 5; i < vis.Texts.Count; i++)
+                vis.Texts[i].Text = string.Empty;
         }
     }
 }

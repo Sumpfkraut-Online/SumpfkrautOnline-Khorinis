@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Utilities;
 using GUC.Types;
 
@@ -305,6 +306,39 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
             
             this.Host.DoTakeItem(item);
+        }
+
+        public void TryVoice(VoiceCmd cmd)
+        {
+            if (Host.IsDead || Host.CustomVoice == 0)
+                return;
+
+            bool shout;
+            switch (cmd)
+            {
+                case VoiceCmd.HELP:
+                    shout = true;
+                    break;
+                default:
+                    shout = false;
+                    break;
+            }
+
+            this.Host.DoVoice(cmd, shout);
+        }
+
+        public static event Action<NPCInst> OnHelpUp;
+        public void TryHelpUp(NPCInst target)
+        {
+            if (Host.IsDead || Host.Movement != NPCMovement.Stand || Host.ModelInst.IsInAnimation() || Host.Environment.InAir || Host.IsUnconscious 
+                || !target.IsUnconscious || target.GetPosition().GetDistance(Host.GetPosition()) > 300)
+                return;
+
+            float speed = 1.0f;
+            this.Host.ModelInst.StartAniJob(Host.AniCatalog.Gestures.Plunder, speed);
+            this.Host.DoVoice((VoiceCmd)(1 + this.Host.Guild));
+            target.LiftUnconsciousness();
+            OnHelpUp?.Invoke(this.Host);
         }
     }
 }

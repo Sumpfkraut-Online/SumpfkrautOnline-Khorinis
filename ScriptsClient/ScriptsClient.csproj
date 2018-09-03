@@ -349,6 +349,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobType.cs">
       <Link>Sumpfkraut\VobSystem\Enumeration\VobType.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs">
+      <Link>Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\BaseVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>
     </Compile>

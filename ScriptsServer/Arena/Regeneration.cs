@@ -32,6 +32,10 @@ namespace GUC.Scripts.Arena
 
         static void RegeneratePlayer(ArenaClient client)
         {
+            // no regen in horde mode
+            if (client.GMTeamID >= TeamIdent.GMPlayer && GameModes.Horde.HordeMode.IsActive)
+                return;
+
             var npc = client.Character;
 
             int diff = npc.HPMax - npc.HP;

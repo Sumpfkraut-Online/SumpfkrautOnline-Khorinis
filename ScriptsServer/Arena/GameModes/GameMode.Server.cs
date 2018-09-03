@@ -19,7 +19,7 @@ namespace GUC.Scripts.Arena.GameModes
     {
         // Lists
         protected List<ArenaClient> players = new List<ArenaClient>(10);
-        public ReadOnlyList<ArenaClient> Players { get { return players; } }        
+        public ReadOnlyList<ArenaClient> Players { get { return players; } }
 
         public static int NextScenarioIndex = 0;
         public static void StartNextScenario()
@@ -90,7 +90,7 @@ namespace GUC.Scripts.Arena.GameModes
             client.KillCharacter();
             if (!players.Contains(client))
                 players.Add(client);
-            
+
             client.SetTeamID(TeamIdent.GMSpectator);
             client.SetToSpectator(World, Scenario.SpecPoint.Position, Scenario.SpecPoint.Angles);
         }
@@ -145,7 +145,7 @@ namespace GUC.Scripts.Arena.GameModes
             phaseTimer.SetCallback(End);
             phaseTimer.Restart();
         }
-        
+
         protected virtual void End()
         {
             Log.Logger.Log("End");
@@ -196,19 +196,24 @@ namespace GUC.Scripts.Arena.GameModes
             if (def.Definition == null)
             {
                 if (cInfo == null)
-                    cInfo = new CharCreationInfo(); // default one, should not happen anyway
-
-                npc = new NPCInst(NPCDef.Get(cInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"))
                 {
-                    UseCustoms = true,
-                    CustomBodyTex = cInfo.BodyTex,
-                    CustomHeadMesh = cInfo.HeadMesh,
-                    CustomHeadTex = cInfo.HeadTex,
-                    CustomVoice = cInfo.Voice,
-                    CustomFatness = cInfo.Fatness,
-                    CustomScale = new Vec3f(cInfo.BodyWidth, 1.0f, cInfo.BodyWidth),
-                    CustomName = cInfo.Name
-                };
+                    npc = new NPCInst(NPCDef.Get("maleplayer"));
+                    npc.RandomizeCustomVisuals(def.Name, true);
+                }
+                else
+                {
+                    npc = new NPCInst(NPCDef.Get(cInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer"))
+                    {
+                        UseCustoms = true,
+                        CustomBodyTex = cInfo.BodyTex,
+                        CustomHeadMesh = cInfo.HeadMesh,
+                        CustomHeadTex = cInfo.HeadTex,
+                        CustomVoice = cInfo.Voice,
+                        CustomFatness = cInfo.Fatness,
+                        CustomScale = new Vec3f(cInfo.BodyWidth, 1.0f, cInfo.BodyWidth),
+                        CustomName = cInfo.Name
+                    };
+                }
             }
             else
             {
@@ -238,23 +243,24 @@ namespace GUC.Scripts.Arena.GameModes
             npc.Protection = def.Protection;
             npc.Damage = def.Damage;
             npc.SetHealth(def.HP, def.HP);
+            npc.Guild = def.Guild;
             return npc;
         }
 
-        protected void SpawnCharacter(ArenaClient client, Vec3f position, float range)
+        protected NPCInst SpawnCharacter(ArenaClient client, Vec3f position, float range)
         {
-            SpawnCharacter(client, new PosAng(Randomizer.GetVec3fRad(position, range), Randomizer.GetYaw()));
+            return SpawnCharacter(client, new PosAng(Randomizer.GetVec3fRad(position, range), Randomizer.GetYaw()));
         }
 
-        protected virtual void SpawnCharacter(ArenaClient client, PosAng spawnPoint)
+        protected virtual NPCInst SpawnCharacter(ArenaClient client, PosAng spawnPoint)
         {
             // only spawn if player has joined the game mode and chosen a class
             if (client == null || !client.GMJoined || client.GMClass == null)
-                return;
+                return null;
 
             // get rid of old character if there is one
             client.KillCharacter();
-            
+
             NPCInst npc = CreateNPC(client.GMClass, (int)client.GMTeamID, client.CharInfo);
             npc.Spawn(World, spawnPoint.Position, spawnPoint.Angles);
             client.SetControl(npc);
@@ -267,6 +273,7 @@ namespace GUC.Scripts.Arena.GameModes
                 phaseTimer.SetCallback(Fight);
                 phaseTimer.Restart();
             }
+            return npc;
         }
 
         public virtual void SelectClass(ArenaClient client, int index) { }

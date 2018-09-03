@@ -106,6 +106,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
 
             // gestures
             { "gesture_dontknow", "Gestures.DontKnow" },
+            { "plunder", "Gestures.Plunder" },
 
 
             { "t_HORN_Stand_2_S0", "ItemHandling.BlowHorn" },
@@ -233,6 +234,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         public class GestureAnis : AniCatalog
         {
             public ScriptAniJob DontKnow { get; private set; }
+            public ScriptAniJob Plunder { get; private set; }
         }
         public GestureAnis Gestures { get; private set; }
 

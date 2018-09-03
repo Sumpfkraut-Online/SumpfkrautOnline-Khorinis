@@ -46,6 +46,9 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         UnequipItem,
         UseItem,
 
+        Voice,
+        HelpUp,
+
         MaxNPCRequests,
     }
 
@@ -56,5 +59,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         ParryMessage,
         Climb,
         Uncon,
+        Voice,
+        VoiceShout,
     }
 }

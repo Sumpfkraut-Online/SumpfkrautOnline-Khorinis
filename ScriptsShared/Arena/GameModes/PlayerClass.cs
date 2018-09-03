@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Arena.GameModes
 {
@@ -34,5 +35,7 @@ namespace GUC.Scripts.Arena.GameModes
         public int Protection;
         public int Damage;
         public int HP = 100;
+
+        public Allegiance Guild;
     }
 }

@@ -21,35 +21,13 @@ namespace GUC.Scripts.Arena.Duel
 
         public override void ReadMessage(PacketReader stream)
         {
-            board.Reset();
+            this.board.Reset();
 
             // players
-            int count = stream.ReadByte();
-            for (int i = 0; i < count; i++)
-            {
-                board.AddEntry(new ScoreBoard.Entry()
-                {
-                    ID = stream.ReadByte(),
-                    Score = stream.ReadShort(),
-                    Kills = stream.ReadShort(),
-                    Deaths = stream.ReadShort(),
-                    Ping = stream.ReadShort()
-                }, false);
-            }
+            this.board.ReadEntries(stream, false);
 
             // spectators
-            count = stream.ReadByte();
-            for (int i = 0; i < count; i++)
-            {
-                board.AddEntry(new ScoreBoard.Entry()
-                {
-                    ID = stream.ReadByte(),
-                    Score = stream.ReadShort(),
-                    Kills = stream.ReadShort(),
-                    Deaths = stream.ReadShort(),
-                    Ping = stream.ReadShort()
-                }, true);
-            }
+            this.board.ReadEntries(stream, true);
         }
     }
 }

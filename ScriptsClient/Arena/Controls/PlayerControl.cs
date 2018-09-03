@@ -7,8 +7,10 @@ using GUC.Utilities;
 using System;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Arena.GameModes;
 using GUC.Scripts.Arena.Duel;
+using GUC.Scripts.Arena.GameModes.Horde;
 
 namespace GUC.Scripts.Arena.Controls
 {
@@ -186,10 +188,32 @@ namespace GUC.Scripts.Arena.Controls
             }
         }
 
+        static LockTimer screamLock = new LockTimer(3000);
         static void PlayerActionButton(bool down)
         {
             var hero = ScriptClient.Client.Character;
-            if (hero.IsDead || hero.IsUnconscious) return;
+            if (hero.IsDead)
+                return;
+
+            if (hero.IsUnconscious)
+            {
+                if (down && HordeMode.IsActive && PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer && screamLock.IsReady)
+                {
+                    NPCInst.Requests.Voice(hero, VoiceCmd.HELP);
+                }
+                return;
+            }
+
+            if (down && HordeMode.IsActive && PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer
+                     && hero.HP > 1 && !hero.ModelInst.IsInAnimation())
+            {
+                var focusVob = hero.GetFocusVob();
+                if (focusVob is NPCInst npc && npc.IsUnconscious && npc.TeamID == (int)PlayerInfo.HeroInfo.TeamID && npc.GetPosition().GetDistance(hero.GetPosition()) < 300)
+                {
+                    NPCInst.Requests.HelpUp(hero, npc);
+                    return;
+                }
+            }
 
             if (freeAim)
             {
