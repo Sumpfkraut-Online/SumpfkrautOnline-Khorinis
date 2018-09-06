@@ -130,7 +130,7 @@ namespace GUC.Scripts
             Sumpfkraut.Daedalus.InstanceParser.ParseInstances();
 
             Sumpfkraut.Daedalus.InstanceParser.AddInstances();
-
+        
             Sumpfkraut.Daedalus.ConstParser.Free();
             Sumpfkraut.Daedalus.FuncParser.Free();
             Sumpfkraut.Daedalus.PrototypeParser.Free();
@@ -187,7 +187,7 @@ namespace GUC.Scripts
             Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
             var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.Start();
-            
+
             /*for (int i = 0; i < 100; i++)
             {
                 NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
@@ -206,8 +206,8 @@ namespace GUC.Scripts
                 var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
                 aiManager01.SubscribeAIAgent(aiAgent);
             }*/
-            
-            
+
+
         }
 
         void AddSomeDefs()
@@ -226,6 +226,7 @@ namespace GUC.Scripts
             AddItemAnis(m);
             AddGestureAnis(m);
 
+            m.AddOverlay(new ScriptOverlay("Humans_Torch", "Humans_Torch.mds"));
             m.AddOverlay(new ScriptOverlay("Humans_Skeleton", "Humans_Skeleton.mds"));
 
             m.Radius = 40;
@@ -267,7 +268,7 @@ namespace GUC.Scripts
             npcDef.Create();
 
             npcDef = new NPCDef("skeleton_lord");
-            npcDef.Name = "Skelett";
+            npcDef.Name = "Schattenlord";
             npcDef.Model = m;
             npcDef.BodyMesh = HumBodyMeshs.HUM_BODY_NAKED0.ToString();
             npcDef.BodyTex = 0;
@@ -284,7 +285,8 @@ namespace GUC.Scripts
             AddDragons();
             AddRats();
             AddLurkers();
-           
+            AddEchsen();
+
 
             m = new ModelDef("trollpalisade");
             m.Visual = "OW_TROLLPALISSADE.3DS";
@@ -304,6 +306,15 @@ namespace GUC.Scripts
             vobDef.CDDyn = vobDef.CDStatic = true;
             vobDef.Create();
 
+            m = new ModelDef("irdorathwall");
+            m.Visual = "NW_DRAGONISLE_INVISIBLEORCWALL_01.3DS";
+            m.Create();
+
+            vobDef = new VobDef("irdorathwall");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
             /*m = new ModelDef("planks");
             m.Visual = "OW_LOB_WOODPLANKS_V1.3DS";
             m.Create();
@@ -318,6 +329,84 @@ namespace GUC.Scripts
             m.Create();
 
             vobDef = new VobDef("gate");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+
+            m = new ModelDef("bridge");
+            m.Visual = "NW_DRAGONISLE_BIGBRIDGE_01.3DS";
+            m.Create();
+
+            vobDef = new VobDef("bridge");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+
+            m = new ModelDef("door");
+            m.Visual = "DOOR_NW_DRAGONISLE_02.MDS";
+            m.Create();
+
+            vobDef = new VobDef("door");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+
+            m = new ModelDef("door_puzzle_left");
+            m.Visual = "EVT_MAINHALL_DOOR_LEFT_01.3DS";
+            m.Create();
+
+            vobDef = new VobDef("door_puzzle_left");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+            m = new ModelDef("door_puzzle_right");
+            m.Visual = "EVT_MAINHALL_DOOR_RIGHT_01.3DS";
+            m.Create();
+            vobDef = new VobDef("door_puzzle_right");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+            
+            m = new ModelDef("redeye");
+            m.Visual = "THEREDEYE.pfx";
+            m.Create();
+            vobDef = new VobDef("redeye");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = false;
+            vobDef.Create();
+
+            m = new ModelDef("bigdoor_head_right");
+            m.Visual = "NW_DRAGONISLE_BIGDOOR_HEAD_RIGHT_01.3DS";
+            m.Create();
+            vobDef = new VobDef("bigdoor_head_right");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+            m = new ModelDef("bigdoor_head_left");
+            m.Visual = "NW_DRAGONISLE_BIGDOOR_HEAD_LEFT_01.3DS";
+            m.Create();
+            vobDef = new VobDef("bigdoor_head_left");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+            m = new ModelDef("bigdoor_right");
+            m.Visual = "NW_DRAGONISLE_BIGDOOR_RIGHT_01.3DS";
+            m.Create();
+            vobDef = new VobDef("bigdoor_right");
+            vobDef.Model = m;
+            vobDef.CDDyn = vobDef.CDStatic = true;
+            vobDef.Create();
+
+            m = new ModelDef("bigdoor_left");
+            m.Visual = "NW_DRAGONISLE_BIGDOOR_LEFT_01.3DS";
+            m.Create();
+            vobDef = new VobDef("bigdoor_left");
             vobDef.Model = m;
             vobDef.CDDyn = vobDef.CDStatic = true;
             vobDef.Create();
@@ -526,6 +615,16 @@ namespace GUC.Scripts
             itemDef.Model = m;
             itemDef.Create();
 
+            m = new ModelDef("war_xbow", "ItRw_Crossbow_M_02.mms");
+            m.Create();
+            itemDef = new ItemDef("war_xbow");
+            itemDef.Name = "Kriegsarmbrust";
+            itemDef.Material = ItemMaterials.Wood;
+            itemDef.ItemType = ItemTypes.WepXBow;
+            itemDef.Damage = 50;
+            itemDef.Model = m;
+            itemDef.Create();
+
             m = new ModelDef("heavy_xbow", "ItRw_Crossbow_H_02.mms");
             m.Create();
             itemDef = new ItemDef("heavy_xbow");
@@ -641,7 +740,18 @@ namespace GUC.Scripts
             itemDef.Protection = 40;
             itemDef.Model = m;
             itemDef.Create();
-            
+
+            m = new ModelDef("ITAR_pal_h", "ItAr_Pal_H.3ds");
+            m.Create();
+            itemDef = new ItemDef("ITAR_pal_h");
+            itemDef.Name = "Paladinrüstung";
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_Pal_H.asc";
+            itemDef.Protection = 50;
+            itemDef.Model = m;
+            itemDef.Create();
+
             // trank
             m = new ModelDef("hptrank", "ItPo_Health_01.3ds");
             m.Create();
@@ -650,6 +760,41 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Drinkable;
             itemDef.Material = ItemMaterials.Glass;
             itemDef.Model = m;
+            itemDef.Create();
+
+            m = new ModelDef("itmw_schlachtaxt", "ItMw_070_2h_axe_heavy_03.3DS");
+            m.Create();
+            itemDef = new ItemDef("itmw_schlachtaxt");
+            itemDef.Name = "Schlachtaxt";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 50;
+            itemDef.Range = 100;
+            itemDef.Create();
+
+            m = new ModelDef("ITAR_garde_h", "ItAr_Thorus_ADDON.3ds");
+            m.Create();
+            itemDef = new ItemDef("ITAR_garde_h");
+            itemDef.Name = "Schwere Gardistenrüstung";
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.ItemType = ItemTypes.Armor;
+            itemDef.VisualChange = "Armor_Thorus_ADDON.asc";
+            itemDef.Protection = 50;
+            itemDef.Model = m;
+            itemDef.Create();
+
+            //ItLs_Torch_01.3ds
+            //ITLSTORCHBURNING.ZEN
+            m = new ModelDef("torch_burning", "ITLSTORCHBURNING.ZEN");
+            m.Create();
+            itemDef = new ItemDef("torch_burning");
+            itemDef.Name = "Brennende Fackel";
+            itemDef.ItemType = ItemTypes.Torch;
+            itemDef.Material = ItemMaterials.Wood;
+            itemDef.Model = m;
+            itemDef.Damage = 1;
+            itemDef.Range = 50;
             itemDef.Create();
         }
 
@@ -722,7 +867,7 @@ namespace GUC.Scripts
             model.AddAniJob(ani1);
             model.AddAniJob(ani2);
             ani1.NextAni = ani2;
-            
+
             ani1 = new ScriptAniJob("uncon_dropback", "t_Stand_2_Woundedb", new ScriptAni(0, 14));
             ani1.DefaultAni.FPS = 10;
 
@@ -732,7 +877,7 @@ namespace GUC.Scripts
             model.AddAniJob(ani2);
 
             ani1.NextAni = ani2;
-            
+
             // STAND UP
             var ani = new ScriptAniJob("uncon_standupfront", "t_Wounded_2_Stand", new ScriptAni(0, 34));
             ani.DefaultAni.FPS = 10;
@@ -1079,7 +1224,7 @@ namespace GUC.Scripts
             // Fwd attack 1
             ScriptAniJob job = new ScriptAniJob("2hattack_fwd0", "s_2hattack");
             model.AddAniJob(job);
-            job.SetDefaultAni(new ScriptAni(0, 31) { { SpecialFrame.Hit, 8 }, { SpecialFrame.Combo, 14 } });
+            job.SetDefaultAni(new ScriptAni(0, 26) { { SpecialFrame.Hit, 8 }, { SpecialFrame.Combo, 14 } });
             job.AddOverlayAni(new ScriptAni(0, 35) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 16 } }, ov1);
             job.AddOverlayAni(new ScriptAni(0, 34) { { SpecialFrame.Hit, 5 }, { SpecialFrame.Combo, 13 } }, ov2);
 
@@ -1186,6 +1331,184 @@ namespace GUC.Scripts
             npcDef.Name = "Minecrawler-Krieger";
             npcDef.Model = m;
             npcDef.BodyMesh = "Cr2_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            // CRAWLER KÖNIGIN
+            m = new ModelDef("crawler_queen", "CRWQUEEN.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 24));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 13);
+            m.AddAniJob(aniJob);
+
+            m.Radius = 250;
+            m.HalfHeight = 300;
+            m.FistRange = 100;
+            m.Create();
+
+            // NPCs
+            npcDef = new NPCDef("crawler_queen");
+            npcDef.Name = "Minecrawler-Königin";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "CrQ_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+        }
+
+        #endregion
+
+        #region Echsenmenschen
+
+        public void AddEchsen()
+        {
+            ModelDef m = new ModelDef("draconian", "draconian.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            #region Draw
+
+            // Draw 2h
+            ScriptAniJob aniJob1 = new ScriptAniJob("draw2h_part0", "t_Run_2_2h");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 5) { { SpecialFrame.Draw, 5 } });
+
+            ScriptAniJob aniJob2 = new ScriptAniJob("draw2h_part1", "s_2h");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob1.NextAni = aniJob2;
+
+            ScriptAniJob aniJob3 = new ScriptAniJob("draw2h_part2", "t_2h_2_2hRun");
+            m.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 12));
+            aniJob2.NextAni = aniJob3;
+
+            // Draw 2h running
+            ScriptAniJob aniJob = new ScriptAniJob("draw2h_running", "t_Move_2_2hMove", new ScriptAni(0, 20));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 7);
+            m.AddAniJob(aniJob);
+
+            // Undraw 2h
+            aniJob1 = new ScriptAniJob("undraw2h_part0", "t_2hRun_2_2h");
+            m.AddAniJob(aniJob1);
+            aniJob1.SetDefaultAni(new ScriptAni(0, 12) { { SpecialFrame.Draw, 12 } });
+
+            aniJob2 = new ScriptAniJob("undraw2h_part1", "s_2h");
+            m.AddAniJob(aniJob2);
+            aniJob2.SetDefaultAni(new ScriptAni(0, 1));
+            aniJob1.NextAni = aniJob2;
+
+            aniJob3 = new ScriptAniJob("undraw2h_part2", "t_2h_2_Run");
+            m.AddAniJob(aniJob3);
+            aniJob3.SetDefaultAni(new ScriptAni(0, 5));
+            aniJob2.NextAni = aniJob3;
+
+            // Undraw 2h running
+            aniJob = new ScriptAniJob("undraw2h_running", "t_2hMove_2_Move", new ScriptAni(0, 20));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Draw, 13);
+            m.AddAniJob(aniJob);
+
+            #endregion
+
+            #region Fighting
+
+            // Fwd attack 1
+            ScriptAniJob job = new ScriptAniJob("2hattack_fwd0", "s_2hattack");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 6 }, { SpecialFrame.Combo, 11 } });
+
+            // fwd combo 2
+            job = new ScriptAniJob("2hattack_fwd1", "s_2hattack");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(25, 70) { { SpecialFrame.Hit, 20 } });
+
+            // left attack
+            job = new ScriptAniJob("2hattack_left", "t_2hAttackL");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 8 } });
+
+            // right attack
+            job = new ScriptAniJob("2hattack_right", "t_2hAttackR");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 24) { { SpecialFrame.Hit, 3 }, { SpecialFrame.Combo, 8 } });
+
+            // run attack
+            job = new ScriptAniJob("2hattack_run", "t_2hAttackMove");
+            job.Layer = 2;
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 19) { { SpecialFrame.Hit, 13 } });
+
+            // parades
+            job = new ScriptAniJob("2h_parade0", "t_2hParade_0");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 30));
+
+            // dodge
+            job = new ScriptAniJob("2h_dodge", "t_2hParadeJumpB");
+            m.AddAniJob(job);
+            job.SetDefaultAni(new ScriptAni(0, 14));
+
+            #endregion
+
+            #region Jump Anis
+
+            m.AddAniJob(new ScriptAniJob("jump_fwd", "t_Stand_2_Jump"));
+            m.AddAniJob(new ScriptAniJob("jump_run", "t_RunL_2_Jump"));
+
+
+            #endregion
+
+            #region Climb Anis
+
+            var ani1 = new ScriptAniJob("climb_low", "t_Stand_2_JumpUpLow", new ScriptAni(0, 10));
+            var ani2 = new ScriptAniJob("climb_low1", "s_JumpUpLow", new ScriptAni(0, 4));
+            var ani3 = new ScriptAniJob("climb_low2", "t_JumpUpLow_2_Stand", new ScriptAni(0, 15));
+
+            m.AddAniJob(ani1);
+            m.AddAniJob(ani2);
+            m.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+
+            ani1 = new ScriptAniJob("climb_mid", "t_Stand_2_JumpUpMid", new ScriptAni(0, 10));
+            ani2 = new ScriptAniJob("climb_mid1", "s_JumpUpMid", new ScriptAni(0, 2));
+            ani3 = new ScriptAniJob("climb_mid2", "t_JumpUpMid_2_Stand", new ScriptAni(0, 23));
+
+            m.AddAniJob(ani1);
+            m.AddAniJob(ani2);
+            m.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+
+            ani1 = new ScriptAniJob("climb_high", "t_Stand_2_JumpUp", new ScriptAni(0, 9));
+            ani2 = new ScriptAniJob("climb_high1", "t_JumpUp_2_Hang", new ScriptAni(0, 2));
+            ani3 = new ScriptAniJob("climb_high2", "t_Hang_2_Stand", new ScriptAni(0, 40));
+
+            m.AddAniJob(ani1);
+            m.AddAniJob(ani2);
+            m.AddAniJob(ani3);
+
+            ani1.NextAni = ani2;
+            ani2.NextAni = ani3;
+
+            #endregion
+
+            m.Radius = 80;
+            m.HalfHeight = 100;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("draconian");
+            npcDef.Name = "Echsenmensch";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Draconian_Body";
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
@@ -1355,6 +1678,7 @@ namespace GUC.Scripts
             #endregion
 
             #endregion
+
             #region Jump Anis
 
             m.AddAniJob(new ScriptAniJob("jump_fwd", "t_Stand_2_Jump"));
@@ -1426,6 +1750,15 @@ namespace GUC.Scripts
 
             npcDef = new NPCDef("orc_elite");
             npcDef.Name = "Ork-Elite";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Orc_BodyElite";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "Orc_HeadWarrior";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            npcDef = new NPCDef("orc_oberst");
+            npcDef.Name = "Orkischer Oberst";
             npcDef.Model = m;
             npcDef.BodyMesh = "Orc_BodyElite";
             npcDef.BodyTex = 0;
@@ -1625,7 +1958,7 @@ namespace GUC.Scripts
         }
 
         #endregion
-        
+
         #region Bloodfly
 
         public void AddBloodflies()
@@ -1666,7 +1999,7 @@ namespace GUC.Scripts
         }
 
         #endregion
-        
+
         #region Dragonsnapper
 
         public void AddDragonsnappers()
@@ -1715,24 +2048,20 @@ namespace GUC.Scripts
             ModelDef m = new ModelDef("Dragon", "Dragon.mds");
             m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
 
-            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 100));
-            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 40));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 24);
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(0, 29));
-            aniJob.Layer = 2;
-            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            // strafe anis for block
+            aniJob = new ScriptAniJob("fist_parade", "t_FistRunStrafeL", new ScriptAni(0, 50));
             m.AddAniJob(aniJob);
 
-            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
-            m.AddAniJob(aniJob);
-
-            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 20));
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistRunStrafeR", new ScriptAni(0, 50));
             m.AddAniJob(aniJob);
 
             m.Radius = 120;
-            m.HalfHeight = 120;
-            m.FistRange = 120;
+            m.HalfHeight = 200;
+            m.FistRange = 300;
             m.Create();
 
             // NPCs
@@ -1740,6 +2069,15 @@ namespace GUC.Scripts
             npcDef.Name = "Feuerdrache";
             npcDef.Model = m;
             npcDef.BodyMesh = "Dragon_FIRE_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            npcDef = new NPCDef("dragon_undead");
+            npcDef.Name = "Untoter Drache";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Dragon_Undead_Body";
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
@@ -1789,7 +2127,7 @@ namespace GUC.Scripts
 
         #endregion
 
-        #region Rats
+        #region Lurkers
 
         public void AddLurkers()
         {

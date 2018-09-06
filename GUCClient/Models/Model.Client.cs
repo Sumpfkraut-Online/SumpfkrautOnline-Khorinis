@@ -116,7 +116,9 @@ namespace GUC.Models
             {
                 var gVob = ((NPC)vob).gVob;
                 if (gVob != null)
+                {
                     gVob.ApplyOverlay(overlay.Name);
+                }
             }
         }
 
@@ -126,7 +128,9 @@ namespace GUC.Models
             {
                 var gVob = ((NPC)vob).gVob;
                 if (gVob != null)
+                {
                     gVob.RemoveOverlay(overlay.Name);
+                }
             }
         }
 
@@ -142,7 +146,7 @@ namespace GUC.Models
                 if (gVob != null)
                 {
                     gVob.AniCtrl.StopTurnAnis();
-                    gVob.GetModel().StartAni(aniJob.Name, 0); 
+                    gVob.GetModel().StartAni(aniJob.Name, 0);
                 }
             }
         }
@@ -252,7 +256,9 @@ namespace GUC.Models
                 if (gVob != null && overlays != null)
                 {
                     for (int i = 0; i < overlays.Count; i++)
+                    {
                         gVob.ApplyOverlay(overlays[i].Name);
+                    }
                 }
             }
         }

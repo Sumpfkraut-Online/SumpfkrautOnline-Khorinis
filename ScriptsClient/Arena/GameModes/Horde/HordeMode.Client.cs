@@ -37,7 +37,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             ActiveStand = stand;
 
             if (!string.IsNullOrWhiteSpace(stand.SFXStart))
-                SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStart), stand.Position, 1000 + stand.Range, 1.0f);
+                SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStart), stand.Position, 5000 + stand.Range, 1.0f);
 
             if (!string.IsNullOrWhiteSpace(stand.SFXLoop))
             {
@@ -82,7 +82,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             if (HordeMode.IsActive)
             {
                 if (!string.IsNullOrWhiteSpace(stand.SFXStart))
-                    SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStop), stand.Position);
+                    SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStop), stand.Position, 5000 + stand.Range, 1.0f);
             }
             ActiveStand = null;
             messageTimer.Stop();

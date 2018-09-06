@@ -356,7 +356,7 @@ namespace GUC.WorldObjects
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
 
-            if (this.ModelInstance.Visual == "CRAWLER.MDS")
+            if (this.ModelInstance.Visual == "CRAWLER.MDS" || this.ModelInstance.Visual == "CRWQUEEN.mds")
             {
                 gVob.Guild = 29;
                 gVob.TrueGuild = 29;
@@ -365,6 +365,11 @@ namespace GUC.WorldObjects
             {
                 gVob.Guild = 59;
                 gVob.TrueGuild = 59;
+            }
+            else if (this.ModelInstance.Visual == "DRAGON.MDS")
+            {
+                gVob.Guild = 47;
+                gVob.TrueGuild = 47;
             }
             else
             {

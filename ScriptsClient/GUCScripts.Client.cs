@@ -73,6 +73,9 @@ namespace GUC.Scripts
         {
             // stop oCAniCtrl_Human::_Stand from canceling the s_bowaim animation
             WinApi.Process.Write(0x006B7772, 0xEB, 0x69);
+
+            // remove SetTorchAni
+            WinApi.Process.Write(0x0073B410, 0xC2, 0x08, 0x00);
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
 
             if (menuTheme != null)

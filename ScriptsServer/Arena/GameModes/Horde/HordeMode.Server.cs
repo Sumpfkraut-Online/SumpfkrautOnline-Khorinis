@@ -26,6 +26,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             public AIAgent Agent;
         }
 
+        IEnumerable<ArenaClient> StandingPlayers { get { return players.Where(p => p.IsCharacter && !p.Character.IsDead && !p.Character.IsUnconscious); } }
+
         List<StandInst> Stands = new List<StandInst>();
         StandInst ActiveStand;
 
@@ -43,13 +45,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 if (player.GMTeamID < TeamIdent.GMPlayer || !player.IsCharacter || player.Character.HP <= 1)
                     continue;
 
-                foreach (StandInst si in Stands)
+                if (player.Character.GetPosition().GetDistance(Stands[0].Stand.Position) < Stands[0].Stand.Range)
                 {
-                    if (player.Character.GetPosition().GetDistance(si.Stand.Position) < si.Stand.Range)
-                    {
-                        StartStand(si);
-                        return;
-                    }
+                    StartStand(Stands[0]);
+                    return;
                 }
             }
         }
@@ -77,6 +76,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             standTimer.SetCallback(EndStand);
         }
 
+        int standSpawnIndex = 0;
         void StandSpawn()
         {
             if (ActiveStand == null || Phase < GamePhase.Fight)
@@ -88,14 +88,18 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             int max = (int)Math.Ceiling(def.EnemyCountPerGroup * players.Count);
             for (int g = 0; g < def.EnemyGroupsPerSpawn; g++)
             {
-                var spawnPos = Randomizer.Get(def.EnemySpawns);
+                if (standSpawnIndex >= def.EnemySpawns.Length)
+                    standSpawnIndex = 0;
+
+                var spawnPos = def.EnemySpawns[standSpawnIndex++];
                 for (int i = 0; i < max; i++)
                 {
                     float prob = Randomizer.GetFloat();
                     var e = def.Enemies.Last(n => prob <= n.CountScale);
 
-                    var npc = SpawnNPC(e.Enemy, spawnPos);
+                    var npc = SpawnNPC(e.Enemy, spawnPos, 10);
                     agent.aiClients.Add(npc);
+
                     ((SimpleAIPersonality)agent.AIPersonality).Attack(npc, Randomizer.Get(players.Where(p => p.IsCharacter && p.Character.HP > 1)).Character);
                 }
             }
@@ -155,11 +159,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
         {
             base.Start(scenario);
 
-            foreach (var bar in Scenario.SpawnBarriers)
-            {
-                if (!bar.AddAfterEvent)
-                    spawnBarriers.Add(CreateBarrier(bar));
-            }
+            if (Scenario.SpawnBarriers != null)
+                foreach (var bar in Scenario.SpawnBarriers)
+                {
+                    if (!bar.AddAfterEvent)
+                        spawnBarriers.Add(CreateBarrier(bar));
+                }
 
             foreach (var hi in Scenario.Items)
             {
@@ -199,9 +204,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 bar.Despawn();
             spawnBarriers.Clear();
 
-            foreach (var bar in Scenario.SpawnBarriers)
-                if (bar.AddAfterEvent)
-                    CreateBarrier(bar);
+            if (Scenario.SpawnBarriers != null)
+                foreach (var bar in Scenario.SpawnBarriers)
+                    if (bar.AddAfterEvent)
+                        CreateBarrier(bar);
 
             foreach (var group in Scenario.Enemies)
             {
@@ -251,6 +257,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 return;
 
             standSpawnTimer.Stop();
+            standTimer.Stop();
             if (playersWon)
             {
                 var stream = ArenaClient.GetStream(ScriptMessages.HordeWin);
@@ -286,6 +293,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             spawnBarriers.Clear();
             Stands.Clear();
             standSpawnTimer.Stop();
+            standTimer.Stop();
             NPCInst.sOnHit -= OnHit;
             HordeBoard.Instance.RemoveAll();
             AmbientNPCs.Clear();
@@ -340,7 +348,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
             if (Phase == GamePhase.WarmUp || Phase == GamePhase.None)
             {
-                var npc = SpawnCharacter(client, Scenario.SpawnPos, Scenario.SpawnRange);
+                NPCInst npc = InitialSpawnClient(client, true);
                 npc.DropUnconsciousOnDeath = true;
                 npc.UnconsciousDuration = -1;
             }
@@ -364,18 +372,18 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
             Vec3f nextStand = Stands[0].Stand.Position;
             // find player closest to next stand
-            IEnumerable<Vec3f> positions = players.Where(p => p.IsCharacter && !p.Character.IsDead && !p.Character.IsUnconscious).Select(p => p.Character.GetPosition());
+            IEnumerable<Vec3f> positions = StandingPlayers.Select(p => p.Character.GetPosition());
             if (!Vec3f.FindClosest(Stands[0].Stand.Position, positions, out Vec3f best))
                 return;
 
             // two closest respawns to player
             IEnumerable<Vec3f> x = Scenario.Respawns.OrderBy(p => p.GetDistance(best)).Take(2);
-            
+
             // closest of the two respawns to next stand
             if (!Vec3f.FindClosest(best, x, out Vec3f result))
                 return;
 
-            var npc = SpawnCharacter(client, result, 100);
+            var npc = SpawnCharacter(client, World, result, 100);
             npc.DropUnconsciousOnDeath = true;
             npc.UnconsciousDuration = -1;
             npc.DropUnconscious();

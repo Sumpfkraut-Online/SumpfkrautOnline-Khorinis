@@ -27,7 +27,8 @@ namespace Gothic.Objects
             SetSkyControlerOutdoor = 0x00620410,
             AddVob = 0x00624810,
             TraceRayNearestHit = 0x00621B80,
-            TraceRayFirstHit = 0x00621960;
+            TraceRayFirstHit = 0x00621960,
+            MergeVobSubtree = 0x006273E0;
         }
 
         /*public enum HookSize
@@ -311,6 +312,12 @@ namespace Gothic.Objects
             return Process.THISCALL<zCTree<zCVob>>(Address, FuncAddresses.AddVob, vob);
         }
 
+        public zCTree<zCVob> AddVobAsChild(zCVob child, zCVob parent)
+        {
+            return Process.THISCALL<zCTree<zCVob>>(Address, 0x6247F0, child, parent);
+        }
+
+
         public virtual void RemoveVob(zCVob vob)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveVob, vob);
@@ -371,6 +378,19 @@ namespace Gothic.Objects
         public zCVob SearchVobByName(zString name)
         {
             return Process.THISCALL<zCVob>(Address, 0x623FB0, name);
+        }
+
+        public zCVob MergeVobSubTree(string visualName)
+        {
+            zCVob result;
+            using (zString zStr = zString.Create(visualName))
+                result = MergeVobSubTree(zStr, zCVob.NullVob, 0);
+            return result;
+        }
+
+        public zCVob MergeVobSubTree(zString visualName, zCVob parent, int mergeType = 0)
+        {
+            return Process.THISCALL<zCVob>(Address, FuncAddresses.MergeVobSubtree, visualName, parent, new IntArg(mergeType));
         }
     }
 }

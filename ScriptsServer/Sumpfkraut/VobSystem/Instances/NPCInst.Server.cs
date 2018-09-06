@@ -881,7 +881,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pBeforeSpawn()
         {
-            if (this.ModelDef.Visual != "HUMANS.MDS" && this.ModelDef.Visual != "ORC.MDS")
+            if (this.ModelDef.Visual != "HUMANS.MDS" && this.ModelDef.Visual != "ORC.MDS" && this.ModelDef.Visual != "DRACONIAN.MDS")
                 this.SetFightMode(true);
         }
 
@@ -1051,7 +1051,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public bool IsObstructed()
         {
-            return IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || HasItemInHands() || IsUnconscious;
+            return IsSpawned && (IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || HasItemInHands() || IsUnconscious);
         }
 
         public void RandomizeCustomVisuals(string name, bool male)

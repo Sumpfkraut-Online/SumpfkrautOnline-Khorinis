@@ -252,7 +252,7 @@ namespace GUC.Scripts.Arena.Controls
         static bool IsWarmup()
         {
             var hero = NPCInst.Hero;
-            if (hero != null && ArenaClient.GMJoined && GameMode.ActiveMode.Phase == GamePhase.WarmUp)
+            if (hero != null && ArenaClient.GMJoined && GameMode.ActiveMode.Phase == GamePhase.WarmUp && !HordeMode.IsActive)
             {
                 if (toWarmupTimer.IsReady)
                     Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
@@ -621,7 +621,7 @@ namespace GUC.Scripts.Arena.Controls
             var hero = NPCInst.Hero;
 
             string CamModFreeAim = "CAMMODRANGED_FREEAIM";
-            if (hero.ModelDef.Visual == "ORC.MDS")
+            if (hero.ModelDef.Visual == "ORC.MDS" || hero.ModelDef.Visual == "DRACONIAN.MDS")
                 CamModFreeAim += "_ORC";
 
             if (down && hero != null && !hero.IsDead && hero.IsInFightMode

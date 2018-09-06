@@ -81,7 +81,8 @@ namespace Gothic.Objects
             SetCollDetDyn = 0x61CF40,
             MoveLocal = 0x61B3C0,
             MoveWorld = 0x61B350,
-            SetSleeping = 0x602930;
+            SetSleeping = 0x602930,
+            AddRefVobSubtree = 0x601CC0;
         }
 
         /*public enum HookSize
@@ -499,5 +500,14 @@ namespace Gothic.Objects
             return String.Format("({0}: {1})", this.Address, this.VTBL);
         }
 
+        public void AddRefVobSubtree()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.AddRefVobSubtree, new IntArg(0), new IntArg(1));
+        }
+
+        public void AddRefVobSubtree(zCTree<zCVob> tree, int count)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.AddRefVobSubtree, tree, new IntArg(count));
+        }
     }
 }

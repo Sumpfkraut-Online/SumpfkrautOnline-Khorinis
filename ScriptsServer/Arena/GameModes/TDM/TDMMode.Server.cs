@@ -25,7 +25,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                 foreach (var player in team.Players)
                 {
                     if (player.Character != null && player.Character.IsDead)
-                        SpawnCharacter(player, team.GetSpawnPoint());
+                        SpawnCharacter(player, World, team.GetSpawnPoint());
                 }
         }
 
@@ -162,7 +162,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             client.GMClass = pc;
 
             if (client.Character == null || Phase == GamePhase.WarmUp)
-                SpawnCharacter(client, client.TDMTeam.GetSpawnPoint());
+                SpawnCharacter(client, World, client.TDMTeam.GetSpawnPoint());
         }
 
         public override bool Leave(ArenaClient client)

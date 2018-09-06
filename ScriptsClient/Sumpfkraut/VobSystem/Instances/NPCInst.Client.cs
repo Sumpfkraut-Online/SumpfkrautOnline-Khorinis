@@ -79,6 +79,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             Gothic.Types.zString node;
             bool undraw = true;
+            bool ininv = true;
             switch (slot)
             {
                 case NPCSlots.OneHanded1:
@@ -106,8 +107,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     return;
             }
 
+            if (item.ModelDef.Visual.EndsWith(".ZEN"))
+                ininv = false;
+
             gItem.Material = (int)item.Material;
-            gNpc.PutInSlot(node, gItem, true);
+            gNpc.PutInSlot(node, gItem, ininv);
             PlayDrawItemSound(item, undraw);
         }
 
@@ -292,7 +296,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                         ai.GetFightLimbs();
                         ai.CheckMeleeWeaponHitsLevel(wep.BaseInst.gVob);
                     }*/
-                    return;
+                return;
                 }
             }
         }

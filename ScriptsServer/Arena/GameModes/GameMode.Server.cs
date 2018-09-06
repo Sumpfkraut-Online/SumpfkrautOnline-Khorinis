@@ -1,17 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using GUC.Network;
 using GUC.Scripting;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Types;
-using GUC.Scripts.Sumpfkraut.WorldSystem;
-using GUC.Network;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
+using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Types;
 using GUC.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GUC.Scripts.Arena.GameModes
 {
@@ -35,6 +34,13 @@ namespace GUC.Scripts.Arena.GameModes
             if (scenario == null)
                 return null;
 
+            if (IsActive)
+            {
+                NextScenarioIndex = GameScenario.Scenarios.IndexOf(scenario);
+                ActiveMode.FadeOut();
+                return null;
+            }
+
             Log.Logger.Log("Init game scenario " + scenario.Name);
 
             if (++NextScenarioIndex >= GameScenario.Count)
@@ -43,12 +49,28 @@ namespace GUC.Scripts.Arena.GameModes
             var mode = scenario.GetMode();
             ActiveMode = mode;
 
-            var world = new WorldInst(null)
-            {
-                Path = scenario.WorldPath
-            };
+            var world = new WorldInst(null) { Path = scenario.WorldPath };
             world.Create();
 
+            SetWorldGlobals(world, scenario);
+            mode.World = world;
+
+            if (!string.IsNullOrWhiteSpace(scenario.SpawnWorld))
+            {
+                var spawnWorld = new WorldInst(null) { Path = scenario.SpawnWorld };
+                spawnWorld.Create();
+
+                SetWorldGlobals(spawnWorld, scenario);
+                mode.SpawnWorld = spawnWorld;
+            }
+
+            mode.Start(scenario);
+
+            return mode;
+        }
+
+        static void SetWorldGlobals(WorldInst world, GameScenario scenario)
+        {
             if (scenario.WorldTimeScale > 0)
             {
                 world.Clock.SetTime(scenario.WorldTime, scenario.WorldTimeScale);
@@ -73,14 +95,11 @@ namespace GUC.Scripts.Arena.GameModes
                 if (scenario.WorldWeather > 0)
                     world.Weather.SetNextWeight(0, scenario.WorldWeather);
             }
-
-            mode.World = world;
-            mode.Start(scenario);
-
-            return mode;
         }
 
         public WorldInst World { get; private set; }
+        public WorldInst SpawnWorld { get; private set; }
+
 
         protected GUCTimer phaseTimer = new GUCTimer();
         public uint PhaseRemainingMsec { get { return (uint)(phaseTimer.GetRemainingTicks() / TimeSpan.TicksPerMillisecond); } }
@@ -92,7 +111,14 @@ namespace GUC.Scripts.Arena.GameModes
                 players.Add(client);
 
             client.SetTeamID(TeamIdent.GMSpectator);
-            client.SetToSpectator(World, Scenario.SpecPoint.Position, Scenario.SpecPoint.Angles);
+            if (SpawnWorld != null && Phase <= GamePhase.WarmUp)
+            {
+                client.SetToSpectator(SpawnWorld, Scenario.SpecPoint.Position, Scenario.SpecPoint.Angles);
+            }
+            else
+            {
+                client.SetToSpectator(World, Scenario.SpawnPos.Position, Scenario.SpawnPos.Angles);
+            }
         }
 
         /// <summary> Does not change the TeamID! </summary>
@@ -103,7 +129,13 @@ namespace GUC.Scripts.Arena.GameModes
 
             client.KillCharacter();
             client.GMClass = null;
-            return players.Remove(client);
+            bool res = players.Remove(client);
+            if (Phase >= GamePhase.Fight && players.Count == 0)
+            {
+                FadeOut();
+            }
+
+            return res;
         }
 
         public static void WriteGameInfo(PacketWriter stream)
@@ -131,6 +163,22 @@ namespace GUC.Scripts.Arena.GameModes
         protected virtual void Fight()
         {
             SetPhase(GamePhase.Fight);
+
+            if (this.SpawnWorld != null)
+            {
+                var oldWorld = this.SpawnWorld;
+                this.SpawnWorld = null;
+                // move to real world
+                foreach (ArenaClient c in players)
+                {
+                    if (c.IsCharacter)
+                        InitialSpawnClient(c, false);
+                    else
+                        JoinAsSpectator(c);
+                }
+
+                oldWorld.Delete();
+            }
 
             phaseTimer.SetInterval(Scenario.FightDuration);
             phaseTimer.SetCallback(FadeOut);
@@ -162,6 +210,8 @@ namespace GUC.Scripts.Arena.GameModes
             });
 
             var oldWorld = this.World;
+            this.World = null;
+
             var oldPlayers = new List<ArenaClient>(players);
             this.players.Clear();
 
@@ -174,6 +224,12 @@ namespace GUC.Scripts.Arena.GameModes
             ClearAgents();
             // delete old world
             oldWorld.Delete();
+
+            if (this.SpawnWorld != null)
+            {
+                this.SpawnWorld.Delete();
+                this.SpawnWorld = null;
+            }
         }
 
         protected void SetPhase(GamePhase phase)
@@ -247,12 +303,31 @@ namespace GUC.Scripts.Arena.GameModes
             return npc;
         }
 
-        protected NPCInst SpawnCharacter(ArenaClient client, Vec3f position, float range)
+        protected virtual NPCInst InitialSpawnClient(ArenaClient client, bool inSpawnWorld)
         {
-            return SpawnCharacter(client, new PosAng(Randomizer.GetVec3fRad(position, range), Randomizer.GetYaw()));
+            NPCInst npc;
+            if (inSpawnWorld && SpawnWorld != null)
+            {
+                npc = SpawnCharacter(client, SpawnWorld, Scenario.SpawnWorldPos, Scenario.SpawnWorldRange);
+            }
+            else
+            {
+                npc = SpawnCharacter(client, World, Scenario.SpawnPos.Position, Scenario.SpawnRange);
+            }
+            return npc;
         }
 
-        protected virtual NPCInst SpawnCharacter(ArenaClient client, PosAng spawnPoint)
+        protected NPCInst SpawnCharacter(ArenaClient client, WorldInst world, Vec3f position, float range)
+        {
+            return SpawnCharacter(client, world, new PosAng(position, Randomizer.GetYaw()), range);
+        }
+
+        protected NPCInst SpawnCharacter(ArenaClient client, WorldInst world, PosAng spawnPoint, float range)
+        {
+            return SpawnCharacter(client, world, new PosAng(Randomizer.GetVec3fRad(spawnPoint.Position, range), spawnPoint.Angles));
+        }
+
+        protected virtual NPCInst SpawnCharacter(ArenaClient client, WorldInst world, PosAng spawnPoint)
         {
             // only spawn if player has joined the game mode and chosen a class
             if (client == null || !client.GMJoined || client.GMClass == null)
@@ -262,7 +337,7 @@ namespace GUC.Scripts.Arena.GameModes
             client.KillCharacter();
 
             NPCInst npc = CreateNPC(client.GMClass, (int)client.GMTeamID, client.CharInfo);
-            npc.Spawn(World, spawnPoint.Position, spawnPoint.Angles);
+            npc.Spawn(world, spawnPoint.Position, spawnPoint.Angles);
             client.SetControl(npc);
 
             // start the warm up phase as soon as the first player joins

@@ -13,10 +13,12 @@ namespace GUC.Scripts.Arena
         {
             string message = stream.ReadString();
 
-            if (message == "/lift")
+            const string modeCmd = "/startmode";
+            if (message.StartsWith(modeCmd, StringComparison.OrdinalIgnoreCase))
             {
-                if (sender.Character != null)
-                    sender.Character.LiftUnconsciousness();
+                var scen = GameModes.GameScenario.Get(message.Substring(modeCmd.Length + 1));
+                if (scen != null)
+                    GameModes.GameMode.InitScenario(scen);
 
                 return;
             }
@@ -25,7 +27,7 @@ namespace GUC.Scripts.Arena
             builder.Append(sender.CharInfo.Name);
             if (sender.IsSpecating)
                 builder.Append(" (Zuschauer)");
-            
+
             builder.Append(": ");
             builder.Append(message);
             SendMessage(builder.ToString());

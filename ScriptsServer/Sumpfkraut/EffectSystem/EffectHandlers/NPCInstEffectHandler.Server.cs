@@ -75,7 +75,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void TryDrawWeapon(ItemInst item)
         {
             if (item == null) return;
-            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS")
+            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS" && Host.ModelDef.Visual != "DRACONIAN.MDS")
                 return;
 
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
@@ -94,7 +94,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void TryUndrawWeapon(ItemInst item)
         {
             if (item == null) return;
-            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS")
+            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS" && Host.ModelDef.Visual != "DRACONIAN.MDS")
                 return;
 
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
@@ -172,6 +172,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 case ItemTypes.WepBow:
                 case ItemTypes.WepXBow:
                     slot = NPCSlots.Ranged;
+                    break;
+                case ItemTypes.Torch:
+                    slot = NPCSlots.LeftHand;
                     break;
                 default:
                     return;

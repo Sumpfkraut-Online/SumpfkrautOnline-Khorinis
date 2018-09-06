@@ -15,7 +15,7 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
             players.Add(client);
 
             client.GMClass = BRScenario.StartClass;
-            SpawnCharacter(client, Randomizer.Get(Scenario.Spawnpoints));
+            SpawnCharacter(client, World, Randomizer.Get(Scenario.Spawnpoints));
         }
 
         protected override void Start(GameScenario scenario)
