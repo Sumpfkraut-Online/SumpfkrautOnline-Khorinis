@@ -143,6 +143,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                         case ItemTypes.WepBow:
                         case ItemTypes.WepXBow:
                         case ItemTypes.Armor:
+                        case ItemTypes.Torch:
                             if (!Arena.ArenaClient.GMJoined)
                                 if (selItem.IsEquipped)
                                     NPCInst.Requests.UnequipItem(player, selItem);

@@ -175,6 +175,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     break;
                 case ItemTypes.Torch:
                     slot = NPCSlots.LeftHand;
+                    if (Host.ModelDef.TryGetOverlay("humans_torch", out Visuals.ScriptOverlay ov))
+                        this.Host.ModelInst.ApplyOverlay(ov);
                     break;
                 default:
                     return;
@@ -212,8 +214,17 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 return;
 
             Host.UnequipItem(item);
-            if (item.ItemType == ItemTypes.Wep1H)
-                Host.UnequipSlot(NPCSlots.OneHanded2);
+            switch (item.ItemType)
+            {
+                case ItemTypes.Wep1H:
+                    Host.UnequipSlot(NPCSlots.OneHanded2);
+                    break;
+                case ItemTypes.Torch:
+                    if (Host.ModelDef.TryGetOverlay("humans_torch", out Visuals.ScriptOverlay ov))
+                        this.Host.ModelInst.RemoveOverlay(ov);
+                    break;
+            }
+
         }
 
         public void TryAim()

@@ -21,7 +21,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             if (!HordeMode.IsActive)
                 return;
 
-           // HordeScoreBoard.Instance.Open();
+            // HordeScoreBoard.Instance.Open();
             DoVictoryStuff(win);
         }
 
@@ -37,12 +37,21 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             ActiveStand = stand;
 
             if (!string.IsNullOrWhiteSpace(stand.SFXStart))
-                SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStart), stand.Position, 5000 + stand.Range, 1.0f);
+            {
+                var def = new SoundDefinition(stand.SFXStart);
+                if (stand.GlobalSFX)
+                    SoundHandler.PlaySound(def, 1.0f);
+                else
+                    SoundHandler.PlaySound3D(def, stand.Position, 5000 + stand.Range, 1.0f);
+            }
 
             if (!string.IsNullOrWhiteSpace(stand.SFXLoop))
             {
-                StandSFXLoop = SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXLoop), stand.Position, 1000 + 2500, 0.5f, true);
-                Log.Logger.Log("Play Loop: " + stand.SFXLoop + " " + (StandSFXLoop != null));
+                var def = new SoundDefinition(stand.SFXLoop);
+                if (stand.GlobalSFX)
+                    SoundHandler.PlaySound(def, 1.0f);
+                else
+                    SoundHandler.PlaySound3D(def, stand.Position, 5000 + stand.Range, 0.5f, true);
             }
 
             if (stand.Messages != null && stand.Messages.Length > 0)
@@ -81,8 +90,14 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             var stand = ActiveStand;
             if (HordeMode.IsActive)
             {
-                if (!string.IsNullOrWhiteSpace(stand.SFXStart))
-                    SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStop), stand.Position, 5000 + stand.Range, 1.0f);
+                if (!string.IsNullOrWhiteSpace(stand.SFXStop))
+                {
+                    var def = new SoundDefinition(stand.SFXStop);
+                    if (stand.GlobalSFX)
+                        SoundHandler.PlaySound(def, 1.0f);
+                    else
+                        SoundHandler.PlaySound3D(def, stand.Position, 5000 + stand.Range, 1.0f);
+                }
             }
             ActiveStand = null;
             messageTimer.Stop();

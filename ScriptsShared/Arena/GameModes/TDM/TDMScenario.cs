@@ -31,7 +31,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             scenarios.Add(new TDMScenario()
             {
                 Name = "tdm_burg",
-                WorldPath = "G1-OLDCAMP.ZEN",
+                WorldPath = "TDM_BURG.ZEN",
                 FightDuration = 10 * TimeSpan.TicksPerMinute,
                 MaxDepth = -400,
                 SpecPoint = new PosAng(-2442.949f, 676.9498f, 412.3001f, -0.2303832f, -1.818634f, 0f),
@@ -152,7 +152,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             scenarios.Add(new TDMScenario()
             {
                 Name = "tdm_mine",
-                WorldPath = "G1-OLDMINE.ZEN",
+                WorldPath = "TDM_OLDMINE.ZEN",
                 FightDuration = 10 * TimeSpan.TicksPerMinute,
                 MaxHeight = -6800,
                 MaxWorldDistance = 8635,
@@ -253,7 +253,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             scenarios.Add(new TDMScenario()
             {
                 Name = "tdm_pass",
-                WorldPath = "G2-PASS.ZEN",
+                WorldPath = "TDM_PASS.ZEN",
                 FightDuration = 10 * TimeSpan.TicksPerMinute,
                 MaxHeight = 950,
                 MaxWorldDistance = 10650,
@@ -369,7 +369,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
             scenarios.Add(new TDMScenario()
             {
                 Name = "tdm_tempel",
-                WorldPath = "ADDON-TEMPLE.ZEN",
+                WorldPath = "TDM_TEMPLE.ZEN",
                 FightDuration = 10 * TimeSpan.TicksPerMinute,
                 MaxDepth = -2100,
                 MaxHeight = 400,
@@ -460,7 +460,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                                 Protection = 35,
                                 Damage = 0,
                                 HP = 100,
-                                Overlays = new string[] {"1HST1" },
+                                Overlays = new string[] {"1HST1", "humans_skeleton" },
                                 ItemDefs = new NPCClass.InvItem[]
                                 {
                                     new NPCClass.InvItem("grobes_schwert"),

@@ -101,15 +101,6 @@ namespace GUC
             return Assembly.LoadFrom(Path.Combine(projectPath, name + ".dll"));
         }
 
-        static void Test(Hook hook, RegisterMemory mem)
-        {
-            int ecx = Process.ReadInt(mem[Registers.EAX]);
-            if (ecx == 0)
-            {
-                Logger.LogWarning("HALT " + mem[Registers.EAX].ToString("X4"));
-            }
-        }
-
         static bool mained = false;
         public static int Main(string message)
         {
@@ -118,11 +109,12 @@ namespace GUC
                 if (mained) return 0;
                 mained = true;
 
+               // WinApi.NEW.Process.Init();
+
                 SetupProject();
 
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
-               // Process.AddHook(Test, 0x656205, 6);
 
                 // add hooks
                 hFileSystem.AddHooks();
@@ -211,6 +203,7 @@ namespace GUC
                 #endregion
 
                 // Load Scripts
+                Logger.Log("Loading client scripts...");
                 Scripting.ScriptManager.StartScripts(Path.Combine(projectPath, "Scripts", "ClientScripts.dll"));
 
                 Logger.Log("Waiting...");

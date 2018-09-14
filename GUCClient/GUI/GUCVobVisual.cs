@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Hooks;
 using Gothic.Objects;
+using GUC.Types;
 
 namespace GUC.GUI
 {
@@ -36,17 +37,12 @@ namespace GUC.GUI
         bool lighting;
         public bool Lighting { get { return lighting; } set { lighting = value; args.Lighting = value; } }
 
-        int distance;
-        public int Distance { get { return distance; } set { distance = value; args.ZBias = value; } }
-
-        int rotX;
-        public int RotationX { get { return rotX; } set { rotX = value; args.RotX = value; } }
-
-        int rotY;
-        public int RotationY { get { return rotY; } set { rotY = value; args.RotY = value; } }
-
-        int rotZ;
-        public int RotationZ { get { return rotZ; } set { rotZ = value; args.RotZ = value; } }
+        public float OffsetX { get { return args.Offset.X; } set { args.Offset.X = value; } }
+        public float OffsetY { get { return args.Offset.Y; } set { args.Offset.Y = value; } }
+        public float OffsetZ { get { return args.Offset.Z; } set { args.Offset.Z = value; } }
+        public float RotationPitch { get { return args.Rotation.Pitch; } set { args.Rotation.Pitch = value; } }
+        public float RotationYaw { get { return args.Rotation.Yaw; } set { args.Rotation.Yaw = value; } }
+        public float RotationRoll { get { return args.Rotation.Roll; } set { args.Rotation.Roll = value; } }
 
         public override void Show()
         {

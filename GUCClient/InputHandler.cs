@@ -58,6 +58,8 @@ namespace GUC
             }
         };
 
+        static Gothic.Objects.zCVob vob;
+
         #endregion
 
         public static bool IsPressed(VirtualKeys key)

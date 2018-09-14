@@ -349,7 +349,7 @@ namespace Gothic.Objects
 
         public zCWorld HomeWorld
         {
-            get { return new zCWorld(Address + VarOffsets.homeWorld); }
+            get { return new zCWorld(Process.ReadInt(Address + VarOffsets.homeWorld)); }
         }
 
         public zTBBox3D BBox3D

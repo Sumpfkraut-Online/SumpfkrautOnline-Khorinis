@@ -61,7 +61,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             inst.Agent = CreateAgent(2 * inst.Stand.Range);
             if (inst.Boss != null)
             {
-                inst.Agent.aiClients.Add(inst.Boss);
+                inst.Agent.Add(inst.Boss);
                 inst.Boss.AllowHitTarget.Remove(BossProtection);
                 inst.Boss.OnDeath += boss => EndStand();
             }
@@ -76,6 +76,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             standTimer.SetCallback(EndStand);
         }
 
+        HashSet<NPCInst> AliveStandEnemies = new HashSet<NPCInst>();
         int standSpawnIndex = 0;
         void StandSpawn()
         {
@@ -98,11 +99,21 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     var e = def.Enemies.Last(n => prob <= n.CountScale);
 
                     var npc = SpawnNPC(e.Enemy, spawnPos, 10);
-                    agent.aiClients.Add(npc);
+                    agent.Add(npc);
+                    if (ActiveStand.Stand.KillSpawnsOnEnd)
+                    {
+                        AliveStandEnemies.Add(npc);
+                        npc.OnDeath += OnStandSpawnDeath;
+                    }
 
                     ((SimpleAIPersonality)agent.AIPersonality).Attack(npc, Randomizer.Get(players.Where(p => p.IsCharacter && p.Character.HP > 1)).Character);
                 }
             }
+        }
+
+        void OnStandSpawnDeath(NPCInst npc)
+        {
+            AliveStandEnemies.Remove(npc);
         }
 
         void EndStand()
@@ -118,6 +129,16 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             foreach (var bar in ActiveStand.Stand.Barriers)
                 if (bar.AddAfterEvent)
                     CreateBarrier(bar);
+
+            if (ActiveStand.Stand.KillSpawnsOnEnd)
+            {
+                foreach(var npc in AliveStandEnemies)
+                {
+                    npc.OnDeath -= OnStandSpawnDeath;
+                    npc.SetHealth(0);
+                }
+                AliveStandEnemies.Clear();
+            }
 
             ActiveStand = null;
             if (Stands.Count == 0)
@@ -217,7 +238,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     int maxCount = (int)Math.Ceiling(pair.CountScale * players.Count);
                     for (int i = 0; i < maxCount; i++)
                     {
-                        agent.aiClients.Add(SpawnNPC(pair.Enemy, group.Position, group.Range));
+                        agent.Add(SpawnNPC(pair.Enemy, group.Position, group.Range));
                     }
                 }
             }
@@ -283,7 +304,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             foreach (var npc in AmbientNPCs)
             {
                 npc.BaseInst.SetNeedsClientGuide(true);
-                agent.aiClients.Add(npc);
+                agent.Add(npc);
             }
             base.FadeOut();
         }

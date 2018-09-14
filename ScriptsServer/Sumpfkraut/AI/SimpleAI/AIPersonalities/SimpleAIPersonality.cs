@@ -200,32 +200,25 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void GoTo(AIAgent aiAgent, Vec3f position)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
-            for (int i = 0; i < aiClients.Count; i++)
-            {
-                GoTo(aiClients[i], position);
-            }
+            foreach(var ai in aiAgent.AIClients)
+                GoTo(ai, position);
         }
 
         public void GoTo(AIAgent aiAgent, VobInst target)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
-            for (int i = 0; i < aiClients.Count; i++)
-            {
-                GoTo(aiClients[i], target);
-            }
+            foreach (var ai in aiAgent.AIClients)
+                GoTo(ai, target);
         }
 
         public void GoTo(AIAgent aiAgent, AITarget aiTarget)
         {
             // let each client follow its nearest VobInst from aiTarget respectively
-            List<VobInst> followers = aiAgent.AIClients;
             VobInst closestTarget = null;
-            for (int f = 0; f < followers.Count; f++)
+            foreach(var follower in aiAgent.AIClients)
             {
-                if (TryFindClosestTarget(followers[f], aiTarget, out closestTarget))
+                if (TryFindClosestTarget(follower, aiTarget, out closestTarget))
                 {
-                    GoTo(followers[f], closestTarget);
+                    GoTo(follower, closestTarget);
                 }
             }
         }
@@ -247,10 +240,9 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void TurnAround(AIAgent aiAgent, Vec3f direction, float angularVelocity)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
-            for (int c = 0; c < aiClients.Count; c++)
+            foreach(var ai in aiAgent.AIClients)
             {
-                TurnAround(aiClients[c], direction, angularVelocity);
+                TurnAround(ai, direction, angularVelocity);
             }
         }
 
@@ -263,8 +255,10 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             throw new NotImplementedException();
         }
 
+        public VobInst EnemyTarget;
         public void Attack(VobInst aggressor, VobInst target)
         {
+            EnemyTarget = target;
             if (aggressor is NPCInst aggressorNPC)
             {
                 if (!aggressorNPC.IsInFightMode && !aggressorNPC.ModelInst.IsInAnimation())
@@ -357,18 +351,17 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
         public void Attack(AIAgent aiAgent, AITarget aiTarget)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
             List<VobInst> targets = aiTarget.VobTargets;
             VobInst closestTarget = null;
 
             if (aiTarget.VobTargets.Count < 1) { return; }
 
             // for now, let each aiClient attack its closest foe
-            for (int c = 0; c < aiClients.Count; c++)
+            foreach (var ai in aiAgent.AIClients)
             {
-                if (TryFindClosestTarget(aiClients[c], aiTarget, out closestTarget))
+                if (TryFindClosestTarget(ai, aiTarget, out closestTarget))
                 {
-                    Attack(aiClients[c], closestTarget);
+                    Attack(ai, closestTarget);
                 }
             }
         }
@@ -407,13 +400,12 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         // can be run anytime to let the aiClients recognize their surrounding actively
         public override void MakeActiveObservation(AIAgent aiAgent)
         {
-            List<VobInst> aiClients = aiAgent.AIClients;
             List<VobInst> enemies = new List<VobInst>();
 
             int despawnedCount = 0;
-            for (int c = 0; c < aiClients.Count; c++)
+            foreach (var ai in aiAgent.AIClients)
             {
-                if (aiClients[c] is NPCInst npc)
+                if (ai is NPCInst npc)
                 {
                     if (!npc.IsSpawned)
                     {
@@ -447,7 +439,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 aiMemory.AddAIObservation(new EnemyAIObservation(new AITarget(enemies)));
             }
 
-            if (despawnedCount == aiClients.Count)
+            if (despawnedCount == aiAgent.AIClients.Count())
             {
                 AIManager.aiManagers[0].UnsubscribeAIAgent(aiAgent);
             }
@@ -522,7 +514,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
         public override void ProcessObservations(AIAgent aiAgent)
         {
             // do nothing, if not aiClient is defined (shouldn't happen but oh well)
-            if (aiAgent.AIClients.Count < 1) { return; }
+            if (aiAgent.AIClients.Count() < 1) { return; }
 
             List<BaseAIObservation> aiObservations = aiMemory.GetAIObservations();
             List<VobInst> enemies = new List<VobInst>();

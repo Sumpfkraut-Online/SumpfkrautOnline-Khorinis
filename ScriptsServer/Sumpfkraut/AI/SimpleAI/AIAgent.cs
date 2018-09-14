@@ -15,13 +15,27 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 
         protected object attributeLock;
 
-        public List<VobInst> aiClients;
-        public List<VobInst> AIClients { get { return aiClients; } }
+        List<VobInst> aiClients;
+        public IEnumerable<VobInst> AIClients { get { return aiClients; } }
 
 
         protected BaseAIPersonality aiPersonality;
         public BaseAIPersonality AIPersonality { get { return aiPersonality; } }
 
+        public void Add(VobInst vob)
+        {
+            aiClients.Add(vob);
+            if (vob is NPCInst npc)
+            {
+                npc.OnHit += (a, t, d) =>
+                {
+                    if (aiPersonality is SimpleAIPersonality ai && ai.EnemyTarget == null)
+                    {
+                        ai.Attack(npc, a);
+                    }
+                };
+            }
+        }
 
 
         public AIAgent (List<VobInst> aiClients, BaseAIPersonality aiPersonality = null)

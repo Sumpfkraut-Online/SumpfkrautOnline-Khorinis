@@ -178,7 +178,7 @@ namespace GUC.Scripts
         void CreateTestWorld()
         {
             var world = new WorldInst(null);
-            world.Path = "G1-OLDCAMP.ZEN";
+            world.Path = "DUEL_OLDCAMP.ZEN";
             world.Create();
             world.Clock.SetTime(new WorldTime(0, 8), 15.0f);
             world.Clock.Stop();
@@ -262,6 +262,15 @@ namespace GUC.Scripts
             npcDef.Name = "Skelett";
             npcDef.Model = m;
             npcDef.BodyMesh = "Ske_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Create();
+
+            npcDef = new NPCDef("skeleton2");
+            npcDef.Name = "Skelett";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Ske_Body2";
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
@@ -682,6 +691,17 @@ namespace GUC.Scripts
             itemDef.Range = 100;
             itemDef.Create();
 
+            m = new ModelDef("echsenschwert", "ItMw_2H_OrcSword_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("echsenschwert");
+            itemDef.Name = "Echsenschwert";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 45;
+            itemDef.Range = 80;
+            itemDef.Create();
+
             // Miliz
             m = new ModelDef("ITAR_miliz_s", "ItAr_MIL_M.3DS");
             m.Create();
@@ -793,7 +813,60 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Torch;
             itemDef.Material = ItemMaterials.Wood;
             itemDef.Model = m;
-            itemDef.Damage = 1;
+            itemDef.Create();
+            
+            m = new ModelDef("paladinschwert", "ItMw_030_1h_PAL_Sword_02.3DS");
+            m.Create();
+            itemDef = new ItemDef("paladinschwert");
+            itemDef.Name = "Paladinschwert";
+            itemDef.ItemType = ItemTypes.Wep1H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 45;
+            itemDef.Range = 60;
+            itemDef.Create();
+
+            m = new ModelDef("paladin2h", "ItMw_040_2h_PAL_Sword_03.3DS");
+            m.Create();
+            itemDef = new ItemDef("paladin2h");
+            itemDef.Name = "Paladinzweihänder";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Range = 100;
+            itemDef.Damage = 50;
+            itemDef.Create();
+
+            m = new ModelDef("rostiger2h", "ItMw_025_2h_Sword_old_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("rostiger2h");
+            itemDef.Name = "rostiger Zweihänder";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Range = 100;
+            itemDef.Damage = 30;
+            itemDef.Create();
+
+            m = new ModelDef("rostigeaxt", "ItMw_025_2h_Misc_Axe_old_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("rostigeaxt");
+            itemDef.Name = "rostige Axt";
+            itemDef.ItemType = ItemTypes.Wep2H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Range = 70;
+            itemDef.Damage = 35;
+            itemDef.Create();
+
+            m = new ModelDef("rostiger1h", "ItMw_020_1h_sword_old_01.3DS");
+            m.Create();
+            itemDef = new ItemDef("rostiger1h");
+            itemDef.Name = "rostiges Schwert";
+            itemDef.ItemType = ItemTypes.Wep1H;
+            itemDef.Material = ItemMaterials.Metal;
+            itemDef.Model = m;
+            itemDef.Damage = 20;
             itemDef.Range = 50;
             itemDef.Create();
         }

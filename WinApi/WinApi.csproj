@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -49,6 +50,13 @@
     <Compile Include="FileFormat\IniFile.cs" />
     <Compile Include="HIDDevice.cs" />
     <Compile Include="Hook.cs" />
+    <Compile Include="NEW\ExceptionHelper.cs" />
+    <Compile Include="NEW\FastHook.cs" />
+    <Compile Include="NEW\PInvoke.cs" />
+    <Compile Include="NEW\Process.cs" />
+    <Compile Include="NEW\Error.cs" />
+    <Compile Include="NEW\RegisterMemory.cs" />
+    <Compile Include="NEW\Registers.cs" />
     <Compile Include="RegisterMemory.cs" />
     <Compile Include="Win32\HID\HID.cs" />
     <Compile Include="Win32\HID\Structures\HidCaps.cs" />

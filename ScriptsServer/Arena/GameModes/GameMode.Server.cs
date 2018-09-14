@@ -20,7 +20,7 @@ namespace GUC.Scripts.Arena.GameModes
         protected List<ArenaClient> players = new List<ArenaClient>(10);
         public ReadOnlyList<ArenaClient> Players { get { return players; } }
 
-        public static int NextScenarioIndex = 0;
+        public static int NextScenarioIndex = 1;
         public static void StartNextScenario()
         {
             if (IsActive)
@@ -216,6 +216,7 @@ namespace GUC.Scripts.Arena.GameModes
             this.players.Clear();
 
             // initialize next scenario, creates a new world
+            ActiveMode = null;
             var newMode = InitScenario(GameScenario.Get(NextScenarioIndex));
 
             // move players to next scenario

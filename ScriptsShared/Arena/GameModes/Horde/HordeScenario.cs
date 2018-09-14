@@ -76,8 +76,11 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             public string SFXStart;
             public string SFXLoop;
             public string SFXStop;
+            public bool GlobalSFX = false;
 
             public string[] Messages;
+
+            public bool KillSpawnsOnEnd = false;
         }
 
         public override GameMode GetMode() { return HordeMode.Instance; }
@@ -96,7 +99,6 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         public static void Init()
         {
-#if false
             #region h_pass
 
             var pass_OrcScout = new NPCClass()
@@ -307,17 +309,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             };*/
 
             #endregion
-
+          
             #region h_irdorath
-
-            var ird_OrcScout = new NPCClass()
-            {
-                Definition = "orc_scout",
-                ItemDefs = new NPCClass.InvItem[]
-                {
-                    new NPCClass.InvItem("krush_pach"),
-                }
-            };
 
             var ird_OrcWarrior = new NPCClass()
             {
@@ -342,25 +335,47 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Definition = "draconian",
                 ItemDefs = new NPCClass.InvItem[]
                 {
-                    new NPCClass.InvItem("krush_pach"),
+                    new NPCClass.InvItem("echsenschwert"),
                 }
             };
 
-            var ird_skeleton_l = new NPCClass()
+            var ird_skeleton_l1 = new NPCClass()
             {
                 Definition = "skeleton",
+                Overlays = new string[] { "humans_skeleton" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
-                    new NPCClass.InvItem("grobes_schwert"),
+                    new NPCClass.InvItem("rostiger1h"),
                 }
             };
 
-            var ird_skeleton_m = new NPCClass()
+            var ird_skeleton_l2 = new NPCClass()
             {
-                Definition = "skeleton",
+                Definition = "skeleton2",
+                Overlays = new string[] { "humans_skeleton" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
-                    new NPCClass.InvItem("leichter_zweihaender"),
+                    new NPCClass.InvItem("rostiger1h"),
+                }
+            };
+
+            var ird_skeleton_m1 = new NPCClass()
+            {
+                Definition = "skeleton2",
+                Overlays = new string[] { "humans_skeleton" },
+                ItemDefs = new NPCClass.InvItem[]
+                {
+                    new NPCClass.InvItem("rostiger2h"),
+                }
+            };
+
+            var ird_skeleton_m2 = new NPCClass()
+            {
+                Definition = "skeleton",
+                Overlays = new string[] { "humans_skeleton" },
+                ItemDefs = new NPCClass.InvItem[]
+                {
+                    new NPCClass.InvItem("rostigeaxt"),
                 }
             };
 
@@ -371,13 +386,11 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Protection = 50,
                 Damage = 0,
                 HP = 100,
-                Overlays = new string[] { "1HST1" },
+                Overlays = new string[] { "2HST2" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
-                      new NPCClass.InvItem("2hschwert"),
+                      new NPCClass.InvItem("paladin2h"),
                       new NPCClass.InvItem("ITAR_pal_h"),
-                      new NPCClass.InvItem("light_xbow"),
-                      new NPCClass.InvItem("itrw_bolt", 20),
                 },
                 Guild = Allegiance.PAL,
             };
@@ -389,13 +402,13 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Protection = 50,
                 Damage = 0,
                 HP = 100,
-                Overlays = new string[] { "2HST1" },
+                Overlays = new string[] { "1HST2" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
-                      new NPCClass.InvItem("2hschwert"),
+                      new NPCClass.InvItem("paladinschwert"),
                       new NPCClass.InvItem("ITAR_ritter"),
                       new NPCClass.InvItem("light_xbow"),
-                      new NPCClass.InvItem("itrw_bolt", 20),
+                      new NPCClass.InvItem("itrw_bolt", 10),
                 },
                 Guild = Allegiance.PAL,
             };
@@ -413,8 +426,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
                 SpecPoint = new PosAng(-9982, -63, -14087, 0),
                 FightDuration = 30 * TimeSpan.TicksPerMinute,
-                WorldTime = new WorldTime(0, 18),
-                WorldTimeScale = 5,
+                WorldTime = new WorldTime(0, 8),
+                WorldTimeScale = 0,
                 WorldBarrier = 0,
                 WorldWeather = -1,
                 PlayerClasses = new NPCClass[]
@@ -425,19 +438,19 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
                 Enemies = new Group[]
                 {
-                    new Group(-16447, 1060, -12366, 600, new Pair(ird_OrcScout, 0.5f)), // mitte anfang
-                    new Group(-17270, 1400, -9920, 600, new Pair(ird_OrcScout, 0.5f)), // anfang 1
-                    new Group(-19723, 1600, -11040, 600, new Pair(ird_OrcScout, 0.5f)), // anfang 2, Lagerfeuer
+                    new Group(-16447, 1060, -12366, 600, new Pair(ird_OrcWarrior, 0.5f)), // mitte anfang
+                    new Group(-17270, 1400, -9920, 600, new Pair(ird_OrcWarrior, 0.5f)), // anfang 1
+                    new Group(-19723, 1600, -11040, 600, new Pair(ird_OrcWarrior, 0.5f)), // anfang 2, Lagerfeuer
                     
                     // 2 Lagerfeuer
-                    new Group(-19803, 1400, -7682, 600, new Pair(ird_OrcScout, 1.0f)), //
-                    new Group(-21369, 1400, -8746, 600, new Pair(ird_OrcScout, 0.5f)), //
+                    new Group(-19803, 1400, -7682, 600, new Pair(ird_OrcWarrior, 1.0f)), //
+                    new Group(-21369, 1400, -8746, 600, new Pair(ird_OrcWarrior, 0.5f)), //
 
                     // höhle anfang
-                    new Group(-22043, 1550, -3822, 1000, new Pair(ird_OrcScout, 2.0f),
-                                                         new Pair(ird_OrcWarrior, 0.1f)), //
+                    new Group(-22043, 1550, -3822, 1000, new Pair(ird_OrcWarrior, 2.0f),
+                                                         new Pair(ird_OrcElite, 0.1f)), //
                     // oberst raum
-                    new Group(-25079, 2100, -1966, 400, new Pair(ird_OrcWarrior, 0.75f)), // lagerfeuer
+                    new Group(-25079, 2100, -1966, 400, new Pair(ird_OrcElite, 0.75f)), // lagerfeuer
 
                     
                     // echsenhöhle
@@ -446,30 +459,66 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     new Group(-20877, 2350, 8147, 1000, new Pair(ird_draconian, 0.75f)), // 
 
                     // eingang hinter feuerdrache
-                    new Group(-20680.33f, 2150, 14910.56f, 1000, new Pair(ird_skeleton_l, 2.0f), 
-                                                        new Pair(ird_skeleton_m, 0.5f)),
-                    new Group(-20046.33f, 2150, 14856.05f, 1000, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
-                    new Group(-19311.63f, 2150, 14927.82f, 1000, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
-                    new Group(-18767.63f, 2150, 14878.88f, 1000, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
-                    new Group(-18189.92f, 2150, 14899.71f, 1000, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
-                    new Group(-17515.37f, 2150, 14923.89f, 1000, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
+                    new Group(-20680.33f, 2150, 14910.56f, 1000, new Pair(ird_skeleton_l2, 2.0f),
+                                                                 new Pair(ird_skeleton_m1, 0.5f)),
+                    new Group(-20046.33f, 2150, 14856.05f, 1000, new Pair(ird_skeleton_l2, 1.0f),
+                                                                 new Pair(ird_skeleton_l1, 1.0f),
+                                                                 new Pair(ird_skeleton_m2, 0.5f)),
+                    new Group(-19311.63f, 2150, 14927.82f, 1000, new Pair(ird_skeleton_l1, 2.0f),
+                                                                 new Pair(ird_skeleton_m2, 0.5f)),
+                    new Group(-18767.63f, 2150, 14878.88f, 1000, new Pair(ird_skeleton_l2, 1.0f),
+                                                                 new Pair(ird_skeleton_l1, 1.0f),
+                                                                 new Pair(ird_skeleton_m1, 0.5f)),
+                    new Group(-18189.92f, 2150, 14899.71f, 1000, new Pair(ird_skeleton_l2, 2.0f),
+                                                                 new Pair(ird_skeleton_m1, 0.5f)),
+                    new Group(-17515.37f, 2150, 14923.89f, 1000, new Pair(ird_skeleton_l1, 2.0f),
+                                                                 new Pair(ird_skeleton_m2, 0.5f)),
 
                     // halle vor rätseltür / Mario
-                    new Group(-17440.56f, 2450, 19284.09f, 500, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
-                    new Group(-17454.3f, 2450, 20348.74f, 500, new Pair(ird_skeleton_l, 2.0f),
-                                                        new Pair(ird_skeleton_m, 0.5f)),
+                    new Group(-17440.56f, 2450, 19284.09f, 500, new Pair(ird_skeleton_l2, 1.0f),
+                                                                new Pair(ird_skeleton_l1, 1.0f),
+                                                                new Pair(ird_skeleton_m1, 0.5f)),
+                    new Group(-17454.3f, 2450, 20348.74f, 500,  new Pair(ird_skeleton_l2, 1.0f),
+                                                                 new Pair(ird_skeleton_l1, 1.0f),
+                                                                 new Pair(ird_skeleton_m2, 0.5f)),
 
                 },
 
                 Items = new Item[]
                 {
-                    //new Item("hptrank", 2892.88354f, 6425.26074f, 31699.8496f), // 
+                     // spawn
+                    new Item("hptrank", -11958.6221f, 328.857269f, -14550.373f),
+                    new Item("hptrank", -11927.4385f, 328.857269f, -14576.2383f),
+                    new Item("hptrank", -11941.751f, 328.857269f, -14609.7178f),
+                    new Item("hptrank", -11981.5566f, 328.857269f, -14594.4043f),
+
+                    new Item("hptrank", -12507.2012f, 483.56543f, -13424.5605f),
+
+                    // rechts hoch hinter spawn
+                    new Item("hptrank", -14916.3633f, 2602.75244f, -8134.875f),
+
+                    // bei pedro
+                    new Item("hptrank", -21921.3066f, 1382.82495f, -727.099304f),
+                    new Item("hptrank", -21957.3613f, 1419.82495f, -650.035767f),
+
+                    // hinter orkoberst
+                    new Item("hptrank", -25547.5547f, 1887.61914f, 421.957397f),
+
+                    // hinter brücke
+                    new Item("hptrank", -24151.7148f, 3231.42407f, 12561.8584f), // turm links
+                    new Item("hptrank", -22576.123f, 3234.23486f, 12552.4121f), // turm rechts
+
+                    // kammer gefangener
+                    new Item("hptrank", -17371.4961f, 2357.39453f, 17849.4453f), // alchemietisch
+                    new Item("hptrank", -17117.0371f, 2347.39453f, 17646.875f), // tisch
+
+                    // rätseltür
+                    new Item("hptrank", -20049.5469f, 2529.32471f, 23356.0469f), // kammer links oben
+                    new Item("hptrank", -16392.4492f, 2529.12573f, 23589.1133f), // kammer rechts oben
+                    new Item("hptrank", -16390.9434f, 2109.46973f, 20264.9473f), // kammer rechts unten
+
+                    // vor großer tür
+                    new Item("hptrank", -19755.8887f, 2257.59668f, 26307.5098f), // kammer links, alchemietisch
                 },
 
                 Stands = new Stand[]
@@ -487,6 +536,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         SFXStart = "ORC_WARN01.WAV",
                         SFXLoop = null,
                         SFXStop = "STONE_SMALL_LOOP.WAV",
+                        GlobalSFX = true,
                         Boss = new NPCClass()
                         {
                             Definition = "orc_oberst",
@@ -530,6 +580,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         SFXStart = "DEM_WARN01.WAV",
                         SFXLoop = null,
                         SFXStop = "STONE_LOOP.WAV",
+                        GlobalSFX = true,
                         Boss = new NPCClass()
                         {
                             HP = 1000,
@@ -567,9 +618,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         EnemyGroupsPerSpawn = 2,
                         EnemySpawnInterval = 10 * TimeSpan.TicksPerSecond,
                         Duration = TimeSpan.TicksPerDay,
-                        SFXStart = "MYSTERY_06.WAV",
+                        SFXStart = "",
                         SFXLoop = null,
                         SFXStop = "MYSTERY_05.WAV",
+                        GlobalSFX = true,
                         Boss = new NPCClass()
                         {
                             Definition = "skeleton_lord",
@@ -592,8 +644,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         },
                         Enemies = new Pair[]
                         {
-                            new Pair(ird_skeleton_l, 1.0f),
-                            new Pair(ird_skeleton_m, 0.1f),
+                            new Pair(ird_skeleton_l1, 1.0f),
+                            new Pair(ird_skeleton_l2, 0.5f),
+                            new Pair(ird_skeleton_m1, 0.1f),
+                            new Pair(ird_skeleton_m2, 0.05f),
                         }
                     },            
                     
@@ -608,9 +662,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         EnemyGroupsPerSpawn = 4,
                         EnemySpawnInterval = 5 * TimeSpan.TicksPerSecond,
                         Duration = 30 * TimeSpan.TicksPerSecond,
-                        SFXStart = "MYSTERY_06.WAV",
+                        SFXStart = "EARTHQUAKE.WAV",
                         SFXLoop = null,
                         SFXStop = "MYSTERY_05.WAV",
+                        GlobalSFX = true,
                         Boss = null,
                         Messages = new string[]
                         {
@@ -625,8 +680,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         },
                         Enemies = new Pair[]
                         {
-                            new Pair(ird_skeleton_l, 1.0f),
-                            new Pair(ird_skeleton_m, 0.1f),
+                            new Pair(ird_skeleton_l1, 1.0f),
+                            new Pair(ird_skeleton_l2, 0.5f),
+                            new Pair(ird_skeleton_m1, 0.1f),
+                            new Pair(ird_skeleton_m2, 0.05f),
                         }
                     },      
                        
@@ -648,6 +705,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         SFXStart = "LASTDOOREVENT.WAV",
                         SFXLoop = null,
                         SFXStop = "STONE_START.WAV",
+                        GlobalSFX = true,
                         Boss = null,
                         Messages = new string[]
                         {
@@ -670,13 +728,14 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         Barriers = new Barrier[] { },
                         Position = new Vec3f(-17573, 3400, 34149),
                         Range = 1500,
-                        EnemyCountPerGroup = 2,
+                        EnemyCountPerGroup = 1,
                         EnemyGroupsPerSpawn = 2,
                         EnemySpawnInterval = 10 * TimeSpan.TicksPerSecond,
                         Duration = TimeSpan.TicksPerDay,
                         SFXStart = "MYSTERY_07.WAV",
                         SFXLoop = null,
                         SFXStop = null,
+                        GlobalSFX = true,
                         Boss = new NPCClass()
                         {
                             HP = 2000,
@@ -694,9 +753,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         },
                         Enemies = new Pair[]
                         {
-                            new Pair(ird_skeleton_l, 1.0f),
-                            new Pair(ird_skeleton_m, 0.1f),
-                        }
+                            new Pair(ird_skeleton_l1, 1.0f),
+                            new Pair(ird_skeleton_l2, 0.55f),
+                            new Pair(ird_skeleton_m1, 0.1f),
+                            new Pair(ird_skeleton_m2, 0.05f),
+                        },
+                        KillSpawnsOnEnd = true
                     }
                 },
 
@@ -707,14 +769,16 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
                 Respawns = new Vec3f[]
                 {
-                    new Vec3f(692.55f, 2824.994f, 21342.08f),
-                    new Vec3f(-8501.721f, -1131.424f, 12540.28f),
-                    new Vec3f(-3193.676f, -552.6367f, 3412.632f),
+                    new Vec3f(-24830.2813f, 1937.18457f, -1044.5708f),
+                    new Vec3f(-23610.3262f, 2203.98608f, 12986.7178f),
+                    new Vec3f(-18580.6816f, 2309.59668f, 19235.2344f),
+                    new Vec3f(-17687.8594f, 2199.81348f, 25858.8359f),
+                    new Vec3f(-17447f, 3178.1582f, 32383f),
                 },
             });
 
-            #endregion
-#endif
+#endregion
+
             #region h_oldmine
 
             var oldmine_gardist = new NPCClass()
@@ -724,14 +788,13 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Protection = 50,
                 Damage = 0,
                 HP = 100,
-                Overlays = new string[] { "humans_torch", "1HST2"  },
+                Overlays = new string[] { "1HST2"  },
                 ItemDefs = new NPCClass.InvItem[]
                 {
                       new NPCClass.InvItem("1hschwert"),
-                      new NPCClass.InvItem("torch_burning"),
                       new NPCClass.InvItem("ITAR_garde_h"),
                       new NPCClass.InvItem("war_xbow"),
-                      new NPCClass.InvItem("itrw_bolt", 20),
+                      new NPCClass.InvItem("itrw_bolt", 10),
                 },
                 Guild = Allegiance.MIL,
             };
@@ -743,15 +806,32 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Protection = 50,
                 Damage = 0,
                 HP = 100,
-                Overlays = new string[] { "2HST2" },
+                Overlays = new string[] { "2HST1" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
                       new NPCClass.InvItem("leichter_zweihaender"),
                       new NPCClass.InvItem("ITAR_templer"),
                       new NPCClass.InvItem("light_xbow"),
-                      new NPCClass.InvItem("itrw_bolt", 10),
+                      new NPCClass.InvItem("itrw_bolt", 5),
                 },
                 Guild = Allegiance.SECT,
+            };
+
+            var oldmine_buddler = new NPCClass()
+            {
+                Name = "Buddler",
+                Definition = null,
+                Protection = 100,
+                Damage = 0,
+                HP = 100,
+                Overlays = new string[] { "humans_torch" },
+                ItemDefs = new NPCClass.InvItem[]
+                {
+                      new NPCClass.InvItem("ItMw_1h_Bau_Mace"),
+                      new NPCClass.InvItem("torch_burning"),
+                      new NPCClass.InvItem("ITAR_Prisoner"),
+                },
+                Guild = Allegiance.AL,
             };
 
             var oldmine_crawler = new NPCClass()
@@ -779,23 +859,31 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 WorldWeather = 0,
                 PlayerClasses = new NPCClass[]
                 {
+                    oldmine_buddler,
                     oldmine_gardist,
                     oldmine_templer,
                 },
 
                 Enemies = new Group[]
                 {                             
-                    new Group(9644, -7400, -4503, 400, new Pair(oldmine_crawler, 1)), // anfang
-                    new Group(8467, -7000, -2633, 400, new Pair(oldmine_crawler, 1)), // anfang2
-                    new Group(5572, -7000, -75, 400, new Pair(oldmine_crawler, 0.5f),
-                                                     new Pair(oldmine_crawler_w, 0.3f)), // nach durchgang
-                    new Group(9561, -7800, 2385, 400, new Pair(oldmine_crawler, 0.5f),
-                                                     new Pair(oldmine_crawler_w, 0.3f)), // vor königin eingang
+                    new Group(9644, -7400, -4503, 400, new Pair(oldmine_crawler, 1)), // hinter tor
+                    new Group(8467, -7000, -2633, 400, new Pair(oldmine_crawler, 1)), // vor durchgang, hinter tor
+                    new Group(5572, -7000, -75, 400, new Pair(oldmine_crawler, 0.5f), // nach durchgang
+                                                     new Pair(oldmine_crawler_w, 0.3f)),
+                    new Group(9561, -7800, 2385, 400, new Pair(oldmine_crawler, 0.5f), // vor königin eingang
+                                                     new Pair(oldmine_crawler_w, 0.3f)),
+                    new Group(11086, -8800, 7008, 300, new Pair(oldmine_crawler, 0.5f),  // königin
+                                                     new Pair(oldmine_crawler_w, 0.3f)), 
                 },
 
                 Items = new Item[]
                 {
-                    //new Item("hptrank", 2892.88354f, 6425.26074f, 31699.8496f), // austauschstelle brücke
+                    new Item("hptrank", 5390.99023f, -8511.96387f, -4679.08105f),
+                    new Item("hptrank", 5413.30859f, -8511.96387f, -4693.40137f),
+                    new Item("hptrank", 5415.12158f, -8511.02441f, -4666.27441f),
+                    new Item("hptrank", 4973.03369f, -8519.47949f, -4593.04248f),
+                    new Item("hptrank", 5108.15771f, -8603.72754f, -4729.32275f),
+                    new Item("hptrank", 5135.13281f, -8603.72754f, -4705.63721f),
                 },
 
                 Stands = new Stand[]
@@ -809,7 +897,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         EnemyCountPerGroup = 0.5f,
                         EnemyGroupsPerSpawn = 2,
                         EnemySpawnInterval = 10 * TimeSpan.TicksPerSecond,
-                        Duration = 30 * TimeSpan.TicksPerSecond,
+                        Duration = 25 * TimeSpan.TicksPerSecond,
                         SFXStart = "GATE_STOP.WAV",
                         SFXLoop = "",
                         SFXStop = "CRW_PERCEPTION01.WAV",
@@ -832,22 +920,22 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     {
                         Barriers = new Barrier[] { },
                         Position = new Vec3f(9644, -7400, -4503),
-                        Range = 500,
+                        Range = 800,
                         EnemyCountPerGroup = 0.000001f,
-                        EnemyGroupsPerSpawn = 2,
+                        EnemyGroupsPerSpawn = 1,
                         EnemySpawnInterval = 20 * TimeSpan.TicksPerSecond,
-                        Duration = 10 * TimeSpan.TicksPerSecond,
+                        Duration = 6 * TimeSpan.TicksPerSecond,
                         SFXStart = "CRW_WARN01.WAV",
                         SFXLoop = "",
                         SFXStop = "CRW_PERCEPTION01.WAV",
                         Messages = new string[]
                         {
-                            "yes",
+                            "hinter tor",
                         },
                         EnemySpawns = new Vec3f[]
                         {
                              new Vec3f(10384.0029f, -7521.979f, -3835.53467f),
-                             new Vec3f(9994.76855f, -7063.48389f, -3043.97192f),
+                             new Vec3f(10466.88f, -7464.816f, -3781.676f),
                         },
                         Enemies = new Pair[]
                         {
@@ -855,15 +943,127 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         }
                     },
                     
+                    // vor durchgang, Hinter Tor 
+                    new Stand()
+                    {
+                        Barriers = new Barrier[] { },
+                        Position = new Vec3f(8467, -7000, -2633),
+                        Range = 800,
+                        EnemyCountPerGroup = 0.000001f,
+                        EnemyGroupsPerSpawn = 1,
+                        EnemySpawnInterval = 5 * TimeSpan.TicksPerSecond,
+                        Duration = 18 * TimeSpan.TicksPerSecond,
+                        SFXStart = "CRW_WARN01.WAV",
+                        SFXLoop = "",
+                        SFXStop = "CRW_WARN02.WAV",
+                        Messages = new string[]
+                        {
+                            "vor durchgang",
+                        },
+                        EnemySpawns = new Vec3f[]
+                        {
+                             new Vec3f(9983.079f, -7049.803f, -3027.662f),
+                             new Vec3f(8717.4541f, -7096.82959f, -2067.42993f),
+                        },
+                        Enemies = new Pair[]
+                        {
+                            new Pair(oldmine_crawler, 1.0f),
+                        }
+                    },
+
+                    // durchgang
+                    new Stand()
+                    {
+                        Barriers = new Barrier[] { },
+                        Position = new Vec3f(5895, -6604, -2131),
+                        Range = 600,
+                        EnemyCountPerGroup = 0.000001f,
+                        EnemyGroupsPerSpawn = 1,
+                        EnemySpawnInterval = 7 * TimeSpan.TicksPerSecond,
+                        Duration = 15 * TimeSpan.TicksPerSecond,
+                        SFXStart = "CRW_WARN01.WAV",
+                        SFXLoop = "",
+                        SFXStop = "",
+                        Messages = new string[]
+                        {
+                            "durchgang",
+                        },
+                        EnemySpawns = new Vec3f[]
+                        {
+                             new Vec3f(6320.13184f, -6719f, -2952.2876f),
+                        },
+                        Enemies = new Pair[]
+                        {
+                            new Pair(oldmine_crawler, 1.0f),
+                        }
+                    },
+
+                    // hinter durchgang
+                    new Stand()
+                    {
+                        Barriers = new Barrier[] { },
+                        Position = new Vec3f(5572, -7000, -75),
+                        Range = 800,
+                        EnemyCountPerGroup = 0.000001f,
+                        EnemyGroupsPerSpawn = 1,
+                        EnemySpawnInterval = 9 * TimeSpan.TicksPerSecond,
+                        Duration = 20 * TimeSpan.TicksPerSecond,
+                        SFXStart = "CRW_WARN01.WAV",
+                        SFXLoop = "",
+                        SFXStop = "",
+                        Messages = new string[]
+                        {
+                            "hinter durchgang",
+                        },
+                        EnemySpawns = new Vec3f[]
+                        {
+                             new Vec3f(6430.88086f, -7086.16895f, 271.222198f),
+                        },
+                        Enemies = new Pair[]
+                        {
+                            new Pair(oldmine_crawler, 1.0f),
+                        }
+                    },
+
+                    // vor königin
+                    new Stand()
+                    {
+                        Barriers = new Barrier[] { },
+                        Position = new Vec3f(9561, -7800, 2385),
+                        Range = 700,
+                        EnemyCountPerGroup = 0.2f,
+                        EnemyGroupsPerSpawn = 1,
+                        EnemySpawnInterval = 8 * TimeSpan.TicksPerSecond,
+                        Duration = 25 * TimeSpan.TicksPerSecond,
+                        SFXStart = "CRW_WARN02.WAV",
+                        SFXLoop = "",
+                        SFXStop = "CRW_WARN01.WAV",
+                        Boss = null,
+                        Messages = new string[]
+                        {
+                            "vor Königin",
+                        },
+                        EnemySpawns = new Vec3f[]
+                        {
+                             new Vec3f(8921.9082f, -7643.92236f, 1218.99854f),
+                             new Vec3f(9586.73926f, -7623.74414f, 1066.13147f),
+                        },
+                        Enemies = new Pair[]
+                        {
+                            new Pair(oldmine_crawler, 1.0f),
+                            new Pair(oldmine_crawler_w, 0.1f),
+                        }
+                    },
+
                     // Königin
                     new Stand()
                     {
                         Barriers = new Barrier[] { },
                         Position = new Vec3f(11086, -9000, 7008),
                         Range = 500,
-                        EnemyCountPerGroup = 0.5f,
-                        EnemyGroupsPerSpawn = 2,
-                        EnemySpawnInterval = 1000000 * TimeSpan.TicksPerSecond,
+                        EnemyCountPerGroup = 2,
+                        EnemyGroupsPerSpawn = 1,
+                        EnemySpawnInterval = 8 * TimeSpan.TicksPerSecond,
                         Duration = TimeSpan.TicksPerDay,
                         SFXStart = "CRW_WARN01.WAV",
                         SFXLoop = "AMBIENTCRAWLERSCREAM.WAV",
@@ -871,7 +1071,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         Boss = new NPCClass()
                         {
                             Definition = "crawler_queen",
-                            HP = 3000,
+                            HP = 5000,
                         },
                         Messages = new string[]
                         {
@@ -879,11 +1079,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         },
                         EnemySpawns = new Vec3f[]
                         {
-                             new Vec3f(7385.34229f, -7975.97852f, -5381.13379f),
+                             new Vec3f(9785.667f, -8536.169f, 4906.923f),
                         },
                         Enemies = new Pair[]
                         {
                             new Pair(oldmine_crawler, 1.0f),
+                            new Pair(oldmine_crawler_w, 0.01f),
                         }
                     }
                 },
@@ -897,13 +1098,11 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
                 Respawns = new Vec3f[]
                 {
-                    new Vec3f(692.55f, 2824.994f, 21342.08f),
-                    new Vec3f(-8501.721f, -1131.424f, 12540.28f),
-                    new Vec3f(-3193.676f, -552.6367f, 3412.632f),
+                    new Vec3f(5166, -8613, -4850),
                 },
             });
 
-            #endregion
+#endregion
         }
     }
 }

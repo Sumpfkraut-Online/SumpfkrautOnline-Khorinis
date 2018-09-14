@@ -697,8 +697,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public int Damage;
         public int Protection;
-
-
+        
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
 
@@ -743,6 +742,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             this.SetHealth(resultingHP);
             sOnHit?.Invoke(attacker, this, damage);
+            OnHit?.Invoke(attacker, this, damage);
             lastHitMoveTime = GameTime.Ticks;
         }
 
@@ -1051,7 +1051,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public bool IsObstructed()
         {
-            return IsSpawned && (IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || HasItemInHands() || IsUnconscious);
+            return IsSpawned && (IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || IsUnconscious);
         }
 
         public void RandomizeCustomVisuals(string name, bool male)
