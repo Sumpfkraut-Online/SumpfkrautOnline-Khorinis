@@ -7,6 +7,7 @@ using GUC.Utilities;
 using System;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.Menus;
 
 namespace GUC.Scripts.Arena.Controls
 {
@@ -28,6 +29,7 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.OpenAllChat, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.Inventory, d => { if (d && TeamMode.TeamDef == null) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
+            { KeyBind.RequestTrade, d => { if(d) TradeMenu.Menu.RequestTrade(); } },
             { VirtualKeys.P, PrintPosition },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
             { VirtualKeys.F3, ToggleG1Camera },

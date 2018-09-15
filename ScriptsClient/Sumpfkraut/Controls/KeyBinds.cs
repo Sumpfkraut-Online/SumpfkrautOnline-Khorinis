@@ -41,6 +41,7 @@ namespace GUC.Scripts.Sumpfkraut.Controls
         public readonly static KeyBind OpenAllChat = new KeyBind("OpenAllChat", VirtualKeys.T, VirtualKeys.Return);
         public readonly static KeyBind OpenTeamChat = new KeyBind("OpenTeamChat", VirtualKeys.Z);
         public readonly static KeyBind OpenScoreBoard = new KeyBind("OpenScoreBoard", VirtualKeys.F1);
+        public readonly static KeyBind RequestTrade = new KeyBind("RequestTrade", VirtualKeys.Y);
 
         #endregion
 

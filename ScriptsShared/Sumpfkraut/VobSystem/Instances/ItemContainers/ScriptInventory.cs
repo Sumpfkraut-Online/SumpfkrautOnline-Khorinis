@@ -95,6 +95,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
             return null;
         }
 
+        public void Clear()
+        {
+            BaseInst.ForEach(i => RemoveItem((ItemInst)i.ScriptObject));
+        }
+
         #endregion
 
         #region Read & Write

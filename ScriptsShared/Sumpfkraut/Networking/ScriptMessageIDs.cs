@@ -46,6 +46,12 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         UnequipItem,
         UseItem,
 
+        OfferItem,
+        RemoveItem,
+        ConfirmOffer,
+        DeclineOffer,
+        RequestTrade,
+
         MaxNPCRequests,
     }
 

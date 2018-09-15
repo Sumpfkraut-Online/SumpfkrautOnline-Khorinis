@@ -195,5 +195,45 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             stream.Write(end);
             NPC.SendScriptCommand(stream, NetPriority.Immediate);
         }
+
+        #region TradeMenu
+        public void ConfirmOffer(NPCInst npc)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.ConfirmOffer);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
+        }
+
+        public void DeclineOffer(NPCInst npc)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.DeclineOffer);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
+        }
+
+        public void OfferItem(NPCInst npc, int itemID)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.OfferItem);
+            stream.Write((byte)itemID);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
+        }
+
+        public void RemoveItem(NPCInst npc, int itemID)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.RemoveItem);
+            stream.Write((byte)itemID);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
+        }
+
+        public void SendRequest(NPCInst npc, NPCInst other)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.RequestTrade);
+            stream.Write((byte)other.ID);
+            NPC.SendScriptCommand(stream, NetPriority.Medium);
+        }
+        #endregion
     }
 }
