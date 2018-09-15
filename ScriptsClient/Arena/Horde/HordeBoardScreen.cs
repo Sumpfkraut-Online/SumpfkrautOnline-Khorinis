@@ -11,7 +11,6 @@ namespace GUC.Scripts.Arena
         public static readonly HordeBoardScreen Instance = new HordeBoardScreen();
 
         ScoreBoard board;
-        int enemies = 0;
 
         private HordeBoardScreen() : base(ScriptMessages.ScoreHordeMessage)
         {
@@ -23,31 +22,11 @@ namespace GUC.Scripts.Arena
 
         void SetTitle(HordePhase phase)
         {
-            string title;
-            switch (phase)
-            {
-                case HordePhase.Fight:
-                    title = enemies + " Gegner verbleiben.";
-                    break;
-                case HordePhase.Intermission:
-                    enemies = 0;
-                    title = "Start in drölf Sekunden!";
-                    break;
-                case HordePhase.Victory:
-                    enemies = 0;
-                    title = "Sieg!";
-                    break;
-                case HordePhase.Lost:
-                    title = "Niederlage!";
-                    break;
-                default: return;
-            }
-            board.SetTitle(title);
+            this.board.SetTitle(phase.ToString());
         }
-
+        
         public override void ReadMessage(PacketReader stream)
         {
-            enemies = stream.ReadUShort();
             SetTitle(HordeMode.Phase);
 
             int count = stream.ReadByte();

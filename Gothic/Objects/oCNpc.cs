@@ -95,7 +95,7 @@ namespace Gothic.Objects
             TakeAnimalTrophy,
             Foreignlanguage
         }
-        
+
         public enum NPCFlags
         {
             None = 0,
@@ -226,7 +226,7 @@ namespace Gothic.Objects
 
         public abstract class NPCNodes
         {
-            public static readonly zString 
+            public static readonly zString
                 Bow = new zString(0xAB1F48),
                 Crossbow = new zString(0xAB2114),
                 Helmet = new zString(0xAB1F04),
@@ -524,7 +524,7 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.RemoveOverlay, str);
         }
-        
+
         public void Equip(oCItem item)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.Equip, item);
@@ -553,7 +553,7 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.UnequipItem, item);
         }
-        
+
         public void SetToFightMode(oCItem item, int mode)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x73A740, item, (IntArg)mode);
@@ -605,7 +605,7 @@ namespace Gothic.Objects
         {
             return Process.THISCALL<BoolArg>(Address, 0x7418E0, vob);
         }
-        
+
         public int Guild
         {
             get { return Process.ReadInt(Address + VarOffsets.guild); }
@@ -641,7 +641,7 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot_str, slot, vob, (BoolArg)inInv);
         }
-        
+
         public int GetInvSlot(string slot)
         {
             int ret;
@@ -664,7 +664,7 @@ namespace Gothic.Objects
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.PutInSlot, (IntArg)slotAddr, vob, (BoolArg)arg);
         }
-        
+
         public oCItem PutInInv(oCItem item)
         {
             return Process.THISCALL<oCItem>(Address, FuncAddresses.PutInInv_Item, item);
@@ -693,6 +693,11 @@ namespace Gothic.Objects
             return Process.THISCALL<IntArg>(Address, 0x686960);
         }
 
+        public void RbtInit(zVec3 pos, zCVob vob = null)
+        {
+                Process.THISCALL<NullReturnCall>(Address, 0x686670, pos, (IntArg)(vob == null ? 0 : vob.Address));
+        }
+
         public void RbtReset()
         {
             Process.THISCALL<NullReturnCall>(Address, 0x686560);
@@ -707,7 +712,7 @@ namespace Gothic.Objects
         {
             return Process.THISCALL<IntArg>(Address, 0x67FFC0);
         }
-        
+
         public void DoDropVob(zCVob vob)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.DoDropVob, vob);

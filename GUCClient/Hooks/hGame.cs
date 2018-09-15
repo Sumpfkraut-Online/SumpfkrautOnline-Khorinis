@@ -34,13 +34,25 @@ namespace GUC.Hooks
             Process.Write(h.OldInNewAddress, 0xC2, 0x04, 0x00);
 
             // hook ingame loop
-            Process.AddHook(RunIngame, 0x006C86A0, 7);
+            Process.AddHook(RunIngame, 0x6C86A0, 7); // before gothic's precache
+
+            // first render
+            Process.AddHook(FirstRender, 0x6C876B, 6);
 
             Logger.Log("Added game loop hooks.");
         }
 
-        static bool outgameStarted = false;
+        public static bool FirstRenderDone = false;
+        static void FirstRender(Hook hook, RegisterMemory rmem)
+        {
+            if (FirstRenderDone) // improveme: remove & add hook
+                return;
 
+            ScriptManager.Interface.FirstWorldRender();
+            FirstRenderDone = true;
+        }
+
+        static bool outgameStarted = false;
         static GUCVisual connectionVis = null;
         static bool ShowConnectionAttempts()
         {

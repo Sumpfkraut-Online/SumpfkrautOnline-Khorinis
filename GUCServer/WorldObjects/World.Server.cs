@@ -39,8 +39,8 @@ namespace GUC.WorldObjects
 
         #region Spawn ranges
 
-        static float spawnInsertRange = 4000; //8000;
-        static float spawnRemoveRange = 5000; //10000;
+        static float spawnInsertRange = 7000; //8000;
+        static float spawnRemoveRange = 8000; //10000;
 
         public static float SpawnInsertRange
         {
@@ -501,5 +501,11 @@ namespace GUC.WorldObjects
         #endregion
 
         #endregion
+
+        partial void pBeforeDelete()
+        {
+            ForEachClient(c => c.SetControl(null));
+            ForEachVob(v => v.Despawn());
+        }
     }
 }

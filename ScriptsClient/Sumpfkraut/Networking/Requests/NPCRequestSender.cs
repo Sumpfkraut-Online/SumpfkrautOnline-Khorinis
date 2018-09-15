@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
 using GUC.Utilities;
@@ -11,6 +12,24 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
 {
     public class NPCRequestSender
     {
+
+        public void Voice(NPCInst npc, VoiceCmd cmd)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.Voice);
+            stream.Write((byte)cmd);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
+        }
+
+        public void HelpUp(NPCInst npc, NPCInst target)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.HelpUp);
+            stream.Write((ushort)target.ID);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
+        }
+
+
         public void DropItem(NPCInst npc, ItemInst item, int amount)
         {
             var stream = npc.BaseInst.GetScriptCommandStream();

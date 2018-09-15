@@ -38,10 +38,17 @@ namespace GUC.Scripts.Sumpfkraut.Controls
         public readonly static KeyBind TurnRight = new KeyBind("TurnRight", VirtualKeys.E, VirtualKeys.Right);
         public readonly static KeyBind DrawWeapon = new KeyBind("DrawWeapon", VirtualKeys.Space);
         public readonly static KeyBind DrawFists = new KeyBind("DrawFists", VirtualKeys.OEM5);
+<<<<<<< HEAD
         public readonly static KeyBind OpenAllChat = new KeyBind("OpenAllChat", VirtualKeys.T, VirtualKeys.Return);
         public readonly static KeyBind OpenTeamChat = new KeyBind("OpenTeamChat", VirtualKeys.Z);
         public readonly static KeyBind OpenScoreBoard = new KeyBind("OpenScoreBoard", VirtualKeys.F1);
         public readonly static KeyBind RequestTrade = new KeyBind("RequestTrade", VirtualKeys.Y);
+=======
+        public readonly static KeyBind ChatAll = new KeyBind("ChatAll", VirtualKeys.T, VirtualKeys.Return);
+        public readonly static KeyBind ChatTeam = new KeyBind("ChatTeam", VirtualKeys.Z);
+        public readonly static KeyBind ScoreBoard = new KeyBind("ScoreBoard", VirtualKeys.F1);
+        public readonly static KeyBind StatusMenu = new KeyBind("StatusMenu", VirtualKeys.B, VirtualKeys.C);
+>>>>>>> ShodenTestBranch
 
         #endregion
 

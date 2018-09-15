@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripting;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Arena.GameModes;
 
 namespace GUC.Scripts.Arena
 {
@@ -24,18 +24,28 @@ namespace GUC.Scripts.Arena
         {
             ArenaClient.ForEach(c =>
             {
-                if (c.IsCharacter && ((ArenaClient)c).DuelEnemy == null)
-                    RegeneratePlayer(c.Character);
+                ArenaClient client = (ArenaClient)c;
+                if (client.IsCharacter && client.DuelEnemy == null)
+                    RegeneratePlayer(client);
             });
         }
 
-        static void RegeneratePlayer(NPCInst npc)
+        static void RegeneratePlayer(ArenaClient client)
         {
-            int diff = npc.HPMax - npc.HP;
-            if (diff <= 0 || npc.IsDead || (GameTime.Ticks - npc.LastHitMove) < RegenerationOffset)
+            // no regen in horde mode
+            if (client.GMTeamID >= TeamIdent.GMPlayer && GameModes.Horde.HordeMode.IsActive)
                 return;
 
-            int add = npc.TeamID == -1 ? 8 : 2;
+            var npc = client.Character;
+
+            int diff = npc.HPMax - npc.HP;
+            if (diff <= 0 || npc.IsDead)
+                return;
+
+            if (client.GMTeamID >= TeamIdent.GMPlayer && (GameTime.Ticks - npc.LastHitMove) < RegenerationOffset)
+                return;
+
+            int add = client.GMTeamID >= TeamIdent.GMPlayer ? 2 : 8;
             if (add > diff)
                 add = diff;
 

@@ -10,6 +10,7 @@ using System.IO;
 using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Scripts.Sumpfkraut.Controls;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Arena.Duel;
 using GUC.Types;
 
 namespace GUC.Scripts
@@ -46,9 +47,13 @@ namespace GUC.Scripts
             OnUpdate?.Invoke(ticks);
             CheckMusic();
             CheckPosition();
+
+            //if (Sumpfkraut.WorldSystem.WorldInst.Current != null)
+            //    Sumpfkraut.WorldSystem.WorldInst.Current.Barrier.SetNextWeight(Sumpfkraut.WorldSystem.WorldInst.Current.Clock.Time, 1);
         }
 
         SoundInstance menuTheme = null;
+        public static event Action OnOutgame;
         public void StartOutgame()
         {
             var theme = new SoundDefinition("INSTALLER_LOOP.WAV");
@@ -59,17 +64,19 @@ namespace GUC.Scripts
 
             Arena.Menus.MainMenu.Menu.Open();
 
+            OnOutgame?.Invoke();
             Logger.Log("Outgame started.");
         }
 
+        public static event Action OnIngame;
         public void StartIngame()
         {
             // stop oCAniCtrl_Human::_Stand from canceling the s_bowaim animation
             WinApi.Process.Write(0x006B7772, 0xEB, 0x69);
+
+            // remove SetTorchAni
+            WinApi.Process.Write(0x0073B410, 0xC2, 0x08, 0x00);
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
-
-
-            GUCMenu.CloseActiveMenus();
 
             if (menuTheme != null)
             {
@@ -78,20 +85,42 @@ namespace GUC.Scripts
             }
 
             Ingame = true;
+
+            OnIngame?.Invoke();
             Logger.Log("Ingame started.");
         }
 
         static void CheckMusic()
         {
-            var client = Arena.ArenaClient.Client;
-            if (Ingame && client.IsCharacter && !client.Character.IsDead)
+            if (Arena.ArenaClient.GMJoined && Arena.GameModes.GameMode.IsActive)
             {
-                if (Arena.DuelMode.Enemy != null)
+                var phase = Arena.GameModes.GameMode.ActiveMode.Phase;
+                if (phase == Arena.GameModes.GamePhase.WarmUp)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Threat;
+                    return;
+                }
+                else if (phase == Arena.GameModes.GamePhase.FadeOut)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Normal;
+                    return;
+                }
+                if (Arena.GameModes.Horde.HordeMode.IsActive && phase > Arena.GameModes.GamePhase.Fight)
                 {
                     SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
                     return;
                 }
-                else if (Arena.TeamMode.TeamDef != null && Arena.TeamMode.Phase == Arena.TOPhases.Battle)
+            }
+
+            var client = Arena.ArenaClient.Client;
+            if (Ingame && client.IsCharacter && !client.Character.IsDead)
+            {
+                if (DuelMode.Enemy != null)
+                {
+                    SoundHandler.CurrentMusicType = SoundHandler.MusicType.Fight;
+                    return;
+                }
+                else if (client.Character.TeamID >= 0)
                 {
                     bool enemyCloseBy = false;
                     var heroPos = client.Character.GetPosition();
@@ -139,7 +168,7 @@ namespace GUC.Scripts
             {
                 if (!hero.IsUnconscious && env.WaterLevel > 0.3f && swimTimer.IsReady)
                 {
-                    ScreenScrollText.AddText("Deine Rüstung ist zu schwer zum schwimmen!");
+                    ScreenScrollText.AddText("Du kannst ja gar nicht schwimmen!?!");
                 }
 
                 if (!hero.IsUnconscious)
@@ -164,22 +193,13 @@ namespace GUC.Scripts
             if (hero != null && !hero.IsDead)
             {
                 DoUnconstuff(hero);
-
-                if (Arena.TeamMode.TeamDef == null && Arena.ArenaClient.Client.HordeClass == null)
-                {
-                    if (hero.GetPosition().GetDistancePlanar(Vec3f.Null) > 10000)
-                        if (Randomizer.GetInt(2) == 0)
-                        {
-                            hero.SetPosition(new Vec3f(-1969.563f, -120.6398f, 2707.328f));
-                            hero.SetAngles(Angles.Null);
-                        }
-                        else
-                        {
-                            hero.SetPosition(new Vec3f(-4550.162f, -98.70279f, 1392.133f));
-                            hero.SetAngles(Angles.Null);
-                        }
-                }
             }
+        }
+
+        public static event Action OnWorldEnter;
+        public void FirstWorldRender()
+        {
+            OnWorldEnter?.Invoke();
         }
     }
 }

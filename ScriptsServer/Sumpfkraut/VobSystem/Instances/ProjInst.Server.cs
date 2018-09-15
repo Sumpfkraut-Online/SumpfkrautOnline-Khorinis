@@ -66,21 +66,25 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         bool DetectHit(Vec3f position)
         {
             NPCInst target = null;
-            this.World.BaseWorld.ForEachNPCRoughPredicate(position, GUCScripts.BiggestNPCRadius, npc =>
+            this.World.BaseWorld.ForEachNPCRoughPredicate(position, GUCScripts.BiggestNPCRadius, baseNPC =>
             {
-                if (!npc.IsDead && npc != Shooter.BaseInst && Shooter.AllowHit((NPCInst)npc.ScriptObject))
+                NPCInst npc = (NPCInst)baseNPC.ScriptObject;
+                if (!npc.IsDead && npc != Shooter 
+                && NPCInst.AllowHitEvent.TrueForAll(Shooter, npc)
+                && npc.AllowHitTarget.TrueForAll(Shooter, npc) && Shooter.AllowHitAttacker.TrueForAll(Shooter, npc))
                 {
-                    var npcPos = npc.Position;
-                    if (npc.ModelInstance.Visual == "CRAWLER.MDS") // fixme
+                    var modelDef = npc.ModelDef;
+
+                    var npcPos = npc.GetPosition();
+                    if (modelDef.Visual == "CRAWLER.MDS") // fixme
                     {
-                        npcPos += npc.GetAtVector() * 50;
+                        npcPos += npc.BaseInst.GetAtVector() * 50;
                     }
 
-                    var npcModel = ((ModelDef)npc.ModelInstance.ScriptObject);
-                    if (npcPos.GetDistancePlanar(position) <= npcModel.Radius
-                        && Math.Abs(npcPos.Y - position.Y) <= npcModel.HalfHeight)
+                    if (npcPos.GetDistancePlanar(position) <= modelDef.Radius
+                        && Math.Abs(npcPos.Y - position.Y) <= modelDef.HalfHeight)
                     {
-                        target = (NPCInst)npc.ScriptObject;
+                        target = npc;
                         return false;
                     }
                 }

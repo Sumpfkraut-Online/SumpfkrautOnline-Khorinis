@@ -12,10 +12,19 @@ namespace GUC.Scripts.Arena
         public string Name;
         public string WorldPath;
 
-        public List<HordeClassDef> Classes;
+        public Vec3f SpawnPos;
+        public float SpawnRange;
+        public HordeBarrier[] SpawnBarriers;
 
-        public List<HordeSection> Sections = new List<HordeSection>();
+        public HordeItem[] Items;
 
+        public HordeClassDef[] Classes;
+
+        public HordeGroup[] Enemies;
+        public HordeStand[] Stands;
+
+        public PosAng SpecPA;
+        
         static Dictionary<string, HordeDef> defs = new Dictionary<string, HordeDef>();
         public static HordeDef GetDef(string defName) { return defs.ContainsKey(defName) ? defs[defName] : null; }
         public static IEnumerable<HordeDef> GetAll() { return defs.Values; }
@@ -28,9 +37,13 @@ namespace GUC.Scripts.Arena
             {
                 Name = "h_pass",
                 WorldPath = "H_PASS.ZEN",
+                SpawnPos = new Vec3f(7695, 6509, 42836),
+                SpawnRange = 100,
+
+                SpecPA = new PosAng(7695, 6509, 42836),
             };
 
-            def.Classes = new List<HordeClassDef>()
+            def.Classes = new HordeClassDef[]
             {
                 new HordeClassDef()
                 {
@@ -47,198 +60,118 @@ namespace GUC.Scripts.Arena
              };
 
             // INTRO SEKTION, EINGANG PASS
-            HordeSection section = new HordeSection()
+            def.SpawnBarriers = new HordeBarrier[]
             {
-                SpawnPos = new Vec3f(7695, 6509, 42836),
-                SpawnRange = 100,
-                SecsTillNext = 3,
-                SpecPos = new Vec3f(0, 400, 0),
-                SpecAng = new Angles(0, 0, 0),
-                FinishedMessage = "Ihr bereitet euch darauf vor, den Weg zur Burg freizukämpfen.",
-
+                new HordeBarrier("invwall", new Vec3f(6551, 6447, 40913), new Angles(0, 3.032f, 0)),
+                new HordeBarrier("trollpalisade", new Vec3f(6555, 6544, 40671), new Angles(0.313, 3.054, 0.035)),
             };
 
-            section.barriers = new List<HordeBarrier>()
-            {
-                new HordeBarrier() { Definition = "invwall", Position = new Vec3f(6551, 6447, 40913), Angles = new Angles(0.000, 3.032, 0.000) },
-                new HordeBarrier() { Definition = "trollpalisade", Position = new Vec3f(6555, 6544, 40671), Angles = new Angles(0.313, 3.054, 0.035) },
-            };
-            section.groups = new List<HordeGroup>();
-            def.Sections.Add(section);
+            var OrcScout = new HordeEnemy("orc_scout", "krush_pach");
+            var OrcWarrior = new HordeEnemy("orc_warrior", "krush_pach");
+            var OrcElite = new HordeEnemy("orc_elite", "orc_sword");
 
-            // 1. SEKTION, bis Steindurchgang vor verlassener Mine
-            section = new HordeSection()
+            def.Enemies = new HordeGroup[]
             {
-                SpawnPos = new Vec3f(0, 400, 0),
-                SpawnRange = 500,
-                SecsTillNext = 3,
-                SpecPos = new Vec3f(0, 400, 0),
-                SpecAng = new Angles(0, 0, 0),
-                FinishedMessage = "Ihr beginnt die Palisade einzureissen.",
+                // 1. SEKTION, bis Steindurchgang vor verlassener Mine                
+                new HordeGroup(8094, 5626, 36860, 600, new HordePair(OrcScout, 0.3f)), // plattform
+                new HordeGroup(5581, 5510, 35969, 400, new HordePair(OrcScout, 0.5f)), // see
+                new HordeGroup(4227, 6145, 31128, 500, new HordePair(OrcScout, 1.0f)), // steindurchgang
+                
+                // 2. SEKTION, bis Weg am Hang, bei Drachenjägern
+                new HordeGroup(4102, 5888, 27445, 500, new HordePair(OrcScout, 1.0f)), // verlassene Mine
+                new HordeGroup( 678, 6235, 27186, 500, new HordePair(OrcWarrior, 0.2f), // bei teleport rune
+                                                       new HordePair(OrcScout, 0.3f)),
+                new HordeGroup(1555, 2900, 21881, 700, new HordePair(OrcWarrior, 0.3f), // toter paladin
+                                                       new HordePair(OrcScout, 1.0f)),
+                
+                // 3. SEKTION, bis Brücke am Fluss
+                new HordeGroup(2370, 1665, 18719, 200, new HordePair(OrcScout, 0.2f)), // weg am hang 1
+                new HordeGroup(-516, -280, 14668, 200, new HordePair(OrcWarrior, 0.2f)), // weg am hang 2
+                new HordeGroup(-5903, -900, 14530, 1500, new HordePair(OrcWarrior, 0.5f), // bei drax / jaegern
+                                                       new HordePair(OrcScout, 2.0f)),
+                new HordeGroup(-11240, -705, 12303, 1500, new HordePair(OrcWarrior, 0.75f), // vor brücke
+                                                       new HordePair(OrcScout, 2.0f)),
+                new HordeGroup(-11003, -820, 9127, 140, new HordePair(OrcElite, 0.2f)), // auf brücke
             };
 
-            section.barriers = new List<HordeBarrier>()
+            def.Stands = new HordeStand[]
             {
-                new HordeBarrier() { Definition = "invwall", Position = new Vec3f(4389, 6038, 30560), Angles = new Angles(0.000, -2.832, 0.000) },
-                new HordeBarrier() { Definition = "trollpalisade", Position = new Vec3f(4413, 6067, 30325), Angles = new Angles(0.226, -2.840, -0.017) },
-            };
-            section.groups = new List<HordeGroup>()
-            {
-                new HordeGroup() { Position = new Vec3f(8094, 5626, 36860), Range = 600, npcs = new List<HordeEnemy>()
-                    { // plattform
-                        new HordeEnemy("orc_scout", 0.3f, "krush_pach"),
+                // LETZTE SEKTION, vor Burgtor
+                new HordeStand()
+                {
+                    Barriers = new HordeBarrier[] { new HordeBarrier("gate", new Vec3f(-3069, -496, 1800),  new Angles(0, -2.793, 0)) },
+                    Position = new Vec3f(-3352, -500, 2491),
+                    Range = 1000,
+                    MaxEnemies = 3,
+                    Duration = 180,
+                    SFXStart = "TRUMPET_01.WAV",
+                    SFXLoop = "GATE_LOOP.WAV",
+                    SFXStop = "GATE_STOP.WAV",
+                    Messages = new string[]
+                    {
+                        "\"Wartet eine Sekunde, wir öffnen die Tore.\" Du hörst Orkrufe aus der Ferne",
+                        "\"Das könnte etwas länger dauern, das Tor hängt.\"",
+                        "\"Verdammte Winde!\"",
+                        "\"Ist nur noch eine Sache von Sekunden\"",
+                        "\"Bei Innos, der Hebel ist abgebrochen. Gebt uns einen Augenblick\"",
+                        "\"Na los! Irgendwer soll bei Engor mir einen Hebel besorgen!\"",
+                        "\"Alles klar dort unten?\"",
+                        "\"Brutus, helf mal mit deinen fetten Arme aus!\"",
+                        "\"Tor ist offen!\"",
+                    },
+                    EnemySpawns = new Vec3f[]
+                    {
+                         new Vec3f(-9010, -830, 2986),
+                         new Vec3f(-9618, -660, 1485),
+                         new Vec3f(-8196, -510, 412),
+                         new Vec3f(-1546, -1010, 7224),
+                         new Vec3f(163, -1130, 6784),
+                         new Vec3f(289, -960, 4472),
+                    },
+                    Enemies = new HordePair[]
+                    {
+                        new HordePair(OrcScout, 0.5f),
+                        new HordePair(OrcWarrior, 0.8f),
+                        new HordePair(OrcElite, 1.0f),
                     }
                 },
-                new HordeGroup() { Position = new Vec3f(5581, 5510, 35969), Range = 400, npcs = new List<HordeEnemy>()
-                    { // see
-                        new HordeEnemy("orc_scout", 0.5f, "krush_pach"),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(4227, 6145, 31128), Range = 500, npcs = new List<HordeEnemy>()
-                    { // vor barrikaden, steindurchgang
-                        new HordeEnemy("orc_scout", 1, "krush_pach"),
-                    },
-                },
-            };
-            def.Sections.Add(section);
-
-            // 2. SEKTION, bis Weg am Hang, bei Drachenjägern
-            section = new HordeSection()
-            {
-                SpawnPos = new Vec3f(0, 400, 0),
-                SpawnRange = 500,
-                SecsTillNext = 3,
-                SpecPos = new Vec3f(0, 400, 0),
-                SpecAng = new Angles(0, 0, 0),
-                FinishedMessage = "Ihr beginnt die Palisade einzureissen.",
             };
 
-            section.barriers = new List<HordeBarrier>()
-            {
-                new HordeBarrier() { Definition = "invwall", Position = new Vec3f(2989, 1915, 19515), Angles = new Angles(0.000, 2.945, 0.000) },
-                new HordeBarrier() { Definition = "trollpalisade", Position = new Vec3f(2655, 2004, 19422), Angles = new Angles(0.000, 2.976, 0.000) },
-            };
-
-            section.groups = new List<HordeGroup>()
-            {
-                new HordeGroup() { Position = new Vec3f(4603, 6076, 28529), Range = 400, npcs = new List<HordeEnemy>()
-                    { // verlassene mine
-                        new HordeEnemy("orc_scout", 1, "krush_pach" ),
-                    }
-                },
-                new HordeGroup() { Position = new Vec3f(4102, 5888, 27445), Range = 500, npcs = new List<HordeEnemy>()
-                    { // verlassene mine 2
-                        new HordeEnemy("orc_scout", 1, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(678, 6235, 27186), Range = 500, npcs = new List<HordeEnemy>()
-                    { // bei teleport rune
-                        new HordeEnemy("orc_warrior", 0.2f, "krush_pach" ),
-                        new HordeEnemy("orc_scout", 0.3f, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(1555, 2900, 21881), Range = 700, npcs = new List<HordeEnemy>()
-                    { // vor barrikade, toter paladin
-                        new HordeEnemy("orc_warrior", 0.3f, "krush_pach" ),
-                        new HordeEnemy("orc_scout", 1, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(3531, 2400, 20153), Range = 200, npcs = new List<HordeEnemy>()
-                    { // vor barrikade, abgrund
-                        new HordeEnemy("orc_scout", 0.2f, "krush_pach" ),
-                    },
-                },
-            };
-            def.Sections.Add(section);
-
-            // 3. SEKTION, bis Brücke am Fluss
-            section = new HordeSection()
-            {
-                SpawnPos = new Vec3f(0, 400, 0),
-                SpawnRange = 500,
-                SecsTillNext = 3,
-                SpecPos = new Vec3f(0, 400, 0),
-                SpecAng = new Angles(0, 0, 0),
-                FinishedMessage = "Ihr beginnt eine Brücke zu bauen.",
-            };
-
-            section.bridges = new List<HordeBarrier>()
+            /*section.bridges = new List<HordeBarrier>()
             {
                 new HordeBarrier() { Definition = "planks", Position = new Vec3f(-11011, -947, 9555), Angles = new Angles(0.000, 1.607, 0.122) },
                 new HordeBarrier() { Definition = "planks", Position = new Vec3f(-11007, -948, 9339), Angles = new Angles(0.000, 1.716, 0.000) },
                 new HordeBarrier() { Definition = "planks", Position = new Vec3f(-10994, -977, 9052), Angles = new Angles(-0.017, 1.714, 0.070) },
                 new HordeBarrier() { Definition = "planks", Position = new Vec3f(-10969, -984, 8762), Angles = new Angles(0.000, 1.716, 0.000) },
                 new HordeBarrier() { Definition = "planks", Position = new Vec3f(-10948, -1002, 8471), Angles = new Angles(0.000, 1.716, 0.000) },
-            };
-            section.groups = new List<HordeGroup>()
-            {
-                new HordeGroup() { Position = new Vec3f(2370, 1665, 18719), Range = 200, npcs = new List<HordeEnemy>()
-                    { // weg am hang 1
-                        new HordeEnemy( "orc_scout", 0.2f, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(709, 880, 17312), Range = 200, npcs = new List<HordeEnemy>()
-                    { // weg am hang 2
-                        new HordeEnemy( "orc_scout", 0.2f, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(-516, -280, 14668), Range = 200, npcs = new List<HordeEnemy>()
-                    { // weg am hang 3
-                        new HordeEnemy("orc_scout", 0.2f, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(-5903, -900, 14530), Range = 1500, npcs = new List<HordeEnemy>()
-                    { // bei drax / jaegern
-                        new HordeEnemy("orc_warrior", 0.5f, "krush_pach" ),
-                        new HordeEnemy( "orc_scout", 2, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(-7665, -435, 11474), Range = 500, npcs = new List<HordeEnemy>()
-                    { // auf huegel
-                        new HordeEnemy( "orc_warrior", 0.25f, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(-11240, -705, 12303), Range = 1500, npcs = new List<HordeEnemy>()
-                    { // vor brücke
-                        new HordeEnemy( "orc_warrior", 0.75f, "krush_pach" ),
-                        new HordeEnemy( "orc_scout", 2, "krush_pach" ),
-                    },
-                },
-                new HordeGroup() { Position = new Vec3f(-10975, -810, 9333), Range = 150, npcs = new List<HordeEnemy>()
-                    { // vor barrikade, auf brücke
-                        new HordeEnemy( "orc_elite", 0.2f, "orc_sword" ),
-                    },
-                },
-            };
-            def.Sections.Add(section);
+            };*/
 
-            // LETZTE SEKTION, bis Burgtor
-            section = new HordeSection()
+            def.Items = new HordeItem[]
             {
-                SpawnPos = new Vec3f(0, 400, 0),
-                SpawnRange = 500,
-                SecsTillNext = 30,
-                SpecPos = new Vec3f(0, 400, 0),
-                SpecAng = new Angles(0, 0, 0),
-                FinishedMessage = "Ziel erreicht.",
-            };
-
-            section.barriers = new List<HordeBarrier>()
-            {
-                new HordeBarrier() { Definition = "gate", Position = new Vec3f(-3069, -496, 1800), Angles = new Angles(0.000, -2.793, 0.000) },
-            };
-            section.groups = new List<HordeGroup>()
-            {
-                new HordeGroup() { Position = new Vec3f(0, 400, 0), Range = 400, npcs = new List<HordeEnemy>()
-                    {
-                        new HordeEnemy( "skeleton", 3 ),
-                        new HordeEnemy( "skeleton_lord", 1 )
-                    }
-                }
-            };
-            def.Sections.Add(section);
+                new HordeItem("hptrank", 2892.88354f, 6425.26074f, 31699.8496f), // austauschstelle brücke
+                new HordeItem("hptrank", 5053.02588f, 5824.37646f, 25956.3828f), // verlassener minenschacht
 
 
+                new HordeItem("hptrank", -346.506165f, 6248.29785f, 27447.5215f), // teleport rune
+                new HordeItem("hptrank", -351.038818f, 6247.33643f, 27468.8926f),
+                new HordeItem("hptrank", -329.380737f, 6246.375f, 27458.5488f),
+
+                new HordeItem("hptrank", 847.420288f, 2719.80615f, 21308.3008f), // toter paladin
+
+                new HordeItem("hptrank", -6164.2998f, -641.647034f, 16228.6006f), // drax / jäger
+                
+                new HordeItem("hptrank", -7673.05566f, -534.731506f, 11694.4043f), // hügel vor brücke
+                new HordeItem("hptrank", -7691.25537f, -534.557861f, 11677.5244f),
+
+                new HordeItem("hptrank", -9071.97656f, -1346.44824f, 6379.68262f), // baum hinter brücke
+
+                new HordeItem("hptrank", -13201.7236f, -795.982117f, 5463.70215f), // höhle hinter brücke
+                new HordeItem("hptrank", -13217.3105f, -795.981567f, 5470.14404f),
+
+                new HordeItem("hptrank", -3203.54468f, -650.505127f, 3661.7583f), // verbranntes haus vor tor
+
+                new HordeItem("hptrank", -6117.55029f, -998.722168f, 720.570923f), // verbranntes haus an mauer
+            };
 
             defs.Add(def.Name, def);
 

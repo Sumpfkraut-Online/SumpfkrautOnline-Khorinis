@@ -57,7 +57,7 @@ namespace GUC.Scripts.Arena.Menus
                 if (index == listVis.Texts.Count)
                     return;
 
-                listVis.Texts[index].Font = info.ID == PlayerInfo.HeroID ? GUCView.Fonts.Default_Hi : GUCView.Fonts.Default;
+                listVis.Texts[index].Font = info.ID == PlayerInfo.HeroInfo.ID ? GUCView.Fonts.Default_Hi : GUCView.Fonts.Default;
                 listVis.Texts[index].Text = string.Format("({0}) {1}", info.ID, info.Name);
                 index++;
             }

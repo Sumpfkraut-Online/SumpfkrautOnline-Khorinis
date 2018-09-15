@@ -65,6 +65,8 @@ namespace GUC.Scripts.Arena
             Character.SetAdditionalVisuals(HumBodyMeshs.HUM_BODY_BABE0.ToString(), (int)HumBodyTexs.G1Hero, HumHeadMeshs.HUM_HEAD_BABE.ToString(), (int)HumHeadTexs.FaceBabe_B_RedLocks);
             AddButton("Akzeptieren", "Charakteränderungen speichern.", 160, 425, CreateNewCharacter);
 
+            
+
             const int offsetX = 415;
             const int offsetY = 27;
             const int dist = 50;

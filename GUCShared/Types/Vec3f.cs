@@ -10,6 +10,7 @@ namespace GUC.Types
     /// </summary>
     public partial struct Vec3f
     {
+        /// <summary> (0, 0, 0) </summary>
         public static Vec3f Null
         {
             get { return new Vec3f(0, 0, 0); }
@@ -204,6 +205,16 @@ namespace GUC.Types
 
         #region Equality
 
+        public bool IsExact(Vec3f other)
+        {
+            return this.X == other.X && this.Y == other.Y && this.Z == other.Z;
+        }
+
+        public bool IsExactNull()
+        {
+            return this.X == 0 && this.Y == 0 && this.Z == 0;
+        }
+
         const float nullLimit = 0.0000001f;
         public bool IsNull()
         {
@@ -273,6 +284,31 @@ namespace GUC.Types
             if (value >= 838860.7f)
                 return 838860.7f;
             return value;
+        }
+
+        public static bool FindClosest(Vec3f from, IEnumerable<Vec3f> to, out Vec3f output)
+        {
+            return FindClosest(from, to, out output, out float whatever);
+        }
+        
+        public static bool FindClosest(Vec3f from, IEnumerable<Vec3f> to, out Vec3f output, out float distance)
+        {
+            Vec3f bestPos = Vec3f.Null;
+            float bestDist = float.MaxValue;
+
+            foreach (var currentPos in to)
+            {
+                float currentDist = from.GetDistance(currentPos);
+                if (currentDist < bestDist)
+                {
+                    bestPos = currentPos;
+                    bestDist = currentDist;
+                }
+            }
+            
+            distance = bestDist;
+            output = bestPos;
+            return bestDist < float.MaxValue;
         }
     }
 }

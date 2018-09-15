@@ -32,8 +32,33 @@ namespace GUC
                         Process.Write(ai.Address + 0x1204, bitField);
                     }
                 }
+            },
+            { VirtualKeys.F8, () =>
+                {
+                    //WorldObjects.World.Current.BarrierCtrl.SetNextWeight(0, 1.0f);
+                    return;
+                    try
+                    {
+                        /*var vob = Gothic.Objects.zCVob.Create();
+                        var vis = new Gothic.Objects.Meshes.zCVisual(GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier.FrontierMesh.Address);
+                        vob.SetVisual("NW_City_Ship_01.3ds");
+                       
+                        vob.FarZClipScale = 1E30f;
+                        vob.SetPositionWorld(0, 1000, 0);
+                        GothicGlobals.Game.GetWorld().AddVob(vob);
+                        vob.SetPositionWorld(0, 1000, 0);
+                        Log.Logger.Log("Done");*/
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Logger.Log(e);
+                    }
+
+                }
             }
         };
+
+        static Gothic.Objects.zCVob vob;
 
         #endregion
 

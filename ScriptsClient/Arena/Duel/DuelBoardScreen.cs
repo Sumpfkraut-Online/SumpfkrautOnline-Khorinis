@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 
-namespace GUC.Scripts.Arena
+namespace GUC.Scripts.Arena.Duel
 {
     class DuelBoardScreen : ScoreBoardScreen
     {
@@ -12,28 +12,22 @@ namespace GUC.Scripts.Arena
 
         ScoreBoard board;
 
-        private DuelBoardScreen() : base(ScriptMessages.ScoreDuelMessage)
+        private DuelBoardScreen() : base(ScriptMessages.DuelScoreBoard)
         {
-            SetUsedCount(1);
-            this.board = GetBoard(0);
+            SetBoardCount(1);
+            this.board = Boards[0];
             this.board.SetTitle("Duellpunkte");
         }
 
         public override void ReadMessage(PacketReader stream)
         {
-            int count = stream.ReadByte();
-            List<ScoreBoard.Entry> list = new List<ScoreBoard.Entry>(count);
-            for (int i = 0; i < count; i++)
-                list.Add(new ScoreBoard.Entry()
-                {
-                    ID = stream.ReadByte(),
-                    Score = stream.ReadShort(),
-                    Kills = stream.ReadShort(),
-                    Deaths = stream.ReadShort(),
-                    Ping = stream.ReadShort()
-                });
+            this.board.Reset();
 
-            board.Fill(list);
+            // players
+            this.board.ReadEntries(stream, false);
+
+            // spectators
+            this.board.ReadEntries(stream, true);
         }
     }
 }

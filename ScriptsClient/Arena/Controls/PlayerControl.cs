@@ -7,7 +7,14 @@ using GUC.Utilities;
 using System;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+<<<<<<< HEAD
 using GUC.Scripts.Sumpfkraut.Menus;
+=======
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
+using GUC.Scripts.Arena.GameModes;
+using GUC.Scripts.Arena.Duel;
+using GUC.Scripts.Arena.GameModes.Horde;
+>>>>>>> ShodenTestBranch
 
 namespace GUC.Scripts.Arena.Controls
 {
@@ -25,19 +32,40 @@ namespace GUC.Scripts.Arena.Controls
             { KeyBind.MoveRight, d => CheckFightMove(d, FightMoves.Right) },
             { KeyBind.Action, PlayerActionButton },
             { KeyBind.DrawWeapon, DrawWeapon },
+<<<<<<< HEAD
             { KeyBind.OpenScoreBoard, ToggleScoreBoard },
             { KeyBind.OpenAllChat, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
             { KeyBind.OpenTeamChat, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
             { KeyBind.Inventory, d => { if (d && TeamMode.TeamDef == null) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
             { KeyBind.RequestTrade, d => { if(d) TradeMenu.Menu.RequestTrade(); } },
+=======
+            { KeyBind.ScoreBoard, ToggleScoreBoard },
+            { KeyBind.ChatAll, d => { if (d) ChatMenu.Menu.OpenAllChat(); } },
+            { KeyBind.ChatTeam, d => { if (d) ChatMenu.Menu.OpenTeamChat(); } },
+            { KeyBind.Inventory, d => { if (d) Sumpfkraut.Menus.PlayerInventory.Menu.Open(); } },
+>>>>>>> ShodenTestBranch
             { VirtualKeys.P, PrintPosition },
             { VirtualKeys.F2, d => Menus.PlayerList.TogglePlayerList() },
             { VirtualKeys.F3, ToggleG1Camera },
             { VirtualKeys.F5, ToggleScreenInfo },
             { VirtualKeys.N1, DrawMeleeWeapon },
             { VirtualKeys.N2, DrawRangedWeapon },
-            { VirtualKeys.RightButton, FreeAim }
+            { VirtualKeys.RightButton, FreeAim },
+            {KeyBind.StatusMenu, OpenStatusMenu }
         };
+
+        static void OpenStatusMenu(bool down)
+        {
+            if (!down) return;
+
+            if (ArenaClient.Client.Character != null)
+            {
+                if (GameMode.IsActive && PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer)
+                    GameMode.ActiveMode.OpenStatusMenu();
+                else
+                    Arena.Menus.StatusMenu.Instance.Open();
+            }
+        }
 
         static void DrawMeleeWeapon(bool down)
         {
@@ -96,7 +124,7 @@ namespace GUC.Scripts.Arena.Controls
             var hero = NPCInst.Hero;
             if (!d || hero == null || hero.IsDead || hero.IsUnconscious) return;
 
-            if (hero.ModelInst.GetActiveAniFromLayer(1) != null || hero.BaseInst.gAI.GetFoundLedge() || CheckWarmup())
+            if (hero.ModelInst.GetActiveAniFromLayer(1) != null || hero.BaseInst.gAI.GetFoundLedge() || IsWarmup())
                 return;
 
             var ledge = hero.BaseInst.DetectClimbingLedge();
@@ -130,24 +158,20 @@ namespace GUC.Scripts.Arena.Controls
         {
             if (down)
             {
-                if (TeamMode.IsRunning && TeamMode.TeamDef != null)
-                {
-                    TOBoardScreen.Instance.Open();
-                }
-                else if (ArenaClient.Client.HordeClass != null)
-                {
-                    HordeBoardScreen.Instance.Open();
-                }
-                else
+                if (ArenaClient.FFAJoined)
                 {
                     DuelBoardScreen.Instance.Open();
+                }
+                else if (GameMode.IsActive && ArenaClient.GMJoined)
+                {
+                    GameMode.ActiveMode.ScoreBoard.Open();
                 }
             }
             else
             {
                 DuelBoardScreen.Instance.Close();
-                TOBoardScreen.Instance.Close();
-                HordeBoardScreen.Instance.Close();
+                if (GameMode.IsActive)
+                    GameMode.ActiveMode.ScoreBoard.Close();
             }
         }
 
@@ -159,7 +183,7 @@ namespace GUC.Scripts.Arena.Controls
 
             var hero = ScriptClient.Client.Character;
             if (hero.IsDead || hero.IsUnconscious || hero.Movement != NPCMovement.Stand || !hero.IsInFightMode || hero.Environment.InAir
-                || CheckWarmup())
+                || IsWarmup())
                 return;
 
             var drawnWeapon = hero.GetDrawnWeapon();
@@ -176,14 +200,36 @@ namespace GUC.Scripts.Arena.Controls
             }
         }
 
+        static LockTimer screamLock = new LockTimer(3000);
         static void PlayerActionButton(bool down)
         {
             var hero = ScriptClient.Client.Character;
-            if (hero.IsDead || hero.IsUnconscious) return;
+            if (hero.IsDead)
+                return;
+
+            if (hero.IsUnconscious)
+            {
+                if (down && HordeMode.IsActive && PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer && screamLock.IsReady)
+                {
+                    NPCInst.Requests.Voice(hero, VoiceCmd.HELP);
+                }
+                return;
+            }
+
+            if (down && HordeMode.IsActive && PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer
+                     && hero.HP > 1 && !hero.ModelInst.IsInAnimation())
+            {
+                var focusVob = hero.GetFocusVob();
+                if (focusVob is NPCInst npc && npc.IsUnconscious && npc.TeamID == (int)PlayerInfo.HeroInfo.TeamID && npc.GetPosition().GetDistance(hero.GetPosition()) < 300)
+                {
+                    NPCInst.Requests.HelpUp(hero, npc);
+                    return;
+                }
+            }
 
             if (freeAim)
             {
-                if (!CheckWarmup())
+                if (!IsWarmup())
                     RequestShootFree(hero);
                 return;
             }
@@ -195,27 +241,30 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     NPCInst.Requests.Aim(hero, down);
                 }
-                else if (down && KeyBind.MoveForward.IsPressed() && !CheckWarmup())
+                else if (down && KeyBind.MoveForward.IsPressed() && !IsWarmup())
                 {
                     NPCInst.Requests.Attack(hero, FightMoves.Run);
                 }
             }
             else if (down)
             {
-                if (hero.TeamID == -1)
+                var focusVob = hero.GetFocusVob();
+                if (focusVob is ItemInst item)
                 {
-                    var focusVob = hero.GetFocusVob();
-                    if (focusVob is NPCInst)
-                        DuelMode.SendRequest((NPCInst)focusVob);
+                    NPCInst.Requests.TakeItem(hero, item);
+                }
+                else if (!ArenaClient.GMJoined && focusVob is NPCInst npc)
+                {
+                    DuelMode.SendRequest(npc);
                 }
             }
         }
 
         static LockTimer toWarmupTimer = new LockTimer(1000);
-        static bool CheckWarmup()
+        static bool IsWarmup()
         {
             var hero = NPCInst.Hero;
-            if (hero != null && hero.TeamID != -1 && TeamMode.Phase == TOPhases.Warmup)
+            if (hero != null && ArenaClient.GMJoined && GameMode.ActiveMode.Phase == GamePhase.WarmUp && !HordeMode.IsActive)
             {
                 if (toWarmupTimer.IsReady)
                     Sumpfkraut.Menus.ScreenScrollText.AddText("Noch wenige Sekunden!");
@@ -321,7 +370,7 @@ namespace GUC.Scripts.Arena.Controls
                     {
                         if (dodgeLock.IsReady) // don't spam
                         {
-                            if (CheckWarmup())
+                            if (IsWarmup())
                                 return;
 
                             NPCInst.Requests.Attack(hero, FightMoves.Dodge);
@@ -384,7 +433,7 @@ namespace GUC.Scripts.Arena.Controls
                     state = NPCMovement.Stand;
             }
 
-            if (state != NPCMovement.Stand && CheckWarmup())
+            if (state != NPCMovement.Stand && IsWarmup())
                 state = NPCMovement.Stand;
 
             if (state == NPCMovement.Left || state == NPCMovement.Right || (state == NPCMovement.Forward && hero.IsInFightMode))
@@ -584,7 +633,7 @@ namespace GUC.Scripts.Arena.Controls
             var hero = NPCInst.Hero;
 
             string CamModFreeAim = "CAMMODRANGED_FREEAIM";
-            if (hero.ModelDef.Visual == "ORC.MDS")
+            if (hero.ModelDef.Visual == "ORC.MDS" || hero.ModelDef.Visual == "DRACONIAN.MDS")
                 CamModFreeAim += "_ORC";
 
             if (down && hero != null && !hero.IsDead && hero.IsInFightMode

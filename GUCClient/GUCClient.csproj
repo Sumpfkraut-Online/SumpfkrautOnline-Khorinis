@@ -133,6 +133,9 @@
     <Compile Include="..\GUCShared\Types\NPCMovement.cs">
       <Link>Types\NPCMovement.cs</Link>
     </Compile>
+    <Compile Include="..\GUCShared\Types\PosAng.cs">
+      <Link>Types\PosAng.cs</Link>
+    </Compile>
     <Compile Include="..\GUCShared\Types\Vec2i.cs">
       <Link>Types\Vec2i.cs</Link>
     </Compile>
@@ -150,6 +153,9 @@
     </Compile>
     <Compile Include="..\GUCShared\Utilities\Alg.cs">
       <Link>Utilities\Alg.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\Utilities\BoolEvent.cs">
+      <Link>Utilities\BoolEvent.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Utilities\ExtendedObject.cs">
       <Link>Utilities\ExtendedObject.cs</Link>
@@ -309,11 +315,11 @@
     <Compile Include="GUI\GUCView.cs" />
     <Compile Include="GUI\GUCVisual.cs" />
     <Compile Include="GUI\GUCVisualText.cs" />
-    <Compile Include="GUI\GUC3DVisual.cs" />
+    <Compile Include="GUI\GUCVobVisual.cs" />
     <Compile Include="Hooks\hFileSystem.cs" />
     <Compile Include="Hooks\hModel.cs" />
     <Compile Include="Hooks\hNpc.cs" />
-    <Compile Include="Hooks\hView.cs" />
+    <Compile Include="Hooks\VobRenderArgs.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
     <Compile Include="Hooks\hPlayerVob.cs" />

@@ -329,6 +329,29 @@ namespace Gothic.Objects
         }
 
 
+        public int Inv_ZBias
+        {
+            get { return Process.ReadInt(Address + VarOffsets.inv_zbias); }
+            set { Process.Write(Address + VarOffsets.inv_zbias, value); }
+        }
+
+        public int Inv_RotX
+        {
+            get { return Process.ReadInt(Address + VarOffsets.inv_rotx); }
+            set { Process.Write(Address + VarOffsets.inv_rotx, value); }
+        }
+
+        public int Inv_RotY
+        {
+            get { return Process.ReadInt(Address + VarOffsets.inv_roty); }
+            set { Process.Write(Address + VarOffsets.inv_roty, value); }
+        }
+
+        public int Inv_RotZ
+        {
+            get { return Process.ReadInt(Address + VarOffsets.inv_rotz); }
+            set { Process.Write(Address + VarOffsets.inv_rotz, value); }
+        }
 
         public int[] Damage
         {

@@ -91,10 +91,10 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
                 }
 
                 var ac = (Arena.ArenaClient) c;
-                if (ac.Team != null) { infoSB.AppendFormat(", toTeam: {0}", ac.Team.Def.Name); }
-                infoSB.AppendFormat(", toKills: {0}", ac.TOKills);
-                infoSB.AppendFormat(", toDeaths: {0}", ac.TODeaths);
-                infoSB.AppendFormat(", toScore: {0}", ac.TOScore);
+                //if (ac.Team != null) { infoSB.AppendFormat(", toTeam: {0}", ac.Team.Def.Name); }
+                //infoSB.AppendFormat(", toKills: {0}", ac.TOKills);
+                //infoSB.AppendFormat(", toDeaths: {0}", ac.TODeaths);
+                //infoSB.AppendFormat(", toScore: {0}", ac.TOScore);
 
                 infoSB.Append("]");
             }
@@ -337,7 +337,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
             }
             if (foundWeight)
             {
-                WorldInst.List[0].Weather.SetNextWeight(WorldInst.List[0].Clock.Time, weight);
+                WorldInst.List[0].Weather.SetNextWeight(0, weight);
                 msgSB.AppendFormat("Applied rain / precipitation weight: {0}", weight);
             }
             else { msgSB.Append("No valid rain / precipitation weight found!"); }
@@ -416,8 +416,8 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole
 
             if (param.Length > 0)
             {
-                Arena.TeamMode.StartTO(param[0]);
-                msgSB.AppendFormat("Activated team objective mode {0}.", Arena.TeamMode.ActiveTODef.Name);
+                //Arena.TeamMode.StartTO(param[0]);
+                //msgSB.AppendFormat("Activated team objective mode {0}.", Arena.TeamMode.ActiveTODef.Name);
             }
             else { msgSB.Append("No name provided for the desired team objective mode!"); }
 

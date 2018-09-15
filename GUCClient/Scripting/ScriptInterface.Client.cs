@@ -26,5 +26,10 @@ namespace GUC.Scripting
         /// Is called once when Gothic is ingame for the first time.
         /// </summary>
         void StartIngame();
+
+        /// <summary>
+        /// Is called once when Gothic is finished loading and renders the first world frame.
+        /// </summary>
+        void FirstWorldRender();
     }
 }

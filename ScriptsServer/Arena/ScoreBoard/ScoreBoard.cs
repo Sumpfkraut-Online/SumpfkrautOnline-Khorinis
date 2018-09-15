@@ -10,7 +10,7 @@ namespace GUC.Scripts.Arena
     abstract class ScoreBoard
     {
         const long UpdateInterval = 1000 * TimeSpan.TicksPerMillisecond;
-        
+
         Dictionary<ArenaClient, GUCTimer> clients;
         GUCTimer packetTimer;
         byte[] packet;
@@ -22,25 +22,30 @@ namespace GUC.Scripts.Arena
             msgID = messageID;
             clients = new Dictionary<ArenaClient, GUCTimer>(20);
             packetTimer = new GUCTimer(UpdateInterval, WriteUpdate);
-            packetTimer.Start();
-
-            WriteUpdate();
         }
 
-        public void Toggle(ArenaClient client)
+        public void Toggle(ArenaClient client, bool open)
         {
-            if (!clients.TryGetValue(client, out GUCTimer timer))
+            if (open)
             {
-                SendUpdate(client);
+                if (!clients.ContainsKey(client))
+                {
+                    GUCTimer timer = new GUCTimer(UpdateInterval, () => SendUpdate(client));
+                    clients.Add(client, timer);
+                    timer.Start();
 
-                timer = new GUCTimer(UpdateInterval, () => SendUpdate(client));
-                clients.Add(client, timer);
-                timer.Start();
+                    if (clients.Count == 1)
+                    {
+                        packetTimer.Start();
+                        WriteUpdate();
+                    }
+
+                    SendUpdate(client);
+                }
             }
             else
             {
-                timer.Stop();
-                clients.Remove(client);
+                Remove(client);
             }
         }
 
@@ -50,18 +55,29 @@ namespace GUC.Scripts.Arena
             {
                 timer.Stop();
                 clients.Remove(client);
+
+                if (clients.Count == 0)
+                    packetTimer.Stop();
             }
+        }
+
+        public void RemoveAll()
+        {
+            foreach (GUCTimer timer in clients.Values)
+                timer.Stop();
+            clients.Clear();
+            packetTimer.Stop();
         }
 
         void SendUpdate(ArenaClient client)
         {
-            client.SendScriptMessage(packet, packet.Length, NetPriority.Low, NetReliability.Unreliable);
+            if (client.IsConnected)
+                client.SendScriptMessage(packet, packet.Length, NetPriority.Low, NetReliability.Unreliable);
         }
 
         void WriteUpdate()
         {
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)msgID);
+            var stream = ArenaClient.GetStream(msgID);
             WriteBoard(stream);
             this.packet = stream.CopyData();
         }

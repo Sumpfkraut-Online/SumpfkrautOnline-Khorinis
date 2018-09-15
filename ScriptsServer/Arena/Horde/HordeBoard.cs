@@ -16,7 +16,6 @@ namespace GUC.Scripts.Arena
 
         protected override void WriteBoard(PacketWriter stream)
         {
-            stream.Write((ushort)HordeMode.Enemies.Count);
             stream.Write((byte)HordeMode.Players.Count);
             HordeMode.Players.ForEach(c => WritePlayer(c, stream));
         }

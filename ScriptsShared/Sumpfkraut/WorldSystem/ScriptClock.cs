@@ -35,6 +35,11 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         #endregion
 
+        public long GetDurationInTicks(WorldTime time)
+        {
+            return (long)(time.GetTotalSeconds() * TimeSpan.TicksPerSecond / Rate);
+        }
+
         public void SetTime(WorldTime time, float rate)
         {
             BaseClock.SetTime(time, rate);

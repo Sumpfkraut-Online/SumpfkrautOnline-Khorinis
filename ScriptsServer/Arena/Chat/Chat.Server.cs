@@ -13,16 +13,13 @@ namespace GUC.Scripts.Arena
         {
             string message = stream.ReadString();
 
-            if (message == "/lift")
+            const string modeCmd = "/startmode";
+            if (message.StartsWith(modeCmd, StringComparison.OrdinalIgnoreCase))
             {
-                if (sender.Character != null)
-                    sender.Character.LiftUnconsciousness();
+                var scen = GameModes.GameScenario.Get(message.Substring(modeCmd.Length + 1));
+                if (scen != null)
+                    GameModes.GameMode.InitScenario(scen);
 
-                return;
-            }
-            else if (message == "/nextsec")
-            {
-                HordeMode.ForceNextSection();
                 return;
             }
 
@@ -30,13 +27,13 @@ namespace GUC.Scripts.Arena
             builder.Append(sender.CharInfo.Name);
             if (sender.IsSpecating)
                 builder.Append(" (Zuschauer)");
-            
+
             builder.Append(": ");
             builder.Append(message);
             SendMessage(builder.ToString());
         }
 
-        public static void ReadTeamMessage(ArenaClient sender, PacketReader stream)
+        /*public static void ReadTeamMessage(ArenaClient sender, PacketReader stream)
         {
             if (sender.Team == null)
                 return;
@@ -49,7 +46,7 @@ namespace GUC.Scripts.Arena
             builder.Append(message);
 
             SendTeamMessage(sender.Team, builder.ToString());
-        }
+        }*/
 
         public static void SendMessage(string message)
         {
@@ -59,7 +56,7 @@ namespace GUC.Scripts.Arena
             ArenaClient.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
         }
 
-        public static void SendTeamMessage(TOTeamInst team, string message)
+        /*public static void SendTeamMessage(TOTeamInst team, string message)
         {
             if (team == null)
                 return;
@@ -68,6 +65,6 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)ScriptMessages.ChatTeamMessage);
             stream.Write(message);
             team.Players.ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable));
-        }
+        }*/
     }
 }

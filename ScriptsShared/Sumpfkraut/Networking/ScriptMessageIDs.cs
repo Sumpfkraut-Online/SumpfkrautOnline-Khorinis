@@ -46,11 +46,16 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         UnequipItem,
         UseItem,
 
+<<<<<<< HEAD
         OfferItem,
         RemoveItem,
         ConfirmOffer,
         DeclineOffer,
         RequestTrade,
+=======
+        Voice,
+        HelpUp,
+>>>>>>> ShodenTestBranch
 
         MaxNPCRequests,
     }
@@ -62,5 +67,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         ParryMessage,
         Climb,
         Uncon,
+        Voice,
+        VoiceShout,
     }
 }

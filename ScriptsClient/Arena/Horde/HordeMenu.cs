@@ -82,6 +82,13 @@ namespace GUC.Scripts.Arena
         LockTimer lockTimer = new LockTimer(200);
         void SelectClass(int index)
         {
+            if (HordeMode.Phase != HordePhase.WarmUp)
+            {
+                Sumpfkraut.Menus.ScreenScrollText.AddText("Dem Horde-Modus kann nur beim Start beigtreten werden.", GUCView.Fonts.Menu);
+                Close();
+                return;
+            }
+
             var classDef = HordeMode.ActiveDef.Classes.ElementAtOrDefault(index);
             if (classDef == null)
                 return;

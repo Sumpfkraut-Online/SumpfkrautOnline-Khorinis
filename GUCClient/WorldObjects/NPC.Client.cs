@@ -68,8 +68,7 @@ namespace GUC.WorldObjects
 
             public static void ReadPlayerEquipMessage(PacketReader stream)
             {
-                Item item;
-                if (Hero.Inventory.TryGetItem(stream.ReadByte(), out item))
+                if (Hero.Inventory.TryGetItem(stream.ReadByte(), out Item item))
                 {
                     Hero.ScriptObject.EquipItem(stream.ReadByte(), item);
                 }
@@ -83,8 +82,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                NPC npc;
-                if (World.Current.TryGetVob(id, out npc))
+                if (World.Current.TryGetVob(id, out NPC npc))
                 {
                     int hpmax = stream.ReadUShort();
                     int hp = stream.ReadUShort();
@@ -98,8 +96,7 @@ namespace GUC.WorldObjects
 
             public static void ReadFightMode(PacketReader stream, bool fightMode)
             {
-                NPC npc;
-                if (World.Current.TryGetVob(stream.ReadUShort(), out npc))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc))
                 {
                     npc.ScriptObject.SetFightMode(fightMode);
                 }
@@ -187,14 +184,14 @@ namespace GUC.WorldObjects
             if (hero == null)
                 return;
 
-            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 10, 0.01f); // update our hero better
+            hero.UpdateGuidedNPCPosition(now, HeroPosUpdateInterval, 15, 0.01f); // update our hero better
         }
 
         #region Vob Guiding
 
         protected override void UpdateGuidePos(long now)
         {
-            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 14, 0.02f);
+            UpdateGuidedNPCPosition(now, NPCPosUpdateInterval, 15, 0.02f);
         }
 
         NPCMovement guidedLastMovement;
@@ -359,7 +356,7 @@ namespace GUC.WorldObjects
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
 
-            if (this.ModelInstance.Visual == "CRAWLER.MDS")
+            if (this.ModelInstance.Visual == "CRAWLER.MDS" || this.ModelInstance.Visual == "CRWQUEEN.mds")
             {
                 gVob.Guild = 29;
                 gVob.TrueGuild = 29;
@@ -368,6 +365,11 @@ namespace GUC.WorldObjects
             {
                 gVob.Guild = 59;
                 gVob.TrueGuild = 59;
+            }
+            else if (this.ModelInstance.Visual == "DRAGON.MDS")
+            {
+                gVob.Guild = 47;
+                gVob.TrueGuild = 47;
             }
             else
             {
@@ -588,7 +590,7 @@ namespace GUC.WorldObjects
 
         void DoStrafe(bool right)
         {
-            if (this.Model.GetActiveAniFromLayerID(1) != null || this.Environment.InAir 
+            if (this.Model.GetActiveAniFromLayerID(1) != null || this.Environment.InAir
                 || (gVob.BitField1 & zCVob.BitFlag0.physicsEnabled) != 0)
                 return;
 
@@ -622,8 +624,13 @@ namespace GUC.WorldObjects
 
         public override void Throw(Vec3f velocity)
         {
-            velocity.SetGVec(gAI.Velocity);
-            base.Throw(velocity);
+            var gVel = gAI.Velocity;
+            velocity.SetGVec(gVel);
+
+            SetPhysics(true);
+
+            var rb = Process.ReadInt(gVob.Address + 224);
+            Process.THISCALL<NullReturnCall>(rb, 0x5B66D0, gVel);
         }
 
         public BaseVob GetFocusVob()

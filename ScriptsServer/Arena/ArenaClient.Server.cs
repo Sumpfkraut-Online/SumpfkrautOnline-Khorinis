@@ -10,39 +10,48 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Utilities;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Arena.Duel;
+using GUC.Scripts.Arena.GameModes;
+using GUC.Scripts.Arena.GameModes.TDM;
+using GUC.Scripts.Arena.GameModes.Horde;
+using GUC.Scripts.Arena.GameModes.BattleRoyale;
 
 namespace GUC.Scripts.Arena
 {
     partial class ArenaClient
     {
-        #region Respawn
-
-        const long RespawnInterval = 10 * TimeSpan.TicksPerSecond;
-        static GUCTimer respawnTimer = new GUCTimer(RespawnInterval, RespawnPlayers);
-
-        static ArenaClient()
+        public static void ForEach(Action<ArenaClient> action)
         {
-            respawnTimer.Start();
+            GameClient.ForEach(c => action((ArenaClient)c.ScriptObject));
         }
 
-        static void RespawnPlayers()
+        #region GameModes
+
+        public NPCClass GMClass;
+        public bool GMJoined { get { return GMTeamID >= TeamIdent.GMSpectator; } }
+
+        TeamIdent gmTeamID = TeamIdent.None;
+        public TeamIdent GMTeamID { get { return gmTeamID; } }
+        public void SetTeamID(TeamIdent id)
         {
-            ArenaClient.ForEach(s =>
-            {
-                ArenaClient client = (ArenaClient)s;
-                if (client.Team != null)
-                {
-                    if (client.TOClass != null && TeamMode.Phase != TOPhases.None && TeamMode.Phase != TOPhases.Finish
-                        && (client.Character == null || client.Character.IsDead))
-                        TeamMode.SpawnCharacter(client);
-                }
-                else
-                {
-                    if (!client.IsSpecating && client.Character != null && client.Character.IsDead)
-                        client.SpawnCharacter();
-                }
-            });
+            if (gmTeamID == id)
+                return;
+
+            gmTeamID = id;
+            if (id < TeamIdent.GMPlayer)
+                GMClass = null;
+            var stream = GetStream(ScriptMessages.PlayerInfoTeam);
+            stream.Write((byte)this.ID);
+            stream.Write((sbyte)this.GMTeamID);
+            ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
+
+        public float GMScore;
+        public int GMKills;
+        public int GMDeaths;
+
+        // TDM
+        public TDMTeamInst TDMTeam;
 
         #endregion
 
@@ -58,23 +67,12 @@ namespace GUC.Scripts.Arena
 
         #endregion
 
-        #region TeamObjective
-
-        public TOTeamInst Team;
-
-        public int TOScore;
-        public int TOKills;
-        public int TODeaths;
-
-        #endregion
-
-        #region Horde
-
-        public float HordeScore;
-        public int HordeKills;
-        public int HordeDeaths;
-
-        #endregion
+        public static PacketWriter GetStream(ScriptMessages id)
+        {
+            var s = GameClient.GetScriptMessageStream();
+            s.Write((byte)id);
+            return s;
+        }
 
         static void SendGameInfo(ArenaClient client)
         {
@@ -83,12 +81,9 @@ namespace GUC.Scripts.Arena
             stream.Write((byte)client.ID);
 
             stream.Write((byte)ArenaClient.GetCount());
-            ArenaClient.ForEach(c => ((ArenaClient)c).WritePlayerInfo(stream));
+            ArenaClient.ForEach(c => c.WritePlayerInfo(stream));
 
-            TeamMode.WriteGameInfo(stream);
-            HordeMode.WriteGameInfo(stream);
-
-            stream.Write((uint)respawnTimer.GetRemainingTicks());
+            GameMode.WriteGameInfo(stream);
 
             client.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered);
         }
@@ -97,12 +92,13 @@ namespace GUC.Scripts.Arena
         {
             stream.Write((byte)this.ID);
             stream.Write(this.CharInfo.Name);
+            stream.Write((sbyte)this.GMTeamID);
         }
 
         void SendPlayerInfoMessage()
         {
             var stream = GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.PlayerInfoMessage);
+            stream.Write((byte)ScriptMessages.PlayerInfo);
             WritePlayerInfo(stream);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
         }
@@ -119,81 +115,76 @@ namespace GUC.Scripts.Arena
         {
             SendGameInfo(this);
             SendPlayerInfoMessage();
-            TeamMode.CheckStartTO();
         }
 
         partial void pOnDisconnect(int id)
         {
-            KillCharacter();
+            if (!GameMode.IsActive || !GameMode.ActiveMode.Leave(this))
+                KillCharacter();
 
-            var stream = GetScriptMessageStream();
-            stream.Write((byte)ScriptMessages.PlayerQuitMessage);
+            var stream = GetStream(ScriptMessages.PlayerQuit);
             stream.Write((byte)id);
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
-            TOBoard.Instance.Remove(this);
+            TDMScoreBoard.Instance.Remove(this);
             HordeBoard.Instance.Remove(this);
-            TeamMenu.Remove(this);
-
-            if (this.Team != null)
-                this.Team.Players.Remove(this);
-            this.Team = null;
-
-            HordeMode.LeaveHorde(this);
         }
 
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
+            Log.Logger.Log(id);
             switch (id)
             {
                 case ScriptMessages.JoinGame:
-                    JoinGame();
+                    FMSpawn();
                     break;
                 case ScriptMessages.Spectate:
-                    Spectate();
+                    FMSpectate();
                     break;
                 case ScriptMessages.CharEdit:
                     string oldName = charInfo.Name;
                     charInfo.Read(stream);
                     if (oldName != charInfo.Name)
                         SendPlayerInfoMessage();
+                    if (GMTeamID == TeamIdent.FFAPlayer)
+                        FMSpawn();
                     break;
                 case ScriptMessages.DuelRequest:
                     DuelMode.ReadRequest(this, stream);
                     break;
-                case ScriptMessages.TOJoinTeam:
-                    TeamMode.ReadJoinTeam(this, stream);
-                    break;
-                case ScriptMessages.TOSelectClass:
-                    TeamMode.ReadSelectClass(this, stream);
-                    break;
                 case ScriptMessages.ChatMessage:
                     Chat.ReadMessage(this, stream);
                     break;
-                case ScriptMessages.ChatTeamMessage:
-                    Chat.ReadTeamMessage(this, stream);
+                case ScriptMessages.DuelScoreBoard:
+                    DuelBoard.Instance.Toggle(this, stream.ReadBit());
                     break;
-                case ScriptMessages.ScoreDuelMessage:
-                    DuelBoard.Instance.Toggle(this);
+
+                case ScriptMessages.ModeSpectate:
+                    if (GameMode.IsActive)
+                        GameMode.ActiveMode.JoinAsSpectator(this);
                     break;
-                case ScriptMessages.ScoreTOMessage:
-                    TOBoard.Instance.Toggle(this);
+
+                case ScriptMessages.TDMTeamSelect:
+                    if (TDMMode.IsActive)
+                        TDMMode.ActiveMode.JoinTeam(this, stream.ReadByte());
                     break;
-                case ScriptMessages.TOTeamCount:
-                    TeamMenu.Toggle(this);
+                case ScriptMessages.TDMScoreBoard:
+                    TDMScoreBoard.Instance.Toggle(this, TDMMode.IsActive ? stream.ReadBit() : false);
                     break;
-                case ScriptMessages.SpectateTeam:
-                    Spectate(true);
+
+                case ScriptMessages.ModeClassSelect:
+                    if (GameMode.IsActive)
+                        GameMode.ActiveMode.SelectClass(this, stream.ReadByte());
                     break;
-                case ScriptMessages.HordeJoin:
-                    HordeMode.JoinClass(stream, this);
+
+                case ScriptMessages.BRJoin:
+                    if (BRMode.IsActive)
+                        BRMode.ActiveMode.Join(this);
                     break;
-                case ScriptMessages.HordeSpectate:
-                    HordeMode.JoinSpectate(this);
-                    break;
-                case ScriptMessages.ScoreHordeMessage:
-                    HordeBoard.Instance.Toggle(this);
+
+                case ScriptMessages.HordeScoreBoard:
+                    HordeBoard.Instance.Toggle(this, HordeMode.IsActive ? stream.ReadBit() : false);
                     break;
             }
         }
@@ -201,37 +192,38 @@ namespace GUC.Scripts.Arena
         CharCreationInfo charInfo = new CharCreationInfo();
         public CharCreationInfo CharInfo { get { return charInfo; } }
 
-        void JoinGame()
+        public void FMSpectate()
         {
-            if (this.Character != null)
-            {
-                if (this.Team != null)
-                {
-                    TeamMode.JoinTeam(this, null);
-                }
-                else
-                {
-                    return;
-                }
-            }
+            if (GameMode.IsActive)
+                GameMode.ActiveMode.Leave(this);
 
-            SpawnCharacter();
+            KillCharacter();
+            SetTeamID(TeamIdent.FFASpectator);
+            this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Angles(0.1151917f, -2.104867f, 0f));
         }
 
-        public void SpawnCharacter()
+        public void FMSpawn()
         {
+            if (GameMode.IsActive)
+                GameMode.ActiveMode.Leave(this);
+
             KillCharacter();
+            SetTeamID(TeamIdent.FFAPlayer);
 
             NPCDef def = NPCDef.Get(charInfo.BodyMesh == HumBodyMeshs.HUM_BODY_NAKED0 ? "maleplayer" : "femaleplayer");
-            NPCInst npc = new NPCInst(def);
-            npc.UseCustoms = true;
-            npc.CustomBodyTex = charInfo.BodyTex;
-            npc.CustomHeadMesh = charInfo.HeadMesh;
-            npc.CustomHeadTex = charInfo.HeadTex;
-            npc.CustomVoice = charInfo.Voice;
-            npc.CustomFatness = charInfo.Fatness;
-            npc.CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth);
-            npc.CustomName = charInfo.Name;
+            NPCInst npc = new NPCInst(def)
+            {
+                UseCustoms = true,
+                CustomBodyTex = charInfo.BodyTex,
+                CustomHeadMesh = charInfo.HeadMesh,
+                CustomHeadTex = charInfo.HeadTex,
+                CustomVoice = charInfo.Voice,
+                CustomFatness = charInfo.Fatness,
+                CustomScale = new Vec3f(charInfo.BodyWidth, 1.0f, charInfo.BodyWidth),
+                CustomName = charInfo.Name,
+                DropUnconsciousOnDeath = true,
+                UnconsciousDuration = 15 * TimeSpan.TicksPerSecond,
+            };
 
             ItemDef.ForEach(itemDef =>
             {
@@ -254,50 +246,18 @@ namespace GUC.Scripts.Arena
             this.SetControl(npc);
         }
 
-        public void Spectate(bool team = false)
-        {
-            if (team && (!TeamMode.IsRunning || TeamMode.Phase == TOPhases.None))
-                return;
-
-            KillCharacter();
-            TeamMode.JoinTeam(this, null);
-
-            if (!team)
-            {
-                this.SetToSpectator(WorldInst.List[0], new Vec3f(-6489, -480, 3828), new Angles(0.1151917f, -2.104867f, 0f));
-            }
-            else
-            {
-                var specPos = TeamMode.ActiveTODef.SpecPos;
-                this.SetToSpectator(TeamMode.World, specPos.Item1, specPos.Item2);
-            }
-        }
-
         public void KillCharacter()
         {
-            if (this.Character == null || this.Character.IsDead || this.Character.IsUnconscious)
+            if (this.Character == null || this.Character.IsDead)
                 return;
 
-            if (this.Team != null)
+            if (GameMode.IsActive && this.GMTeamID >= TeamIdent.GMPlayer)
             {
-                if (TeamMode.Phase == TOPhases.Battle)
-                {
-                    this.TODeaths++;
-                    this.TOScore--;
-                    this.Team.Score--;
-                    if (this.ID != -1)
-                        SendPointsMessage(-1);
-                }
+                GameMode.ActiveMode.OnSuicide(this);
             }
             else if (this.DuelEnemy != null)
             {
                 DuelMode.DuelWin(this.DuelEnemy);
-            }
-            else if (this.HordeClass != null)
-            {
-                this.Character.DropUnconscious(false);
-                this.Character.SetHealth(1);
-                return;
             }
 
             this.Character.SetHealth(0);

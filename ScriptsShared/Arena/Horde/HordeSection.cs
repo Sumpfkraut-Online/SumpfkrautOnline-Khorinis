@@ -8,27 +8,36 @@ using GUC.Types;
 
 namespace GUC.Scripts.Arena
 {
-    class HordeBarrier
+    class HordeItem
     {
+        public string ItemDef;
         public Vec3f Position;
         public Angles Angles;
-        public string Definition;
+
+        public HordeItem(string itemDef, float x, float y, float z) : this(itemDef, new Vec3f(x, y, z), default(Angles))
+        {
+        }
+
+        public HordeItem(string itemDef, Vec3f position, Angles angles = default(Angles))
+        {
+            this.ItemDef = itemDef;
+            this.Position = position;
+            this.Angles = angles;
+        }
     }
 
     class HordeEnemy
     {
         public string NPCDef;
-        public float CountScale;
         public string WeaponDef;
         public string ArmorDef;
         public int Protection;
         public int Damage;
         public int Health;
 
-        public HordeEnemy(string npcDef, float countScale, string wep = null, string armor = null, int prot = 0, int dam = 0, int hp = 100)
+        public HordeEnemy(string npcDef, string wep = null, string armor = null, int prot = 0, int dam = 0, int hp = 100)
         {
             this.NPCDef = npcDef;
-            this.CountScale = countScale;
             this.WeaponDef = wep;
             this.ArmorDef = armor;
             this.Protection = prot;
@@ -37,28 +46,87 @@ namespace GUC.Scripts.Arena
         }
     }
 
-    class HordeGroup
+    struct HordePair
     {
-        public List<HordeEnemy> npcs;
-        public Vec3f Position;
-        public float Range;
+        public HordeEnemy Enemy;
+        public float CountScale;
+
+        public HordePair(HordeEnemy enemy, float countScale)
+        {
+            this.Enemy = enemy;
+            this.CountScale = countScale;
+        }
     }
 
-    class HordeSection
+    class HordeGroup
     {
-        public List<HordeBarrier> barriers;
-        public List<HordeBarrier> bridges;
-        public List<HordeGroup> groups;
+        public HordePair[] npcs;
+        public Vec3f Position;
+        public float Range;
 
-        public HordeSection Next;
-        public Vec3f SpawnPos;
-        public float SpawnRange;
+        public HordeGroup(Vec3f position, float range, HordePair[] enemies)
+        {
+            this.Position = position;
+            this.Range = range;
+            this.npcs = enemies;
+        }
 
-        public int SecsTillNext = 30;
+        public HordeGroup(float x, float y, float z, float range, params HordePair[] enemies) : this(new Vec3f(x, y, z), range, enemies)
+        {
+        }
+    }
 
-        public Vec3f SpecPos;
-        public Angles SpecAng;
+    class HordeBarrier
+    {
+        public Vec3f Position;
+        public Angles Angles;
+        public string Definition;
+        public bool AddAfterEvent;
 
-        public string FinishedMessage;
+        public HordeBarrier(string def, Vec3f pos, Angles ang, bool add = false)
+        {
+            this.Position = pos;
+            this.Angles = ang;
+            this.Definition = def;
+            this.AddAfterEvent = add;
+        }
+    }
+
+    class HordeStand
+    {
+        public HordeBarrier[] Barriers;
+
+        public Vec3f Position;
+        public float Range;
+
+        public int Duration; // sec
+
+        public float MaxEnemies;
+        public HordePair[] Enemies; // enemy + probability
+        public Vec3f[] EnemySpawns;
+
+        public HordeEnemy Boss;
+
+        public string SFXStart;
+        public string SFXLoop;
+        public string SFXStop;
+
+        public string[] Messages;
+    }
+
+    struct HordeZone
+    {
+        public Vec3f Position;
+        public float Range;
+
+        public HordeZone(Vec3f pos, float range)
+        {
+            this.Position = pos;
+            this.Range = range;
+        }
+
+        public HordeZone(float x, float y, float z, float range) : this(new Vec3f(x,y,z), range)
+        {
+        }
     }
 }

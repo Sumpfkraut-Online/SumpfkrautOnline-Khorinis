@@ -72,7 +72,22 @@ namespace GUC
         {
             return rand.NextDouble() * (maxValue - minValue) + minValue;
         }
-        
+
+        public static float GetFloat()
+        {
+            return (float)rand.NextDouble();
+        }
+
+        public static float GetFloat(float maxValue)
+        {
+            return (float)(rand.NextDouble() * maxValue);
+        }
+
+        public static float GetFloat(float minValue, float maxValue)
+        {
+            return (float)(rand.NextDouble() * (maxValue - minValue) + minValue);
+        }
+
         public static Vec3f GetVec3fRad(Vec3f pos, float radius)
         {
             float x = (float)GetDouble(-radius, radius);
@@ -87,14 +102,24 @@ namespace GUC
             return new Vec3f(pos.X + (float)GetDouble(-xLen, xLen), pos.Y, pos.Z + (float)GetDouble(-yLen, yLen));
         }
 
-        public static T GetRandom<T>(this T[] array)
+        public static Angles GetYaw()
+        {
+            return new Angles(0, GetFloat(-Angles.PI, Angles.PI), 0);
+        }
+
+        public static T Get<T>(T[] array)
         {
             return array[GetInt(array.Length)];
         }
 
-        public static T GetRandom<T>(this List<T> list)
+        public static T Get<T>(List<T> list)
         {
             return list[GetInt(list.Count)];
+        }
+
+        public static T Get<T>(IEnumerable<T> enumerable)
+        {
+            return enumerable.ElementAt(GetInt(enumerable.Count()));
         }
     }
 }

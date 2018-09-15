@@ -7,19 +7,30 @@ using WinApi;
 using Gothic.Objects.Sky;
 using Gothic.System;
 using Gothic.Objects;
-using Gothic.Session;
+using GUC.Types;
 
 namespace GUC.Hooks
 {
     static class hBarrier
     {
+        static Vec3f formerScale = new Vec3f(1, 1, 1);
+
+        public static void SetScale(Vec3f scale)
+        {
+            var barrier = new zCSkyControler_Outdoor(zCSkyControler.ActiveSkyController.Address).Barrier;
+            var mesh = barrier.FrontierMesh;
+            mesh.Scale(scale.X / formerScale.X, scale.Y / formerScale.Y, scale.Z / formerScale.Z);
+            formerScale = scale;
+        }
+
         static bool hooked = false;
         static void Hook()
         {
             if (hooked) return;
             hooked = true;
 
-            Process.AddHook(Render, 0x6BB92A, 5);
+            Process.AddHook(Render, 0x53099C, 5);
+            //Process.AddHook(Render, 0x6BB92A, 5);
 
             Logger.Log("Added barrier hooks.");
         }
@@ -108,6 +119,8 @@ namespace GUC.Hooks
             }
         }
 
+        static zCVob testVob = zCVob.Create();
+
         public static bool PlaySound = true;
         static readonly SoundDefinition sound = new SoundDefinition("MFX_BARRIERE_AMBIENT.WAV");
         static long nextSoundTime = 0;
@@ -120,10 +133,11 @@ namespace GUC.Hooks
                 if (!inited)
                     Init();
 
-                var barrier = GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier;
 
                 if (barrierAlpha > 0)
                 {
+                    var barrier = GothicGlobals.Game.GetWorld().SkyControlerOutdoor.Barrier;
+
                     var activeCam = zCCamera.ActiveCamera;
 
                     float farClipZ = activeCam.FarClipZ;
@@ -136,7 +150,7 @@ namespace GUC.Hooks
                     barrier.RenderLayer(context, 0, ptrArg);
                     barrier.RenderLayer(context, 1, ptrArg);
 
-                    zCRenderer.FlushPolys();
+                    zCRenderer.FlushPolys(); // comment for real size
 
                     activeCam.SetFarClipZ(farClipZ);
                     zCRenderer.SetZBufferWriteEnabled(zBufferWriteEnabled);
@@ -163,6 +177,7 @@ namespace GUC.Hooks
         {
             var activeCam = zCCamera.ActiveCamera;
             int something = Process.ReadInt(activeCam.Address + 2336);
+      
 
             Process.Write(renderContext , -1);
             Process.Write(renderContext + 4, 0/*something*/);

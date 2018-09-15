@@ -60,6 +60,7 @@
     <Compile Include="Objects\oCAICamera.cs" />
     <Compile Include="Objects\oCAIHuman.cs" />
     <Compile Include="Objects\oCAISound.cs" />
+    <Compile Include="Objects\oCAIVobMove.cs" />
     <Compile Include="Objects\oCAniCtrl_Human.cs" />
     <Compile Include="Objects\oCItem.cs" />
     <Compile Include="Objects\oCMob.cs" />

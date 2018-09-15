@@ -13,8 +13,16 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 {
     class MainMenuCharacter : MainMenuItem, InputReceiver
     {
-        GUC3DVisual vis;
-        
+        GUCVobVisual vis;
+
+        public bool Lighting { get { return vis.Lighting; } set { vis.Lighting = value; } }
+        public float OffsetX { get { return vis.OffsetX; } set { vis.OffsetX = value; } }
+        public float OffsetY { get { return vis.OffsetY; } set { vis.OffsetY = value; } }
+        public float OffsetZ { get { return vis.OffsetZ; } set { vis.OffsetZ = value; } }
+        public float RotationPitch { get { return vis.RotationPitch; } set { vis.RotationPitch = value; } }
+        public float RotationYaw { get { return vis.RotationYaw; } set { vis.RotationYaw = value; } }
+        public float RotationRoll { get { return vis.RotationRoll; } set { vis.RotationRoll = value; } }
+
         public void SetAdditionalVisuals(string bodyMesh, int bodyTex, string headMesh, int headTex)
         {
             thisVob.SetAdditionalVisuals(bodyMesh, bodyTex, 0, headMesh, headTex, 0, -1);
@@ -27,29 +35,30 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
                 thisVob.SetModelScale(vec);
             }
         }
-        
+
         public void SetFatness(float fatness)
         {
             thisVob.SetFatness(fatness);
         }
-        
+
         oCNpc thisVob;
 
-        int rotation = 180;
+        float rotation = 180;
+        float distance = 130;
 
         GUCVisual leftArrow, rightArrow;
 
         public MainMenuCharacter(string help, int x, int y, int w, int h)
         {
             HelpText = help;
-            
+
             thisVob = oCNpc.Create();
 
-            vis = new GUC3DVisual(x, y, w, h);
-            vis.SetVob(thisVob);
-
-            //Process.Write(thisVob.Address + oCItem.VarOffsets.inv_zbias, 140);
-            //Process.Write(thisVob.Address + oCItem.VarOffsets.inv_roty, rotation);
+            vis = new GUCVobVisual(x, y, w, h)
+            {
+                Lighting = true,
+            };
+            UpdateOrientation();
 
             leftArrow = new GUCVisual(x + 150, y + h / 2 - 40, 15, 20);
             leftArrow.SetBackTexture("L.TGA");
@@ -60,6 +69,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
         public void SetVisual(string visual)
         {
             thisVob.SetVisual(visual.ToUpperInvariant());
+            vis.SetVisualFromVob(thisVob);
         }
 
         public override void Show()
@@ -88,14 +98,42 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 
         public void KeyPressed(VirtualKeys key)
         {
-            if (key == VirtualKeys.Left) {
-                rotation += 5;
+            Log.Logger.Log(key);
+            switch (key)
+            {
+                case VirtualKeys.Left:
+                    rotation += 5;
+                    break;
+                case VirtualKeys.Right:
+                    rotation -= 5;
+                    break;
+                case VirtualKeys.OEMPlus:
+                case VirtualKeys.Add:
+                    distance -= 5;
+                    break;
+                case VirtualKeys.OEMMinus:
+                case VirtualKeys.Subtract:
+                    distance += 5;
+                    break;
+                default:
+                    return;
             }
-            else if (key == VirtualKeys.Right) {
-                rotation -= 5;
-            } else return;
+            
+            UpdateOrientation();
+        }
 
-            //Process.Write(thisVob.Address + oCItem.VarOffsets.inv_roty, rotation);
+        void UpdateOrientation()
+        {
+            if (distance < 40)
+                distance = 40;
+            else if (distance > 180)
+                distance = 180;
+
+            float offsetY = (distance - 180) / 1.8f + 10;
+
+            vis.RotationYaw = Angles.Deg2Rad(rotation);
+            vis.OffsetY = offsetY;
+            vis.OffsetZ = distance - 180.0f;
         }
     }
 }

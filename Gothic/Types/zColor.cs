@@ -54,6 +54,11 @@ namespace Gothic.Types
             set { Process.Write(Address + 3, (byte)value); }
         }
 
+        public void Set(uint color)
+        {
+            Process.Write(Address, color);
+        }
+
         public override uint ValueLength()
         {
             return 4;

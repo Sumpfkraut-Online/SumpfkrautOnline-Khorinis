@@ -52,7 +52,9 @@
     <Compile Include="Network\PacketEnums.cs" />
     <Compile Include="Types\Angles.cs" />
     <Compile Include="Types\NPCMovement.cs" />
+    <Compile Include="Types\PosAng.cs" />
     <Compile Include="Utilities\Alg.cs" />
+    <Compile Include="Utilities\BoolEvent.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\LockTimer.cs" />
     <Compile Include="Utilities\ReadOnlyList.cs" />

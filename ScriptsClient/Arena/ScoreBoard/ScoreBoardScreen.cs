@@ -6,6 +6,7 @@ using GUC.GUI;
 using GUC.Scripts.Sumpfkraut.Menus;
 using GUC.Network;
 using GUC.Scripting;
+using GUC.Utilities;
 
 namespace GUC.Scripts.Arena
 {
@@ -15,29 +16,26 @@ namespace GUC.Scripts.Arena
 
         GUCTimer closeTimer;
         ScriptMessages msgID;
-        List<ScoreBoard> boards;
-        protected ScoreBoard GetBoard(int index)
-        {
-            return index >= usedCount ? null : boards[index];
-        }
+        List<ScoreBoard> boards = new List<ScoreBoard>();
+        protected ReadOnlyList<ScoreBoard> Boards { get { return boards; } }
 
-        int usedCount;
-        protected int UsedCount { get { return usedCount; } }
-        protected void SetUsedCount(int value)
+        int boardCount;
+        public int BoardCount { get { return boardCount; } }
+        protected void SetBoardCount(int num)
         {
-            if (this.usedCount == value)
+            if (this.boardCount == num)
                 return;
 
-            this.usedCount = value;
+            this.boardCount = num;
             UpdateBoardPositions();
-            for (int i = usedCount; i < boards.Count; i++)
+            for (int i = boardCount; i < boards.Count; i++)
                 boards[i].Hide();
         }
 
         void UpdateBoardPositions()
         {
             var screenSize = GUCView.GetScreenSize();
-            for (int i = 0; i < usedCount; i++)
+            for (int i = 0; i < boardCount; i++)
             {
                 ScoreBoard board;
                 if (i >= boards.Count)
@@ -49,7 +47,7 @@ namespace GUC.Scripts.Arena
                 {
                     board = boards[i];
                 }
-                board.SetPos((screenSize.X - ScoreBoard.Width * usedCount) / 2 + i * ScoreBoard.Width, ScoreBoard.YDistance);
+                board.SetPos((screenSize.X - ScoreBoard.Width * boardCount) / 2 + i * ScoreBoard.Width, ScoreBoard.YDistance);
             }
         }
 
@@ -57,7 +55,6 @@ namespace GUC.Scripts.Arena
         {
             this.msgID = messageID;
             this.closeTimer = new GUCTimer(DoClose);
-            this.boards = new List<ScoreBoard>();
         }
 
         bool shown = false;
@@ -69,10 +66,10 @@ namespace GUC.Scripts.Arena
             if (shown)
                 return;
 
-            SendToggleMessage();
-            for (int i = 0; i < usedCount; i++)
-                boards[i].Show();
+            SendToggleMessage(true);
             OnOpen?.Invoke();
+            for (int i = 0; i < boardCount; i++)
+                boards[i].Show();
             openTime = GameTime.Ticks;
             closeTimer.Stop();
             shown = true;
@@ -100,17 +97,17 @@ namespace GUC.Scripts.Arena
         public event Action OnClose;
         void DoClose()
         {
-            SendToggleMessage();
+            SendToggleMessage(false);
             boards.ForEach(b => b.Hide());
             OnClose?.Invoke();
             closeTimer.Stop();
             shown = false;
         }
 
-        void SendToggleMessage()
+        void SendToggleMessage(bool open)
         {
-            var stream = ArenaClient.GetScriptMessageStream();
-            stream.Write((byte)msgID);
+            var stream = ArenaClient.GetStream(msgID);
+            stream.Write(open);
             ArenaClient.SendScriptMessage(stream, NetPriority.Low, NetReliability.Reliable);
         }
 

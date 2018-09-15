@@ -20,7 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
         class Slot : GUCView
         {
             public GUCVisual back;
-            GUC3DVisual vis;
+            GUCVobVisual vis;
             GUCVisualText amount;
             bool shown = false;
 
@@ -35,7 +35,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 back = new GUCVisual(x, y, SlotSize, SlotSize);
                 back.SetBackTexture(bgTex);
 
-                vis = new GUC3DVisual(x, y, SlotSize, SlotSize);
+                vis = new GUCVobVisual(x, y, SlotSize, SlotSize);
 
                 amount = vis.CreateText("", SlotSize - 5, SlotSize - 5 - FontsizeDefault);
                 amount.Format = GUCVisualText.TextFormat.Right;
@@ -160,7 +160,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 
         // description
         GUCVisual descrBack;
-        GUC3DVisual descrVis;
+        GUCVobVisual descrVis;
 
         // next inventories
         public GUCInventory Left;
@@ -221,14 +221,14 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 count.Format = GUCVisualText.TextFormat.Right;
             }
 
-            descrVis = new GUC3DVisual(GetScreenSize().X / 2 + 160, GetScreenSize().Y - 128 - 48, 128, 128);
+            descrVis = new GUCVobVisual(GetScreenSize().X / 2 + 160, GetScreenSize().Y - 128 - 48, 128, 128);
 
             // create the right info box
             rightBack = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);
             rightBack.SetBackTexture(backTex);
             rightVis = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);
             rightVis.SetBackTexture("Inv_Title.tga");
-            rightText = rightVis.CreateText("");
+            rightText = rightVis.CreateText("Gold: 0");
             RightInfoBox = "GOLD";
 
             // create the left info box
@@ -236,7 +236,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             leftBack.SetBackTexture(backTex);
             leftVis = new GUCVisual(x, y - 20 - 35, 2 * SlotSize, 35);
             leftVis.SetBackTexture("Inv_Title.tga");
-            leftText = leftVis.CreateText("");
+            leftText = leftVis.CreateText("Gewicht: 0");
             LeftInfoBox = "WEIGHT";
         }
 

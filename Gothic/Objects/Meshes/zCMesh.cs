@@ -75,5 +75,20 @@ namespace Gothic.Objects.Meshes
         {
             Process.THISCALL<NullReturnCall>(Address, 0x56A610);
         }
+
+        public void Scale(float x, float y, float z)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x56AF90, (FloatArg)x, (FloatArg)y, (FloatArg)z);
+        }
+
+        public void ScaleXZ(float x, float z)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x56AF20, (FloatArg)x, (FloatArg)z);
+        }
+
+        public void Render(int renderContext)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x56B190, (IntArg)renderContext);
+        }
     }
 }

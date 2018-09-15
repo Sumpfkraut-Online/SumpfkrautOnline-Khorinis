@@ -17,9 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         partial void pConstruct();
         public ScriptWeatherCtrl(WorldInst world)
         {
-            if (world == null)
-                throw new ArgumentNullException("World is null!");
-            this.world = world;
+            this.world = world ?? throw new ArgumentNullException("World is null!");
             pConstruct();
         }
 
@@ -33,8 +31,8 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
 
         #endregion
 
-        partial void pSetNextWeight(WorldTime time, float weight);
-        public void SetNextWeight(WorldTime time, float weight)
+        partial void pSetNextWeight(long time, float weight);
+        public void SetNextWeight(long time, float weight)
         {
             BaseWeather.SetNextWeight(time, weight);
             pSetNextWeight(time, weight);

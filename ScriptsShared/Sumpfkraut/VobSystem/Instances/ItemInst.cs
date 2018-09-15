@@ -104,6 +104,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         /// </summary>
         public void Remove()
         {
+            if (this.IsEquipped && this.Container is NPCInst npc)
+            {
+                npc.UnequipItem(this);
+            }
+
             this.BaseInst.Remove();
         }
     }

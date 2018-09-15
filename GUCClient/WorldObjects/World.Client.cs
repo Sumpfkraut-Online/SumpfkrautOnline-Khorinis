@@ -41,6 +41,7 @@ namespace GUC.WorldObjects
                 current.WeatherCtrl.ScriptObject.SetNextWeight(current.WeatherCtrl.EndTime, current.WeatherCtrl.EndWeight);
                 current.BarrierCtrl.ScriptObject.SetNextWeight(current.BarrierCtrl.EndTime, current.BarrierCtrl.EndWeight);
 
+                Hooks.hGame.FirstRenderDone = false;
                 current.ScriptObject.Load();
 
                 var hero = oCNpc.GetPlayer();
@@ -101,10 +102,13 @@ namespace GUC.WorldObjects
 
                 if (current.TryGetVob(id, out BaseVob vob))
                 {
+                    // despawn also removes guided id
                     vob.ScriptObject.Despawn();
                 }
-
-                GameClient.Client.guidedIDs.Remove(id);
+                else
+                {
+                    GameClient.Client.guidedIDs.Remove(id);
+                }
             }
 
             #endregion

@@ -6,7 +6,7 @@ using GUC.Scripts.Sumpfkraut.Controls;
 using WinApi.User.Enumeration;
 using GUC.Scripts.Sumpfkraut.Networking;
 using Gothic.Objects;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Arena.GameModes;
 
 namespace GUC.Scripts.Arena.Controls
 {
@@ -51,7 +51,6 @@ namespace GUC.Scripts.Arena.Controls
 
             showScreenInfo = !showScreenInfo;
             Network.GameClient.ShowInfo = showScreenInfo;
-            Menus.TOInfoScreen.Shown = showScreenInfo;
         }
 
 

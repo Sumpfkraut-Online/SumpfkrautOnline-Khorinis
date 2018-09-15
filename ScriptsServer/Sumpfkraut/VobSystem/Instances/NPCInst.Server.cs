@@ -1,4 +1,5 @@
 ﻿using GUC.Log;
+using System.Collections.Generic;
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Visuals;
@@ -6,34 +7,14 @@ using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using System;
+using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const int MaxNPCCorpses = 500000;
-
-        public bool AllowHit(NPCInst target)
-        {
-            if (!target.IsPlayer)
-            {
-                return this.IsPlayer;
-            }
-            else if (this.IsPlayer) // pvp
-            {
-                if (this.TeamID == -1)
-                {
-                    return target.TeamID == -1 && ((Arena.ArenaClient)this.Client).DuelEnemy == target.Client;
-                }
-                else
-                {
-                    return this.TeamID != target.TeamID;
-                }
-            }
-
-            return true;
-        }
-
+        const int MaxNPCCorpses = 500;
 
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
@@ -65,7 +46,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 if (dmg > 0)
                 {
                     Logger.Log("Damage: " + dmg);
-                    this.SetHealth(this.HP - (int)dmg);
+                    //this.SetHealth(this.HP - (int)dmg);
                     highestY = 0;
                 }
             }
@@ -82,13 +63,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.ModelInst.StopAnimation(this.fightAni, false);
             }
 
-            if (this.TeamID != -1 && this.Client != null)
+            if (Arena.GameModes.GameMode.ActiveMode != null && Cast.Try(this.Client, out Arena.ArenaClient ac) && ac.GMJoined)
             {
-                if (pos.GetDistancePlanar(Vec3f.Null) > Arena.TeamMode.ActiveTODef.MaxWorldDistance
-                    || pos.Y > Arena.TeamMode.ActiveTODef.MaxHeight
-                    || pos.Y < Arena.TeamMode.ActiveTODef.MaxDepth)
+                var gm = Arena.GameModes.GameMode.ActiveMode;
+                if (pos.GetDistancePlanar(Vec3f.Null) > gm.Scenario.MaxWorldDistance
+                    || pos.Y > gm.Scenario.MaxHeight
+                    || pos.Y < gm.Scenario.MaxDepth)
                 {
-                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                    ac.KillCharacter();
                 }
             }
 
@@ -96,15 +78,26 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 if (this.IsPlayer)
                 {
-                    ((Arena.ArenaClient)this.Client).KillCharacter();
+                    var client = ((Arena.ArenaClient)this.Client);
+                    client.KillCharacter();
+                    if (Arena.GameModes.Horde.HordeMode.IsActive && this.TeamID >= 0)
+                    {
+                        Arena.GameModes.Horde.HordeMode.ActiveMode.RespawnClient(client);
+                    }
+                }
+                else
+                {
+                    this.SetHealth(0);
                 }
             }
-            
+
             if (env.InAir && !this.isClimbing)
             {
                 var aa = this.ModelInst.GetActiveAniFromLayer(1);
                 if (aa != null)
+                {
                     this.ModelInst.StopAnimation(aa, false);
+                }
             }
 
 
@@ -144,6 +137,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pConstruct()
         {
+        }
+
+        partial void pDespawn()
+        {
+            if (unconTimer != null && unconTimer.Started)
+                unconTimer.Stop();
         }
 
         #endregion
@@ -228,84 +227,56 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        #region Drop & Take
+        #region Drop & Take items
 
-        /// <summary>
-        /// Starts a drop animation and drops any item in front of the npc
-        /// </summary>
-        /// <param name="item"></param>
-        /// <param name="amount"></param>
-        public void DropItem(ItemInst item, int amount, float offset = 50)
+        public void DoDropItem(ItemInst item, int amount, Vec3f position, Angles angles)
         {
-            if (item == null)
-                return;
-
-            //if (item.Container != this)
-            //    return;
-
             item = item.Split(amount);
 
-            Vec3f spawnPos = this.GetPosition();
-            //Angles spawnAng = this.GetAngles();
-            //spawnPos += spawnDir * offset;
+            ScriptAniJob job = AniCatalog?.ItemHandling.DropItem;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
+                    frame = float.MaxValue;
 
-            // fixme: drop item at the item drop frame
-            ModelInst.StartAniJob(this.AniCatalog.ItemHandling.DropItem, () => item.Spawn(this.World, spawnPos, Angles.Null));
+                var pair = new Animations.FrameActionPair(frame, () => this.DropItem(item, position, angles));
+                this.ModelInst.StartAniJob(job, 0.8f, 0, pair);
+                return;
+            }
+            DropItem(item, position, angles);
         }
 
-        public void UseItem(byte itemID)
+        void DropItem(ItemInst item, Vec3f position, Angles angles)
         {
-            ItemInst item = Inventory.GetItem(itemID);
-            if (item == null)
-                return;
+            item.Spawn(this.World, position, angles);
+            item.BaseInst.SetNeedsClientGuide(true);
+            item.Throw(Vec3f.Null);
+        }
 
-            if (this.ModelInst.BaseInst.IsInAnimation())
-                return;
-
-            if (this.Environment.InAir)
-                return;
-
-            if (this.Movement != NPCMovement.Stand)
-                return;
-
-            switch (item.ItemType)
+        public void DoTakeItem(ItemInst item)
+        {
+            ScriptAniJob job = AniCatalog?.ItemHandling.TakeItem;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
             {
-                case ItemTypes.SmallEatable:
-                    // TODO: eat item zu bestimmtem frame aufrufen
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatSmall, () => { this.UnequipItem(item); this.EatItem(item); });
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.LargeEatable:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatLarge, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Mutton:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatMutton, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Rice:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.EatRice, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Drinkable:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.DrinkPotion, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Readable:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.ReadScroll, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
-                case ItemTypes.Torch:
-                    this.ModelInst.StartAniJob(AniCatalog.ItemHandling.UseTorch, () => this.UnequipItem(item));
-                    this.EquipItem(NPCSlots.LeftHand, item);
-                    break;
+                if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
+                    frame = float.MaxValue;
+
+                var pair = new Animations.FrameActionPair(frame, () => this.TakeItem(item));
+                this.ModelInst.StartAniJob(job, 0.8f, 0, pair);
+                return;
+            }
+            TakeItem(item);
+        }
+
+        void TakeItem(ItemInst item)
+        {
+            if (item != null && item.IsSpawned)
+            {
+                item.Despawn();
+                this.Inventory.AddItem(item);
             }
         }
 
-        public void EatItem(ItemInst item)
-        {
-
-        }
         #endregion
 
         #region Fight Moves
@@ -382,8 +353,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var comboPair = new Animations.FrameActionPair(comboFrame, () => OpenCombo());
 
             // hit frame
-            float hitFrame;
-            if (!ani.TryGetSpecialFrame(SpecialFrame.Hit, out hitFrame))
+            if (!ani.TryGetSpecialFrame(SpecialFrame.Hit, out float hitFrame))
                 hitFrame = comboFrame;
 
             if (hitFrame > comboFrame)
@@ -426,8 +396,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            ScriptAni ani;
-            if (!ModelInst.TryGetAniFromJob(job, out ani))
+            if (!ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
                 return;
 
             // end of animation
@@ -444,8 +413,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (job == null)
                 return;
 
-            ScriptAni ani;
-            if (!ModelInst.TryGetAniFromJob(job, out ani))
+            if (!ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
                 return;
 
             // end of animation
@@ -718,26 +686,34 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (hp <= 0)
             {
                 npcDespawnList.AddVob(this);
+
+                if (unconTimer != null && unconTimer.Started)
+                    unconTimer.Stop();
             }
         }
 
 
         #region Hit Detection
 
+        public int Damage;
+        public int Protection;
+        
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
+
+
+        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
+        public static event OnHitHandler sOnHit;
+        public event OnHitHandler OnHit;
 
         public void Hit(NPCInst attacker, int damage, bool fromFront = true)
         {
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.HitMessage);
-            strm.Write((ushort)this.ID);
+            strm.Write((ushort)attacker.ID);
             this.BaseInst.SendScriptVobStream(strm);
 
-            if (Cast.Try(attacker.Client, out Arena.ArenaClient att) && attacker.TeamID != -1 && att.TOClass != null)
-                damage += att.TOClass.Damage;
-
-            int protection = 0;
+            int protection = this.Protection;
             var armor = this.GetArmor();
             if (armor != null)
                 protection += armor.Protection;
@@ -747,16 +723,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if ((otherMelee = this.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
                 protection -= otherMelee.Damage / 4;
 
-            if ((otherMelee = attacker.GetLeftHand()) != null && otherMelee.ItemType == ItemTypes.Wep1H)
-                damage += otherMelee.Damage / 4;
-
-            if (Cast.Try(this.Client, out Arena.ArenaClient tar) && this.TeamID != -1 && tar.TOClass != null)
-                protection += tar.TOClass.Protection;
-
             damage -= protection;
 
             // ARENA
-            if (this.TeamID != -1 && attacker.TeamID == this.TeamID) // same team
+            if (this.TeamID >= 0 && attacker.TeamID == this.TeamID) // same team
                 damage /= 2;
 
             if (damage <= 0)
@@ -764,14 +734,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             int resultingHP = this.GetHealth() - damage;
 
-            if (resultingHP <= 0 && !attacker.IsPlayer && tar != null && tar.HordeClass != null)
+            if (DropUnconsciousOnDeath && resultingHP <= 1)
             {
                 resultingHP = 1;
-                this.DropUnconscious(!fromFront);
+                this.DropUnconscious(UnconsciousDuration, !fromFront);
             }
 
             this.SetHealth(resultingHP);
             sOnHit?.Invoke(attacker, this, damage);
+            OnHit?.Invoke(attacker, this, damage);
             lastHitMoveTime = GameTime.Ticks;
         }
 
@@ -781,8 +752,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return this.ModelDef.Radius + (drawnWeapon == null ? ModelDef.FistRange : drawnWeapon.Definition.Range);
         }
 
-        public delegate void OnHitHandler(NPCInst attacker, NPCInst target, int damage);
-        public static event OnHitHandler sOnHit;
+        /// <summary> Skips hit determination if false is returned. Arguments: Attacker, Target </summary>
+        public static BoolEvent<NPCInst, NPCInst> AllowHitEvent;
+
+        /// <summary> Skips hit determination if attacker returns false. Arguments: Attacker, Target </summary>
+        public BoolEvent<NPCInst, NPCInst> AllowHitAttacker;
+
+        // <summary> Skips hit determination if target returns false. Arguments: Attacker, Target </summary>
+        public BoolEvent<NPCInst, NPCInst> AllowHitTarget;
 
         void CalcHit()
         {
@@ -794,8 +771,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 Vec3f attPos = this.GetPosition();
                 Angles attAng = this.GetAngles();
 
-                ItemInst drawnWeapon = GetDrawnWeapon();
-                int baseDamage = drawnWeapon == null ? 10 : drawnWeapon.Damage;
+                int baseDamage = 5 + this.Damage;
+
+                ItemInst weapon;
+                if ((weapon = this.GetDrawnWeapon()) != null)
+                    baseDamage += weapon.Damage;
+
+                // two weapons
+                if ((weapon = this.GetLeftHand()) != null && weapon.ItemType == ItemTypes.Wep1H)
+                    baseDamage += weapon.Damage / 4;
+
                 float weaponRange = GetFightRange();
                 this.BaseInst.World.ForEachNPCRough(attPos, GUCScripts.BiggestNPCRadius + weaponRange, npc => // fixme: enemy model radius
                   {
@@ -803,7 +788,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target == this || target.IsDead || target.IsUnconscious)
                           return;
 
-                      if (!AllowHit(target))
+                      if (!AllowHitEvent.TrueForAll(this, target)
+                      || !this.AllowHitAttacker.TrueForAll(this, target) || !target.AllowHitTarget.TrueForAll(this, target))
                           return;
 
                       float realRange = weaponRange + target.ModelDef.Radius;
@@ -817,7 +803,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       }
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
-
 
                       float hitHeight;
                       float hitYaw;
@@ -896,7 +881,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         partial void pBeforeSpawn()
         {
-            if (this.ModelDef.Visual != "HUMANS.MDS" && this.ModelDef.Visual != "ORC.MDS")
+            if (this.ModelDef.Visual != "HUMANS.MDS" && this.ModelDef.Visual != "ORC.MDS" && this.ModelDef.Visual != "DRACONIAN.MDS")
                 this.SetFightMode(true);
         }
 
@@ -969,7 +954,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
-        public void DropUnconscious(bool toFront = true)
+        #region Unconsciousness
+
+        public bool DropUnconsciousOnDeath = false;
+        public long UnconsciousDuration = 15 * TimeSpan.TicksPerSecond;
+        GUCTimer unconTimer;
+
+        public void DropUnconscious(long duration = -1, bool toFront = true)
         {
             var cat = AniCatalog.Unconscious;
             ScriptAniJob job = toFront ? cat.DropFront : cat.DropBack;
@@ -982,6 +973,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             strm.Write((byte)ScriptVobMessageIDs.Uncon);
             strm.Write((byte)uncon);
             this.BaseInst.SendScriptVobStream(strm);
+
+            if (duration >= 0)
+            {
+                if (unconTimer == null)
+                    unconTimer = new GUCTimer(LiftUnconsciousness);
+
+                unconTimer.SetInterval(duration);
+                unconTimer.Start();
+            }
         }
 
         public void LiftUnconsciousness()
@@ -995,6 +995,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.ModelInst.StartAniJob(job, DoLiftUncon);
             else
                 DoLiftUncon();
+
+            if (unconTimer != null && unconTimer.Started)
+                unconTimer.Stop();
         }
 
         void DoLiftUncon()
@@ -1003,6 +1006,97 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             var strm = this.BaseInst.GetScriptVobStream();
             strm.Write((byte)ScriptVobMessageIDs.Uncon);
             strm.Write((byte)uncon);
+            this.BaseInst.SendScriptVobStream(strm);
+
+            int hp = this.HP + 25;
+            this.SetHealth(hp > HPMax ? HPMax : hp);
+        }
+
+        #endregion
+
+        #region Use Items
+
+        public void UseItem(ItemInst item)
+        {
+            if (item.ItemType != ItemTypes.Drinkable)
+                return;
+
+            ScriptAniJob job = AniCatalog?.ItemHandling.DrinkPotion;
+            if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
+            {
+                if (!ani.TryGetSpecialFrame(SpecialFrame.ItemHandle, out float frame))
+                    frame = float.MaxValue;
+
+                this.EquipItem(NPCSlots.RightHand, item);
+                var pair = new Animations.FrameActionPair(frame, () => ChugPotion(item));
+                ModelInst.StartAniJob(job, pair);
+                return;
+            }
+
+            ChugPotion(item);
+        }
+
+        void ChugPotion(ItemInst item)
+        {
+            if (item == null) return;
+
+            int hp = this.HP + 50;
+            this.SetHealth(hp > HPMax ? HPMax : hp);
+            if (item.IsEquipped)
+                this.UnequipItem(item);
+            item.SetAmount(item.Amount - 1);
+        }
+
+        #endregion
+
+        public bool IsObstructed()
+        {
+            return IsSpawned && (IsDead || Movement != NPCMovement.Stand || ModelInst.IsInAnimation() || Environment.InAir || IsInFightMode || IsUnconscious);
+        }
+
+        public void RandomizeCustomVisuals(string name, bool male)
+        {
+            if (male)
+            {
+                CustomBodyTex = (HumBodyTexs)Randomizer.GetInt(0, 4);
+                CustomHeadMesh = (HumHeadMeshs)Randomizer.GetInt(6);
+                CustomVoice = (HumVoices)Randomizer.GetInt(15);
+                switch (CustomBodyTex)
+                {
+                    case HumBodyTexs.M_Pale:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(41, 58);
+                        break;
+                    case HumBodyTexs.M_Normal:
+                    case HumBodyTexs.G1Hero:
+                    case HumBodyTexs.G2Hero:
+                    case HumBodyTexs.M_Tattooed:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(58, 120);
+                        break;
+                    case HumBodyTexs.M_Latino:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(120, 129);
+                        break;
+                    case HumBodyTexs.M_Black:
+                        CustomHeadTex = (HumHeadTexs)Randomizer.GetInt(129, 137);
+                        break;
+                }
+            }
+            else
+            {
+
+            }
+
+            var size = Randomizer.GetFloat(0.95f, 1.05f);
+            CustomFatness = Randomizer.GetFloat(-1, 1);
+            CustomScale = new Vec3f(size, 1.0f, size);
+            CustomName = name;
+            UseCustoms = true;
+        }
+
+        public void DoVoice(VoiceCmd cmd, bool shout = false)
+        {
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)(shout ? ScriptVobMessageIDs.VoiceShout : ScriptVobMessageIDs.Voice));
+            strm.Write((byte)cmd);
             this.BaseInst.SendScriptVobStream(strm);
         }
     }

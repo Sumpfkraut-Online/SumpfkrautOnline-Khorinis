@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.GUI;
 using GUC.Types;
+using GUC.Network;
 
 namespace GUC.Scripts.Arena
 {
@@ -16,6 +17,15 @@ namespace GUC.Scripts.Arena
             public int Kills;
             public int Deaths;
             public int Ping;
+
+            public Entry(PacketReader stream)
+            {
+                ID = stream.ReadByte();
+                Score = stream.ReadShort();
+                Kills = stream.ReadShort();
+                Deaths = stream.ReadShort();
+                Ping = stream.ReadShort();
+            }
         }
 
         const string BackTex = "MENU_INGAME.TGA";
@@ -94,35 +104,60 @@ namespace GUC.Scripts.Arena
             titleVis.Show();
         }
 
-        public void Fill(List<Entry> list)
-        {
-            int index = 5; // column specifier offset
-            foreach (Entry entry in list.OrderByDescending(b => b.Score))
-            {
-                if (index >= vis.Texts.Count)
-                    return;
+        int entryCount;
+        public int EntryCount { get { return entryCount; } }
 
-                string name = PlayerInfo.TryGetInfo(entry.ID, out PlayerInfo pi) ? pi.Name : "!Unknown Player!";
-                SetText(vis.Texts[index++], name, entry.ID);
-                SetText(vis.Texts[index++], entry.Score, entry.ID);
-                SetText(vis.Texts[index++], entry.Kills, entry.ID);
-                SetText(vis.Texts[index++], entry.Deaths, entry.ID);
-                SetText(vis.Texts[index++], entry.Ping, entry.ID);
+        static readonly ColorRGBA SpectatorColor = new ColorRGBA(250, 250, 250, 100);
+
+        public void AddEntry(Entry entry, bool spectator)
+        {
+            var arr = vis.Texts;
+
+            int index = 5 * (entryCount + 1);
+            bool hero = entry.ID == PlayerInfo.HeroInfo.ID;
+            for (int i = 0; i < 5; i++)
+            {
+                var box = vis.Texts[index + i];
+                box.Font = hero ? Fonts.Default_Hi : Fonts.Default;
+                box.SetColor(spectator ? SpectatorColor : ColorRGBA.White);
             }
 
-            for (; index < vis.Texts.Count; index++)
-                vis.Texts[index].Text = string.Empty;
-        }
+            arr[index++].Text = PlayerInfo.TryGetInfo(entry.ID, out PlayerInfo pi) ? pi.Name : "!Unknown Player!";
+            arr[index++].Text = entry.Score.ToString();
+            arr[index++].Text = entry.Kills.ToString();
+            arr[index++].Text = entry.Deaths.ToString();
+            arr[index++].Text = entry.Ping.ToString();
 
-        void SetText(GUCVisualText visText, object text, int playerID)
-        {
-            visText.Text = text.ToString();
-            visText.Font = playerID == PlayerInfo.HeroID ? GUCView.Fonts.Default_Hi : GUCView.Fonts.Default;
+            entryCount++;
         }
 
         public void SetPos(int x, int y)
         {
             titleVis.SetPos(x, y);
+        }
+
+        List<Entry> entries = new List<Entry>(10);
+        public void ReadEntries(PacketReader stream, bool spectator)
+        {
+            int count = stream.ReadByte();
+            for (int i = 0; i < count; i++)
+            {
+                entries.Add(new Entry(stream));
+            }
+
+            foreach (var e in entries.OrderByDescending(o => o.Score))
+            {
+                AddEntry(e, spectator);
+            }
+
+            entries.Clear();
+        }
+
+        public void Reset()
+        {
+            entryCount = 0;
+            for (int i = 5; i < vis.Texts.Count; i++)
+                vis.Texts[i].Text = string.Empty;
         }
     }
 }

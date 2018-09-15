@@ -11,7 +11,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
     public partial class WorldInst
     {
         public static WorldInst Current { get { return (WorldInst)WorldObjects.World.Current?.ScriptObject; } }
-        
+
         public void Load()
         {
             GUCMenu.CloseActiveMenus();

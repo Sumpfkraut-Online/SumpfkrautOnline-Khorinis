@@ -61,32 +61,44 @@
     <Compile Include="..\ScriptsShared\Arena\Duel\DuelMode.cs">
       <Link>Arena\Duel\DuelMode.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeClassDef.cs">
-      <Link>Arena\Horde\HordeClassDef.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\BattleRoyale\BRMode.cs">
+      <Link>Arena\GameModes\BattleRoyale\BRMode.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeDef.cs">
-      <Link>Arena\Horde\HordeDef.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\BattleRoyale\BRRandomizer.cs">
+      <Link>Arena\GameModes\BattleRoyale\BRRandomizer.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeMode.cs">
-      <Link>Arena\Horde\HordeMode.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\BattleRoyale\BRScenario.cs">
+      <Link>Arena\GameModes\BattleRoyale\BRScenario.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Arena\Horde\HordeSection.cs">
-      <Link>Arena\Horde\HordeSection.cs</Link>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\GameMode.cs">
+      <Link>Arena\GameModes\GameMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\GamePhase.cs">
+      <Link>Arena\GameModes\GamePhase.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\GameScenario.cs">
+      <Link>Arena\GameModes\GameScenario.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\Horde\HordeMode.cs">
+      <Link>Arena\GameModes\Horde\HordeMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\Horde\HordeScenario.cs">
+      <Link>Arena\GameModes\Horde\HordeScenario.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\PlayerClass.cs">
+      <Link>Arena\GameModes\PlayerClass.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\TDM\TDMMode.cs">
+      <Link>Arena\GameModes\TDM\TDMMode.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\TDM\TDMScenario.cs">
+      <Link>Arena\GameModes\TDM\TDMScenario.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Arena\GameModes\TeamIdent.cs">
+      <Link>Arena\GameModes\TeamIdent.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Arena\ScriptMessages.cs">
       <Link>Arena\ScriptMessages.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TeamMode.cs">
-      <Link>Arena\TeamObjective\TeamMode.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOClassDef.cs">
-      <Link>Arena\TeamObjective\TOClassDef.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TODef.cs">
-      <Link>Arena\TeamObjective\TODef.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Arena\TeamObjective\TOTeamDef.cs">
-      <Link>Arena\TeamObjective\TOTeamDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\GUCScripts.cs">
       <Link>GUCScripts.cs</Link>
@@ -337,6 +349,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobType.cs">
       <Link>Sumpfkraut\VobSystem\Enumeration\VobType.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs">
+      <Link>Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\BaseVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\BaseVobInst.cs</Link>
     </Compile>
@@ -381,24 +396,28 @@
     <Compile Include="Arena\Controls\ArenaControl.cs" />
     <Compile Include="Arena\Duel\DuelBoardScreen.cs" />
     <Compile Include="Arena\Duel\DuelMode.Client.cs" />
-    <Compile Include="Arena\Horde\HordeBoardScreen.cs" />
-    <Compile Include="Arena\Horde\HordeDef.Client.cs" />
-    <Compile Include="Arena\Horde\HordeMenu.cs" />
-    <Compile Include="Arena\Horde\HordeMode.Client.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRJoinMenu.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRMode.Client.cs" />
+    <Compile Include="Arena\GameModes\BattleRoyale\BRStatusMenu.cs" />
+    <Compile Include="Arena\GameModes\GameMode.Client.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeMode.Client.cs" />
+    <Compile Include="Arena\GameModes\Horde\MenuClassSelect.cs" />
+    <Compile Include="Arena\GameModes\Horde\HordeScoreBoard.cs" />
+    <Compile Include="Arena\GameModes\TDM\MenuClassSelect.cs" />
+    <Compile Include="Arena\GameModes\TDM\MenuTeamSelect.cs" />
+    <Compile Include="Arena\GameModes\TDM\RespawnNote.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMMode.Client.cs" />
+    <Compile Include="Arena\GameModes\TDM\TDMScoreBoard.cs" />
     <Compile Include="Arena\Menus\CharCreationMenu.cs" />
     <Compile Include="Arena\Chat\ChatMenu.cs" />
     <Compile Include="Arena\Menus\ExitMenu.cs" />
+    <Compile Include="Arena\Menus\FreeModeMenu.cs" />
     <Compile Include="Arena\Menus\MainMenu.cs" />
     <Compile Include="Arena\Menus\PlayerList.cs" />
-    <Compile Include="Arena\Menus\RespawnTimer.cs" />
-    <Compile Include="Arena\Menus\TOClassMenu.cs" />
-    <Compile Include="Arena\Menus\TOInfoScreen.cs" />
-    <Compile Include="Arena\Menus\TOTeamsMenu.cs" />
+    <Compile Include="Arena\Menus\StatusMenu.cs" />
     <Compile Include="Arena\PlayerInfo.cs" />
     <Compile Include="Arena\ScoreBoard\ScoreBoard.cs" />
     <Compile Include="Arena\ScoreBoard\ScoreBoardScreen.cs" />
-    <Compile Include="Arena\TeamObjective\TeamMode.Client.cs" />
-    <Compile Include="Arena\TeamObjective\TOBoardScreen.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToPosCommand.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobCommand.Client.cs" />
     <Compile Include="Sumpfkraut\AI\GuideCommands\GoToVobLookAtCommand.Client.cs" />

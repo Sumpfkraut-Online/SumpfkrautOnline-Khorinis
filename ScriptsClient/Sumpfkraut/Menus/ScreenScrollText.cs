@@ -16,13 +16,14 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public static void AddText(string text, GUCView.Fonts font = GUCView.Fonts.Default)
         {
-            AddText(text, font, ColorRGBA.White);
+            AddText(text, font, ColorRGBA.White, TextDuration);
         }
 
-        public static void AddText(string text, GUCView.Fonts font, ColorRGBA color)
+        public static void AddText(string text, GUCView.Fonts font, ColorRGBA color, long duration = TextDuration)
         {
             if (string.IsNullOrWhiteSpace(text))
                 return;
+
             if (vis.Texts.Count == 0)
                 vis.CreateTextCenterX("", 0);
 
@@ -50,7 +51,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             visText.Text = text;
             visText.SetPosY(0xB00 - vFontSize, true);
 
-            endTimes.Insert(0, GameTime.Ticks + TextDuration);
+            endTimes.Insert(0, GameTime.Ticks + duration);
 
             if (endTimes.Count == 1)
             {

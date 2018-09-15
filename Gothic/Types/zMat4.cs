@@ -184,5 +184,11 @@ namespace Gothic.Types
         {
             Process.Free(new IntPtr(Address), zMat4.ByteSize);
         }
+
+        public void Set(zMat4 otherMat)
+        {
+            byte[] otherBytes = Process.ReadBytes(otherMat.Address, ByteSize);
+            Process.Write(this.Address, otherBytes);
+        }
     }
 }

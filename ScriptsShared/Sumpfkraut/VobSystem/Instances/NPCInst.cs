@@ -184,7 +184,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (item.BaseInst.Slot == (int)slot)
                 return;
-            
+
             pBeforeEquip(slot, item);
             this.BaseInst.EquipItem((int)slot, item.BaseInst);
             pAfterEquip(slot, item);
@@ -242,7 +242,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             if (hp <= 0)
             {
-                this.uncon = Unconsciousness.None; 
+                this.uncon = Unconsciousness.None;
                 OnDeath?.Invoke(this);
                 sOnDeath?.Invoke(this);
             }
@@ -324,5 +324,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         Unconsciousness uncon = Unconsciousness.None;
         public bool IsUnconscious { get { return uncon != Unconsciousness.None; } }
+
+        public Allegiance Guild;
+    }
+
+    public enum Allegiance
+    {
+        PAL, // Innos
+        MIL, // koenig
+        AL, // gomez
+        SECT, // erwache
     }
 }

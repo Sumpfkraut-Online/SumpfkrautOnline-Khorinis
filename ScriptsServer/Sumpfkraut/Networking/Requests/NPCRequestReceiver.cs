@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
+using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
 using GUC.Types;
@@ -18,12 +19,15 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
         public event Action<NPCInst, ItemInst> OnDrawWeapon;
         public event Action<NPCInst, FightMoves> OnFightMove;
         public event Action<NPCInst, ItemInst, int> OnDropItem;
+        public event Action<NPCInst, ItemInst> OnTakeItem;
         public event Action<NPCInst, ItemInst> OnEquipItem;
         public event Action<NPCInst, ItemInst> OnUnequipItem;
         public event Action<NPCInst, ItemInst> OnUseItem;
         public event Action<NPCInst> OnAim;
         public event Action<NPCInst> OnUnaim;
         public event Action<NPCInst, Vec3f, Vec3f> OnShoot;
+        public event Action<NPCInst, VoiceCmd> OnVoice;
+        public event Action<NPCInst, NPCInst> OnHelpUp;
 
 
         public void ReadRequest(RequestMessageIDs id, PacketReader stream, NPCInst npc)
@@ -79,6 +83,10 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                 case RequestMessageIDs.DropItem:
                     OnDropItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()), stream.ReadUShort());
                     break;
+                case RequestMessageIDs.TakeItem:
+                    if (npc.World.TryGetVob(stream.ReadUShort(), out ItemInst item))
+                        OnTakeItem?.Invoke(npc, item);
+                    break;
 
                 case RequestMessageIDs.EquipItem:
                     OnEquipItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()));
@@ -99,6 +107,14 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                     break;
                 case RequestMessageIDs.Shoot:
                     OnShoot?.Invoke(npc, stream.ReadVec3f(), stream.ReadVec3f());
+                    break;
+
+                case RequestMessageIDs.Voice:
+                    OnVoice?.Invoke(npc, (VoiceCmd)stream.ReadByte());
+                    break;
+                case RequestMessageIDs.HelpUp:
+                    if (npc.World.TryGetVob(stream.ReadUShort(), out NPCInst target))
+                        OnHelpUp?.Invoke(npc, target);
                     break;
 
                 default:

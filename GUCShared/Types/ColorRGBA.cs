@@ -105,6 +105,11 @@ namespace GUC.Types
             this.A = a;
         }
 
+        public static implicit operator ColorRGBA(uint value)
+        {
+            return new ColorRGBA((byte)(value >> 24), (byte)(value >> 16), (byte)(value >> 8), (byte)value);
+        }
+
         public static explicit operator ColorRGBA(byte[] data)
         {
             return new ColorRGBA(data);

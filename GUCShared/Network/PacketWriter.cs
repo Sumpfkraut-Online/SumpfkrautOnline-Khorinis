@@ -10,10 +10,19 @@ namespace GUC.Network
     {
         const int StandardCapacity = 32000;
         
-        /// <summary>
-        /// Be careful when you set this manually!
-        /// </summary>
-        internal int CurrentByte;
+        int pos;
+        public int Position
+        {
+            get { return this.pos; }
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException("Position can't be smaller than zero!");
+
+                CheckRealloc(value - pos);
+                pos = value;
+            }
+        }
 
         int currentBitByte;
         int bitsWritten;
@@ -43,7 +52,7 @@ namespace GUC.Network
 
         internal void Reset()
         {
-            CurrentByte = 0;
+            Position = 0;
             currentBitByte = -1;
 
             bitsWritten = 0;
@@ -60,24 +69,24 @@ namespace GUC.Network
         public byte[] CopyData()
         {
             byte[] bytes = GetData();
-            byte[] ret = new byte[CurrentByte];
-            Array.Copy(bytes, ret, CurrentByte);
+            byte[] ret = new byte[Position];
+            Array.Copy(bytes, ret, Position);
             return ret;
         }
 
         internal int GetLength()
         {
-            return CurrentByte;
+            return Position;
         }
 
         void CheckRealloc(int add)
         {
-            int neededLen = CurrentByte + add;
+            int neededLen = Position + add;
             if (neededLen >= capacity)
             {
                 capacity = StandardCapacity * (int)((float)neededLen / (float)StandardCapacity + 1.0f);
                 byte[] newData = new byte[capacity];
-                Buffer.BlockCopy(data, 0, newData, 0, CurrentByte);
+                Buffer.BlockCopy(data, 0, newData, 0, Position);
                 data = newData;
             }
         }
@@ -147,19 +156,19 @@ namespace GUC.Network
 
         #region Writing Methods
 
-        public void Write(bool val)
+        public bool Write(bool val)
         {
             if (currentBitByte == -1)
             {
                 //CheckRealloc(1); // except when the capacity is 0 this is useless
-                currentBitByte = CurrentByte++;
+                currentBitByte = Position++;
             }
 
             if (bitsWritten == 8) // old byte is full
             {
                 CheckRealloc(1);
                 data[currentBitByte] = (byte)bitByte;
-                currentBitByte = CurrentByte++;
+                currentBitByte = Position++;
                 bitsWritten = 0;
                 bitByte = 0;
             }
@@ -169,6 +178,7 @@ namespace GUC.Network
                 bitByte |= (1 << bitsWritten);
             }
             bitsWritten++;
+            return val;
         }
 
         void FlushBits()
@@ -182,102 +192,113 @@ namespace GUC.Network
         public void Write(sbyte val)
         {
             CheckRealloc(1);
-            data[CurrentByte++] = (byte)val;
+            data[Position++] = (byte)val;
         }
 
         public void Write(byte val)
         {
             CheckRealloc(1);
-            data[CurrentByte++] = val;
+            data[Position++] = val;
+        }
+
+        public void Edit(int position, byte val)
+        {
+            if (position < 0)
+                throw new ArgumentOutOfRangeException("Position can't be smaller than zero!");
+
+            int oldPos = this.pos;
+            this.pos = position;
+            Write(val);
+            this.pos = oldPos;
         }
 
         public void Write(short val)
         {
             CheckRealloc(2);
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
         }
 
         public void Write(ushort val)
         {
             CheckRealloc(2);
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
         }
 
         public void Write(int val)
         {
             CheckRealloc(4);
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
-            data[CurrentByte++] = (byte)(val >> 16);
-            data[CurrentByte++] = (byte)(val >> 24);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
+            data[Position++] = (byte)(val >> 16);
+            data[Position++] = (byte)(val >> 24);
         }
 
         public void Write(uint val)
         {
             CheckRealloc(4);
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
-            data[CurrentByte++] = (byte)(val >> 16);
-            data[CurrentByte++] = (byte)(val >> 24);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
+            data[Position++] = (byte)(val >> 16);
+            data[Position++] = (byte)(val >> 24);
         }
 
         public void Write(long val)
         {
             CheckRealloc(8);
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
-            data[CurrentByte++] = (byte)(val >> 16);
-            data[CurrentByte++] = (byte)(val >> 24);
-            data[CurrentByte++] = (byte)(val >> 32);
-            data[CurrentByte++] = (byte)(val >> 40);
-            data[CurrentByte++] = (byte)(val >> 48);
-            data[CurrentByte++] = (byte)(val >> 56);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
+            data[Position++] = (byte)(val >> 16);
+            data[Position++] = (byte)(val >> 24);
+            data[Position++] = (byte)(val >> 32);
+            data[Position++] = (byte)(val >> 40);
+            data[Position++] = (byte)(val >> 48);
+            data[Position++] = (byte)(val >> 56);
         }
 
         public void Write(ulong val)
         {
             CheckRealloc(8);
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
-            data[CurrentByte++] = (byte)(val >> 16);
-            data[CurrentByte++] = (byte)(val >> 24);
-            data[CurrentByte++] = (byte)(val >> 32);
-            data[CurrentByte++] = (byte)(val >> 40);
-            data[CurrentByte++] = (byte)(val >> 48);
-            data[CurrentByte++] = (byte)(val >> 56);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
+            data[Position++] = (byte)(val >> 16);
+            data[Position++] = (byte)(val >> 24);
+            data[Position++] = (byte)(val >> 32);
+            data[Position++] = (byte)(val >> 40);
+            data[Position++] = (byte)(val >> 48);
+            data[Position++] = (byte)(val >> 56);
         }
 
         public void Write(float val)
         {
             CheckRealloc(4);
             byte[] arr = BitConverter.GetBytes(val);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
         }
 
         public void Write(double val)
         {
             CheckRealloc(8);
             byte[] arr = BitConverter.GetBytes(val);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
-            data[CurrentByte++] = arr[4];
-            data[CurrentByte++] = arr[5];
-            data[CurrentByte++] = arr[6];
-            data[CurrentByte++] = arr[7];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
+            data[Position++] = arr[4];
+            data[Position++] = arr[5];
+            data[Position++] = arr[6];
+            data[Position++] = arr[7];
         }
 
         public void Write(byte[] arr, int startIndex, int length)
         {
             CheckRealloc(length);
-            Buffer.BlockCopy(arr, startIndex, data, CurrentByte, length);
-            CurrentByte += length;
+            Buffer.BlockCopy(arr, startIndex, data, Position, length);
+            Position += length;
         }
 
         // Taken from http://referencesource.microsoft.com/#mscorlib/system/io/binarywriter.cs,2daa1d14ff1877bd
@@ -314,31 +335,31 @@ namespace GUC.Network
         {
             CheckRealloc(12);
             byte[] arr = BitConverter.GetBytes(vec.X);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
 
             arr = BitConverter.GetBytes(vec.Y);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
 
             arr = BitConverter.GetBytes(vec.Z);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
         }
 
         public void Write(ColorRGBA color)
         {
             CheckRealloc(4);
-            data[CurrentByte++] = color.R;
-            data[CurrentByte++] = color.G;
-            data[CurrentByte++] = color.B;
-            data[CurrentByte++] = color.A;
+            data[Position++] = color.R;
+            data[Position++] = color.G;
+            data[Position++] = color.B;
+            data[Position++] = color.A;
         }
 
         /*
@@ -361,9 +382,9 @@ namespace GUC.Network
 
         void WriteInt24(int val)
         {
-            data[CurrentByte++] = (byte)val;
-            data[CurrentByte++] = (byte)(val >> 8);
-            data[CurrentByte++] = (byte)(val >> 16);
+            data[Position++] = (byte)val;
+            data[Position++] = (byte)(val >> 8);
+            data[Position++] = (byte)(val >> 16);
         }
 
         /// <summary>
@@ -372,9 +393,9 @@ namespace GUC.Network
         public void WriteCompressedDirection(Vec3f direction)
         {
             CheckRealloc(3);
-            data[CurrentByte++] = (byte)(direction.X * 127.0f);
-            data[CurrentByte++] = (byte)(direction.Y * 127.0f);
-            data[CurrentByte++] = (byte)(direction.Z * 127.0f);
+            data[Position++] = (byte)(direction.X * 127.0f);
+            data[Position++] = (byte)(direction.Y * 127.0f);
+            data[Position++] = (byte)(direction.Z * 127.0f);
         }
 
 
@@ -382,22 +403,22 @@ namespace GUC.Network
         {
             CheckRealloc(12);
             byte[] arr = BitConverter.GetBytes(angles.Pitch);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
 
             arr = BitConverter.GetBytes(angles.Yaw);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
 
             arr = BitConverter.GetBytes(angles.Roll);
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
-            data[CurrentByte++] = arr[2];
-            data[CurrentByte++] = arr[3];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
+            data[Position++] = arr[2];
+            data[Position++] = arr[3];
         }
 
         /// <summary> Angle must be [-pi, +pi]. Writes 2 Bytes. </summary>
@@ -410,16 +431,16 @@ namespace GUC.Network
         {
             CheckRealloc(6);
             byte[] arr = BitConverter.GetBytes(Angles.Angle2Short(angles.Pitch));
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
 
             arr = BitConverter.GetBytes(Angles.Angle2Short(angles.Yaw));
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
 
             arr = BitConverter.GetBytes(Angles.Angle2Short(angles.Roll));
-            data[CurrentByte++] = arr[0];
-            data[CurrentByte++] = arr[1];
+            data[Position++] = arr[0];
+            data[Position++] = arr[1];
         }
 
         #endregion

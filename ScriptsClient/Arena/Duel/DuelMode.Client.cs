@@ -8,7 +8,7 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.GUI;
 
-namespace GUC.Scripts.Arena
+namespace GUC.Scripts.Arena.Duel
 {
     static partial class DuelMode
     {
@@ -17,8 +17,8 @@ namespace GUC.Scripts.Arena
 
         public static void ReadRequest(PacketReader stream)
         {
-            NPCInst requester, target;
-            if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out requester) && WorldInst.Current.TryGetVob(stream.ReadUShort(), out target))
+            if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out NPCInst requester) 
+                && WorldInst.Current.TryGetVob(stream.ReadUShort(), out NPCInst target))
             {
                 if (requester == ArenaClient.Client.Character)
                     DuelMessage("Du hast " + target.CustomName + " zum Duell herausgefordert.");

@@ -295,7 +295,7 @@ namespace GUC.Network
                 devInfo.Texts[devIndex++].Text = "Spike: " + Hooks.hGame.SpikeLongest / TimeSpan.TicksPerMillisecond + "ms";
 
                 // update kB/s text on screen
-                /*int kbs = (int)(receivedBytes);
+                int kbs = (int)(receivedBytes);
                 devInfo.Texts[devIndex++].Text = ("Net received: " + kbs + "B/s");
                 kbs = (int)(sentBytes);
                 devInfo.Texts[devIndex++].Text = ("Net Sent: " + kbs + "B/s");
@@ -310,7 +310,10 @@ namespace GUC.Network
 
                     devInfo.Texts[devIndex++].Text = "Weather: " + World.Current.WeatherCtrl.CurrentWeight + " " + World.Current.Clock.Time.ToString(false);
                     devInfo.Texts[devIndex++].Text = "Barrier: " + World.Current.BarrierCtrl.CurrentWeight + " " + World.Current.BarrierCtrl.EndWeight;
-                }*/
+
+                    devInfo.Texts[devIndex++].Text = "VobSounds: " + SoundHandler.VobSoundCount;
+                    devInfo.Texts[devIndex++].Text = "PosSounds: " + SoundHandler.PosSoundCount;
+                }
             }
 
             #endregion
@@ -385,6 +388,10 @@ namespace GUC.Network
                 // load a gothic world
                 case ServerMessages.LoadWorldMessage:
                     World.Messages.ReadLoadWorld(stream);
+                    break;
+
+                case ServerMessages.WorldLeaveMessage:
+                    throw new NotImplementedException();
                     break;
 
                 // client becomes a spectator
@@ -626,8 +633,7 @@ namespace GUC.Network
         void ReadPlayerControlMessage(PacketReader stream)
         {
             int characterID = stream.ReadUShort();
-            NPC npc;
-            if (!World.Current.TryGetVob(characterID, out npc))
+            if (!World.Current.TryGetVob(characterID, out NPC npc))
             {
                 throw new Exception("Hero not found!");
             }

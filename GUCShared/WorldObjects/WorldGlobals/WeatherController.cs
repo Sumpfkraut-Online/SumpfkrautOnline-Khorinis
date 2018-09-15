@@ -58,7 +58,7 @@ namespace GUC.WorldObjects.WorldGlobals
         /// <summary> Sets the next interpolated rainfall weight and time. </summary>
         /// <param name="time"> The point in time when the given rainfall weight should be reached. </param>
         /// <param name="weight">[0..1]</param>
-        public override void SetNextWeight(WorldTime time, float weight)
+        public override void SetNextWeight(long time, float weight)
         {
             base.SetNextWeight(time, weight);
             pSetNextWeight();

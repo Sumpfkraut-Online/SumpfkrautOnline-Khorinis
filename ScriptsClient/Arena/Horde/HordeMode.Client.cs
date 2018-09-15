@@ -4,30 +4,109 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.Menus;
+using GUC.Scripting;
 
 namespace GUC.Scripts.Arena
 {
     static partial class HordeMode
     {
+        public static bool IsPlaying { get { return ArenaClient.Client.HordeClass != null && ArenaClient.Client.IsIngame; } }
+
         public static void ReadGameInfo(PacketReader stream)
         {
             string name = stream.ReadString();
             activeDef = HordeDef.GetDef(name);
-            activeSectionIndex = stream.ReadByte();
-            SetPhase((HordePhase)stream.ReadByte());
+            HordePhase phase = (HordePhase)stream.ReadByte();
+            if (phase == HordePhase.Stand)
+            {
+                int index = stream.ReadByte();
+                StartStand(activeDef.Stands[index]);
+            }
+            else
+            {
+                Endstand();
+            }
+            SetPhase(phase);
+        }
+
+        static HordeStand ActiveStand;
+        static SoundInstance StandSFXLoop;
+        static int messageIndex = 0;
+        static GUCTimer messageTimer = new GUCTimer(NextMessage);
+        static void StartStand(HordeStand stand)
+        {
+            ActiveStand = stand;
+
+            if (IsPlaying)
+            {
+                if (!string.IsNullOrWhiteSpace(stand.SFXStart))
+                    SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStart), stand.Position, 2500, 1.0f);
+
+                if (!string.IsNullOrWhiteSpace(stand.SFXStart))
+                    StandSFXLoop = SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXLoop), stand.Position, 2500, 0.5f, true);
+
+                if (stand.Messages != null && stand.Messages.Length > 0)
+                {
+                    messageIndex = 0;
+                    NextMessage();
+                    if (stand.Messages.Length > 1 && stand.Duration > 0)
+                    {
+                        messageTimer.SetInterval(stand.Duration * TimeSpan.TicksPerSecond / (stand.Messages.Length - 1));
+                        messageTimer.Start();
+                    }
+                }
+            }
+        }
+
+        static void NextMessage()
+        {
+            if (ActiveStand == null || messageIndex >= ActiveStand.Messages.Length)
+            {
+                messageTimer.Stop();
+                return;
+            }
+
+            Log.Logger.Log(ActiveStand.Messages[messageIndex]);
+            ChatMenu.Menu.AddMessage(ChatMode.Private, ActiveStand.Messages[messageIndex++]);
+        }
+
+        static void Endstand()
+        {
+            if (ActiveStand == null)
+                return;
+
+            if (StandSFXLoop != null)
+                SoundHandler.StopSound(StandSFXLoop);
+
+            var stand = ActiveStand;
+            ActiveStand = null;
+            if (IsPlaying)
+            {
+                if (!string.IsNullOrWhiteSpace(stand.SFXStart))
+                    SoundHandler.PlaySound3D(new SoundDefinition(stand.SFXStop), stand.Position);
+            }
+            messageTimer.Stop();
         }
 
         public static void ReadStartMessage(PacketReader stream)
         {
             string name = stream.ReadString();
             activeDef = HordeDef.GetDef(name);
-            activeSectionIndex = 0;
         }
 
         public static void ReadPhaseMessage(PacketReader stream)
         {
-            activeSectionIndex = stream.ReadByte();
-            SetPhase((HordePhase)stream.ReadByte());
+            HordePhase phase = (HordePhase)stream.ReadByte();
+            SetPhase(phase);
+            if (phase == HordePhase.Stand)
+            {
+                int index = stream.ReadByte();
+                StartStand(activeDef.Stands[index]);
+            }
+            else
+            {
+                Endstand();
+            }
         }
 
         static void SetPhase(HordePhase phase)
@@ -35,11 +114,14 @@ namespace GUC.Scripts.Arena
             string screenMsg;
             switch (phase)
             {
-                case HordePhase.Intermission:
-                    screenMsg = ActiveSection.FinishedMessage;
+                case HordePhase.WarmUp:
+                    screenMsg = "warmup";
                     break;
                 case HordePhase.Fight:
-                    screenMsg = "Der Kampf beginnt!";
+                    screenMsg = "Fight!";
+                    break;
+                case HordePhase.Stand:
+                    screenMsg = "Stand";
                     break;
                 case HordePhase.Victory:
                     screenMsg = "Sieg!";
