@@ -96,13 +96,13 @@ namespace GUC.Hooks
             {
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);
-
+                
                 GameTime.Update();
                 GameClient.Update();
-
+                
                 GameTime.Update();
                 InputHandler.Update();
-
+                
                 if (!ShowConnectionAttempts())
                 {
                     if (!outgameStarted)

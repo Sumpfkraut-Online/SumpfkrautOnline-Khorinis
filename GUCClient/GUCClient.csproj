@@ -27,7 +27,7 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -319,6 +319,12 @@
     <Compile Include="Hooks\hFileSystem.cs" />
     <Compile Include="Hooks\hModel.cs" />
     <Compile Include="Hooks\hNpc.cs" />
+    <Compile Include="Hooks\VDFS\FileHandle.cs" />
+    <Compile Include="Hooks\VDFS\hFileSystem.Phys.cs" />
+    <Compile Include="Hooks\VDFS\hFileSystem.cs" />
+    <Compile Include="Hooks\VDFS\VDFSArchive.cs" />
+    <Compile Include="Hooks\VDFS\VDFSDirectoryInfo.cs" />
+    <Compile Include="Hooks\VDFS\VDFSFileInfo.cs" />
     <Compile Include="Hooks\VobRenderArgs.cs" />
     <Compile Include="Hooks\hGame.cs" />
     <Compile Include="Hooks\hParser.cs" />
@@ -429,6 +435,7 @@
       <Link>RakNet.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <Compile Include="Hooks\VDFS\hFileSystem.Virt.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

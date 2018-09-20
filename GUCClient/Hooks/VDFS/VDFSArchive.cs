@@ -102,8 +102,7 @@ namespace GUC.Hooks.VDFS
         {
             string path = parent == null ? name : Path.Combine(parent.Path, name);
 
-            VDFSDirectoryInfo dir;
-            if (!vDirs.TryGetValue(path, out dir))
+            if (!vDirs.TryGetValue(path, out VDFSDirectoryInfo dir))
             {
                 dir = new VDFSDirectoryInfo(path);
                 if (parent != null)
@@ -134,10 +133,10 @@ namespace GUC.Hooks.VDFS
 
         void AddFile(VDFSDirectoryInfo dir, Entry entry)
         {
-            string filePath = Path.Combine(dir.Path, entry.Name);
+            //string filePath = Path.Combine(dir.Path, entry.Name);
+            string filePath = string.IsNullOrWhiteSpace(dir.Path) ? ('\\' + entry.Name) : string.Format("\\{0}\\{1}", dir.Path, entry.Name);
 
-            VDFSFileInfo other;
-            if (vFiles.TryGetValue(filePath, out other))
+            if (vFiles.TryGetValue(filePath, out VDFSFileInfo other))
             {// there is already a file with that path
                 if (this.projectVDFS) // this one is more important
                 {

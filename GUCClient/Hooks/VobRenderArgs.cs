@@ -93,7 +93,7 @@ namespace GUC.Hooks
                 return;
             inited = true;
 
-            Process.AddHook(OnDrawItems, 0x7A6750, 5);
+            Injection.Process.AddFastHook(OnDrawItems, 0x7A6750, 5);
 
             Logger.Log("Added VobRender hooks.");
         }
@@ -114,12 +114,11 @@ namespace GUC.Hooks
         static zCWorld rndrWorld = null;
         static zCVob camVob = null;
         static zCCamera camera = null;
-        static void OnDrawItems(Hook hook, RegisterMemory rmem)
+        static void OnDrawItems(Injection.RegisterMemory rmem)
         {
-            return;
             try
             {
-                int viewAddr = rmem[Registers.ECX];
+                int viewAddr = rmem.ECX;
                 if (rndrDict.TryGetValue(viewAddr, out VobRenderArgs args) && args != null)
                 {
                     var vob = args.item;

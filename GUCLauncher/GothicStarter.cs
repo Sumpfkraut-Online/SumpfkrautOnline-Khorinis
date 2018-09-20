@@ -50,7 +50,7 @@ namespace GUCLauncher
             g2Psi.UseShellExecute = false;
             g2Psi.EnvironmentVariables.Add("GUCProjectPath", projectFolder);
             g2Psi.EnvironmentVariables.Add("GUCServerIP", ip);
-            g2Psi.EnvironmentVariables.Add("GUCServerPassword", Convert.ToBase64String(pw == null ? new byte[0] : pw));
+            g2Psi.EnvironmentVariables.Add("GUCServerPassword", Convert.ToBase64String(pw ?? new byte[0]));
             g2Psi.EnvironmentVariables.Add("GUCServerPort", port.ToString());
             g2Psi.EnvironmentVariables.Add("GUCGothicPath", Configuration.GothicPath);
             

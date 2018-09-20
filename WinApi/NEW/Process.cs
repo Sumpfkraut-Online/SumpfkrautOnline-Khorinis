@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
+using GUC.Injection.Utilities;
 
-namespace WinApi.NEW
+namespace GUC.Injection
 {
     public unsafe static class Process
     {
-        static IntPtr Handle;
+        static int Handle;
         static uint ProcessID;
 
         public static void Init()
@@ -21,13 +22,12 @@ namespace WinApi.NEW
             {
                 ProcessID = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
                 System.Diagnostics.Process.EnterDebugMode();
-                Handle = PInvoke.OpenProcess((uint)PInvoke.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
-                if (Handle == IntPtr.Zero)
-                    Error.GetLast();
+                Handle = PInvoke.OpenProcess(PInvoke.ProcessAccess.PROCESS_ALL_ACCESS, false, ProcessID);
+                if (Handle == 0) Error.GetLast();
 
                 const int ExecuteCodeStart = 0x401000;
                 const int ExecuteCodeEnd = 0xB0BFFF;
-                PInvoke.VirtualProtect(new IntPtr(ExecuteCodeStart), ExecuteCodeEnd - ExecuteCodeStart, PInvoke.MemoryProtection.ExecuteReadWrite, out PInvoke.MemoryProtection old);
+                PInvoke.VirtualProtect(ExecuteCodeStart, ExecuteCodeEnd - ExecuteCodeStart, PInvoke.MemoryProtection.ExecuteReadWrite, out PInvoke.MemoryProtection old);
             }
             catch (Exception e)
             {
@@ -79,32 +79,35 @@ namespace WinApi.NEW
             return *(int*)address;
         }
 
-        public static void ReadBytes(int address, byte[] buffer, uint count)
+        public static void ReadBytes(int address, byte[] buffer, int count)
         {
             ExceptionHelper.AddressZero(address);
             ExceptionHelper.ArgumentNull(buffer, "buffer");
             ExceptionHelper.ArrayCount(buffer, count);
 
+            if (count <= 0)
+                return;
+
             fixed (byte* buf = buffer)
             {
                 int index = 0;
                 int nextIndex;
-                while ((nextIndex = index + 4) < count)
+                while ((nextIndex = index + 8) <= count)
                 {
-                    *(int*)(buf + index) = *(int*)(address + index);
-                    index += 4;
+                    *(long*)(buf + index) = *(long*)(address + index);
+                    index = nextIndex;
                 }
 
-                while (index < count)
+                while ((nextIndex = index + 1) <= count)
                 {
                     *(buf + index) = *(byte*)(address + index);
-                    index++;
+                    index = nextIndex;
                 }
             }
         }
 
         /// <summary> Creates a new byte array and reads. </summary>
-        public static byte[] ReadBytes(int address, uint count)
+        public static byte[] ReadBytes(int address, int count)
         {
             ExceptionHelper.AddressZero(address);
             byte[] result = new byte[count];
@@ -116,98 +119,147 @@ namespace WinApi.NEW
 
         #region Write
 
+        /// <summary> Sets the specified bit from the left of the 4 bytes at address. </summary>
         public static void WriteBit(int address, int bitNum, bool value)
         {
-            /*ExceptionHelper.AddressZero(address);
-            *(byte*)address = value;
+            ExceptionHelper.AddressZero(address);
 
             int bitValue = 1 << bitNum;
             int read = ReadInt(address);
             if (((read & bitValue) != 0) != value)
             {
-                Write(address, read ^ bitValue);
-            }´*/
+                *(int*)address = read ^ bitValue;
+            }
         }
 
         /// <summary> Writes bool as 4 bytes. </summary>
-        public static void Write(int address, bool value)
+        public static void WriteBool(int address, bool value)
         {
             ExceptionHelper.AddressZero(address);
             *(int*)address = value ? 1 : 0;
         }
 
-        public static void Write(int address, byte value)
+        public static void WriteByte(int address, byte value)
         {
             ExceptionHelper.AddressZero(address);
             *(byte*)address = value;
         }
 
-        public static void Write(int address, sbyte value)
+        public static void WriteSByte(int address, sbyte value)
         {
             ExceptionHelper.AddressZero(address);
             *(sbyte*)address = value;
         }
 
-        public static void Write(int address, ushort value)
+        public static void WriteUShort(int address, ushort value)
         {
             ExceptionHelper.AddressZero(address);
             *(ushort*)address = value;
         }
 
-        public static void Write(int address, short value)
+        public static void WriteShort(int address, short value)
         {
             ExceptionHelper.AddressZero(address);
             *(short*)address = value;
         }
 
-        public static void Write(int address, uint value)
+        public static void WriteUInt(int address, uint value)
         {
             ExceptionHelper.AddressZero(address);
             *(uint*)address = value;
         }
 
-        public static void Write(int address, int value)
+        public static void WriteInt(int address, int value)
         {
             ExceptionHelper.AddressZero(address);
             *(int*)address = value;
         }
 
+        public static void WriteBytes(int address, byte[] buffer, int count)
+        {
+            ExceptionHelper.AddressZero(address);
+            ExceptionHelper.ArgumentNull(buffer, "buffer");
+            ExceptionHelper.ArrayCount(buffer, count);
+
+            if (count <= 0)
+                return;
+
+            fixed(byte* ptr = buffer)
+            {
+                int index = 0;
+                int nextIndex;
+                while ((nextIndex = index + 8) <= count)
+                {
+                    *(long*)(address + index) = *(long*)(ptr + index);
+                    index = nextIndex;
+                }
+
+                while ((nextIndex = index + 1) <= count)
+                {
+                    *(byte*)(address + index) = *(ptr + index);
+                    index = nextIndex;
+                }
+            }
+        }
+
+        public static void WriteBytes(int address, params byte[] buffer)
+        {
+            WriteBytes(address, buffer, buffer.Length);
+        }
+
+        public static void Nop(int address, int count)
+        {
+            ExceptionHelper.AddressZero(address);
+            if (count <= 0) return;
+            for (int i = 0; i < count; i++)
+                *(byte*)(address + i) = 0x90;
+        }
+
         #endregion
 
-        public static FastHook AddFastHook(FastHook.HookHandler method, int address, uint length, Registers registers = Registers.ALL)
+        /// <summary> "Transmits via CLR / .NET, slow but safe, allocates space for call code and jumps there." </summary>
+        public static FastHook AddSafeHook(Delegate method, int address, int length)
         {
-            FastHook hook = new FastHook(method, address, length, registers);
+            throw new NotImplementedException();
+        }
+
+        /// <summary> "Directly calls the C# method, breaks (at least) FileStreams, allocates space for call code and jumps there." </summary>
+        public static FastHook AddFastHook(FastHook.MethodScheme method, int address, int length)
+        {
+            FastHook hook = new FastHook(method, address, length);
             hook.Inject();
             return hook;
         }
 
-        public static int Alloc(uint size)
-        {
-            return 0;
-            if (size == 0)
-                throw new Exception("Size is zero!");
+        #region Alloc & Free
 
-            IntPtr ptr = PInvoke.VirtualAllocEx(Handle, IntPtr.Zero, size, PInvoke.AllocationType.Reserve | PInvoke.AllocationType.Commit, PInvoke.MemoryProtection.ReadWrite);
-            if (ptr == IntPtr.Zero)
+        public static int Alloc(int size)
+        {
+            ExceptionHelper.SEQZero(size, "size");
+
+            int ptr = PInvoke.VirtualAllocEx(Handle, 0, (uint)size, PInvoke.AllocationType.Reserve | PInvoke.AllocationType.Commit, PInvoke.MemoryProtection.ExecuteReadWrite);
+            if (ptr == 0)
                 Error.GetLast();
 
-            return ptr.ToInt32();
+            return ptr;
         }
 
-        public static uint Write(int address, byte[] arr, int count)
+        public static void Free(int address, int count)
         {
-            if (address <= 0)
-                throw new ArgumentException("Address is <= 0!");
+            ExceptionHelper.AddressZero(address);
+            ExceptionHelper.SEQZero(count, "count");
 
-            if (!PInvoke.WriteProcessMemory(Handle, new IntPtr(address), arr, (uint)count, out uint byteWritten))
+            if (!PInvoke.VirtualFreeEx(Handle, address, (uint)count, PInvoke.AllocationType.Decommit))
                 Error.GetLast();
-
-            return byteWritten;
+            if (!PInvoke.VirtualFreeEx(Handle, address, 0, PInvoke.AllocationType.Release))
+                Error.GetLast();
         }
+
+        #endregion
 
         static void MessageBox(string text)
         {
-            PInvoke.MessageBox(IntPtr.Zero, text, "WinApi", 0);
+            PInvoke.MessageBox(0, text, "WinApi", 0);
         }
     }
 }

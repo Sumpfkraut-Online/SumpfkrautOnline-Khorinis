@@ -12,6 +12,7 @@ using WinApi;
 using GUC.Hooks;
 using System.Reflection;
 using System.Management;
+using System.Runtime.InteropServices;
 
 namespace GUC
 {
@@ -28,46 +29,33 @@ namespace GUC
         static string password;
         static string gothicRootPath;
 
+        /// <summary> Gothic 2 folder. No backslash at the end. </summary>
         public static string GothicPath { get { return gothicPath; } }
-        public static string GothicRootPath { get { return gothicPath; } }
+        /// <summary> Gothic 2 folder. No backslash at the end. (Gothic2/System at start of program) </summary>
+        public static string GothicRootPath { get { return gothicRootPath; } }
+        /// <summary> project (ip) folder. No backslash at the end. </summary>
         public static string ProjectPath { get { return projectPath; } }
         public static string ServerIP { get { return serverIP; } }
         public static ushort ServerPort { get { return serverPort; } }
         public static string Password { get { return password; } }
 
-        public static string GetProjectPath(string path)
-        {
-            return Path.Combine(projectPath, path);
-        }
-
-        public static string GetGothicPath(string path)
-        {
-            return Path.Combine(gothicPath, path);
-        }
-
-        public static string GetGothicRootPath(string path)
-        {
-            return Path.Combine(gothicRootPath, path);
-        }
-
         static void SetRootPathHook(Hook hook, RegisterMemory rmem)
         {
-            //Logger.LogWarning("Set root!");
-            gothicRootPath = Gothic.System.zFile.s_rootPathString.ToString();
+            gothicRootPath = Gothic.System.zFile.s_rootPathString.ToString().ToUpperInvariant();
             Logger.Log("Set root to: " + gothicRootPath);
         }
 
         static void SetupProject()
         {
-            gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath");
+            gothicPath = Environment.GetEnvironmentVariable("GUCGothicPath").ToUpperInvariant();
             if (string.IsNullOrWhiteSpace(gothicPath) || !Directory.Exists(gothicPath))
                 throw new Exception("Gothic folder environment variable is null or not found!");
 
             Process.AddHook(SetRootPathHook, 0x44235E, 7);
             Process.AddHook(SetRootPathHook, 0x44237A, 7);
-            gothicRootPath = Path.Combine(gothicPath, "SYSTEM");
+            gothicRootPath = Path.Combine(gothicPath, "SYSTEM").ToUpperInvariant();
 
-            projectPath = Environment.GetEnvironmentVariable("GUCProjectPath");
+            projectPath = Environment.GetEnvironmentVariable("GUCProjectPath").ToUpperInvariant();
             if (string.IsNullOrWhiteSpace(projectPath) || !Directory.Exists(projectPath))
                 throw new Exception("Project folder environment variable is null or not found!");
 
@@ -83,6 +71,11 @@ namespace GUC
                 password = null;
 
             AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
+
+            const string iniString = "SYSTEM\\GOTHIC.INI";
+            string destIni = Path.Combine(ProjectPath, iniString);
+            if (!File.Exists(destIni))
+                File.Copy(Path.Combine(GothicPath, iniString), destIni);
         }
 
         static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
@@ -108,17 +101,15 @@ namespace GUC
             {
                 if (mained) return 0;
                 mained = true;
-
-               // WinApi.NEW.Process.Init();
-
+                
                 SetupProject();
 
                 SplashScreen.SetUpHooks();
                 SplashScreen.Create();
 
                 // add hooks
-                hFileSystem.AddHooks();
-                //Hooks.VDFS.hFileSystem.AddHooks();
+                //hFileSystem.AddHooks();
+                Hooks.VDFS.hFileSystem.AddHooks();
                 hParser.AddHooks();
                 hGame.AddHooks();
                 hPlayerVob.AddHooks();

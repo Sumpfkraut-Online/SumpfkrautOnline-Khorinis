@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace GUC
 {
@@ -47,6 +48,14 @@ namespace GUC
         public static T TryGet<T>(this T[] array, int index)
         {
             return (index < array.Length && index >= 0) ? array[index] : default(T);
+        }
+    }
+
+    public static class FileExtensions
+    {
+        public static IEnumerable<FileInfo> EnumerateFiles(this DirectoryInfo dir, params string[] extensions)
+        {
+            return dir.EnumerateFiles().Where(f => extensions.Contains(f.Extension, StringComparer.OrdinalIgnoreCase));
         }
     }
 }

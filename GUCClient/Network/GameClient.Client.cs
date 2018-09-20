@@ -114,7 +114,7 @@ namespace GUC.Network
         static GameClient()
         {
             Client = ScriptManager.Interface.CreateClient();
-
+            
             // Init RakNet objects
             clientInterface = RakPeerInterface.GetInstance();
             clientInterface.SetOccasionalPing(true);
@@ -196,7 +196,7 @@ namespace GUC.Network
             int counter = 0;
             ServerMessages msgType;
             Packet packet;
-
+            
             // Receive packets
             while ((packet = clientInterface.Receive()) != null)
             {

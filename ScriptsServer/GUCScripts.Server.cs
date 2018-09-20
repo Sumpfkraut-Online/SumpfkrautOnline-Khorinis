@@ -178,7 +178,7 @@ namespace GUC.Scripts
         void CreateTestWorld()
         {
             var world = new WorldInst(null);
-            world.Path = "DUEL_OLDCAMP.ZEN";
+            world.Path = "MINENTAL.ZEN";
             world.Create();
             world.Clock.SetTime(new WorldTime(0, 8), 15.0f);
             world.Clock.Stop();
