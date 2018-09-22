@@ -313,6 +313,10 @@ namespace GUC.Network
 
                     devInfo.Texts[devIndex++].Text = "VobSounds: " + SoundHandler.VobSoundCount;
                     devInfo.Texts[devIndex++].Text = "PosSounds: " + SoundHandler.PosSoundCount;
+
+                    //if (NPC.Hero != null)
+                    //    devInfo.Texts[devIndex++].Text =  NPC.Hero.Movement.ToString();
+
                 }
             }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace GUC.Injection.Utilities
+namespace WinApiNew.Utilities
 {
     static class Error
     {

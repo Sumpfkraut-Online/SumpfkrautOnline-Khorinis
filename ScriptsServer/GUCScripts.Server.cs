@@ -470,6 +470,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.Protection = 40;
             itemDef.VisualChange = "ARMOR_GRDL.ASC";
+            itemDef.InvOffset = new Vec3f(0, -20, -20);
             itemDef.Model = m;
             itemDef.Create();
 
@@ -494,6 +495,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.Protection = 40;
             itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
+            itemDef.InvOffset = new Vec3f(0, -20, -20);
             itemDef.Model = m;
             itemDef.Create();
 
@@ -801,6 +803,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Thorus_ADDON.asc";
             itemDef.Protection = 50;
+            itemDef.InvOffset = new Vec3f(0, -20, -20);
             itemDef.Model = m;
             itemDef.Create();
 

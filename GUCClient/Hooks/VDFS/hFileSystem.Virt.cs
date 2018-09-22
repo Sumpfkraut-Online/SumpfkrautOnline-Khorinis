@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Injection;
+using WinApiNew;
 using System.IO;
 using Gothic.Types;
 using GUC.Log;
@@ -46,12 +46,12 @@ namespace GUC.Hooks.VDFS
                 if (path.Length > 0 && path[0] != '\\') // not virtual?
                     path = zFile.s_virtPathString + path;
 
-                if (path[0] != '\\')
-                    path = '\\' + path;
+                if (path[0] == '\\')
+                    path = path.Substring(1);
 
                 if ((vFiles.Count > 0 && vFiles.ContainsKey(path))
-                    || File.Exists(Program.ProjectPath + path)
-                    || File.Exists(Program.GothicRootPath + path))
+                    || File.Exists(Program.ProjectPathCombine(path))
+                    || File.Exists(Program.GothicRootPathCombine(path)))
                 {
                     //Logger.Log("Exists: " + path);
                     mem.EAX = 1;
@@ -84,11 +84,11 @@ namespace GUC.Hooks.VDFS
                 if (path.Length > 0 && path[0] != '\\') // not virtual enough?)
                     path = zFile.s_virtPathString + path;
 
-                if (path[0] != '\\')
-                    path = '\\' + path;
+                if (path[0] == '\\')
+                    path = path.Substring(1);
 
-                if (path.EndsWith("CAMERA.DAT")) // gothic fucks over its virtual path with threads sometimes
-                    path = @"\_WORK\DATA\SCRIPTS\_COMPILED\CAMERA.DAT";
+                if (path.EndsWith("CAMERA.DAT")) // gothic fucks over its virtual path with multiple thread at one point, ..
+                    path = @"_WORK\DATA\SCRIPTS\_COMPILED\CAMERA.DAT"; // .. apparently at the time where the camera is loaded
 
                 //Logger.Log("Open " + self.ToString("X4") + " " + path);
                 if (vFiles.Count > 0 && vFiles.TryGetValue(path, out VDFSFileInfo vdfsFileInfo))
@@ -97,14 +97,14 @@ namespace GUC.Hooks.VDFS
                 }
                 else
                 {
-                    FileInfo fullPath = new FileInfo(Program.ProjectPath + path);
+                    FileInfo fullPath = new FileInfo(Program.ProjectPathCombine(path));
                     if (fullPath.Exists)
                     {
                         fileHandle = new FileHandle(fullPath);
                     }
                     else
                     {
-                        fullPath = new FileInfo(Program.GothicRootPath + path);
+                        fullPath = new FileInfo(Program.GothicRootPathCombine(path));
 
                         if (fullPath.Exists)
                         {
@@ -337,6 +337,11 @@ namespace GUC.Hooks.VDFS
                 string fileName = new zString(mem.GetArg(0)).ToString();
                 string folder = new zString(mem.GetArg(1)).ToString();
 
+                if (folder.Length > 0 && folder[0] == '\\')
+                    folder = folder.Substring(1);
+                if (folder.Length > 0 && folder[folder.Length - 1] == '\\')
+                    folder = folder.Remove(folder.Length - 1);
+
                 //Logger.Log("SearchFile: " + fileName + " " + folder);
                 if (vFiles.Count > 0)
                 {
@@ -345,14 +350,14 @@ namespace GUC.Hooks.VDFS
                         VDFSFileInfo fi = dir.SearchFile(fileName);
                         if (fi != null)
                         {
-                            zfile.SetPath(fi.Path);
+                            zfile.SetPath('\\' + fi.Path);
                             mem.EAX = 0;
                             return;
                         }
                     }
                 }
 
-                DirectoryInfo dirInfo = new DirectoryInfo(Program.ProjectPath + folder);
+                DirectoryInfo dirInfo = new DirectoryInfo(Program.ProjectPathCombine(folder));
                 if (dirInfo.Exists)
                 {
                     FileInfo fi = dirInfo.EnumerateFiles(fileName, SearchOption.AllDirectories).FirstOrDefault();
@@ -364,7 +369,7 @@ namespace GUC.Hooks.VDFS
                     }
                 }
 
-                dirInfo = new DirectoryInfo(Program.GothicRootPath + folder);
+                dirInfo = new DirectoryInfo(Program.GothicRootPathCombine(folder));
                 if (dirInfo.Exists)
                 {
                     FileInfo fi = dirInfo.EnumerateFiles(fileName, SearchOption.AllDirectories).FirstOrDefault();

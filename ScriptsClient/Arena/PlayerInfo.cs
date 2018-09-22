@@ -30,6 +30,9 @@ namespace GUC.Scripts.Arena
         TeamIdent teamID = TeamIdent.None;
         public TeamIdent TeamID { get { return teamID; } }
 
+        public bool JoinedFFA { get { return this.teamID == TeamIdent.FFAPlayer || this.teamID == TeamIdent.FFASpectator; } }
+        public bool JoinedGameMode { get { return this.teamID >= TeamIdent.GMSpectator; } }
+
         public static void ReadHeroInfo(PacketReader stream)
         {
             heroInfo.id = stream.ReadByte();

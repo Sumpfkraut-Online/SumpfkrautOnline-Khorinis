@@ -44,7 +44,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
         oCNpc thisVob;
 
         float rotation = 180;
-        float distance = 130;
+        float distance = 100;
 
         GUCVisual leftArrow, rightArrow;
 
@@ -64,6 +64,8 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
             leftArrow.SetBackTexture("L.TGA");
             rightArrow = new GUCVisual(x + w - 170, y + h / 2 - 40, 15, 20);
             rightArrow.SetBackTexture("R.TGA");
+
+            vis.CreateText("Zoom +/-", 120, 10);
         }
 
         public void SetVisual(string visual)
@@ -98,22 +100,19 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 
         public void KeyPressed(VirtualKeys key)
         {
-            Log.Logger.Log(key);
             switch (key)
             {
                 case VirtualKeys.Left:
-                    rotation += 5;
+                    rotation -= 8;
                     break;
                 case VirtualKeys.Right:
-                    rotation -= 5;
+                    rotation += 8;
                     break;
-                case VirtualKeys.OEMPlus:
                 case VirtualKeys.Add:
-                    distance -= 5;
+                    distance -= 8;
                     break;
-                case VirtualKeys.OEMMinus:
                 case VirtualKeys.Subtract:
-                    distance += 5;
+                    distance += 8;
                     break;
                 default:
                     return;
@@ -124,16 +123,18 @@ namespace GUC.Scripts.Sumpfkraut.GUI.MainMenu
 
         void UpdateOrientation()
         {
-            if (distance < 40)
-                distance = 40;
-            else if (distance > 180)
-                distance = 180;
+            const float distMax = 180;
+            const float distMin = 0;
+            if (distance < distMin)
+                distance = distMin;
+            else if (distance > distMax)
+                distance = distMax;
 
-            float offsetY = (distance - 180) / 1.8f + 10;
+            float offsetY = (distance - 100) * 0.4f - 20;
 
             vis.RotationYaw = Angles.Deg2Rad(rotation);
             vis.OffsetY = offsetY;
-            vis.OffsetZ = distance - 180.0f;
+            vis.OffsetZ = distance;
         }
     }
 }

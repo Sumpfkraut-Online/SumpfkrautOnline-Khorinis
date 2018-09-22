@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using GUC.Injection.Utilities;
+using WinApiNew.Utilities;
+using System.IO;
 
-namespace GUC.Injection
+namespace WinApiNew.Hooks
 {
     public class FastHook : Hook
     {
@@ -25,40 +26,54 @@ namespace GUC.Injection
 
         protected override byte[] CreateCode(Delegate method)
         {
-            #region Method Code
-            methodAddress = Process.Alloc(methodCodeLen);
+            byte[] data;
 
-            ByteWriter bw = new ByteWriter(methodCodeLen);
-            bw.WriteByte(0x9C); // pushfd
-            bw.WriteByte(0x60); // pushad
+            using (MemoryStream ms = new MemoryStream(methodCodeLen))
+            using (BinaryWriter bw = new BinaryWriter(ms))
+            {
+                #region Method Code
+                methodAddress = Process.Alloc(methodCodeLen);
 
-            // call method (cdecl call)
-            this.ptr = Marshal.GetFunctionPointerForDelegate(method);
-            int methodPtr = ptr.ToInt32();
-            bw.WriteByte(0xE8);
-            bw.WriteInt(methodPtr - (methodAddress + 7));
+                bw.Write((byte)0x9C); // pushfd
+                bw.Write((byte)0x60); // pushad
 
-            bw.WriteByte(0x61); // popad
-            bw.WriteByte(0x9D); // popfd
-            
-            bw.WriteBytes(oriCode);
+                // call method (cdecl call)
+                this.ptr = Marshal.GetFunctionPointerForDelegate(method);
+                int methodPtr = ptr.ToInt32();
+                bw.Write((byte)0xE8);
+                bw.Write(methodPtr - (methodAddress + 7));
 
-            // jump back
-            bw.WriteByte(0xE9);
-            bw.WriteInt(Address + Length - (methodAddress + methodCodeLen));
+                bw.Write((byte)0x61); // popad
+                bw.Write((byte)0x9D); // popfd
 
-            Process.WriteBytes(methodAddress, bw.GetBuffer(), bw.Length);
-            #endregion
+                bw.Write(oriCode);
 
-            #region Hook Code
-            // hook jmp code
-            bw.Reset();
-            bw.WriteByte(0xE9);
-            bw.WriteInt(methodAddress - (Address + 5));
-            for (int i = 5; i < Length; i++) // fill rest with nops
-                bw.WriteByte(0x90);
-            return bw.CopyData();
-            #endregion
+                // jump back
+                bw.Write((byte)0xE9);
+                bw.Write(Address + Length - (methodAddress + methodCodeLen));
+
+                // write into process
+                bw.Flush();
+                data = ms.ToArray();
+                Process.WriteBytes(methodAddress, data, data.Length);
+                #endregion
+
+                #region Hook Code
+                // reset
+                ms.Position = 0;
+                ms.SetLength(0);
+
+                bw.Write((byte)0xE9);
+                bw.Write(methodAddress - (Address + 5));
+                for (int i = 5; i < Length; i++) // fill rest with nops
+                    bw.Write((byte)0x90);
+
+                bw.Flush();
+                data = ms.ToArray();
+
+                #endregion
+            }
+            return data;
         }
 
         public override void Dispose()

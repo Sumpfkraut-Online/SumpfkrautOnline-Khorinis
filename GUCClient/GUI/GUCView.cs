@@ -102,7 +102,13 @@ namespace GUC.GUI
             /// <summary> Large text font. </summary>
             Menu,
             /// <summary> Highlighted text font, so it's just white. </summary>
-            Menu_Hi
+            Menu_Hi,
+
+            Book,
+            Book_Hi,
+
+            BookLarge,
+            BookLarge_Hi,
         }
 
         public const int FontsizeDefault = 18;
@@ -113,7 +119,12 @@ namespace GUC.GUI
             { Fonts.Default, "Font_Old_10_White.tga"},
             { Fonts.Default_Hi, "Font_Old_10_White_Hi.tga"},
             { Fonts.Menu, "Font_Old_20_White.tga"},
-            { Fonts.Menu_Hi, "Font_Old_20_White_Hi.tga"}
+            { Fonts.Menu_Hi, "Font_Old_20_White_Hi.tga"},
+
+            { Fonts.Book, "Font_10_Book.tga"},
+            { Fonts.Book_Hi, "Font_10_Book_Hi.tga"},
+            { Fonts.BookLarge, "Font_20_Book.tga"},
+            { Fonts.BookLarge_Hi, "Font_20_Book_Hi.tga"},
         };
 
         public static int GetFontSize(Fonts font)

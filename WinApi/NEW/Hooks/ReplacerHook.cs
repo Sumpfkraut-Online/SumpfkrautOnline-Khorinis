@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using GUC.Injection.Utilities;
 
-namespace GUC.Injection
+namespace WinApiNew.Hooks
 {
-    /// <summary>
-    /// Address should start at the 0xE8 (...) of a call!!!
-    /// </summary>
+    /// <summary> Replaces an address </summary>
     public class ReplacerHook : Hook
     {
         #region CDECL
@@ -89,7 +86,7 @@ namespace GUC.Injection
 
         #endregion
 
-        protected ReplacerHook(Delegate method, int address) : base(method, address + 1, 4)
+        protected ReplacerHook(Delegate method, int address) : base(method, address, 4)
         {
         }
 

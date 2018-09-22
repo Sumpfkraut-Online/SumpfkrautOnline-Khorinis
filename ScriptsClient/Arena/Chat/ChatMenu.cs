@@ -103,30 +103,37 @@ namespace GUC.Scripts.Arena
             Open();
         }
 
-        protected override void KeyDown(VirtualKeys key)
+        protected override void KeyPress(VirtualKeys key, bool hold)
         {
             switch (key)
             {
                 case VirtualKeys.Escape:
-                    Close();
+                    if (!hold)
+                        Close();
                     break;
                 case VirtualKeys.Delete:
-                    if (InputHandler.IsPressed(VirtualKeys.Control))
-                        ClearChat();
-                    else
-                        textBox.Input = "";
+                    if (!hold)
+                    {
+                        if (InputHandler.IsPressed(VirtualKeys.Control))
+                            ClearChat();
+                        else
+                            textBox.Input = "";
+                    }
                     break;
                 case VirtualKeys.Return:
-                    if (!(textBox.Input.Length == 0))
-                        SendInput();
-                    if (!InputHandler.IsPressed(VirtualKeys.Shift))
-                        Close();
+                    if (!hold)
+                    {
+                        if (!(textBox.Input.Length == 0))
+                            SendInput();
+                        if (!InputHandler.IsPressed(VirtualKeys.Shift))
+                            Close();
+                    }
                     break;
                 default:
                     textBox.KeyPressed(key);
                     break;
             }
-            base.KeyDown(key);
+            base.KeyPress(key, hold);
         }
 
         public void SendInput()

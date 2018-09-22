@@ -82,7 +82,8 @@ namespace Gothic.Objects
             MoveLocal = 0x61B3C0,
             MoveWorld = 0x61B350,
             SetSleeping = 0x602930,
-            AddRefVobSubtree = 0x601CC0;
+            AddRefVobSubtree = 0x601CC0,
+            ReleaseVobSubtree = 0x601D40;
         }
 
         /*public enum HookSize
@@ -508,6 +509,16 @@ namespace Gothic.Objects
         public void AddRefVobSubtree(zCTree<zCVob> tree, int count)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.AddRefVobSubtree, tree, new IntArg(count));
+        }
+
+        public void ReleaseVobSubTree()
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ReleaseVobSubtree, new IntArg(0));
+        }
+
+        public void ReleaseVobSubTree(zCTree<zCVob> tree)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.ReleaseVobSubtree, tree);
         }
     }
 }

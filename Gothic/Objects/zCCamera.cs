@@ -95,5 +95,17 @@ namespace Gothic.Objects
             get { return new zCVob(Address + 0x920); }
             set { Process.Write(Address + 0x920, value.Address); }
         }
+
+        public float FOVx
+        {
+            get { return Process.ReadFloat(Address + 0x918); }
+            set { Process.Write(Address + 0x918, value); }
+        }
+
+        public float FOVy
+        {
+            get { return Process.ReadFloat(Address + 0x91C); }
+            set { Process.Write(Address + 0x91C, value); }
+        }
     }
 }

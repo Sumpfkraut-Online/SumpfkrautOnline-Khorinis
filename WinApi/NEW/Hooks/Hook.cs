@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Injection.Utilities;
+using WinApiNew.Utilities;
 
-namespace GUC.Injection
+namespace WinApiNew.Hooks
 {
     public abstract class Hook : IDisposable
     {

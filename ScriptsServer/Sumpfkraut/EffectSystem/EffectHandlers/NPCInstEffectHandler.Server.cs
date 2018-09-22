@@ -81,9 +81,18 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
 
-            if (this.Host.IsInFightMode && Host.GetDrawnWeapon() != null)
+
+            ItemInst removeItem;
+            if ((removeItem = Host.GetDrawnWeapon()) != null || (removeItem = Host.GetRightHand()) != null || (item.ItemType != ItemTypes.Wep1H && (removeItem = Host.GetLeftHand()) != null))
             {
-                Host.DoUndrawWeapon(Host.GetDrawnWeapon());
+                if (removeItem.IsWeapon)
+                    Host.DoUndrawWeapon(removeItem);
+                else
+                {
+                    this.TryUnequipItem(removeItem);
+                    if (!removeItem.IsEquipped)
+                        Host.DoDrawWeapon(item);
+                }
             }
             else
             {
@@ -185,26 +194,35 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             ItemInst otherItem = Host.GetEquipmentBySlot(slot);
             if (otherItem != null)
                 Host.UnequipItem(otherItem);
-            
+
             this.Host.EquipItem(slot, item);
 
             if (item.IsWepRanged)
             {
-                var curAmmo = Host.GetAmmo();
-                var ammoType = item.ItemType == ItemTypes.WepXBow ? ItemTypes.AmmoXBow : ItemTypes.AmmoBow;
-                if (curAmmo == null || curAmmo.ItemType != ammoType) // no ammo equipped or wrong type
-                    Host.Inventory.ForEachItemPredicate(i =>
-                    {
-                        if (i.ItemType == ammoType)
-                        {
-                            if (curAmmo != null)
-                                Host.UnequipItem(curAmmo);
-                            Host.EquipItem(NPCSlots.Ammo, i);
-                            return false;
-                        }
-                        return true;
-                    });
+                UpdateAmmo(item);
             }
+        }
+
+        void UpdateAmmo(ItemInst rangedWeapon = null)
+        {
+            ItemInst item = rangedWeapon ?? Host.GetEquipmentBySlot(NPCSlots.Ranged);
+            if (item == null)
+                return;
+
+            ItemInst currentAmmo = Host.GetAmmo();
+            ItemTypes ammoType = item.ItemType == ItemTypes.WepXBow ? ItemTypes.AmmoXBow : ItemTypes.AmmoBow;
+            if (currentAmmo == null || currentAmmo.ItemType != ammoType) // no ammo equipped or wrong type
+                Host.Inventory.ForEachItemPredicate(i =>
+                {
+                    if (i.ItemType == ammoType)
+                    {
+                        if (currentAmmo != null)
+                            Host.UnequipItem(currentAmmo);
+                        Host.EquipItem(NPCSlots.Ammo, i);
+                        return false;
+                    }
+                    return true;
+                });
         }
 
 
@@ -272,17 +290,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 Model = ammo.ModelDef
             };
 
-            /*if (ammo.Amount == 1)
-            {
-                Host.Inventory.RemoveItem(projItem);
-            }
-            else
-            {
-                projItem = projItem.Split(1);
-            }*/
-
             end = end - (end - start).Normalise() * (ammo.ItemType == ItemTypes.AmmoBow ? 40 : 10); // so arrows' bodies aren't 90% inside walls
             Host.DoShoot(start, end, inst);
+
+            int ammoCount = ammo.Amount - 1;
+            if (ammoCount <= 0)
+            {
+                Host.UnequipItem(ammo);
+            }
+            ammo.SetAmount(ammo.Amount - 1);
         }
 
 
@@ -318,7 +334,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 Host.ModelInst.StartAniJob(Host.AniCatalog.Gestures.DontKnow);
                 return;
             }
-            
+
             this.Host.DoTakeItem(item);
         }
 
@@ -344,7 +360,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public static event Action<NPCInst> OnHelpUp;
         public void TryHelpUp(NPCInst target)
         {
-            if (Host.IsDead || Host.Movement != NPCMovement.Stand || Host.ModelInst.IsInAnimation() || Host.Environment.InAir || Host.IsUnconscious 
+            if (Host.IsDead || Host.Movement != NPCMovement.Stand || Host.ModelInst.IsInAnimation() || Host.Environment.InAir || Host.IsUnconscious
                 || !target.IsUnconscious || target.GetPosition().GetDistance(Host.GetPosition()) > 300)
                 return;
 

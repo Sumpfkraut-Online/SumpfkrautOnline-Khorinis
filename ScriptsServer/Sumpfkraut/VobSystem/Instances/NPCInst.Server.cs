@@ -272,8 +272,35 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (item != null && item.IsSpawned)
             {
+                // remove item in world
                 item.Despawn();
-                this.Inventory.AddItem(item);
+                bool add = true;
+
+                // stack items of the same kind
+                this.Inventory.ForEachItemPredicate(invItem =>
+                {
+                    if (invItem.Definition == item.Definition)
+                    {
+                        invItem.SetAmount(invItem.Amount + item.Amount);
+                        add = false;
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (add)
+                {
+                    this.Inventory.AddItem(item);
+
+                    // check if this is ammo we need
+                    ItemInst rangedWep = GetEquipmentBySlot(NPCSlots.Ranged);
+                    if (rangedWep != null && GetEquipmentBySlot(NPCSlots.Ammo) == null
+                        && ((item.ItemType == ItemTypes.AmmoBow && rangedWep.ItemType == ItemTypes.WepBow)
+                           || (item.ItemType == ItemTypes.AmmoXBow && rangedWep.ItemType == ItemTypes.WepXBow)))
+                    {
+                        EquipItem(NPCSlots.Ammo, item);
+                    }
+                }
             }
         }
 
@@ -697,7 +724,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public int Damage;
         public int Protection;
-        
+
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
 
@@ -942,7 +969,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             rotation.Roll = p;
 
             proj.Spawn(this.World, start, rotation);
-
 
             var drawnWeapon = GetDrawnWeapon();
             ScriptAniJob job = (drawnWeapon != null && drawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Reload : AniCatalog.FightBow.Reload;

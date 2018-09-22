@@ -48,6 +48,8 @@ namespace Gothic.Objects
             activeSkyControler = 0xE8,
             skyControlerOutdoor = 0xE4,
             VobList = 0x6280,
+            VobNum = 0xD0,
+
 
             raytrace_foundHit = 0x0038,
             raytrace_foundVob = 0x003C,
@@ -203,6 +205,11 @@ namespace Gothic.Objects
         {
             get { return Process.ReadInt(Address + 0x204); }
             set { Process.Write(Address + 0x204, value); }
+        }
+
+        public int VobsInWorld
+        {
+            get { return Process.ReadInt(Address + VarOffsets.VobNum); }
         }
 
         public bool Raytrace_FoundHit

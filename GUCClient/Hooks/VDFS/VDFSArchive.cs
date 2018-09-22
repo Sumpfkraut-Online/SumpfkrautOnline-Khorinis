@@ -133,8 +133,7 @@ namespace GUC.Hooks.VDFS
 
         void AddFile(VDFSDirectoryInfo dir, Entry entry)
         {
-            //string filePath = Path.Combine(dir.Path, entry.Name);
-            string filePath = string.IsNullOrWhiteSpace(dir.Path) ? ('\\' + entry.Name) : string.Format("\\{0}\\{1}", dir.Path, entry.Name);
+            string filePath = Path.Combine(dir.Path, entry.Name);
 
             if (vFiles.TryGetValue(filePath, out VDFSFileInfo other))
             {// there is already a file with that path

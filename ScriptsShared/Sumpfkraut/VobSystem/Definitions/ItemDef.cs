@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using GUC.Types;
 using GUC.Network;
 using GUC.WorldObjects.Instances;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
@@ -53,8 +53,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Scroll,
     }
 
-
-
     public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
     {
         #region Properties
@@ -92,6 +90,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public float Range = 0;
         public int Damage = 0;
         public int Protection = 0;
+
+        public Vec3f InvOffset;
+        public Angles InvRotation;
 
         #endregion
 
@@ -145,14 +146,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
                 stream.Write(false);
             }
 
-            if (Protection != 0)
+            if (stream.Write(Protection != 0))
             {
-                stream.Write(true);
                 stream.Write((ushort)Protection);
             }
-            else
+
+            if (stream.Write(!InvOffset.IsExactNull()))
             {
-                stream.Write(false);
+                stream.Write(InvOffset);
+            }
+            if (stream.Write(!InvRotation.IsExactNull()))
+            {
+                stream.WriteCompressedAngles(InvRotation);
             }
         }
 
@@ -170,14 +175,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
                 this.Damage = stream.ReadUShort();
             if (stream.ReadBit())
                 this.Protection = stream.ReadUShort();
+            if (stream.ReadBit())
+                this.InvOffset = stream.ReadVec3f();
+            if (stream.ReadBit())
+                this.InvRotation = stream.ReadCompressedAngles();
         }
 
         #endregion
 
         public static void ForEach(Action<ItemDef> action)
         {
-            BaseVobInstance.ForEachOfType(Types.VobTypes.Item, i => action((ItemDef)i.ScriptObject));
+            BaseVobInstance.ForEachOfType(VobTypes.Item, i => action((ItemDef)i.ScriptObject));
         }
     }
-
 }

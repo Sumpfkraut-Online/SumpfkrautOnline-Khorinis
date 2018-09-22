@@ -47,8 +47,11 @@ namespace GUC.Scripts.Arena.GameModes
         {
             GUCScripts.OnWorldEnter += () =>
             {
-                if (IsActive && ArenaClient.GMJoined)
+                if (IsActive && ArenaClient.GMJoined && NPCClass.Hero == null)
+                {
                     ActiveMode.OpenJoinMenu();
+                    MissionScreen.Show(ActiveMode.Scenario.MissionInfo);
+                }
             };
         }
 
@@ -80,6 +83,7 @@ namespace GUC.Scripts.Arena.GameModes
         protected virtual void End()
         {
             VictoryVis.Hide();
+            MissionScreen.Hide();
             ScoreBoard?.Close();
             ActiveMode = null;
             NPCClass.Hero = null;
@@ -123,6 +127,9 @@ namespace GUC.Scripts.Arena.GameModes
             {
                 PhaseEndTime = GameTime.Ticks + Scenario.FightDuration;
             }
+
+            if (Phase != GamePhase.WarmUp)
+                MissionScreen.Hide();
 
             OnPhaseChange?.Invoke();
 

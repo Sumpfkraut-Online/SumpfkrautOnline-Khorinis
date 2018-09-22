@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Injection;
+using WinApiNew.Hooks;
 using System.IO;
-using Gothic.Types;
 using GUC.Log;
-using Gothic.System;
 
 namespace GUC.Hooks.VDFS
 {
@@ -14,8 +12,8 @@ namespace GUC.Hooks.VDFS
     {
         public static void AddHooks()
         {
-            ReplacerHook.CDECL(InitFileSystem, 0x558CC8).Inject();
-            ReplacerHook.CDECL(DeinitFileSystem, 0x5593A6).Inject();
+            ReplacerHook.CDECL(InitFileSystem, 0x558CC9).Inject();
+            ReplacerHook.CDECL(DeinitFileSystem, 0x5593A7).Inject();
 
             AddHooks_Virtual();
             AddHooks_Physical();

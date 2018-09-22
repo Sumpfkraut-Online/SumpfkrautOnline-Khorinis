@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Injection;
+using WinApiNew;
 using System.IO;
 using Gothic.Types;
 
@@ -96,14 +96,14 @@ namespace GUC.Hooks.VDFS
             {
                 if (path.StartsWith(Program.GothicRootPath, StringComparison.OrdinalIgnoreCase))
                 {
-                    path = path.Substring(Program.GothicRootPath.Length);
+                    path = path.Substring(Program.GothicRootPath.Length + 1);
                 }
 
                 if (path[0] == '\\')
                 {
                     path = path.Substring(1);
                 }
-                return Path.Combine(Program.ProjectPath, path);
+                return Program.ProjectPathCombine(path);
             }
             return path;
         }

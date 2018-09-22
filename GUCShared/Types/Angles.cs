@@ -12,7 +12,7 @@ namespace GUC.Types
             get { return new Angles(0, 0, 0); }
         }
 
-        public const float PI    = 3.1415926535897931f;
+        public const float PI = 3.1415926535897931f;
         public const float TwoPI = 6.2831853071795865f;
 
         public static float Deg2Rad(float degrees)
@@ -293,16 +293,17 @@ namespace GUC.Types
 
         #region Equality
 
+        public bool IsExactNull()
+        {
+            return this.Roll == 0 && this.Pitch == 0 && this.Yaw == 0;
+        }
+
         const float nullLimit = 0.0000001f;
         public bool IsNull()
         {
-
-            if (this.Roll < nullLimit && this.Roll > -nullLimit &&
+            return this.Roll < nullLimit && this.Roll > -nullLimit &&
                 this.Yaw < nullLimit && this.Yaw > -nullLimit &&
-                this.Pitch < nullLimit && this.Pitch > -nullLimit)
-                return true;
-            else
-                return false;
+                this.Pitch < nullLimit && this.Pitch > -nullLimit;
         }
 
         public static bool operator ==(Angles a, Angles b)

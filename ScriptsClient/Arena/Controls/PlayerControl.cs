@@ -81,7 +81,9 @@ namespace GUC.Scripts.Arena.Controls
             ItemInst weapon;
             if (((weapon = hero.GetDrawnWeapon()) != null && weapon.IsWepRanged) ||  // undraw
                  (weapon = hero.GetEquipmentBySlot(NPCSlots.Ranged)) != null) // draw
+            {
                 NPCInst.Requests.DrawWeapon(hero, weapon);
+            }
         }
 
         static void DrawWeapon(bool down)

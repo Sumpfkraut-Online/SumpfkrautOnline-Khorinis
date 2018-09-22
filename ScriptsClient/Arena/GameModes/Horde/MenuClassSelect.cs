@@ -95,7 +95,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Close();
                 return;
             }
-
+            
             if (!HordeMode.ActiveMode.Scenario.PlayerClasses.TryGet(index, out NPCClass classDef))
                 return;
             

@@ -403,6 +403,7 @@
     <Compile Include="Arena\GameModes\Horde\HordeMode.Client.cs" />
     <Compile Include="Arena\GameModes\Horde\MenuClassSelect.cs" />
     <Compile Include="Arena\GameModes\Horde\HordeScoreBoard.cs" />
+    <Compile Include="Arena\GameModes\MissionScreen.cs" />
     <Compile Include="Arena\GameModes\TDM\MenuClassSelect.cs" />
     <Compile Include="Arena\GameModes\TDM\MenuTeamSelect.cs" />
     <Compile Include="Arena\GameModes\TDM\RespawnNote.cs" />

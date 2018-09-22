@@ -39,6 +39,10 @@ namespace GUC
         public static ushort ServerPort { get { return serverPort; } }
         public static string Password { get { return password; } }
 
+        public static string ProjectPathCombine(string path) { return Path.Combine(projectPath, path); }
+        public static string GothicPathCombine(string path) { return Path.Combine(gothicPath, path); }
+        public static string GothicRootPathCombine(string path) { return Path.Combine(gothicRootPath, path); }
+
         static void SetRootPathHook(Hook hook, RegisterMemory rmem)
         {
             gothicRootPath = Gothic.System.zFile.s_rootPathString.ToString().ToUpperInvariant();
@@ -75,7 +79,14 @@ namespace GUC
             const string iniString = "SYSTEM\\GOTHIC.INI";
             string destIni = Path.Combine(ProjectPath, iniString);
             if (!File.Exists(destIni))
-                File.Copy(Path.Combine(GothicPath, iniString), destIni);
+            {
+                string srcIni = Path.Combine(GothicPath, iniString);
+                if (File.Exists(srcIni))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(destIni));
+                    File.Copy(srcIni, destIni);
+                }
+            }
         }
 
         static Assembly ResolveAssembly(object sender, ResolveEventArgs args)

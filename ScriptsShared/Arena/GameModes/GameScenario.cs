@@ -53,7 +53,7 @@ namespace GUC.Scripts.Arena.GameModes
         public float MaxHeight = float.MaxValue;
         public float MaxDepth = float.MinValue;
 
-
+        public string MissionInfo;
 
         public class Barrier
         {

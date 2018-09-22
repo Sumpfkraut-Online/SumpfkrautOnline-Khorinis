@@ -10,13 +10,23 @@ namespace GUC.Scripts.Sumpfkraut.Menus
     {
         static readonly List<GUCMenu> activeMenus = new List<GUCMenu>();
         public static IEnumerable<GUCMenu> GetActiveMenus() { return activeMenus; }
-        public static bool IsMenuActive { get { return activeMenus.Count > 0; } }
+        public static bool IsAMenuActive { get { return activeMenus.Count > 0; } }
+
+        // for button holding
+        static long holdInitTime, holdLastTime;
+        static VirtualKeys lastKey;
 
         public static bool KeyDownUpdateMenus(VirtualKeys key)
         {
             if (activeMenus.Count > 0)
             {
-                activeMenus[0].KeyDown(key);
+                if (holdInitTime == 0)
+                {
+                    holdInitTime = holdLastTime = GameTime.Ticks;
+                    lastKey = key;
+                }
+
+                activeMenus[0].KeyPress(key, false);
                 return true;
             }
             return false;
@@ -24,16 +34,26 @@ namespace GUC.Scripts.Sumpfkraut.Menus
 
         public static bool KeyUpUpdateMenus(VirtualKeys key)
         {
-            if (activeMenus.Count > 0)
-            {
-                activeMenus[0].KeyUp(key);
-                return true;
-            }
-            return false;
+            holdInitTime = holdLastTime = 0;
+            return activeMenus.Count > 0;
         }
 
         public static void UpdateMenus(long now)
         {
+            if (activeMenus.Count == 0)
+                return;
+
+            // button holding
+            if (holdInitTime > 0)
+            {
+                if (now - holdInitTime > 600 * TimeSpan.TicksPerMillisecond
+                 && now - holdLastTime > 100 * TimeSpan.TicksPerMillisecond)
+                {
+                    activeMenus[0].KeyPress(lastKey, true);
+                    holdLastTime = now;
+                }
+            }
+
             activeMenus.ForEach(m => m.Update(now));
         }
 
@@ -65,8 +85,7 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             }
         }
 
-        protected virtual void KeyDown(VirtualKeys key) { }
-        protected virtual void KeyUp(VirtualKeys key) { }
+        protected virtual void KeyPress(VirtualKeys key, bool hold) { }
         protected virtual void Update(long now) { }
     }
 }

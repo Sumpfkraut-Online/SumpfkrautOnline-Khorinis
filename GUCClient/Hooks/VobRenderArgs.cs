@@ -4,86 +4,105 @@ using System.Linq;
 using System.Text;
 using Gothic.View;
 using Gothic.Objects;
-using WinApi;
 using GUC.Log;
 using Gothic.Objects.Meshes;
 using Gothic.System;
 using GUC.Types;
 using Gothic.Objects.EventManager;
+using GUC.WorldObjects;
 
 namespace GUC.Hooks
 {
     class VobRenderArgs : IDisposable
     {
-        public VobRenderArgs()
+        public static void Init()
         {
-            if (rndrWorld == null)
-            {
-                rndrWorld = zCWorld.Create();
-                rndrWorld.IsInventoryWorld = true;
-                rndrWorld.DrawVobBBox3D = false;
-                rndrWorld.BspTreeMode = 0;
-                rndrWorld.ActiveSkyControler.FillBackground = false;
+            if (rndrWorld != null)
+                return;
 
-                camera = zCCamera.Create();
-                camera.SetFarClipZ(int.MaxValue);
+            rndrWorld = zCWorld.Create();
+            rndrWorld.IsInventoryWorld = true;
+            rndrWorld.DrawVobBBox3D = false;
+            rndrWorld.BspTreeMode = 0;
+            rndrWorld.ActiveSkyControler.FillBackground = false;
 
-                camVob = zCVob.Create();
-                rndrWorld.AddVob(camVob);
-                camera.CamVob = camVob;
-            }
+            camera = zCCamera.Create();
+            camera.SetFarClipZ(int.MaxValue);
+
+            camVob = zCVob.Create();
+            rndrWorld.AddVob(camVob);
+            camera.CamVob = camVob;
+            camera.SetFOV(45 * 4.0f / 3.0f, 45);
+
+            var light = zCVobLight.Create();
+            light.SetRange(50000, true);
+            rndrWorld.AddVob(light);
         }
-        oCItem item = oCItem.Create();
+
+        string visual;
+        zCVob renderVob = zCVob.Create();
+        zCVob zenTree = null;
 
         public bool Lighting = true;
 
+        /// <summary> Camera is Z - 100 </summary>
         public Vec3f Offset;
         public Angles Rotation;
-        
+
+        bool render;
         public void SetVisual(string visualName)
         {
-            if (visualName.EndsWith(".ZEN"))
-            {
-                item.SetVisual(new zCVisual(0));
-                item.SetCollDetDyn(false);
-                item.SetCollDetStat(false);
-                Gothic.zCOption.ChangeDir(0xE); // world directory
-                rndrWorld.AddVob(item);
-                item.SetPositionWorld(0, 0, 0);
+            if (string.Equals(visual, visualName, StringComparison.OrdinalIgnoreCase))
+                return;
 
-                zCVob zenVob = rndrWorld.MergeVobSubTree(visualName);
-                if (zenVob.Address != 0)
+            this.render = true;
+            this.visual = visualName;
+            if (zenTree != null)
+            {
+                zenTree.ReleaseVobSubTree();
+                zenTree = null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(visualName))
+            {
+                if (visualName.EndsWith(".ZEN", StringComparison.OrdinalIgnoreCase))
                 {
-                    zenVob.SetCollDetDyn(false);
-                    zenVob.SetCollDetStat(false);
-                    zenVob.SetPositionWorld(0, 0, 0);
-                    item.TrafoObjToWorld.Set(zenVob.TrafoObjToWorld);
-                    zenVob.AddRefVobSubtree();
-                    rndrWorld.RemoveVobSubTree(zenVob);
-                    rndrWorld.AddVobAsChild(zenVob, item);
-                    rndrWorld.RemoveVobSubTree(item);
+                    renderVob.SetVisual(new zCVisual(0));
+
+                    Gothic.zCOption.ChangeDir(0xE); // world directory
+                    zenTree = rndrWorld.MergeVobSubTree(visualName);
+                    if (zenTree.Address != 0)
+                    {
+                        zenTree.AddRefVobSubtree();
+                        rndrWorld.RemoveVobSubTree(zenTree);
+                        return;
+                    }
+                    else
+                    {
+                        Logger.LogWarning("Could not load " + visualName);
+                        zenTree = null;
+                    }
                 }
                 else
                 {
-                    Logger.LogWarning("Could not load " + visualName);
+                    renderVob.SetVisual(zCVisual.LoadVisual(visualName));
+                    return;
                 }
             }
-            else
-            {
-                zCVisual vis = zCVisual.LoadVisual(visualName);
-                item.SetVisual(vis);
-            }
+            renderVob.SetVisual(new zCVisual(0));
+            render = false;
         }
 
         public void SetVisual(zCVisual visual)
-        {           
-            item.SetVisual(visual);
+        {
+            renderVob.SetVisual(visual);
+            render = visual != null && visual.Address != 0;
         }
 
         public void Dispose()
         {
-            item?.Dispose();
-            item = null;
+            renderVob?.Dispose();
+            renderVob = null;
         }
 
         static bool inited = false;
@@ -93,7 +112,7 @@ namespace GUC.Hooks
                 return;
             inited = true;
 
-            Injection.Process.AddFastHook(OnDrawItems, 0x7A6750, 5);
+            WinApiNew.Process.AddFastHook(OnDrawItems, 0x7A6750, 5);
 
             Logger.Log("Added VobRender hooks.");
         }
@@ -111,52 +130,39 @@ namespace GUC.Hooks
         }
 
 
+
+
         static zCWorld rndrWorld = null;
         static zCVob camVob = null;
         static zCCamera camera = null;
-        static void OnDrawItems(Injection.RegisterMemory rmem)
+        static void OnDrawItems(WinApiNew.RegisterMemory rmem)
         {
             try
             {
                 int viewAddr = rmem.ECX;
-                if (rndrDict.TryGetValue(viewAddr, out VobRenderArgs args) && args != null)
+                if (rndrDict.TryGetValue(viewAddr, out VobRenderArgs args) && args != null && args.render)
                 {
-                    var vob = args.item;
+                    var vob = args.zenTree ?? args.renderVob;
                     zCView view = new zCView(viewAddr);
+                    camera.SetRenderTarget(view);
 
-                    var oldCam = zCCamera.ActiveCamera;
+                    vob.SetPositionWorld(args.Offset.X, args.Offset.Y, args.Offset.Z + 100.0f);
+                    args.Rotation.SetMatrix(vob.TrafoObjToWorld);
+                    vob.LastTimeDrawn = -1;
 
-                    int light = zCRenderer.PlayerLightInt;
-
-                    vob.SetPositionWorld(0, 0, 0);
                     vob.GroundPoly = 0;
                     rndrWorld.AddVob(vob);
 
-                    zCRenderer.PlayerLightInt = 50000;
-
-                    //RenderItemPlaceCamera
-                    //Process.THISCALL<NullReturnCall>(rndrVob.Address, 0x00713800, camera, new IntArg(0));
-                    vob.SetPositionWorld(args.Offset.X, args.Offset.Y, args.Offset.Z + 180.0f);
-                    
-                    args.Rotation.SetMatrix(vob.TrafoObjToWorld);
-                    
-
-                    camera.SetRenderTarget(view);
-                    vob.LastTimeDrawn = -1;
-
+                    bool evMan = zCEventManager.DisableEventManagers;
                     zCEventManager.DisableEventManagers = true;
 
                     zCRenderer.SetAlphaBlendFunc(zCRenderer.AlphaBlendFuncs.None);
-
                     rndrWorld.Render(camera);
-
-                    zCEventManager.DisableEventManagers = false;
                     
+                    zCEventManager.DisableEventManagers = evMan;
+
                     rndrWorld.RemoveVobSubTree(vob);
 
-                    zCCamera.ActiveCamera = oldCam;
-                    zCRenderer.PlayerLightInt = light;
-                    
                     view.Blit();
                 }
             }

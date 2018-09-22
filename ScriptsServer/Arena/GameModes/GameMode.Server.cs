@@ -127,9 +127,9 @@ namespace GUC.Scripts.Arena.GameModes
             if (!client.GMJoined)
                 return false;
 
+            bool res = players.Remove(client);
             client.KillCharacter();
             client.GMClass = null;
-            bool res = players.Remove(client);
             if (Phase >= GamePhase.Fight && players.Count == 0)
             {
                 FadeOut();
@@ -162,8 +162,6 @@ namespace GUC.Scripts.Arena.GameModes
 
         protected virtual void Fight()
         {
-            SetPhase(GamePhase.Fight);
-
             if (this.SpawnWorld != null)
             {
                 var oldWorld = this.SpawnWorld;
@@ -179,6 +177,8 @@ namespace GUC.Scripts.Arena.GameModes
 
                 oldWorld.Delete();
             }
+
+            SetPhase(GamePhase.Fight);
 
             phaseTimer.SetInterval(Scenario.FightDuration);
             phaseTimer.SetCallback(FadeOut);
@@ -210,7 +210,9 @@ namespace GUC.Scripts.Arena.GameModes
             });
 
             var oldWorld = this.World;
+            var oldSpawnWorld = this.SpawnWorld;
             this.World = null;
+            this.SpawnWorld = null;
 
             var oldPlayers = new List<ArenaClient>(players);
             this.players.Clear();
@@ -226,11 +228,8 @@ namespace GUC.Scripts.Arena.GameModes
             // delete old world
             oldWorld.Delete();
 
-            if (this.SpawnWorld != null)
-            {
-                this.SpawnWorld.Delete();
-                this.SpawnWorld = null;
-            }
+            if (oldSpawnWorld != null)
+                oldSpawnWorld.Delete();
         }
 
         protected void SetPhase(GamePhase phase)
@@ -313,7 +312,7 @@ namespace GUC.Scripts.Arena.GameModes
             }
             else
             {
-                npc = SpawnCharacter(client, World, Scenario.SpawnPos.Position, Scenario.SpawnRange);
+                npc = SpawnCharacter(client, World, Scenario.SpawnPos, Scenario.SpawnRange);
             }
             return npc;
         }
@@ -360,7 +359,7 @@ namespace GUC.Scripts.Arena.GameModes
             return SpawnNPC(classDef, pos, Randomizer.GetYaw(), posOffset, teamID, giveAI);
         }
 
-        protected NPCInst SpawnNPC(NPCClass classDef, Vec3f pos, Angles ang, float posOffset = 100, int teamID = 1, bool giveAI = true)
+        protected virtual NPCInst SpawnNPC(NPCClass classDef, Vec3f pos, Angles ang, float posOffset = 100, int teamID = 1, bool giveAI = true)
         {
             NPCInst npc = CreateNPC(classDef, teamID);
 
@@ -383,7 +382,7 @@ namespace GUC.Scripts.Arena.GameModes
 
         List<AIAgent> agents = new List<AIAgent>(100);
 
-        void ClearAgents()
+        protected void ClearAgents()
         {
             var aiMan = AIManager.aiManagers[0];
             agents.ForEach(a => aiMan.UnsubscribeAIAgent(a));

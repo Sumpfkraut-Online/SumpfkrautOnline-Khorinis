@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using GUC.Injection.Utilities;
+using WinApiNew.Utilities;
+using WinApiNew.Hooks;
 
-namespace GUC.Injection
+namespace WinApiNew
 {
     public unsafe static class Process
     {
@@ -77,6 +78,12 @@ namespace GUC.Injection
         {
             ExceptionHelper.AddressZero(address);
             return *(int*)address;
+        }
+
+        public static float ReadFloat(int address)
+        {
+            ExceptionHelper.AddressZero(address);
+            return *(float*)address;
         }
 
         public static void ReadBytes(int address, byte[] buffer, int count)
@@ -218,7 +225,7 @@ namespace GUC.Injection
         #endregion
 
         /// <summary> "Transmits via CLR / .NET, slow but safe, allocates space for call code and jumps there." </summary>
-        public static FastHook AddSafeHook(Delegate method, int address, int length)
+        public static object AddSafeHook(Delegate method, int address, int length)
         {
             throw new NotImplementedException();
         }
@@ -257,7 +264,7 @@ namespace GUC.Injection
 
         #endregion
 
-        static void MessageBox(string text)
+        public static void MessageBox(string text)
         {
             PInvoke.MessageBox(0, text, "WinApi", 0);
         }

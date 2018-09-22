@@ -78,12 +78,6 @@ namespace GUC.Scripts
             WinApi.Process.Write(0x0073B410, 0xC2, 0x08, 0x00);
             Gothic.Objects.oCNpcFocus.SetFocusMode(1);
 
-            if (menuTheme != null)
-            {
-                SoundHandler.StopSound(menuTheme);
-                menuTheme = null;
-            }
-
             Ingame = true;
 
             OnIngame?.Invoke();
@@ -199,6 +193,12 @@ namespace GUC.Scripts
         public static event Action OnWorldEnter;
         public void FirstWorldRender()
         {
+            if (menuTheme != null)
+            {
+                SoundHandler.StopSound(menuTheme);
+                menuTheme = null;
+            }
+
             OnWorldEnter?.Invoke();
         }
     }

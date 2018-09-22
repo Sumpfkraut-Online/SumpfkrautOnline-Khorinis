@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.IO;
 
 namespace GUC.Hooks.VDFS
 {
@@ -24,8 +23,7 @@ namespace GUC.Hooks.VDFS
 
         public VDFSFileInfo SearchFile(string fileName)
         {
-            VDFSFileInfo fi;
-            if (fileNames.TryGetValue(fileName, out fi))
+            if (fileNames.TryGetValue(fileName, out VDFSFileInfo fi))
                 return fi;
 
             for (int i = 0; i < dirs.Count; i++)

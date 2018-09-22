@@ -35,7 +35,7 @@ namespace GUC.Scripts.Sumpfkraut.Controls
 
         public static void UpdateControls(long now)
         {
-            if (!GUCMenu.IsMenuActive && Active != null)
+            if (!GUCMenu.IsAMenuActive && Active != null)
                 Active.Update(now);
         }
     }
