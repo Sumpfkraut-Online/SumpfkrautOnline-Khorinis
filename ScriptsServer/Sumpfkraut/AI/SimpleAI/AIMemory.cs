@@ -100,7 +100,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             var obs = new List<T>();
             foreach (var o in aiObservations)
             {
-                if (o.GetType().IsSubclassOf(typeof(T))) { obs.Add(o); }
+                if (o is T) { obs.Add((T)o); }
             }
             return obs;
         }

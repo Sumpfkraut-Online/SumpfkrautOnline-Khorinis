@@ -46,7 +46,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
 
 
-        public List<VobInst> DetectEnemies ()
+        public List<VobInst> DetectEnemiesn ()
         {
             var enemies = new List<VobInst>();
             foreach (var member in groupMembers)
