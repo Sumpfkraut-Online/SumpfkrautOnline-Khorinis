@@ -16,7 +16,6 @@ namespace GUC.Scripts.Arena.Duel
 
         static DuelMode()
         {
-            NPCInst.AllowHitEvent.Add(CheckHitDetection);
             NPCInst.sOnNPCInstMove += (npc, p, d, m) =>
             {
                 if (npc.Client is ArenaClient client)
@@ -41,7 +40,7 @@ namespace GUC.Scripts.Arena.Duel
             }
         }
 
-        static bool CheckHitDetection(NPCInst attacker, NPCInst target)
+        public static bool CheckHitDetection(NPCInst attacker, NPCInst target)
         {
             if (attacker.Client is ArenaClient attClient && target.Client is ArenaClient tarClient)
             {

@@ -124,6 +124,7 @@ namespace GUC.Scripts.Arena
 
             var stream = GetStream(ScriptMessages.PlayerQuit);
             stream.Write((byte)id);
+
             ForEach(c => c.SendScriptMessage(stream, NetPriority.Low, NetReliability.ReliableOrdered));
             DuelBoard.Instance.Remove(this);
             TDMScoreBoard.Instance.Remove(this);
@@ -133,7 +134,7 @@ namespace GUC.Scripts.Arena
         public override void ReadScriptMessage(PacketReader stream)
         {
             ScriptMessages id = (ScriptMessages)stream.ReadByte();
-            Log.Logger.Log(id);
+            //Log.Logger.Log(id);
             switch (id)
             {
                 case ScriptMessages.JoinGame:
@@ -234,6 +235,10 @@ namespace GUC.Scripts.Arena
                 {
                     npc.EffectHandler.TryEquipItem(item);
                 }
+                else if (itemDef.ItemType == ItemTypes.AmmoBow || itemDef.ItemType == ItemTypes.AmmoXBow)
+                {
+                    item.SetAmount(100);
+                }
             });
 
             if (npc.ModelDef.TryGetOverlay("1HST1", out ScriptOverlay ov))
@@ -244,6 +249,7 @@ namespace GUC.Scripts.Arena
             var pair = spawnPositions.GetRandom();
             npc.Spawn(WorldInst.List[0], pair.Item1, pair.Item2);
             this.SetControl(npc);
+            npc.AllowHitAttacker.Add(DuelMode.CheckHitDetection);
         }
 
         public void KillCharacter()
@@ -251,6 +257,7 @@ namespace GUC.Scripts.Arena
             if (this.Character == null || this.Character.IsDead)
                 return;
 
+            this.Character.SetHealth(0);
             if (GameMode.IsActive && this.GMTeamID >= TeamIdent.GMPlayer)
             {
                 GameMode.ActiveMode.OnSuicide(this);
@@ -259,8 +266,6 @@ namespace GUC.Scripts.Arena
             {
                 DuelMode.DuelWin(this.DuelEnemy);
             }
-
-            this.Character.SetHealth(0);
         }
 
         static List<Vec3f, Angles> spawnPositions = new List<Vec3f, Angles>()

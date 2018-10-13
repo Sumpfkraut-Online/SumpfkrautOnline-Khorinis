@@ -7,8 +7,12 @@ using Gothic.Types;
 
 namespace Gothic.System
 {
-    public class zFile
+    public class zFile : zClass
     {
+        public zFile(int address) : base(address)
+        {
+        }
+
         public static zString s_rootPathString
         {
             get { return new zString(0x8C3468); }

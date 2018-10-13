@@ -13,24 +13,24 @@ namespace GUC.Scripts.Arena
     {
         public readonly static CharCreationMenu Menu = new CharCreationMenu();
         
-        protected override void KeyDown(VirtualKeys key)
+        protected override void KeyPress(VirtualKeys key, bool hold)
         {
             if (key == VirtualKeys.Tab)
             {
                 if (items[cursor] is MainMenuChoice)
                 {
                     lastChoice = items[cursor];
-                    SetCursor(lastOther == null ? Character : lastOther);
+                    SetCursor(lastOther ?? Character);
                 }
                 else
                 {
                     lastOther = items[cursor];
-                    SetCursor(lastChoice == null ? bodymesh : lastChoice);
+                    SetCursor(lastChoice ?? bodymesh);
                 }
             }
             else
             {
-                base.KeyDown(key);
+                base.KeyPress(key, hold);
             }
         }
 
@@ -100,7 +100,7 @@ namespace GUC.Scripts.Arena
             if (GUCScripts.Ingame)
                 Close();
             else
-                Arena.Menus.MainMenu.Menu.Open();
+                Menus.MainMenu.Menu.Open();
         }
 
         void PlayVoice()
@@ -120,7 +120,7 @@ namespace GUC.Scripts.Arena
                 {
                     headtex.Choices = c_Faces_M_P;
                 }
-                else if (bodytex.Choice == 1 || bodytex.Choice == 10)
+                else if (bodytex.Choice == 1 || bodytex.Choice == 8 || bodytex.Choice == 9 || bodytex.Choice == 10)
                 {
                     headtex.Choices = c_Faces_M_N;
                 }

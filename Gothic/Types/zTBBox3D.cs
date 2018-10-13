@@ -27,5 +27,10 @@ namespace Gothic.Types
         {
             get { return Max.Y - Min.Y; }
         }
+
+        public void GetCenter(zVec3 vec)
+        {
+            Process.THISCALL<NullReturnCall>(Address, 0x54E7A0, (IntArg)vec.Address);
+        }
     }
 }

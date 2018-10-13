@@ -89,6 +89,7 @@
     <Compile Include="Objects\zCAIPlayer.cs" />
     <Compile Include="Objects\zCCamera.cs" />
     <Compile Include="Objects\zCCollisionObject.cs" />
+    <Compile Include="Objects\zCVobLight.cs" />
     <Compile Include="Objects\zCWorld.cs" />
     <Compile Include="Session\zCSession.cs" />
     <Compile Include="Sound\zCSndFX_MSS.cs" />

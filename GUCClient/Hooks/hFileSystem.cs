@@ -232,7 +232,7 @@ namespace GUC.Hooks
         const string BackupEnding = ".guc_backup";
         public static void BeginInit(Hook hook, RegisterMemory mem)
         {
-            string vdfsPath = Program.GetGothicRootPath("vdfs.cfg");
+            string vdfsPath = Path.Combine(Program.GothicRootPath, "vdfs.cfg");
             string backupPath = vdfsPath + BackupEnding;
 
             if (!File.Exists(vdfsPath))
@@ -262,7 +262,7 @@ namespace GUC.Hooks
 
         static void EndInit(Hook hook, RegisterMemory mem)
         {
-            string vdfsPath = Program.GetGothicRootPath("vdfs.cfg");
+            string vdfsPath = Path.Combine(Program.GothicRootPath, "vdfs.cfg");
             string backupPath = vdfsPath + BackupEnding;
 
             if (!File.Exists(backupPath))
@@ -294,7 +294,7 @@ namespace GUC.Hooks
                     path = path.Substring(1);
                 }
 
-                return Program.GetProjectPath(path);
+                return Path.Combine(Program.ProjectPath, path);
             }
 
             return path;

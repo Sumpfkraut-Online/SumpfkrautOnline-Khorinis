@@ -9,7 +9,6 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Utilities;
 using GUC.Types;
 using GUC.WorldObjects;
 using GUC.Scripts.Arena.Duel;
@@ -162,10 +161,11 @@ namespace GUC.Scripts
             // -- command console --
             Sumpfkraut.CommandConsole.CommandConsole cmdConsole = new Sumpfkraut.CommandConsole.CommandConsole();
 
-            CreateTestWorld();
 
-            Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
-            new Sumpfkraut.AI.SimpleAI.AIManager(true, true, new TimeSpan(0, 0, 0, 0, 400));
+            CreateTestWorld();
+            //Sumpfkraut.AI.SimpleAI.AIManager.InitStatic();
+            //new Sumpfkraut.AI.SimpleAI.AIManager(true, true, new TimeSpan(0, 0, 0, 0, 400));
+
 
             DuelMode.Init();
             Arena.Regeneration.Init();
@@ -178,7 +178,7 @@ namespace GUC.Scripts
         void CreateTestWorld()
         {
             var world = new WorldInst(null);
-            world.Path = "DUEL_OLDCAMP.ZEN";
+            world.Path = "MINENTAL.ZEN";
             world.Create();
             world.Clock.SetTime(new WorldTime(0, 8), 15.0f);
             world.Clock.Stop();
@@ -188,26 +188,9 @@ namespace GUC.Scripts
             var aiManager01 = new Sumpfkraut.AI.SimpleAI.AIManager(true, false, new TimeSpan(0, 0, 0, 0, 500));
             aiManager01.Start();
 
-            /*for (int i = 0; i < 100; i++)
-            {
-                NPCInst testNPC = new NPCInst(NPCDef.Get("skeleton"));
-                if (testNPC.ModelDef.TryGetOverlay("humans_skeleton", out ScriptOverlay ov))
-                    testNPC.ModelInst.ApplyOverlay(ov);
-                testNPC.BaseInst.SetNeedsClientGuide(true);
-                var item = new ItemInst(ItemDef.Get("grobes_schwert"));
-                testNPC.Inventory.AddItem(item);
-                testNPC.EquipItem(NPCSlots.OneHanded1, item);
-                testNPC.Spawn(world, Randomizer.GetVec3fRad(new Vec3f(0, 1000, 0), 10000), Angles.Null);      
-                
-                var aiMemory = new Sumpfkraut.AI.SimpleAI.AIMemory();
-                var aiRoutine = new Sumpfkraut.AI.SimpleAI.AIRoutines.SimpleAIRoutine();
-                var aiPersonality = new Sumpfkraut.AI.SimpleAI.AIPersonalities.SimpleAIPersonality(800f, 1f);
-                aiPersonality.Init(aiMemory, aiRoutine);
-                var aiAgent = new Sumpfkraut.AI.SimpleAI.AIAgent(new List<VobInst> { testNPC }, aiPersonality);
-                aiManager01.SubscribeAIAgent(aiAgent);
-            }*/
+            // { new Vec3f(-618.7121f, -320.7968f, -1885.178f), new Angles(-0.101229f, -0.6841688f, 0f) },
 
-
+            Arena.GameModes.BattleRoyale.BRWorldLoader.Load(world);
         }
 
         void AddSomeDefs()
@@ -247,6 +230,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = (int)HumBodyTexs.G1Hero;
             npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_PONY.ToString();
             npcDef.HeadTex = (int)HumHeadTexs.Face_N_Player;
+            npcDef.Guild = 1;
             npcDef.Create();
 
             npcDef = new NPCDef("femaleplayer");
@@ -256,6 +240,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = (int)HumBodyTexs.F_Babe1;
             npcDef.HeadMesh = HumHeadMeshs.HUM_HEAD_BABE.ToString();
             npcDef.HeadTex = (int)HumHeadTexs.FaceBabe_N_Anne;
+            npcDef.Guild = 1;
             npcDef.Create();
 
             npcDef = new NPCDef("skeleton");
@@ -265,6 +250,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 31;
             npcDef.Create();
 
             npcDef = new NPCDef("skeleton2");
@@ -274,6 +260,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 31;
             npcDef.Create();
 
             npcDef = new NPCDef("skeleton_lord");
@@ -283,6 +270,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "Ske_Head";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 31;
             npcDef.Create();
 
             AddItems();
@@ -295,6 +283,7 @@ namespace GUC.Scripts
             AddRats();
             AddLurkers();
             AddEchsen();
+            AddScavengers();
 
 
             m = new ModelDef("trollpalisade");
@@ -470,6 +459,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.Protection = 40;
             itemDef.VisualChange = "ARMOR_GRDL.ASC";
+            itemDef.InvOffset = new Vec3f(0, -20, -20);
             itemDef.Model = m;
             itemDef.Create();
 
@@ -482,7 +472,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Wep2H;
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
-            itemDef.Range = 100;
+            itemDef.Range = 110;
             itemDef.Damage = 50;
             itemDef.Create();
 
@@ -494,6 +484,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.Protection = 40;
             itemDef.VisualChange = "Armor_Bloodwyn_ADDON.asc";
+            itemDef.InvOffset = new Vec3f(0, -20, -20);
             itemDef.Model = m;
             itemDef.Create();
 
@@ -747,7 +738,7 @@ namespace GUC.Scripts
             itemDef.Material = ItemMaterials.Metal;
             itemDef.Model = m;
             itemDef.Damage = 50;
-            itemDef.Range = 100;
+            itemDef.Range = 110;
             itemDef.Create();
 
             m = new ModelDef("ITAR_pal_skel", "ItAr_Pal_H.3ds");
@@ -801,6 +792,7 @@ namespace GUC.Scripts
             itemDef.ItemType = ItemTypes.Armor;
             itemDef.VisualChange = "Armor_Thorus_ADDON.asc";
             itemDef.Protection = 50;
+            itemDef.InvOffset = new Vec3f(0, -20, -20);
             itemDef.Model = m;
             itemDef.Create();
 
@@ -1388,6 +1380,7 @@ namespace GUC.Scripts
             m.Radius = 130;
             m.HalfHeight = 80;
             m.FistRange = 40;
+            m.CenterOffset = 50;
             m.Create();
 
             // NPCs
@@ -1398,6 +1391,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 29;
             npcDef.Create();
 
             npcDef = new NPCDef("minecrawler_warrior");
@@ -1407,6 +1401,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 29;
             npcDef.Create();
 
             // CRAWLER KÖNIGIN
@@ -1430,6 +1425,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 29;
             npcDef.Create();
         }
 
@@ -1575,6 +1571,7 @@ namespace GUC.Scripts
 
             m.Radius = 80;
             m.HalfHeight = 100;
+            m.CenterOffset = 20;
             m.Create();
 
             // NPCs
@@ -1585,6 +1582,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 62;
             npcDef.Create();
         }
 
@@ -1799,6 +1797,7 @@ namespace GUC.Scripts
 
             m.Radius = 80;
             m.HalfHeight = 100;
+            m.CenterOffset = 20;
             m.Create();
 
             // NPCs
@@ -1809,6 +1808,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "Orc_HeadWarrior";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 59;
             npcDef.Create();
 
             // NPCs
@@ -1819,6 +1819,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "Orc_HeadWarrior";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 59;
             npcDef.Create();
 
             npcDef = new NPCDef("orc_elite");
@@ -1828,6 +1829,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "Orc_HeadWarrior";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 59;
             npcDef.Create();
 
             npcDef = new NPCDef("orc_oberst");
@@ -1837,6 +1839,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "Orc_HeadWarrior";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 59;
             npcDef.Create();
         }
 
@@ -2055,9 +2058,9 @@ namespace GUC.Scripts
             aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 19));
             m.AddAniJob(aniJob);
 
-            m.Radius = 80;
+            m.Radius = 40;
             m.HalfHeight = 40;
-            m.FistRange = 40;
+            m.FistRange = 60;
             m.Create();
 
             // NPCs
@@ -2068,6 +2071,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 25;
             npcDef.Create();
         }
 
@@ -2108,6 +2112,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 35;
             npcDef.Create();
         }
 
@@ -2135,6 +2140,7 @@ namespace GUC.Scripts
             m.Radius = 120;
             m.HalfHeight = 200;
             m.FistRange = 300;
+            m.CenterOffset = 20;
             m.Create();
 
             // NPCs
@@ -2145,6 +2151,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 47;
             npcDef.Create();
 
             npcDef = new NPCDef("dragon_undead");
@@ -2154,6 +2161,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 47;
             npcDef.Create();
         }
 
@@ -2185,6 +2193,7 @@ namespace GUC.Scripts
             m.Radius = 60;
             m.HalfHeight = 30;
             m.FistRange = 40;
+            m.CenterOffset = 30;
             m.Create();
 
             // NPCs
@@ -2195,6 +2204,7 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 23;
             npcDef.Create();
         }
 
@@ -2225,7 +2235,8 @@ namespace GUC.Scripts
 
             m.Radius = 60;
             m.HalfHeight = 30;
-            m.FistRange = 40;
+            m.CenterOffset = 50;
+            m.FistRange = 100;
             m.Create();
 
             // NPCs
@@ -2236,6 +2247,49 @@ namespace GUC.Scripts
             npcDef.BodyTex = 0;
             npcDef.HeadMesh = "";
             npcDef.HeadTex = 0;
+            npcDef.Guild = 30;
+            npcDef.Create();
+        }
+
+        #endregion
+
+        #region Scavenger
+
+        public void AddScavengers()
+        {
+            ModelDef m = new ModelDef("Scavenger", "Scavenger.mds");
+            m.SetAniCatalog(new Sumpfkraut.Visuals.AniCatalogs.NPCCatalog());
+
+            var aniJob = new ScriptAniJob("fistattack_fwd0", "s_FistAttack", new ScriptAni(0, 20));
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 9);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fistattack_run", "t_FistAttackMove", new ScriptAni(1, 15));
+            aniJob.Layer = 2;
+            aniJob.DefaultAni.SetSpecialFrame(SpecialFrame.Hit, 16);
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_parade", "t_FistParade_0", new ScriptAni(0, 29));
+            m.AddAniJob(aniJob);
+
+            aniJob = new ScriptAniJob("fist_jumpback", "t_FistParadeJumpB", new ScriptAni(1, 20));
+            m.AddAniJob(aniJob);
+
+            m.Radius = 60;
+            m.HalfHeight = 30;
+            m.CenterOffset = 50;
+            m.FistRange = 100;
+            m.Create();
+
+            // NPCs
+            NPCDef npcDef = new NPCDef("scavenger");
+            npcDef.Name = "Scavenger";
+            npcDef.Model = m;
+            npcDef.BodyMesh = "Sca_Body";
+            npcDef.BodyTex = 0;
+            npcDef.HeadMesh = "";
+            npcDef.HeadTex = 0;
+            npcDef.Guild = 22;
             npcDef.Create();
         }
 

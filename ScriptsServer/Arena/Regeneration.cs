@@ -42,7 +42,7 @@ namespace GUC.Scripts.Arena
             if (diff <= 0 || npc.IsDead)
                 return;
 
-            if (client.GMTeamID >= TeamIdent.GMPlayer && (GameTime.Ticks - npc.LastHitMove) < RegenerationOffset)
+            if (GameTime.Ticks - npc.LastHitMove < RegenerationOffset)
                 return;
 
             int add = client.GMTeamID >= TeamIdent.GMPlayer ? 2 : 8;

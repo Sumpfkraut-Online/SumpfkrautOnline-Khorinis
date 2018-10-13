@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
-using WinApi.Kernel.Exception;
 
-namespace WinApi.NEW
+namespace WinApiNew.Utilities
 {
     static class Error
     {
@@ -15,7 +14,7 @@ namespace WinApi.NEW
             switch (errorcode)
             {
                 case 5:
-                    throw new AccessDenied();
+                    throw new Exception("Access Denied!");
                 case 299:
                     break;
                 default:

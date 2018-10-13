@@ -106,16 +106,17 @@ namespace GUC.Scripts.Sumpfkraut.Menus
         }
 
 
-        protected override void KeyDown(VirtualKeys key)
+        protected override void KeyPress(VirtualKeys key, bool hold)
         {
             switch (key)
             {
                 case VirtualKeys.Escape:
                 case VirtualKeys.Tab:
-                    Close();
+                    if (!hold)
+                        Close();
                     break;
                 case VirtualKeys.Menu: // DROP
-                    if (player != null && !Arena.ArenaClient.GMJoined)
+                    if (!hold && player != null && !Arena.ArenaClient.GMJoined)
                     {
                         ItemInst selectedItem = inv.GetSelectedItem();
                         if (selectedItem != null)
@@ -132,27 +133,30 @@ namespace GUC.Scripts.Sumpfkraut.Menus
                     }
                     break;
                 case VirtualKeys.Control: // USE
-                    ItemInst selItem = inv.GetSelectedItem();
-                    if (selItem == null)
-                        return;
-
-                    switch (selItem.ItemType)
+                    if (!hold)
                     {
-                        case ItemTypes.Wep1H:
-                        case ItemTypes.Wep2H:
-                        case ItemTypes.WepBow:
-                        case ItemTypes.WepXBow:
-                        case ItemTypes.Armor:
-                        case ItemTypes.Torch:
-                            if (!Arena.ArenaClient.GMJoined)
-                                if (selItem.IsEquipped)
-                                    NPCInst.Requests.UnequipItem(player, selItem);
-                                else
-                                    NPCInst.Requests.EquipItem(player, selItem);
-                            break;
-                        default:
-                            NPCInst.Requests.UseItem(player, selItem);
-                            break;
+                        ItemInst selItem = inv.GetSelectedItem();
+                        if (selItem == null)
+                            return;
+
+                        switch (selItem.ItemType)
+                        {
+                            case ItemTypes.Wep1H:
+                            case ItemTypes.Wep2H:
+                            case ItemTypes.WepBow:
+                            case ItemTypes.WepXBow:
+                            case ItemTypes.Armor:
+                            case ItemTypes.Torch:
+                                if (selItem.ItemType == ItemTypes.Torch || !Arena.ArenaClient.GMJoined)
+                                    if (selItem.IsEquipped)
+                                        NPCInst.Requests.UnequipItem(player, selItem);
+                                    else
+                                        NPCInst.Requests.EquipItem(player, selItem);
+                                break;
+                            default:
+                                NPCInst.Requests.UseItem(player, selItem);
+                                break;
+                        }
                     }
                     break;
                 default:

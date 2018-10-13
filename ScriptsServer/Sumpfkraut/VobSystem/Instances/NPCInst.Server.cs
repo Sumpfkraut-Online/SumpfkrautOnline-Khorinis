@@ -272,8 +272,35 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (item != null && item.IsSpawned)
             {
+                // remove item in world
                 item.Despawn();
-                this.Inventory.AddItem(item);
+                bool add = true;
+
+                // stack items of the same kind
+                this.Inventory.ForEachItemPredicate(invItem =>
+                {
+                    if (invItem.Definition == item.Definition)
+                    {
+                        invItem.SetAmount(invItem.Amount + item.Amount);
+                        add = false;
+                        return false;
+                    }
+                    return true;
+                });
+
+                if (add)
+                {
+                    this.Inventory.AddItem(item);
+
+                    // check if this is ammo we need
+                    ItemInst rangedWep = GetEquipmentBySlot(NPCSlots.Ranged);
+                    if (rangedWep != null && GetEquipmentBySlot(NPCSlots.Ammo) == null
+                        && ((item.ItemType == ItemTypes.AmmoBow && rangedWep.ItemType == ItemTypes.WepBow)
+                           || (item.ItemType == ItemTypes.AmmoXBow && rangedWep.ItemType == ItemTypes.WepXBow)))
+                    {
+                        EquipItem(NPCSlots.Ammo, item);
+                    }
+                }
             }
         }
 
@@ -697,7 +724,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public int Damage;
         public int Protection;
-        
+
         long lastHitMoveTime;
         public long LastHitMove { get { return this.lastHitMoveTime; } }
 
@@ -796,11 +823,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target.CurrentFightMove == FightMoves.Dodge)
                           realRange /= 3.0f; // decrease radius if target is backing up
 
-                      Vec3f targetPos = npc.Position;
-                      if (target.ModelDef.Visual == "CRAWLER.MDS") // fixme
-                      {
-                          targetPos += npc.GetAtVector() * 50;
-                      }
+                      Vec3f targetPos = npc.Position + npc.GetAtVector() * target.ModelDef.CenterOffset;
+
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
 
@@ -943,7 +967,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             proj.Spawn(this.World, start, rotation);
 
-
             var drawnWeapon = GetDrawnWeapon();
             ScriptAniJob job = (drawnWeapon != null && drawnWeapon.ItemType == ItemTypes.WepXBow) ? AniCatalog.FightXBow.Reload : AniCatalog.FightBow.Reload;
             if (job != null && ModelInst.TryGetAniFromJob(job, out ScriptAni ani))
@@ -982,6 +1005,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 unconTimer.SetInterval(duration);
                 unconTimer.Start();
             }
+
+            OnUnconChange?.Invoke(this);
         }
 
         public void LiftUnconsciousness()
@@ -1010,6 +1035,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             int hp = this.HP + 25;
             this.SetHealth(hp > HPMax ? HPMax : hp);
+            OnUnconChange?.Invoke(this);
         }
 
         #endregion

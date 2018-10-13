@@ -86,9 +86,9 @@ namespace WinApi
 
         #region Utils
 
-        static int AllocString(string str, Encoding enc = null)
+        public static int AllocString(string str, Encoding enc = null)
         {
-            byte[] bytes = (enc == null ? Encoding.Unicode : enc).GetBytes(str + "\0");
+            byte[] bytes = (enc ?? Encoding.Unicode).GetBytes(str + "\0");
             int ptr = Alloc((uint)bytes.Length).ToInt32();
             Write(ptr, bytes);
             return ptr;

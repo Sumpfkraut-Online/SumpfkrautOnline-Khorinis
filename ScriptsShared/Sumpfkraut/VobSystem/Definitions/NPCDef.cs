@@ -24,6 +24,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         public int BodyTex { get { return BaseDef.BodyTex; } set { BaseDef.BodyTex = value; } }
         public string HeadMesh { get { return BaseDef.HeadMesh; } set { BaseDef.HeadMesh = value; } }
         public int HeadTex { get { return BaseDef.HeadTex; } set { BaseDef.HeadTex = value; } }
+        public byte Guild { get { return BaseDef.Guild; } set { BaseDef.Guild = value; } }
 
         #endregion
 

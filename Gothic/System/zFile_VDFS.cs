@@ -8,6 +8,10 @@ namespace Gothic.System
 {
     public class zFile_VDFS : zFile_File
     {
+        public zFile_VDFS(int address) : base(address)
+        {
+        }
+
         new public static bool InitFileSystem()
         {
             return Process.CDECLCALL<BoolArg>(0x44AD60);

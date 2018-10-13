@@ -8,6 +8,7 @@ using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
 using GUC.Scripting;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.WorldSystem;
 
 namespace GUC.Scripts.Arena.GameModes.Horde
 {
@@ -269,7 +270,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         protected override void FadeOut()
         {
-            HordeFadeOut(Stands.Count == 0 && players.TrueForAll(p => !p.IsCharacter || p.Character.HP > 1));
+            HordeFadeOut(Stands.Count == 0 && players.TrueForAll(p => !p.IsCharacter || (!p.Character.IsUnconscious && !p.Character.IsDead)));
         }
 
         void HordeFadeOut(bool playersWon)
@@ -288,6 +289,13 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     if (p.IsCharacter)
                         p.Character.LiftUnconsciousness();
                 });
+
+                var agent = CreateAgent();
+                foreach (var npc in AmbientNPCs)
+                {
+                    npc.BaseInst.SetNeedsClientGuide(true);
+                    agent.Add(npc);
+                }
             }
             else
             {
@@ -298,13 +306,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     if (p.IsCharacter)
                         p.Character.SetHealth(0);
                 });
-            }
 
-            var agent = CreateAgent();
-            foreach (var npc in AmbientNPCs)
-            {
-                npc.BaseInst.SetNeedsClientGuide(true);
-                agent.Add(npc);
+                ClearAgents();
             }
             base.FadeOut();
         }
@@ -336,8 +339,6 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                     return;
 
                 ArenaClient player = (ArenaClient)attacker.Client;
-                if (player.GMTeamID < TeamIdent.GMPlayer) return;
-
                 player.GMScore += damage / 10.0f;
                 if (target.HP <= 0)
                 {
@@ -348,8 +349,6 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             else if (target.IsPlayer)
             {
                 ArenaClient player = (ArenaClient)target.Client;
-                if (player.GMTeamID < TeamIdent.GMPlayer) return;
-
                 if (target.HP <= 1)
                 {
                     player.GMDeaths++;
@@ -366,12 +365,10 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
             client.GMClass = pc;
             client.SetTeamID(TeamIdent.GMPlayer);
-
+            
             if (Phase == GamePhase.WarmUp || Phase == GamePhase.None)
             {
-                NPCInst npc = InitialSpawnClient(client, true);
-                npc.DropUnconsciousOnDeath = true;
-                npc.UnconsciousDuration = -1;
+                InitialSpawnClient(client, true);
             }
             else if (Phase != GamePhase.FadeOut)
             {
@@ -381,6 +378,9 @@ namespace GUC.Scripts.Arena.GameModes.Horde
 
         public override void OnSuicide(ArenaClient client)
         {
+            if (Phase < GamePhase.Fight)
+                return;
+
             client.GMDeaths++;
             if (players.TrueForAll(p => !p.IsCharacter || p.Character.IsDead || p.Character.IsUnconscious))
                 HordeFadeOut(false);
@@ -405,9 +405,28 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 return;
 
             var npc = SpawnCharacter(client, World, result, 100);
-            npc.DropUnconsciousOnDeath = true;
-            npc.UnconsciousDuration = -1;
             npc.DropUnconscious();
+        }
+
+        bool OnAllowHit(NPCInst attacker, NPCInst target)
+        {
+            return attacker.TeamID != target.TeamID;
+        }
+
+        protected override NPCInst SpawnCharacter(ArenaClient client, WorldInst world, PosAng spawnPoint)
+        {
+            NPCInst pc = base.SpawnCharacter(client, world, spawnPoint);
+            pc.AllowHitTarget.Add(OnAllowHit);
+            pc.DropUnconsciousOnDeath = true;
+            pc.UnconsciousDuration = -1;
+            return pc;
+        }
+
+        protected override NPCInst SpawnNPC(NPCClass classDef, Vec3f pos, Angles ang, float posOffset = 100, int teamID = 1, bool giveAI = true)
+        {
+            NPCInst npc =  base.SpawnNPC(classDef, pos, ang, posOffset, teamID, giveAI);
+            npc.AllowHitTarget.Add(OnAllowHit);
+            return npc;
         }
     }
 }

@@ -108,6 +108,7 @@ namespace GUC.Hooks
                     if (!outgameStarted)
                     {
                         outgameStarted = true;
+                        VobRenderArgs.Init();
                         ScriptManager.Interface.StartOutgame();
                     }
 
@@ -152,7 +153,6 @@ namespace GUC.Hooks
             try
             {
                 spikeWatch.Restart();
-
                 // Update Timers
                 GameTime.Update();
                 GUCTimer.Update(GameTime.Ticks);

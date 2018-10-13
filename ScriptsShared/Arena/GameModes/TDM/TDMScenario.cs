@@ -456,7 +456,7 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                             new NPCClass()
                             {
                                 Name = "Skelettkrieger",
-                                Definition = null,
+                                Definition = "skeleton",
                                 Protection = 35,
                                 Damage = 0,
                                 HP = 100,
@@ -471,11 +471,12 @@ namespace GUC.Scripts.Arena.GameModes.TDM
                         },
                         SpawnPoints = new PosAng[]
                         {
-                            new PosAng(-1181.993f, -437.5759f, -2589.357f, 0f, 0.5689777f, 0f),
-                            new PosAng(-1033.761f, -438.4826f, -2530.26f, 0f, 0.4817112f, 0f),
-                            new PosAng(-766.6343f, -425.4779f, -2489.346f, 0f, 0.6946411f, 0f),
-                            new PosAng(-628.7674f, -355.7959f, -2276.756f, 0f, 0.959931f, 0f),
-                            new PosAng(-558.9549f, -192.2555f, -2474.483f, 0f, 0.9305235f, 0f),
+                            new PosAng(-207.9663f, -358.2849f, -1879.606f, 0f, -0.1881028f, 0f),
+                            new PosAng(139.1924f, -359.334f, -1937.104f, 0f, -0.1147986f, 0f),
+                            new PosAng(408.9449f, -360.9809f, -1839.654f, 0f, 0.4576695f, 0f),
+                            new PosAng(684.8774f, -363.3592f, -1608.415f, 0f, 0.8870206f, 0f),
+                            new PosAng(-742.9604f, -288.7229f, -1876.77f, -0.1570795f, -0.8517206f, 0f),
+                            new PosAng(-618.7121f, -320.7968f, -1885.178f, -0.101229f, -0.6841688f, 0f),
                         }
                     }
                 }

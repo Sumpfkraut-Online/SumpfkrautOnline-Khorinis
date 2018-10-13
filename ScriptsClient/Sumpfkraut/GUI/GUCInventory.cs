@@ -6,11 +6,19 @@ using WinApi.User.Enumeration;
 using GUC.Types;
 using GUC.GUI;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.GUI
 {
     public class GUCInventory : GUCView
     {
+        const string TextureBackgroundDefault = "INV_BACK.TGA";
+        const string TextureTitle = "INV_TITLE.TGA";
+        const string TextureSlot = "INV_SLOT.TGA";
+        const string TextureSlotHL = "INV_SLOT_HIGHLIGHTED.TGA";
+        const string TextureSlotEquip = "INV_SLOT_EQUIPPED.TGA";
+        const string TextureSlotEquipHL = "INV_SLOT_EQUIPPED_HIGHLIGHTED.TGA";
+
         public const int DescriptionBoxWidth = 720;
         public const int DescriptionBoxHeight = 162;
         public const int SlotSize = 70;
@@ -24,16 +32,10 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             GUCVisualText amount;
             bool shown = false;
 
-            const string bgTex = "Inv_Slot.tga";
-            const string bgHighlightedTex = "Inv_Slot_Highlighted.tga";
-
-            const string eqTex = "Inv_Slot_Equipped.tga";
-            const string eqHighlightedTex = "Inv_Slot_Equipped_Highlighted.tga";
-
             public Slot(int x, int y)
             {
                 back = new GUCVisual(x, y, SlotSize, SlotSize);
-                back.SetBackTexture(bgTex);
+                back.SetBackTexture(TextureSlot);
 
                 vis = new GUCVobVisual(x, y, SlotSize, SlotSize);
 
@@ -42,39 +44,37 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             }
 
             ItemInst item = null;
-            public ItemInst Item
+            public ItemInst Item { get { return item; } }
+            public void SetItem(ItemInst item)
             {
-                get { return item; }
-                set
+                if (this.item == item)
+                    return;
+                this.item = item;
+
+                UpdateBackTex();
+                if (item == null)
                 {
-                    if (this.item != value)
+                    vis.SetVisual(string.Empty);
+                    vis.Hide();
+                }
+                else
+                {
+                    vis.SetVisual(item.ModelDef.Visual);
+                    if (shown)
                     {
-                        item = value;
-                        UpdateBackTex();
-                        if (item == null)
-                        {
-                            vis.SetVisual(string.Empty);
-                            vis.Hide();
-                        }
-                        else
-                        {
-                            vis.SetVisual(item.ModelDef.Visual);
-                            if (shown)
-                            {
-                                vis.Show();
-                            }
-                            int num = item.Amount;
-                            if (num > 1)
-                            {
-                                amount.Text = num.ToString();
-                            }
-                            else
-                            {
-                                amount.Text = string.Empty;
-                            }
-                        }
+                        vis.Show();
+                    }
+                    int num = item.Amount;
+                    if (num > 1)
+                    {
+                        amount.Text = num.ToString();
+                    }
+                    else
+                    {
+                        amount.Text = string.Empty;
                     }
 
+                    item.Definition.PositionInVobVisual(vis);
                 }
             }
 
@@ -96,11 +96,11 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             {
                 if (this.isSelected)
                 {
-                    back.SetBackTexture((item != null && item.IsEquipped) ? eqHighlightedTex : bgHighlightedTex);
+                    back.SetBackTexture((item != null && item.IsEquipped) ? TextureSlotEquipHL : TextureSlotHL);
                 }
                 else
                 {
-                    back.SetBackTexture((item != null && item.IsEquipped) ? eqTex : bgTex);
+                    back.SetBackTexture((item != null && item.IsEquipped) ? TextureSlotEquip : TextureSlot);
                 }
             }
 
@@ -191,7 +191,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
 
         #region Constructor
 
-        public GUCInventory(int x, int y, int cols, int rows, string backTex = "Inv_Back.tga")
+        public GUCInventory(int x, int y, int cols, int rows, string backTex = TextureBackgroundDefault)
         {
             // create the background
             back = new GUCVisual(x, y, cols * SlotSize, rows * SlotSize);
@@ -227,7 +227,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             rightBack = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);
             rightBack.SetBackTexture(backTex);
             rightVis = new GUCVisual(x + (cols - 2) * SlotSize, y - 20 - 35, 2 * SlotSize, 35);
-            rightVis.SetBackTexture("Inv_Title.tga");
+            rightVis.SetBackTexture(TextureTitle);
             rightText = rightVis.CreateText("Gold: 0");
             RightInfoBox = "GOLD";
 
@@ -235,7 +235,7 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             leftBack = new GUCVisual(x, y - 20 - 35, 2 * SlotSize, 35);
             leftBack.SetBackTexture(backTex);
             leftVis = new GUCVisual(x, y - 20 - 35, 2 * SlotSize, 35);
-            leftVis.SetBackTexture("Inv_Title.tga");
+            leftVis.SetBackTexture(TextureTitle);
             leftText = leftVis.CreateText("Gewicht: 0");
             LeftInfoBox = "WEIGHT";
         }
@@ -438,7 +438,9 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 //visual vob
                 descrVis.SetVisual(selItem.ModelDef.Visual);
 
-                //show
+                //show description
+                def.PositionInVobVisual(descrVis);
+
                 descrBack.Show();
                 descrVis.Show();
             }
@@ -449,22 +451,75 @@ namespace GUC.Scripts.Sumpfkraut.GUI
             if (!enabled)
                 return;
 
-            if (key == VirtualKeys.Right)
+            switch (key)
             {
-                SetCursor(cursor.X + 1, cursor.Y);
+                case VirtualKeys.Right:
+                    SetCursor(cursor.X + 1, cursor.Y);
+                    return;
+                case VirtualKeys.Left:
+                    SetCursor(cursor.X - 1, cursor.Y);
+                    return;
+                case VirtualKeys.Up:
+                    SetCursor(cursor.X, cursor.Y - 1);
+                    return;
+                case VirtualKeys.Down:
+                    SetCursor(cursor.X, cursor.Y + 1);
+                    return;
+
+                // left/right
+                case VirtualKeys.Numpad4:
+                    descrVis.OffsetX -= 5;
+                    break;
+                case VirtualKeys.Numpad6:
+                    descrVis.OffsetX += 5;
+                    break;
+
+                // up / down
+                case VirtualKeys.Numpad8:
+                    descrVis.OffsetY += 5;
+                    break;
+                case VirtualKeys.Numpad2:
+                    descrVis.OffsetY -= 5;
+                    break;
+
+                // forth / back
+                case VirtualKeys.Add:
+                    descrVis.OffsetZ -= 5;
+                    break;
+                case VirtualKeys.Subtract:
+                    descrVis.OffsetZ += 5;
+                    break;
+
+                // rotation yaw
+                case VirtualKeys.Numpad7:
+                    descrVis.RotationYaw -= Angles.Deg2Rad(5);
+                    break;
+                case VirtualKeys.Numpad9:
+                    descrVis.RotationYaw += Angles.Deg2Rad(5);
+                    break;
+
+                // rotation roll
+                case VirtualKeys.Numpad1:
+                    descrVis.RotationRoll -= Angles.Deg2Rad(5);
+                    break;
+                case VirtualKeys.Numpad3:
+                    descrVis.RotationRoll += Angles.Deg2Rad(5);
+                    break;
+
+                // rotation pitch
+                case VirtualKeys.Divide:
+                    descrVis.RotationPitch += Angles.Deg2Rad(5);
+                    break;
+                case VirtualKeys.Multiply:
+                    descrVis.RotationPitch -= Angles.Deg2Rad(5);
+                    break;
+                default:
+                    return;
             }
-            else if (key == VirtualKeys.Left)
-            {
-                SetCursor(cursor.X - 1, cursor.Y);
-            }
-            else if (key == VirtualKeys.Up)
-            {
-                SetCursor(cursor.X, cursor.Y - 1);
-            }
-            else if (key == VirtualKeys.Down)
-            {
-                SetCursor(cursor.X, cursor.Y + 1);
-            }
+
+            Log.Logger.Log("Offset: ({0} {1} {2}) Rotation: ({3} {4} {5})",
+                            descrVis.OffsetX, descrVis.OffsetY, descrVis.OffsetZ,
+                            descrVis.RotationPitch, descrVis.RotationYaw, descrVis.RotationRoll);
         }
 
         #endregion
@@ -514,13 +569,13 @@ namespace GUC.Scripts.Sumpfkraut.GUI
                 {
                     if (i < contents.Count)
                     {
-                        slots[x, y].Item = contents[i];
+                        slots[x, y].SetItem(contents[i]);
                         slots[x, y].UpdateSlotAmount();
                         slots[x, y].UpdateBackTex();
                     }
                     else
                     {
-                        slots[x, y].Item = null;
+                        slots[x, y].SetItem(null);
                     }
                     i++;
                 }

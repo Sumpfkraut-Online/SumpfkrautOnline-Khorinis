@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Utilities;
 using WinApi.User.Enumeration;
+using System.IO;
 
 namespace GUC.Scripts.Sumpfkraut.Options
 {
@@ -21,7 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.Options
 
         public static void Save()
         {
-            XMLHelper.SaveObject<Options>(options, Program.GetProjectPath(FilePath));
+            XMLHelper.SaveObject<Options>(options, Path.Combine(Program.ProjectPath, FilePath));
         }
 
         public static void Load()

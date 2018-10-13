@@ -21,20 +21,19 @@ namespace GUC.Scripts.Arena.Menus
             AddButton("Charakter editieren", "Deinen Spielcharakter editieren.", 220, CharCreationMenu.Menu.Open);
             AddButton("Spiel verlassen", "Das Spiel schließen.", 320, ExitMenu.Menu.Open);
             OnEscape = () => { if (!GUCScripts.Ingame) Open(); };
-
-            GameMode.OnModeStart += UpdateGameModeButton;
         }
 
-        void UpdateGameModeButton()
+        void UpdateModeButtons()
         {
+            freeModeButton.Text = string.Format("Freier Modus ({0})", PlayerInfo.GetInfos().Count(pi => pi.JoinedFFA));
             if (GameMode.IsActive)
             {
-                gameModeButton.Text = string.Format("{0} ({1})", GameMode.ActiveMode.Name, PlayerInfo.GetInfos().Count(pi => pi.TeamID >= TeamIdent.GMSpectator));
+                gameModeButton.Text = string.Format("{0} ({1})", GameMode.ActiveMode.Name, PlayerInfo.GetInfos().Count(pi => pi.JoinedGameMode));
                 gameModeButton.Enabled = true;
             }
             else
             {
-                gameModeButton.Text = "Spielmodus";
+                gameModeButton.Text = "Kein Spielmodus läuft";
                 gameModeButton.Enabled = false;
             }
         }
@@ -67,8 +66,14 @@ namespace GUC.Scripts.Arena.Menus
         public override void Open()
         {
             base.Open();
-            UpdateGameModeButton();
-            freeModeButton.Text = string.Format("Freier Modus ({0})", PlayerInfo.GetInfos().Count(pi => pi.TeamID <= TeamIdent.FFASpectator));
+            UpdateModeButtons();
+            PlayerInfo.OnPlayerListChange += UpdateModeButtons;
+        }
+
+        public override void Close()
+        {
+            base.Close();
+            PlayerInfo.OnPlayerListChange -= UpdateModeButtons;
         }
     }
 }

@@ -66,8 +66,10 @@ namespace GUC.Scripts.Sumpfkraut.Menus
             base.Close();
         }
 
-        protected override void KeyDown(VirtualKeys key)
+        protected override void KeyPress(VirtualKeys key, bool hold)
         {
+            if (hold) return;
+
             if (key == VirtualKeys.Escape || key == VirtualKeys.Tab)
             {
                 Close();

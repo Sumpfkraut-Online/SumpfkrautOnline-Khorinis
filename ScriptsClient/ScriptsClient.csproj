@@ -310,6 +310,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\StringUtil.cs">
       <Link>Utilities\StringUtil.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\Utilities\TestVariable.cs">
+      <Link>Sumpfkraut\Utilities\TestVariable.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\Visuals\HumanVisuals.cs">
       <Link>Sumpfkraut\Visuals\HumanVisuals.cs</Link>
     </Compile>
@@ -403,6 +406,7 @@
     <Compile Include="Arena\GameModes\Horde\HordeMode.Client.cs" />
     <Compile Include="Arena\GameModes\Horde\MenuClassSelect.cs" />
     <Compile Include="Arena\GameModes\Horde\HordeScoreBoard.cs" />
+    <Compile Include="Arena\GameModes\MissionScreen.cs" />
     <Compile Include="Arena\GameModes\TDM\MenuClassSelect.cs" />
     <Compile Include="Arena\GameModes\TDM\MenuTeamSelect.cs" />
     <Compile Include="Arena\GameModes\TDM\RespawnNote.cs" />
@@ -426,7 +430,9 @@
     <Compile Include="Arena\Controls\SpectatorControl.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyDictionary.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyHoldHelper.cs" />
+    <Compile Include="Sumpfkraut\Controls\PlayerFocus.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
+    <Compile Include="Sumpfkraut\GUI\GUCTextLines.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCWorldSprite.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuButton.cs" />
     <Compile Include="Sumpfkraut\GUI\MainMenu\MainMenuCharacter.cs" />

@@ -9,6 +9,8 @@ using GUC.Types;
 using System.Globalization;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI;
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
 
 namespace GUC.Scripts.Arena.GameModes.BattleRoyale
 {
@@ -46,6 +48,9 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
                         continue;
 
                     if (!ReadPosition(line, out Vec3f pos))
+                        continue;
+
+                    if (pos.GetLength() < 8500)
                         continue;
 
                     spawnFunc(world, new PosAng(pos, Angles.TwoPI * Randomizer.GetFloat()));
@@ -120,7 +125,22 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
             if (def == null) return;
 
             NPCInst inst = new NPCInst(def);
+            inst.BaseInst.SetNeedsClientGuide(true);
+            inst.TeamID = 1;
+            posAng.Position.Y += 50;
             inst.Spawn(world, posAng.Position, posAng.Angles);
+
+            var agent = CreateAgent();
+            agent.Add(inst);
+        }
+
+        static AIAgent CreateAgent(float aggressionRad = 800)
+        {
+            var pers = new SimpleAIPersonality(aggressionRad, 1);
+            var agent = new AIAgent(new List<VobInst>(), pers);
+            AIManager.aiManagers[0].SubscribeAIAgent(agent);
+            pers.Init(null, null);
+            return agent;
         }
     }
 }

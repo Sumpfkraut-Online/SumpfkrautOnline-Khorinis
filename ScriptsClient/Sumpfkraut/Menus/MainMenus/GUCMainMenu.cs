@@ -288,34 +288,32 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
                     break;
                 }
             }
-            //PlaySound(SndBrowse);
+            PlaySound(sndBrowse);
         }
         
-        protected override void KeyDown(VirtualKeys key)
+        protected override void KeyPress(VirtualKeys key, bool hold)
         {
             long now = GameTime.Ticks;
             switch (key)
             {
                 case VirtualKeys.Return:
-                    if (items[cursor].OnActivate != null)
+                    if (!hold)
                     {
-                        items[cursor].OnActivate();
+                        items[cursor].OnActivate?.Invoke();
+                        PlaySound(sndSelect);
                     }
-                    //PlaySound(SndSelect);
                     break;
                 case VirtualKeys.Escape:
-                    this.Close();
-                    if (OnEscape != null)
+                    if (!hold)
                     {
-                        OnEscape();
+                        this.Close();
+                        OnEscape?.Invoke();
+                        PlaySound(sndEscape);
                     }
-                    //PlaySound(SndEscape);
                     break;
                 default:
-                    if (CurrentItem is InputReceiver)
-                    {
-                        ((InputReceiver)CurrentItem).KeyPressed(key);
-                    }
+                    if (CurrentItem is InputReceiver rec)
+                        rec.KeyPressed(key);
                     break;
             }
         }
@@ -325,67 +323,21 @@ namespace GUC.Scripts.Sumpfkraut.Menus.MainMenus
         protected override void Update(long now)
         {
             scrollHelper.Update(now);
-            if (items[cursor] is MainMenuTextBox)
-            {
-                ((MainMenuTextBox)items[cursor]).Update(now);
-            }
+            if (items[cursor] is MainMenuTextBox tb)
+                tb.Update(now); // for cursor
         }
 
         bool sndEnabled = true;
-        /*void PlaySound(zCSoundFX snd)
+        void PlaySound(SoundDefinition snd)
         {
             if (sndEnabled)
             {
-                zCSndSys_MSS.SoundSystem(Program.Process).PlaySound(snd, 0, 0, 1.3f * Program.GetSoundVol());
+                SoundHandler.PlaySound(snd, 1.5f);
             }
         }
 
-        static zCSoundFX sndBrowse = null;
-        protected zCSoundFX SndBrowse
-        {
-            get
-            {
-                if (sndBrowse == null)
-                {
-                    using (zString z = zString.Create(Program.Process, "MENU_BROWSE"))
-                    {
-                        sndBrowse = zCSndSys_MSS.SoundSystem(Program.Process).LoadSoundFXScript(z);
-                    }
-                }
-                return sndBrowse;
-            }
-        }
-
-        static zCSoundFX sndSelect = null;
-        protected zCSoundFX SndSelect
-        {
-            get
-            {
-                if (sndSelect == null)
-                {
-                    using (zString z = zString.Create(Program.Process, "MENU_SELECT"))
-                    {
-                        sndSelect = zCSndSys_MSS.SoundSystem(Program.Process).LoadSoundFXScript(z);
-                    }
-                }
-                return sndSelect;
-            }
-        }
-
-        static zCSoundFX sndEscape = null;
-        protected zCSoundFX SndEscape
-        {
-            get
-            {
-                if (sndEscape == null)
-                {
-                    using (zString z = zString.Create(Program.Process, "MENU_ESC"))
-                    {
-                        sndEscape = zCSndSys_MSS.SoundSystem(Program.Process).LoadSoundFXScript(z);
-                    }
-                }
-                return sndEscape;
-            }
-        }*/
+        static readonly SoundDefinition sndBrowse = new SoundDefinition("MENU_BROWSE");
+        static readonly SoundDefinition sndSelect = new SoundDefinition("MENU_SELECT");
+        static readonly SoundDefinition sndEscape = new SoundDefinition("MENU_ESC");
     }
 }

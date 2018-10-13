@@ -14,7 +14,8 @@ namespace Gothic.Objects.Meshes
             public const int Owner = 0x60,
             ModelPrototype = 0x64,
             BBox3D = 216,
-            BBox3DLocal = 240;
+            BBox3DLocal = 240,
+            BitField = 0x1F8;
         }
 
         new public abstract class FuncAddresses : zCVisual.FuncAddresses
@@ -223,7 +224,7 @@ namespace Gothic.Objects.Meshes
         {
             return Process.THISCALL<IntArg>(Address, FuncAddresses.IsAnimationActive, animname) != 0;
         }
-        
+
         public bool IsAniActive(int aniID)
         {
             return IsAniActive(GetAniFromAniID(aniID));
@@ -294,7 +295,7 @@ namespace Gothic.Objects.Meshes
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetMeshLibTexture, texture, (IntArg)arg1, (IntArg)arg2, part);
         }
-        
+
         public int SearchNode(zString nodeName)
         {
             return Process.THISCALL<IntArg>(Address, 0x57DFF0, nodeName);
@@ -303,6 +304,18 @@ namespace Gothic.Objects.Meshes
         public void GetTrafoNodeToModel(int nodePtr, zMat4 matrix)
         {
             Process.THISCALL<NullReturnCall>(Address, 0x57A9C0, matrix, (IntArg)nodePtr);
+        }
+
+        public bool IsFlying
+        {
+            get { return Process.ReadBit(Address + VarOffsets.BitField, 1); }
+            set { Process.WriteBit(Address + VarOffsets.BitField, 1, value); }
+        }
+
+        public int BitField
+        {
+            get { return Process.ReadInt(Address + VarOffsets.BitField); }
+            set { Process.Write(Address + VarOffsets.BitField, value); }
         }
     }
 }

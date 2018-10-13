@@ -103,30 +103,37 @@ namespace GUC.Scripts.Arena
             Open();
         }
 
-        protected override void KeyDown(VirtualKeys key)
+        protected override void KeyPress(VirtualKeys key, bool hold)
         {
             switch (key)
             {
                 case VirtualKeys.Escape:
-                    Close();
+                    if (!hold)
+                        Close();
                     break;
                 case VirtualKeys.Delete:
-                    if (InputHandler.IsPressed(VirtualKeys.Control))
-                        ClearChat();
-                    else
-                        textBox.Input = "";
+                    if (!hold)
+                    {
+                        if (InputHandler.IsPressed(VirtualKeys.Control))
+                            ClearChat();
+                        else
+                            textBox.Input = "";
+                    }
                     break;
                 case VirtualKeys.Return:
-                    if (!(textBox.Input.Length == 0))
-                        SendInput();
-                    if (!InputHandler.IsPressed(VirtualKeys.Shift))
-                        Close();
+                    if (!hold)
+                    {
+                        if (!(textBox.Input.Length == 0))
+                            SendInput();
+                        if (!InputHandler.IsPressed(VirtualKeys.Shift))
+                            Close();
+                    }
                     break;
                 default:
                     textBox.KeyPressed(key);
                     break;
             }
-            base.KeyDown(key);
+            base.KeyPress(key, hold);
         }
 
         public void SendInput()
@@ -141,34 +148,11 @@ namespace GUC.Scripts.Arena
                 textBox.Input = "";
                 return;
             }
-            else if (message.StartsWith("/tell"))
+            else if (message.StartsWith("/test", StringComparison.OrdinalIgnoreCase)
+                  || message.StartsWith("test", StringComparison.OrdinalIgnoreCase))
             {
-                string name = message.Substring(6).Trim();
-                var vob = GothicGlobals.Game.GetWorld().SearchVobByName(name);
-                if (vob.Address != 0)
-                {
-                    Vec3f pos = (Vec3f)vob.Position;
-                    Angles ang = Angles.FromMatrix(vob.TrafoObjToWorld);
-                    string msg = string.Format(System.Globalization.CultureInfo.InvariantCulture, "new HordeBarrier() {{ Definition = \"barrier\", Position = new Vec3f({0:0}, {1:0}, {2:0}), Angles = new Angles({3:0.000}, {4:0.000}, {5:0.000}) }},\n", pos.X, pos.Y, pos.Z, ang.Pitch, ang.Yaw, ang.Roll);
-                    System.IO.File.AppendAllText("barriers.txt", msg);
-                }
-                else
-                {
-                    Log.Logger.Log("not found");
-                }
-                return;
-            }
-            else if (message.StartsWith("/scale"))
-            {
-                string[] strs = message.Substring(7).Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                if (strs.Length <= 0 || !float.TryParse(strs[0], out float x))
-                    x = 1;
-                if (strs.Length <= 1 || !float.TryParse(strs[1], out float y))
-                    y = 1;
-                if (strs.Length <= 2 || !float.TryParse(strs[2], out float z))
-                    z = 1;
-
-                Log.Logger.Log(x + " " + y + " " + z);
+                Sumpfkraut.Utilities.TestVarAbstract.Parse(message);
+                textBox.Input = "";
                 return;
             }
 

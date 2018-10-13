@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Runtime.InteropServices;
 
-namespace WinApi.NEW
+namespace WinApiNew.Utilities
 {
-    public class PInvoke
+    static class PInvoke
     {
         public enum ProcessAccess : uint
         {
@@ -29,10 +29,7 @@ namespace WinApi.NEW
         }
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
-
-        [DllImport("Kernel32.dll", SetLastError = true)]
-        public static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, UInt32 nSize, ref UInt32 lpNumberOfBytesRead);
+        public static extern int OpenProcess(ProcessAccess dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
         [Flags]
         public enum MemoryProtection : uint
@@ -51,7 +48,7 @@ namespace WinApi.NEW
         }
 
         [Flags]
-        public enum AllocationType
+        public enum AllocationType : uint
         {
             Commit = 0x1000,
             Reserve = 0x2000,
@@ -65,16 +62,15 @@ namespace WinApi.NEW
         }
 
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        public static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
+        public static extern int VirtualAllocEx(int hProcess, int lpAddress, uint dwSize, AllocationType flAllocationType, MemoryProtection flProtect);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, byte[] lpBuffer, UInt32 nSize, out UInt32 lpNumberOfBytesWritten);
+        public static extern bool VirtualProtect(int lpAddress, uint dwSize, MemoryProtection flNewProtect, out MemoryProtection lpflOldProtect);
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool VirtualProtect(IntPtr lpAddress, uint dwSize, MemoryProtection flNewProtect, out MemoryProtection lpflOldProtect);
-
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        public static extern bool VirtualFreeEx(int hProcess, int lpAddress, uint dwSize, AllocationType dwFreeType);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int MessageBox(IntPtr hWnd, String text, String caption, int options);
+        public static extern int MessageBox(int hWnd, String text, String caption, int options);
     }
 }

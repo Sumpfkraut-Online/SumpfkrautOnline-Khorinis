@@ -20,7 +20,7 @@ namespace GUC.Scripts.Arena.GameModes
         static GameScenario()
         {
             Log.Logger.Log("Load Game Scenarios...");
-            //TDM.TDMScenario.Init();
+            TDM.TDMScenario.Init();
             //BattleRoyale.BRScenario.Init();
             Horde.HordeScenario.Init();
 
@@ -53,7 +53,7 @@ namespace GUC.Scripts.Arena.GameModes
         public float MaxHeight = float.MaxValue;
         public float MaxDepth = float.MinValue;
 
-
+        public string MissionInfo;
 
         public class Barrier
         {

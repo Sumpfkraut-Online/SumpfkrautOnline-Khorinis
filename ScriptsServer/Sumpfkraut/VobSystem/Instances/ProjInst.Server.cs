@@ -75,11 +75,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 {
                     var modelDef = npc.ModelDef;
 
-                    var npcPos = npc.GetPosition();
-                    if (modelDef.Visual == "CRAWLER.MDS") // fixme
-                    {
-                        npcPos += npc.BaseInst.GetAtVector() * 50;
-                    }
+                    var npcPos = npc.GetPosition() + npc.BaseInst.GetAtVector() * npc.ModelDef.CenterOffset;
 
                     if (npcPos.GetDistancePlanar(position) <= modelDef.Radius
                         && Math.Abs(npcPos.Y - position.Y) <= modelDef.HalfHeight)
