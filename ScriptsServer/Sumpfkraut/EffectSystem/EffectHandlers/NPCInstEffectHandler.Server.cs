@@ -75,36 +75,52 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         public void TryDrawWeapon(ItemInst item)
         {
             if (item == null) return;
-            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS" && Host.ModelDef.Visual != "DRACONIAN.MDS")
-                return;
 
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;
 
+            if (Host.GetDrawnWeapon() != null)
+                Host.DoUndrawWeapon(item);
 
-            ItemInst removeItem;
-            if ((removeItem = Host.GetDrawnWeapon()) != null || (removeItem = Host.GetRightHand()) != null || (item.ItemType != ItemTypes.Wep1H && (removeItem = Host.GetLeftHand()) != null))
+            ItemInst removeItem = Host.GetRightHand();
+            if (removeItem != null)
             {
                 if (removeItem.IsWeapon)
+                {
                     Host.DoUndrawWeapon(removeItem);
+                    return;
+                }
                 else
                 {
                     this.TryUnequipItem(removeItem);
-                    if (!removeItem.IsEquipped)
-                        Host.DoDrawWeapon(item);
+                    if (removeItem.IsEquipped) // still equipped?
+                        return; // dunno
                 }
             }
-            else
+
+            removeItem = Host.GetLeftHand();
+            if (removeItem != null && (item.ItemType != ItemTypes.Wep1H || Host.GetEquipmentBySlot(NPCSlots.OneHanded2) != null))
             {
-                this.Host.DoDrawWeapon(item);
+                if (removeItem.IsWeapon)
+                {
+                    Host.DoUndrawWeapon(removeItem);
+                    return;
+                }
+                else
+                {
+                    this.TryUnequipItem(removeItem);
+                    if (removeItem.IsEquipped) // still equipped?
+                        return; // dunno
+                }
             }
+
+            // Hands should be free now
+            this.Host.DoDrawWeapon(item);
         }
 
         public void TryUndrawWeapon(ItemInst item)
         {
             if (item == null) return;
-            if (Host.ModelDef.Visual != "HUMANS.MDS" && Host.ModelDef.Visual != "ORC.MDS" && Host.ModelDef.Visual != "DRACONIAN.MDS")
-                return;
 
             if (Host.IsDead || this.Host.ModelInst.IsInAnimation())
                 return;

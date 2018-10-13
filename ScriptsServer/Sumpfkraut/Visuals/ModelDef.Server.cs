@@ -84,6 +84,18 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
                 this.height = value;
             }
         }
+        
+        float centerOffset = 1;
+        public float CenterOffset
+        {
+            get { return this.centerOffset; }
+            set
+            {
+                if (this.IsCreated)
+                    throw new Exception("CenterOffset can't be changed when the object is created!");
+                this.centerOffset = value;
+            }
+        }
 
         float fistRange = 1;
         public float FistRange

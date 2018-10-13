@@ -21,8 +21,7 @@ namespace GUC.WorldObjects.Mobs
         public new IScriptMobInter ScriptObject { get { return (IScriptMobInter)base.ScriptObject; } }
 
         #endregion
-
-
+        
         #region Constructors
 
         public MobInter(Model.IScriptModel scriptModel, IScriptMobInter scriptObject) : base(scriptModel, scriptObject)

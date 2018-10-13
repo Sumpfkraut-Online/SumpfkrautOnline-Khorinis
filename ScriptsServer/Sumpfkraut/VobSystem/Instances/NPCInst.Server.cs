@@ -823,11 +823,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                       if (target.CurrentFightMove == FightMoves.Dodge)
                           realRange /= 3.0f; // decrease radius if target is backing up
 
-                      Vec3f targetPos = npc.Position;
-                      if (target.ModelDef.Visual == "CRAWLER.MDS") // fixme
-                      {
-                          targetPos += npc.GetAtVector() * 50;
-                      }
+                      Vec3f targetPos = npc.Position + npc.GetAtVector() * target.ModelDef.CenterOffset;
+
                       if ((targetPos - attPos).GetLength() > realRange)
                           return; // not in range
 
@@ -1008,6 +1005,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 unconTimer.SetInterval(duration);
                 unconTimer.Start();
             }
+
+            OnUnconChange?.Invoke(this);
         }
 
         public void LiftUnconsciousness()
@@ -1036,6 +1035,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
             int hp = this.HP + 25;
             this.SetHealth(hp > HPMax ? HPMax : hp);
+            OnUnconChange?.Invoke(this);
         }
 
         #endregion

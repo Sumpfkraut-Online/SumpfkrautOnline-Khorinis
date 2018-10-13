@@ -234,9 +234,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return this.BaseInst.HP;
         }
 
+        public event NPCEvent OnRevive;
+
         partial void pSetHealth(int hp, int hpmax);
         public void SetHealth(int hp, int hpmax)
         {
+            if (this.HP <= 0 && hp > 0)
+                OnRevive?.Invoke(this);
+
             this.BaseInst.SetHealth(hp, hpmax);
             pSetHealth(hp, hpmax);
 
@@ -306,11 +311,16 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        public delegate void NPCEvent(NPCInst npc);
+        public event NPCEvent OnDespawn;
+        public event NPCEvent OnSpawn;
+
         partial void pDespawn();
         public override void Despawn()
         {
             pDespawn();
             base.Despawn();
+            OnDespawn?.Invoke(this);
         }
 
         partial void pBeforeSpawn();
@@ -320,7 +330,11 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pBeforeSpawn();
             base.Spawn(world, pos, ang);
             pAfterSpawn();
+
+            OnSpawn?.Invoke(this);
         }
+
+        public NPCEvent OnUnconChange;
 
         Unconsciousness uncon = Unconsciousness.None;
         public bool IsUnconscious { get { return uncon != Unconsciousness.None; } }

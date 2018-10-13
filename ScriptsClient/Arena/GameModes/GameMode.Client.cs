@@ -22,7 +22,7 @@ namespace GUC.Scripts.Arena.GameModes
                 const int boxHeight = 45;
                 const int boxOffset = 100;
                 var ssize = GUCView.GetScreenSize();
-                var vis = new GUCVisual((ssize.X - boxWidth)/2, boxOffset, boxWidth, boxHeight);
+                var vis = new GUCVisual((ssize.X - boxWidth) / 2, boxOffset, boxWidth, boxHeight);
                 vis.Font = GUCView.Fonts.Menu;
                 vis.SetBackTexture("menu_choice_back.tga");
                 var txt = vis.CreateTextCenterX("", 7);
@@ -82,11 +82,18 @@ namespace GUC.Scripts.Arena.GameModes
         public virtual void OpenStatusMenu() { }
         protected virtual void End()
         {
-            VictoryVis.Hide();
-            MissionScreen.Hide();
-            ScoreBoard?.Close();
-            ActiveMode = null;
-            NPCClass.Hero = null;
+            try
+            {
+                VictoryVis?.Hide();
+                MissionScreen.Hide();
+                ScoreBoard?.Close();
+                ActiveMode = null;
+                NPCClass.Hero = null;
+            }
+            catch (Exception e)
+            {
+                Log.Logger.LogWarning((VictoryVis != null) + " " + (ScoreBoard != null) + " " + e.ToString());
+            }
         }
 
         public long PhaseEndTime { get; protected set; }

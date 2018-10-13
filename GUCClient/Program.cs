@@ -131,6 +131,17 @@ namespace GUC
 
                 #region Some more editing
 
+                Process.Write(0x5D50CE, (byte)0xEB); // portal lighting, CollectLights_StatLights, handle sectors as outdoor
+                // portal fade ShouldActivatePortal
+
+                //Process.Write(0x52F30F, 0xE9, 0xC0, 0x00, 0x00, 0x00); // RenderNodeOutdoor always render sectors
+                //Process.Write(0x534954, 0xEB, 0x57); // ActivateSectorRec always render sectors
+
+                //int wald = Process.AllocString("WALD", Encoding.Default);
+                //Process.Write(0x535885 + 1, wald);
+                //Process.Write(0x535A91 + 1, wald);
+
+
                 Process.Write(0x42687F, 0xE9, 0xA3, 0x00, 0x00, 0x00); // skip intro videos
 
                 Process.Write(0x00424EE2, 0xEB, 0x35); // don't init savegame manager

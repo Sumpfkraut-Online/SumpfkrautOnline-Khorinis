@@ -17,14 +17,28 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             {
                 case ItemTypes.Wep1H:
                 case ItemTypes.Wep2H:
-                case ItemTypes.WepBow:
-                case ItemTypes.WepXBow:
                     offset = new Vec3f(40, -15, 25);
                     angles = new Angles(-Angles.PI/2.0f, 0, 0.5235988f);
+                    break;
+                case ItemTypes.WepXBow:
+                    offset = new Vec3f(15, -15, -5);
+                    angles = new Angles(-Angles.PI / 2.0f, 0, 0.5235988f);
+                    break;
+                case ItemTypes.WepBow:
+                    offset = new Vec3f(-15, -15, 50);
+                    angles = new Angles(-Angles.PI / 2.0f, 0, 0.5235988f);
                     break;
                 case ItemTypes.Drinkable:
                     offset = new Vec3f(0, -10, -60);
                     angles = new Angles(0, 0, 0);
+                    break;
+                case ItemTypes.AmmoBow:
+                    offset = new Vec3f(20, -10, -25);
+                    angles = new Angles(-Angles.PI/2.0f, 0, 0.4363323f);
+                    break;
+                case ItemTypes.AmmoXBow:
+                    offset = new Vec3f(5, -2.5f, -70);
+                    angles = new Angles(0, 0, 0.4363323f);
                     break;
                 default:
                     offset = new Vec3f(0, 0, 0);

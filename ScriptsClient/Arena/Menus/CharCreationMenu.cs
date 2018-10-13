@@ -120,7 +120,7 @@ namespace GUC.Scripts.Arena
                 {
                     headtex.Choices = c_Faces_M_P;
                 }
-                else if (bodytex.Choice == 1 || bodytex.Choice == 10)
+                else if (bodytex.Choice == 1 || bodytex.Choice == 8 || bodytex.Choice == 9 || bodytex.Choice == 10)
                 {
                     headtex.Choices = c_Faces_M_N;
                 }

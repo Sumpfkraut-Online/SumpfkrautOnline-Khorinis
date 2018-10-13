@@ -280,7 +280,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
                 var cmd = aggressorNPC.BaseInst.CurrentCommand;
                 if (cmd == null || !(cmd is GoToVobLookAtCommand) || ((GoToVobLookAtCommand)cmd).Target != target)
                 {
-                    aggressorNPC.BaseInst.SetGuideCommand(new GoToVobLookAtCommand(target, fightRange - 20f)); // -20 cm for safety
+                    aggressorNPC.BaseInst.SetGuideCommand(new GoToVobLookAtCommand(target, fightRange)); // -20 cm for safety
                 }
 
                 if ((aggressorNPC.CurrentFightMove == FightMoves.None || aggressorNPC.CanCombo) && target is NPCInst enemy)

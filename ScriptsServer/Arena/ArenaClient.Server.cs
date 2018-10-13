@@ -249,6 +249,7 @@ namespace GUC.Scripts.Arena
             var pair = spawnPositions.GetRandom();
             npc.Spawn(WorldInst.List[0], pair.Item1, pair.Item2);
             this.SetControl(npc);
+            npc.AllowHitAttacker.Add(DuelMode.CheckHitDetection);
         }
 
         public void KillCharacter()

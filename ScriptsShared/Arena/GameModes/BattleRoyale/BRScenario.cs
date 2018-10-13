@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Types;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Arena.GameModes.BattleRoyale
 {
     partial class BRScenario : GameScenario
     {
         public const float VobSpotItemProb = 0.05f;
-        public const float VobSpotNPCProb = 0.4f;
+        public const float VobSpotNPCProb = 0.1f;
 
         public override GameMode GetMode() { return BRMode.Instance; }
 
@@ -44,7 +43,7 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
                     Damage = 40,
                     HP = 100,
                 },
-                0.25f
+                0.1f
             },
             {
                 new NPCClass()
@@ -55,7 +54,7 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
                     Damage = 20,
                     HP = 40,
                 },
-                0.4f
+                0.2f
             },
             {
                 new NPCClass()
@@ -64,9 +63,9 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
                     Definition = "Dragonsnapper",
                     Protection = 50,
                     Damage = 60,
-                    HP = 100,
+                    HP = 500,
                 },
-                0.05f
+                0.01f
             },
             {
                 new NPCClass()
@@ -77,7 +76,18 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
                     Damage = 20,
                     HP = 60,
                 },
-                0.5f
+                0.15f
+            },
+            {
+                new NPCClass()
+                {
+                    Name = "Scavenger",
+                    Definition = "Scavenger",
+                    Protection = 20,
+                    Damage = 30,
+                    HP = 60,
+                },
+                0.6f
             },
         };
 

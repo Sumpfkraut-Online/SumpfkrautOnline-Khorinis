@@ -356,32 +356,9 @@ namespace GUC.WorldObjects
             gVob.HP = this.hp;
             gVob.HPMax = this.hpmax;
 
-            if (this.ModelInstance.Visual == "CRAWLER.MDS" || this.ModelInstance.Visual == "CRWQUEEN.mds")
-            {
-                gVob.Guild = 29;
-                gVob.TrueGuild = 29;
-            }
-            else if (this.ModelInstance.Visual == "ORC.MDS")
-            {
-                gVob.Guild = 59;
-                gVob.TrueGuild = 59;
-            }
-            else if (this.ModelInstance.Visual == "DRAGON.MDS")
-            {
-                gVob.Guild = 47;
-                gVob.TrueGuild = 47;
-            }
-            else
-            {
-                gVob.Guild = 1;
-                gVob.TrueGuild = 1;
-            }
-
             gVob.InitHumanAI();
             this.humanAI = gVob.HumanAI;
             this.gmodel = gVob.GetModel();
-
-            gVob.Name.Set(this.Name);
 
             // do detect walk stop chasm
             humanAI.Bitfield0 &= ~zCAIPlayer.Flags.DetectWalkChasm; // some shitty flag which makes npcs always check their ground

@@ -20,7 +20,7 @@ namespace GUC.Scripts.Arena.GameModes
         static GameScenario()
         {
             Log.Logger.Log("Load Game Scenarios...");
-            //TDM.TDMScenario.Init();
+            TDM.TDMScenario.Init();
             //BattleRoyale.BRScenario.Init();
             Horde.HordeScenario.Init();
 

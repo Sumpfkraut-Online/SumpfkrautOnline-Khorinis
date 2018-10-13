@@ -106,5 +106,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public virtual void OnReadScriptVobMsg(PacketReader stream)
         {
         }
+
+        public float GetDistance(BaseVobInst other)
+        {
+            return this.GetPosition().GetDistance(other.GetPosition());
+        }
     }
 }

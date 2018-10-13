@@ -34,9 +34,9 @@ namespace GUC.Hooks
             camera.CamVob = camVob;
             camera.SetFOV(45 * 4.0f / 3.0f, 45);
 
-            var light = zCVobLight.Create();
-            light.SetRange(50000, true);
-            rndrWorld.AddVob(light);
+            lightVob = zCVobLight.Create();
+            lightVob.SetRange(50000, true);
+            rndrWorld.AddVob(lightVob);
         }
 
         string visual;
@@ -135,6 +135,7 @@ namespace GUC.Hooks
         static zCWorld rndrWorld = null;
         static zCVob camVob = null;
         static zCCamera camera = null;
+        static zCVobLight lightVob = null;
         static void OnDrawItems(WinApiNew.RegisterMemory rmem)
         {
             try
@@ -147,6 +148,7 @@ namespace GUC.Hooks
                     camera.SetRenderTarget(view);
 
                     vob.SetPositionWorld(args.Offset.X, args.Offset.Y, args.Offset.Z + 100.0f);
+                    lightVob.SetPositionWorld(args.Offset.X, args.Offset.Y, args.Offset.Z); // light in your face
                     args.Rotation.SetMatrix(vob.TrafoObjToWorld);
                     vob.LastTimeDrawn = -1;
 

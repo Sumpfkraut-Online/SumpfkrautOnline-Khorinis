@@ -209,8 +209,7 @@ namespace GUC.Scripts.Arena.Controls
             if (down && HordeMode.IsActive && PlayerInfo.HeroInfo.TeamID >= TeamIdent.GMPlayer
                      && hero.HP > 1 && !hero.ModelInst.IsInAnimation())
             {
-                var focusVob = hero.GetFocusVob();
-                if (focusVob is NPCInst npc && npc.IsUnconscious && npc.TeamID == (int)PlayerInfo.HeroInfo.TeamID && npc.GetPosition().GetDistance(hero.GetPosition()) < 300)
+                if (PlayerFocus.FocusVob is NPCInst npc && npc.IsUnconscious && npc.TeamID == hero.TeamID && npc.GetDistance(hero) < 300)
                 {
                     NPCInst.Requests.HelpUp(hero, npc);
                     return;
@@ -238,12 +237,11 @@ namespace GUC.Scripts.Arena.Controls
             }
             else if (down)
             {
-                var focusVob = hero.GetFocusVob();
-                if (focusVob is ItemInst item)
+                if (PlayerFocus.FocusVob is ItemInst item)
                 {
                     NPCInst.Requests.TakeItem(hero, item);
                 }
-                else if (!ArenaClient.GMJoined && focusVob is NPCInst npc)
+                else if (!ArenaClient.GMJoined && PlayerFocus.FocusVob is NPCInst npc)
                 {
                     DuelMode.SendRequest(npc);
                 }
@@ -321,8 +319,7 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
                     {
-                        var focus = hero.GetFocusVob();
-                        enemy = focus is NPCInst ? (NPCInst)focus : null;
+                        enemy = PlayerFocus.GetFocusNPC();
                         if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
                         {
                             oCNpcFocus.StopHighlightingFX();
@@ -343,7 +340,7 @@ namespace GUC.Scripts.Arena.Controls
                     enemy = null;
                 }
 
-                hero.BaseInst.gVob.CollectFocusVob(false);
+                //hero.BaseInst.gVob.CollectFocusVob(false);
             }
 
             NPCMovement state = NPCMovement.Stand;

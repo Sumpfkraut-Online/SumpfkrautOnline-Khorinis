@@ -50,9 +50,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.ForEachEquippedItem(i => this.pAfterEquip((NPCSlots)i.Slot, (ItemInst)i.ScriptObject));
             doDrawItemSound = true;
 
-            if (this.HP <= 0)
-                this.BaseInst.gVob.Name.Clear(); // Hides focus of dead npcs
-            else
+            if (this.HP > 0)
             {
                 // because monsters were looking at some weird angle
                 this.BaseInst.gAI.SetLookAtTarget(1.0f, 1.0f); // need to change the value or it's not updated
@@ -305,7 +303,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             if (hp <= 0)
             {
-                this.BaseInst.gVob.Name.Clear();
                 if (this == NPCInst.Hero)
                 {
                     Menus.PlayerInventory.Menu.Close();
@@ -463,13 +460,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 this.fmode = fmode;
             }
         }
-
-        public BaseVobInst GetFocusVob()
-        {
-            var vob = this.BaseInst.GetFocusVob();
-            return vob != null ? (BaseVobInst)vob.ScriptObject : null;
-        }
-
+        
         zCVob secondMeleeVob;
         void Update2nd1H()
         {

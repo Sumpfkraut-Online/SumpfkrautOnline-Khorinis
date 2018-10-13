@@ -92,6 +92,17 @@ namespace GUC.WorldObjects.Instances
             }
         }
 
+        byte guild;
+        public byte Guild
+        {
+            get { return this.guild; }
+            set
+            {
+                CanChangeNow();
+                this.guild = value;
+            }
+        }
+
         #endregion
 
         #region Read & Write
@@ -105,6 +116,7 @@ namespace GUC.WorldObjects.Instances
             stream.Write((byte)bodyTex);
             stream.Write(headMesh);
             stream.Write((byte)headTex);
+            stream.Write(guild);
         }
 
         protected override void ReadProperties(PacketReader stream)
@@ -116,6 +128,7 @@ namespace GUC.WorldObjects.Instances
             this.bodyTex = stream.ReadByte();
             this.headMesh = stream.ReadString();
             this.headTex = stream.ReadByte();
+            this.guild = stream.ReadByte();
         }
 
         #endregion

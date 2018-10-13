@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
 using GUC.Utilities;
+using GUC.Scripts.Sumpfkraut.Controls;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -36,6 +37,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         partial void pSetControl(NPCInst npc)
         {
             Menus.PlayerInventory.Menu.Close();
+            PlayerFocus.Activate(npc);
         }
 
         partial void pSetToSpectator(WorldInst world, Vec3f pos, Angles ang)
