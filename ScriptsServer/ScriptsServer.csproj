@@ -504,6 +504,8 @@
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.Server.cs" />
+    <Compile Include="Sumpfkraut\Mobs\Definitions\MobDef.cs" />
+    <Compile Include="Sumpfkraut\Mobs\Instances\MobInst.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
@@ -547,8 +549,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Sumpfkraut\Visuals\VisualsLoading\" />
-    <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
-    <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Sumpfkraut\packages.config" />
