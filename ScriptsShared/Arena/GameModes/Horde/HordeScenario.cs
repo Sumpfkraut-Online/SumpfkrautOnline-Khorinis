@@ -136,7 +136,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Protection = 15,
                 Damage = 0,
                 HP = 100,
-                Overlays = new string[] { "1HST1", "HUMANS_TORCH" },
+                Overlays = new string[] { "1HST1" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
                       new NPCClass.InvItem("1hschwert"),
@@ -158,7 +158,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 Overlays = new string[] { "2HST1" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
-                      new NPCClass.InvItem("paladin2h"),
+                      new NPCClass.InvItem("2hschwert"),
                       new NPCClass.InvItem("ITAR_ritter"),
                       new NPCClass.InvItem("light_xbow"),
                       new NPCClass.InvItem("itrw_bolt", 20),
@@ -170,22 +170,19 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             {
                 Name = "h_pass",
                 WorldPath = "H_PASS.ZEN",
-                SpawnPos = new PosAng(7695, 6509, 42836, 2.6878f),
+                SpawnPos = new PosAng(7695, 6509, 42836, 0),
                 SpawnRange = 100,
 
                 SpawnWorld = "H_PASS_SPAWN.zen",
-                SpawnWorldPos = new Vec3f(31195, 4800, -40437),
+                SpawnWorldPos = new Vec3f(31195, 4538, -40437),
                 SpawnWorldRange = 1000,
 
                 SpecPoint = new PosAng(31195, 4538, -40437, 0),
                 FightDuration = 30 * TimeSpan.TicksPerMinute,
-                WorldTime = new WorldTime(0, 20),
+                WorldTime = new WorldTime(0, 22),
                 WorldTimeScale = 5,
                 WorldBarrier = 0,
                 WorldWeather = -1,
-
-                MissionInfo = "Kloppt alle Orks um und befreit Malak Akbar.",
-
                 PlayerClasses = new NPCClass[]
                 {
                     pass_Miliz,
@@ -421,12 +418,12 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             {
                 Name = "h_irdorath",
                 WorldPath = "H_IRDORATH.ZEN",
-                SpawnPos = new PosAng(-9982, -63, -14087, 1.4486f),
-                SpawnRange = 800,
+                SpawnPos = new PosAng(-9982, -63, -14087, 0),
+                SpawnRange = 1000,
 
                 SpawnWorld = "H_IRDORATH_SPAWN.zen",
                 SpawnWorldPos = new Vec3f(-9982, -63, -14087),
-                SpawnWorldRange = 800,
+                SpawnWorldRange = 1000,
 
                 SpecPoint = new PosAng(-9982, -63, -14087, 0),
                 FightDuration = 30 * TimeSpan.TicksPerMinute,
@@ -637,7 +634,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         },
                         Messages = new string[]
                         {
-                            "Fremder tragen Ulumulu, dann Fremder nicht sterben!",
+                            "Ich vertraue diesen Skelett-Statuen nicht. Seid vorsichtig!",
                         },
                         EnemySpawns = new Vec3f[]
                         {
@@ -673,7 +670,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         Boss = null,
                         Messages = new string[]
                         {
-                            "Fremder tragen Ulumulu, dann Fremder nicht sterben!",
+                            "Innos, ich wittere eine Falle...",
                         },
                         EnemySpawns = new Vec3f[]
                         {
@@ -705,7 +702,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         EnemyCountPerGroup = 0,
                         EnemyGroupsPerSpawn = 0,
                         EnemySpawnInterval = TimeSpan.TicksPerDay,
-                        Duration = 8 * TimeSpan.TicksPerSecond,
+                        Duration = 11 * TimeSpan.TicksPerSecond,
                         SFXStart = "LASTDOOREVENT.WAV",
                         SFXLoop = null,
                         SFXStop = "STONE_START.WAV",
@@ -713,7 +710,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         Boss = null,
                         Messages = new string[]
                         {
-                            "Fremder tragen Ulumulu, dann Fremder nicht sterben!",
+                            "Das ist ein mächtiges Tor",
                         },
                         EnemySpawns = new Vec3f[]
                         {
@@ -797,7 +794,8 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 {
                       new NPCClass.InvItem("1hschwert"),
                       new NPCClass.InvItem("ITAR_garde_h"),		
-                      new NPCClass.InvItem("war_xbow"),		
+                      new NPCClass.InvItem("war_xbow"),					  			  
+                      new NPCClass.InvItem("torch_burning"),
                       new NPCClass.InvItem("itrw_bolt", 10),
                 },
                 Guild = Allegiance.MIL,
@@ -825,9 +823,9 @@ namespace GUC.Scripts.Arena.GameModes.Horde
             {
                 Name = "Buddler",
                 Definition = null,
-                Protection = 100,
+                Protection = 20,
                 Damage = 0,
-                HP = 100,
+                HP = 120,
                 Overlays = new string[] { "humans_torch" },
                 ItemDefs = new NPCClass.InvItem[]
                 {
@@ -1017,7 +1015,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                         SFXStop = "",
                         Messages = new string[]
                         {
-                            "hinter durchgang",
+                            "Nur noch ein Stück. Haltet den Buddler am leben",
                         },
                         EnemySpawns = new Vec3f[]
                         {

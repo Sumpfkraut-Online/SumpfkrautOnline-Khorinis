@@ -31,7 +31,7 @@ namespace GUC.Scripts.Arena.Duel
             if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out NPCInst enemy))
             {
                 SetEnemy(enemy);
-                DuelMessage("Duell gegen " + enemy.CustomName + " + gestartet");
+                DuelMessage("Duell gegen " + enemy.CustomName + " gestartet");
             }
         }
 
