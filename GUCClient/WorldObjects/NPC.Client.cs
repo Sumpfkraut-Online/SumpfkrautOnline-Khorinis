@@ -540,6 +540,12 @@ namespace GUC.WorldObjects
             {
                 switch (Movement)
                 {
+                    case NPCMovement.Right:
+                        DoStrafe(true);
+                        break;
+                    case NPCMovement.Left:
+                        DoStrafe(false);
+                        break;
                     case NPCMovement.Forward:
                         if (!this.Environment.InAir && gModel.IsAnimationActive("T_JUMP_2_STAND"))
                         {
@@ -549,12 +555,6 @@ namespace GUC.WorldObjects
                         break;
                     case NPCMovement.Backward:
                         gAI._Backward();
-                        break;
-                    case NPCMovement.Right:
-                        DoStrafe(true);
-                        break;
-                    case NPCMovement.Left:
-                        DoStrafe(false);
                         break;
                     case NPCMovement.Stand:
                         gAI._Stand();

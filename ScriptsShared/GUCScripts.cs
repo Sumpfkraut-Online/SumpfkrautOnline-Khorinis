@@ -13,6 +13,8 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
 using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.Mobs.Instances;
+using GUC.Scripts.Sumpfkraut.Mobs.Definitions;
 
 namespace GUC.Scripts
 {
@@ -62,6 +64,9 @@ namespace GUC.Scripts
                 case VobTypes.Vob:
                     vob = new VobInst();
                     break;
+                case VobTypes.Mob:
+                    vob = new MobInst();
+                    break;
                 case VobTypes.Item:
                     vob = new ItemInst();
                     break;
@@ -85,6 +90,9 @@ namespace GUC.Scripts
             {
                 case VobTypes.Vob:
                     def = new VobDef();
+                    break;
+                case VobTypes.Mob:
+                    def = new MobDef();
                     break;
                 case VobTypes.NPC:
                     def = new NPCDef();

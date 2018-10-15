@@ -8,10 +8,22 @@ using GUC.WorldObjects.Mobs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Mobs.Definitions;
+using GUC.Models;
+using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.Visuals;
+
 namespace GUC.Scripts.Sumpfkraut.Mobs.Instances
 {
     public class MobInst : VobInst, Mob.IScriptMob
     {
+
+        GUC.Models.ModelInstance s;
+
+        public MobInst()
+        {
+
+        }
+
         public MobInst(MobDef mobDef)
             : base(mobDef)
         {
@@ -27,6 +39,11 @@ namespace GUC.Scripts.Sumpfkraut.Mobs.Instances
             base.Despawn();
         }
 
+        protected override BaseVob CreateVob()
+        {
+            return new Mob(new ModelInst(this),this);
+        }
+
         public void Throw(Vec3f velocity)
         {
             base.Throw(velocity);
@@ -40,6 +57,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs.Instances
         public override void OnWriteProperties(PacketWriter stream)
         {
             base.OnWriteProperties(stream);
+            stream.Write("cool");
         }
     }
 }
