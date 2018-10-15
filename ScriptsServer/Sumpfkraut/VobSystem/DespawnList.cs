@@ -6,6 +6,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
+    // Fixme: a list per world, don't include players, use timer and capacity together?
     class DespawnList<T> where T : BaseVobInst
     {
         T[] vobs;
@@ -25,7 +26,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         {
             if (count == Capacity)
             {
-                vobs[index].Despawn();
+                T otherVob = vobs[index];
+                if (otherVob.IsSpawned)
+                    otherVob.Despawn();
+
                 vobs[index] = vob;
                 index++;
                 if (index == Capacity)
