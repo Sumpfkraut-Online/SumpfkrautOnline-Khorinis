@@ -142,6 +142,7 @@ namespace GUC
                 //Process.Write(0x535885 + 1, wald);
                 //Process.Write(0x535A91 + 1, wald);
 
+
                 Process.Write(0x00726831, 0xEB, 0x38); // don't fill load MobContainers in the Zen with Items
 
                 Process.Write(0x42687F, 0xE9, 0xA3, 0x00, 0x00, 0x00); // skip intro videos

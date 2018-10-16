@@ -249,8 +249,11 @@ namespace GUC.WorldObjects
             GameClient.Messages.WritePlayerControl(this.client, this);
         }
 
-        partial void pBeforeDespawn()
+        partial void pAfterDespawn()
         {
+            if (!this.isCreated)
+                throw new Exception("NPC isn't spawned!");
+
             if (this.IsPlayer)
             {
                 this.client.SetControl(null);

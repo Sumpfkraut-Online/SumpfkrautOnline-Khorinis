@@ -189,7 +189,7 @@ namespace GUC.Scripts
             aiManager01.Start();
 
             // { new Vec3f(-618.7121f, -320.7968f, -1885.178f), new Angles(-0.101229f, -0.6841688f, 0f) },
-
+            
             //Arena.GameModes.BattleRoyale.BRWorldLoader.Load(world);
 
             Logger.Log("Creating the Chair!");

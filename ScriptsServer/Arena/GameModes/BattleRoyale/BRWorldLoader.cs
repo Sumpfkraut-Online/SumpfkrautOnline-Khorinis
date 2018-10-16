@@ -128,6 +128,8 @@ namespace GUC.Scripts.Arena.GameModes.BattleRoyale
             inst.BaseInst.SetNeedsClientGuide(true);
             inst.TeamID = 1;
             posAng.Position.Y += 50;
+            inst.Protection = npc.Protection;
+            inst.Damage = npc.Damage;
             inst.Spawn(world, posAng.Position, posAng.Angles);
 
             var agent = CreateAgent();

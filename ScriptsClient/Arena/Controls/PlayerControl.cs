@@ -313,34 +313,18 @@ namespace GUC.Scripts.Arena.Controls
 
             DoTurning(hero);
 
-            if (KeyBind.Action.IsPressed())
+            if (KeyBind.Action.IsPressed() && hero.IsInFightMode)
             {
-                if (hero.IsInFightMode)
+                var enemy = PlayerFocus.GetFocusNPC();
+                if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
                 {
-                    if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
-                    {
-                        enemy = PlayerFocus.GetFocusNPC();
-                        if (enemy == null || !enemy.IsSpawned || enemy.IsDead)
-                        {
-                            oCNpcFocus.StopHighlightingFX();
-                            enemy = null;
-                        }
-                        else
-                        {
-                            oCNpcFocus.StartHighlightingFX(enemy.BaseInst.gVob);
-                        }
-                    }
+                    PlayerFocus.SetLockedTarget(null); // updates for new target
                 }
+                PlayerFocus.SetLockedTarget(PlayerFocus.GetFocusNPC());
             }
             else
             {
-                if (enemy != null)
-                {
-                    oCNpcFocus.StopHighlightingFX();
-                    enemy = null;
-                }
-
-                //hero.BaseInst.gVob.CollectFocusVob(false);
+                PlayerFocus.SetLockedTarget(null);
             }
 
             NPCMovement state = NPCMovement.Stand;
@@ -434,13 +418,14 @@ namespace GUC.Scripts.Arena.Controls
             hero.SetMovement(state);
         }
 
-        static NPCInst enemy;
         static void DoTurning(NPCInst hero)
         {
             if (hero.BaseInst.gAI.GetFoundLedge())
                 return;
 
             const float maxTurnFightSpeed = 0.07f;
+
+            NPCInst enemy = PlayerFocus.LockedTarget;
             if (enemy != null)
             {
                 Vec3f heroPos = hero.GetPosition();
@@ -536,6 +521,7 @@ namespace GUC.Scripts.Arena.Controls
 
             const zCWorld.zTraceRay traceType = zCWorld.zTraceRay.Ignore_Alpha | zCWorld.zTraceRay.Ignore_Projectiles | zCWorld.zTraceRay.Ignore_Vob_No_Collision | zCWorld.zTraceRay.Ignore_NPC;
 
+            NPCInst enemy = PlayerFocus.GetFocusNPC();
             Vec3f dir = enemy == null ? (Vec3f)hero.BaseInst.gVob.Direction : (enemy.GetPosition() - start).Normalise();
             Vec3f ray = 500000f * dir;
 
@@ -631,13 +617,11 @@ namespace GUC.Scripts.Arena.Controls
                 {
                     if (!freeAim)
                     {
-
                         hero.SetMovement(NPCMovement.Stand);
                         NPCInst.Requests.Aim(hero, true);
 
                         // no auto-lock
-                        oCNpcFocus.StopHighlightingFX();
-                        enemy = null;
+                        PlayerFocus.SetLockedTarget(null);
 
                         // zoom in
                         FOVTransition(60, TimeSpan.TicksPerSecond / 2);

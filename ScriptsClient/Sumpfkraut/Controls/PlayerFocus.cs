@@ -36,33 +36,40 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             npc.OnUnconChange += UnconHandler;
 
             if (npc.IsSpawned && !npc.IsDead && !npc.IsUnconscious)
-                ActivateHandler(npc);
+                Activate();
+        }
+
+        static void ActivateHandler(NPCInst npc) { Activate(); }
+        static void DeactivateHandler(NPCInst npc) { Deactivate(); }
+        static void UnconHandler(NPCInst npc)
+        {
+            if (npc.IsUnconscious) Activate();
+            else Deactivate();
         }
 
         const long UpdateInterval = 200 * TimeSpan.TicksPerMillisecond;
         static GUCTimer timer = new GUCTimer(UpdateInterval, Update);
 
-        static bool active = false;
-        public static bool IsActive { get { return active; } }
-        static void ActivateHandler(NPCInst npc)
+        static bool isActive;
+        public static bool IsActive { get { return isActive; } }
+
+        static void Activate()
         {
-            if (active) return;
-            active = true;
+            if (isActive)
+                return;
+
+            isActive = true;
             timer.Start();
         }
 
-        static void DeactivateHandler(NPCInst npc)
+        static void Deactivate()
         {
-            if (!active) return;
-            active = false;
-            timer.Stop();
-            SetFocus(null);
-        }
+            if (!isActive)
+                return;
 
-        static void UnconHandler(NPCInst npc)
-        {
-            if (npc.IsUnconscious) DeactivateHandler(npc);
-            else ActivateHandler(npc);
+            isActive = false;
+            SetLockedTarget(null);
+            timer.Stop();
         }
 
         static BaseVobInst focusVob;
@@ -74,15 +81,18 @@ namespace GUC.Scripts.Sumpfkraut.Controls
 
         static void Update()
         {
-            NPCInst hero = NPCInst.Hero;
+            NPCInst hero = currentPlayer;
             if (hero == null)
+            {
+                Deactivate();
                 return;
+            }
 
             float maxYaw = Angles.Deg2Rad(60);
             bool fightMode = hero.IsInFightMode;
 
             ItemInst wep = hero.GetDrawnWeapon();
-            float maxRange = (fightMode && wep != null && wep.IsWepRanged) ? 3000 : 300;
+            float maxRange = (fightMode && wep != null && wep.IsWepRanged) ? 3000 : 400;
 
             Vec3f heroPos = hero.GetPosition();
             Angles heroAng = hero.GetAngles();
@@ -183,6 +193,28 @@ namespace GUC.Scripts.Sumpfkraut.Controls
             }
 
             return true;
+        }
+
+        static NPCInst lockedTarget;
+        public static NPCInst LockedTarget { get { return lockedTarget; } }
+        public static void SetLockedTarget(NPCInst target)
+        {
+            if (!isActive || lockedTarget == target)
+                return;
+
+            SetFocus(target);
+            lockedTarget = target;
+            if (target == null)
+            {
+                timer.Start();
+                oCNpcFocus.StopHighlightingFX();
+                Update();
+            }
+            else
+            {
+                timer.Stop();
+                oCNpcFocus.StartHighlightingFX(target.BaseInst.gVob);
+            }
         }
     }
 }
