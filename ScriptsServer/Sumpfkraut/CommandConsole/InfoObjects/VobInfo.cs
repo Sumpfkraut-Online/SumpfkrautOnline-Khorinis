@@ -20,7 +20,7 @@ namespace GUC.Scripts.Sumpfkraut.CommandConsole.InfoObjects
         public Vec3f Direction;
         public Vec3f Position;
         public int VobID;
-        public VobTypes VobType;
+        public GUCVobTypes VobType;
 
     }
 }

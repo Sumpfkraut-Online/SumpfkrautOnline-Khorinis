@@ -30,6 +30,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
+        public byte GetVobType() { return (byte)this.VobType; } // for base vob interface
+        public abstract VobType VobType { get; }
+
         // Effect Handler
         BaseEffectHandler effectHandler;
         public BaseEffectHandler EffectHandler
@@ -50,7 +53,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         protected abstract BaseVobInstance CreateVobInstance();
 
         public int ID { get { return BaseDef.ID; } }
-        public VobTypes VobType { get { return BaseDef.VobType; } }
         public bool IsStatic { get { return BaseDef.IsStatic; } }
         public bool IsCreated { get { return baseDef.IsCreated; } }
 
@@ -85,7 +87,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             return false;
         }
 
-        public static void ForEachOfType(VobTypes type, Action<BaseVobDef> action)
+        public static void ForEachOfType(GUCVobTypes type, Action<BaseVobDef> action)
         {
             BaseVobInstance.ForEachOfType(type, v => action((BaseVobDef)v.ScriptObject));
         }

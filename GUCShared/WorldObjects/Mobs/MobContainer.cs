@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Mobs
 {
     public partial class MobContainer : MobLockable //, IContainer
     {
-        public override VobTypes VobType { get { return VobTypes.MobContainer; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.MobContainer; } }
 
         #region ScriptObject
 

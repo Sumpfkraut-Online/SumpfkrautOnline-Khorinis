@@ -21,15 +21,15 @@ namespace GUC.WorldObjects.Instances
 
             public static void ReadCreate(PacketReader stream)
             {
-                BaseVobInstance inst = ScriptManager.Interface.CreateInstance((VobTypes)stream.ReadByte());
+                byte type = stream.ReadByte();
+                BaseVobInstance inst = ScriptManager.Interface.CreateInstance(type);
                 inst.ReadStream(stream);
                 inst.ScriptObject.Create();
             }
 
             public static void ReadDelete(PacketReader stream)
             {
-                BaseVobInstance inst;
-                if (BaseVobInstance.TryGet(stream.ReadUShort(), out inst))
+                if (BaseVobInstance.TryGet(stream.ReadUShort(), out BaseVobInstance inst))
                 {
                     inst.ScriptObject.Delete();
                 }

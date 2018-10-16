@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Mobs
 {
     public partial class MobSwitch : MobInter
     {
-        public override VobTypes VobType { get { return VobTypes.MobSwitch; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.MobSwitch; } }
 
         #region ScriptObject
 

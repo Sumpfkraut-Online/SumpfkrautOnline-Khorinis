@@ -390,9 +390,6 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobType.cs">
-      <Link>Sumpfkraut\VobSystem\Enumeration\VobType.cs</Link>
-    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs">
       <Link>Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs</Link>
     </Compile>
@@ -422,6 +419,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobDefLoader.cs">
       <Link>Sumpfkraut\VobSystem\VobDefLoader.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobTypes.cs">
+      <Link>Sumpfkraut\VobSystem\VobTypes.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs">
       <Link>Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs</Link>

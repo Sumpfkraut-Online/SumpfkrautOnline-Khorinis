@@ -19,13 +19,14 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         
         void OnRainChange()
         {
+            long transition = Randomizer.GetInt(60, 360) * TimeSpan.TicksPerSecond;
             if (Randomizer.GetInt(0, 5) == 0)
             {
-                SetNextWeight(Randomizer.GetInt(60, 360) * TimeSpan.TicksPerSecond, (float)Randomizer.GetDouble()); // rain
+                SetNextWeight(GameTime.Ticks + transition, (float)Randomizer.GetDouble()); // rain
             }
             else
             {
-                SetNextWeight(Randomizer.GetInt(60, 360) * TimeSpan.TicksPerSecond, 0.0f); // sun
+                SetNextWeight(GameTime.Ticks + transition, 0.0f); // sun
             }
         }
 

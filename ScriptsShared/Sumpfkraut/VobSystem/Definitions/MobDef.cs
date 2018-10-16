@@ -12,6 +12,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class MobDef : NamedVobDef, MobInstance.IScriptMobInstance
     {
         #region Properties 
+
+        public override VobType VobType { get { return VobType.Mob; } }
+
         // Zugriff auf BasisKlasse (MobInstance = MobDef)
         new public MobInstance BaseDef { get { return (MobInstance)base.BaseDef; } }
 

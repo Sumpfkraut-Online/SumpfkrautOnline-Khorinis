@@ -71,6 +71,7 @@ namespace GUC.WorldObjects
         {
             void Spawn(World world);
             void Despawn();
+            byte GetVobType();
         }
 
         /// <summary> The ScriptObject of this Vob. </summary>
@@ -89,7 +90,7 @@ namespace GUC.WorldObjects
         #region Properties
 
         /// <summary> The VobType of this Vob. </summary>
-        public abstract VobTypes VobType { get; }
+        public abstract GUCVobTypes VobType { get; }
 
         #region Vob Instance
 

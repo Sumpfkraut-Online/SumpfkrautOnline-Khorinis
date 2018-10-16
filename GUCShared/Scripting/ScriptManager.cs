@@ -21,8 +21,8 @@ namespace GUC.Scripting
         AniJob CreateAniJob();
         Animation CreateAnimation();
         ModelInstance CreateModelInstance();
-        BaseVob CreateVob(VobTypes type);
-        BaseVobInstance CreateInstance(VobTypes type);
+        BaseVob CreateVob(byte type);
+        BaseVobInstance CreateInstance(byte type);
         World CreateWorld();
         GuideCmd CreateGuideCommand(byte type);
     }

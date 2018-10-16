@@ -12,7 +12,7 @@ namespace GUC.WorldObjects
 {
     public partial class Item : Vob
     {
-        public override VobTypes VobType { get { return VobTypes.Item; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.Item; } }
 
         #region ScriptObject
 

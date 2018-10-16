@@ -33,6 +33,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #region Properties
 
+        public override VobType VobType { get { return VobType.Projectile; } }
+
         new public ProjectileInstance BaseDef { get { return (ProjectileInstance)base.BaseDef; } }
 
         #endregion

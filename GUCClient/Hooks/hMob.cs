@@ -27,22 +27,27 @@ namespace GUC.Hooks
         {
             int self = mem.ECX;
             int arg = mem.GetArg(0);
-            
+
+            byte[] arr;
             if (World.Current.TryGetVobByAddress(self, out Mob mob) && mob.FocusName != null && mob.FocusName.Length > 0)
             {
-                byte[] bytes = Encoding.Default.GetBytes(mob.FocusName);
-                int charPtr = Process.Alloc(bytes.Length + 1);
-
-                Process.WriteBytes(charPtr, bytes);
-                Process.WriteByte(charPtr + bytes.Length, 0); // end '\0'
-                
-                WinApi.Process.THISCALL<WinApi.NullReturnCall>(arg, 0x004010C0, (WinApi.IntArg)charPtr);
-                Process.Free(charPtr, bytes.Length + 1);
+                arr = Encoding.Default.GetBytes(mob.FocusName);
             }
             else
             {
-                WinApi.Process.THISCALL<WinApi.NullReturnCall>(arg, 0x004010C0, (WinApi.IntArg)0);
+                arr = new byte[0];
             }
+            
+            int charArr = Process.Alloc(arr.Length + 1);
+
+            if (arr.Length > 0)
+            {
+                Process.WriteBytes(charArr, arr);
+            }
+            Process.WriteByte(charArr + arr.Length, 0);
+
+            WinApi.Process.THISCALL<zString>(arg, 0x004010C0, (WinApi.IntArg)charArr);
+            Process.Free(charArr, arr.Length + 1);
         }
     }
 }

@@ -174,7 +174,7 @@ namespace GUC.Scripts.Arena.GameModes.Horde
                 SpawnRange = 100,
 
                 SpawnWorld = "H_PASS_SPAWN.zen",
-                SpawnWorldPos = new Vec3f(31195, 4538, -40437),
+                SpawnWorldPos = new Vec3f(31195, 4700, -40437),
                 SpawnWorldRange = 1000,
 
                 SpecPoint = new PosAng(31195, 4538, -40437, 0),

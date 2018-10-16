@@ -36,10 +36,11 @@ namespace GUC.Network
                 }
                 stream.Load(data, decomp);
 
+                // Read models
                 if (stream.ReadBit())
                 {
-                    int modelCount = stream.ReadUShort();
-                    for (int i = 0; i < modelCount; i++)
+                    int count = stream.ReadUShort();
+                    for (int i = 0; i < count; i++)
                     {
                         ModelInstance model = ScriptManager.Interface.CreateModelInstance();
                         model.ReadStream(stream);
@@ -47,17 +48,16 @@ namespace GUC.Network
                     }
                 }
 
+                // Read vob instances
                 if (stream.ReadBit())
                 {
-                    for (int i = 0; i < (int)VobTypes.Maximum; i++)
+                    int count = stream.ReadUShort();
+                    for (int i = 0; i < count; i++)
                     {
-                        int num = stream.ReadUShort();
-                        for (int n = 0; n < num; n++)
-                        {
-                            BaseVobInstance inst = ScriptManager.Interface.CreateInstance((VobTypes)i);
-                            inst.ReadStream(stream);
-                            inst.ScriptObject.Create();
-                        }
+                        byte type = stream.ReadByte();
+                        BaseVobInstance inst = ScriptManager.Interface.CreateInstance(type);
+                        inst.ReadStream(stream);
+                        inst.ScriptObject.Create();
                     }
                 }
             }
@@ -114,7 +114,7 @@ namespace GUC.Network
         static GameClient()
         {
             Client = ScriptManager.Interface.CreateClient();
-            
+
             // Init RakNet objects
             clientInterface = RakPeerInterface.GetInstance();
             clientInterface.SetOccasionalPing(true);
@@ -196,7 +196,7 @@ namespace GUC.Network
             int counter = 0;
             ServerMessages msgType;
             Packet packet;
-            
+
             // Receive packets
             while ((packet = clientInterface.Receive()) != null)
             {

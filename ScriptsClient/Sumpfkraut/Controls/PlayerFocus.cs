@@ -22,7 +22,6 @@ namespace GUC.Scripts.Sumpfkraut.Controls
                 currentPlayer.OnDespawn -= DeactivateHandler;
                 currentPlayer.OnSpawn -= ActivateHandler;
                 currentPlayer.OnUnconChange -= UnconHandler;
-                currentPlayer.BaseInst.gVob.SetFocusVob(new zCVob(0));
             }
 
             currentPlayer = npc;

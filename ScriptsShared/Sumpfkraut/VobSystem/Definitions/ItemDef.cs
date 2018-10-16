@@ -56,7 +56,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
     {
         #region Properties
-        
+
+        public override VobType VobType { get { return VobType.Item; } }
+
         new public ItemDefEffectHandler EffectHandler { get { return (ItemDefEffectHandler)base.EffectHandler; } }
 
         new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
@@ -185,7 +187,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static void ForEach(Action<ItemDef> action)
         {
-            BaseVobInstance.ForEachOfType(VobTypes.Item, i => action((ItemDef)i.ScriptObject));
+            BaseVobInstance.ForEachOfType(GUCVobTypes.Item, i => action((ItemDef)i.ScriptObject));
         }
     }
 }

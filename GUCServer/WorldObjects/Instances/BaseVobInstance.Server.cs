@@ -15,7 +15,7 @@ namespace GUC.WorldObjects.Instances
             public static void WriteCreate(BaseVobInstance instance)
             {
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceCreateMessage);
-                stream.Write((byte)instance.VobType);
+                stream.Write((byte)instance.ScriptObject.GetVobType());
                 instance.WriteStream(stream);
                 GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0'));
             }

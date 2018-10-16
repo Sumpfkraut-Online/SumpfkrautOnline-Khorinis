@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Types
 {
-    public enum VobTypes : byte
+    public enum GUCVobTypes : byte
     {
         Vob,
         NPC,

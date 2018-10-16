@@ -17,6 +17,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
+        public byte GetVobType() { return (byte)this.VobType; } // for base vob interface
+        public abstract VobType VobType { get; }
+
         // Effect Handler
         BaseEffectHandler effectHandler;
         public BaseEffectHandler EffectHandler
@@ -44,7 +47,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         }
 
         public int ID { get { return BaseInst.ID; } }
-        public VobTypes VobType { get { return BaseInst.VobType; } }
         public bool IsStatic { get { return BaseInst.IsStatic; } }
         public bool IsSpawned { get { return BaseInst.IsSpawned; } }
 

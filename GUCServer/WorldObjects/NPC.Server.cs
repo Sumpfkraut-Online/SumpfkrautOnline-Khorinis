@@ -27,6 +27,7 @@ namespace GUC.WorldObjects
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipAddMessage);
                 stream.Write((ushort)npc.ID);
                 stream.Write((byte)item.slot);
+                stream.Write((byte)item.ScriptObject.GetVobType());
                 item.WriteEquipProperties(stream);
                 npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
             }
@@ -249,11 +250,8 @@ namespace GUC.WorldObjects
             GameClient.Messages.WritePlayerControl(this.client, this);
         }
 
-        partial void pAfterDespawn()
+        partial void pBeforeDespawn()
         {
-            if (!this.isCreated)
-                throw new Exception("NPC isn't spawned!");
-
             if (this.IsPlayer)
             {
                 this.client.SetControl(null);

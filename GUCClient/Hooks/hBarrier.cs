@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Log;
-using WinApi;
+using WinApiNew;
 using Gothic.Objects.Sky;
 using Gothic.System;
 using Gothic.Objects;
@@ -29,7 +29,7 @@ namespace GUC.Hooks
             if (hooked) return;
             hooked = true;
 
-            Process.AddHook(Render, 0x53099C, 5);
+            Process.AddFastHook(Render, 0x53099C, 5);
             //Process.AddHook(Render, 0x6BB92A, 5);
 
             Logger.Log("Added barrier hooks.");
@@ -125,8 +125,8 @@ namespace GUC.Hooks
         static readonly SoundDefinition sound = new SoundDefinition("MFX_BARRIERE_AMBIENT.WAV");
         static long nextSoundTime = 0;
 
-        static readonly int ptrArg = Process.Alloc(4).ToInt32();
-        static void Render(Hook hook, RegisterMemory rmem)
+        static readonly int ptrArg = Process.Alloc(4);
+        static void Render(RegisterMemory rmem)
         {
             try
             {
@@ -172,18 +172,18 @@ namespace GUC.Hooks
             }
         }
 
-        static readonly int renderContext = Process.Alloc(0x28).ToInt32();
+        static readonly int renderContext = Process.Alloc(0x28);
         static int GetResetRenderContext()
         {
             var activeCam = zCCamera.ActiveCamera;
             int something = Process.ReadInt(activeCam.Address + 2336);
       
 
-            Process.Write(renderContext , -1);
-            Process.Write(renderContext + 4, 0/*something*/);
-            Process.Write(renderContext + 8, Process.ReadInt(something + 184));
-            Process.Write(renderContext + 12, activeCam.Address);
-            Process.Write(renderContext + 16, zeros);
+            Process.WriteInt(renderContext , -1);
+            Process.WriteInt(renderContext + 4, 0/*something*/);
+            Process.WriteInt(renderContext + 8, Process.ReadInt(something + 184));
+            Process.WriteInt(renderContext + 12, activeCam.Address);
+            Process.WriteBytes(renderContext + 16, zeros);
 
             return renderContext;
         }

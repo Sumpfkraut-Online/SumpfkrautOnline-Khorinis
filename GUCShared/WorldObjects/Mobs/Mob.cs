@@ -10,7 +10,7 @@ namespace GUC.WorldObjects.Mobs
 {
     public partial class Mob : Vob
     {
-        public override VobTypes VobType { get { return VobTypes.Mob; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.Mob; } }
         
         #region ScriptObject
 

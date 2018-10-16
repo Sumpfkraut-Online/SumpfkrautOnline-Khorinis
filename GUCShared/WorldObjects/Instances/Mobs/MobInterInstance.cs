@@ -9,7 +9,7 @@ namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobInterInstance : MobInstance
     {
-        public override VobTypes VobType { get { return VobTypes.MobInter; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.MobInter; } }
 
         #region ScriptObject
 

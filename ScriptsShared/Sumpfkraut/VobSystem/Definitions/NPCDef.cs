@@ -10,7 +10,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public partial class NPCDef : NamedVobDef, NPCInstance.IScriptNPCInstance
     {
         #region Properties
-        
+
+        public override VobType VobType { get { return VobType.NPC; } }
+
         new public NPCDefEffectHandler EffectHandler { get { return (NPCDefEffectHandler)base.EffectHandler; } }
 
         new public NPCInstance BaseDef { get { return (NPCInstance)base.BaseDef; } }

@@ -161,7 +161,6 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Enumeration\VobType.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs" />
@@ -173,6 +172,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobInstLoader.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobTypes.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptClock.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs" />

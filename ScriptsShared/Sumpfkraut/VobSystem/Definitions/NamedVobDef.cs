@@ -9,7 +9,7 @@ using GUC.WorldObjects.Instances;
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
 
-    public partial class NamedVobDef : VobDef
+    public abstract partial class NamedVobDef : VobDef
     {
         #region Constructor
         

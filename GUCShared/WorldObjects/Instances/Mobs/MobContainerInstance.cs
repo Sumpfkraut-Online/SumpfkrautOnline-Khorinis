@@ -8,7 +8,7 @@ namespace GUC.WorldObjects.Instances.Mobs
 {
     public partial class MobContainerInstance : MobLockableInstance
     {
-        public override VobTypes VobType { get { return VobTypes.MobContainer; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.MobContainer; } }
 
         #region ScriptObject
 

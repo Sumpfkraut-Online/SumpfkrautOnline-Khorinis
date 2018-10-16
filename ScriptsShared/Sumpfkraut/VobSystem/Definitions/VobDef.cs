@@ -31,7 +31,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         #endregion
 
         #region Properties
-        
+
+        public override VobType VobType { get { return VobType.Vob; } }
+
         new public VobDefEffectHandler EffectHandler { get { return (VobDefEffectHandler)base.EffectHandler; } }
         new public VobInstance BaseDef { get { return (VobInstance)base.BaseDef; } }
         

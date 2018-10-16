@@ -12,7 +12,7 @@ namespace GUC.WorldObjects
 {
     public partial class Projectile : BaseVob
     {
-        public override VobTypes VobType { get { return VobTypes.Projectile; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.Projectile; } }
 
         #region ScriptObject
 
