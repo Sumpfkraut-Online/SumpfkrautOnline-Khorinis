@@ -45,8 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Sumpfkraut\VobSystem\Definitions\Mobs\" />
-    <Folder Include="Sumpfkraut\VobSystem\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arena\ArenaClient.cs" />
@@ -113,6 +111,8 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemDefEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NamedVobInstEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCDefEffectHandler.cs" />
@@ -156,6 +156,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs" />
     <Compile Include="Sumpfkraut\Visuals\HumanVisuals.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NamedVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.cs" />

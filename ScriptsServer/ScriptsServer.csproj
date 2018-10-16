@@ -246,6 +246,12 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs">
       <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.cs">
+      <Link>Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs">
       <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs</Link>
     </Compile>
@@ -369,6 +375,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\ItemDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\ItemDef.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\MobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\MobDef.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs</Link>
     </Compile>
@@ -395,6 +404,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\MobInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\MobInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NamedVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\NamedVobInst.cs</Link>
@@ -503,9 +515,9 @@
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Item.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_NamedVob.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Destinations\DestInit_Vob.Server.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.Server.cs" />
+    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.Server.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCInstEffectHandler.Server.cs" />
-    <Compile Include="Sumpfkraut\Mobs\Definitions\MobDef.cs" />
-    <Compile Include="Sumpfkraut\Mobs\Instances\MobInst.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestReceiver.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.Server.cs" />
     <Compile Include="Sumpfkraut\Visuals\AniCatalogs\AniCatalog.cs" />
@@ -518,12 +530,16 @@
     <Compile Include="Sumpfkraut\Visuals\VisualLoader.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\NamedVobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\DespawnList.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\NamedVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Server.cs" />

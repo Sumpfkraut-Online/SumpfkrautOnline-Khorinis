@@ -12,7 +12,6 @@ namespace GUC.WorldObjects.Instances.Mobs
         {
             oCMob ret = (vob == null || !(vob is oCMob)) ? oCMob.Create() : (oCMob)vob;
             base.CreateVob(ret);
-            ret.SetName(FocusName);
             return ret;
         }
     }

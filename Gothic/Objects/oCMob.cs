@@ -13,8 +13,7 @@ namespace Gothic.Objects
 
         new public abstract class VarOffsets : zCVob.VarOffsets
         {
-            public const int Model = 0x0C8,
-            Name = 0x0120;
+            public const int Model = 0x0C8;
         }
 
         new public abstract class FuncAddresses : zCVob.FuncAddresses
@@ -41,12 +40,8 @@ namespace Gothic.Objects
             : base(address)
         {
         }
-        /*
-        public zCModel GetModel()
-        {
-            return Process.THISCALL<zCModel>((uint)Address, (uint)FuncOffsets.GetModel, new CallValue[] { });
-        }
-        */
+
+        /// <summary> worthless, gets the parser string id name </summary>
         public zString GetName()
         {
             return Process.THISCALL<zString>(Address, FuncAddresses.GetName);
@@ -57,22 +52,18 @@ namespace Gothic.Objects
             return Process.THISCALL<zString>(Address, FuncAddresses.GetScemeName);
         }
 
+        /// <summary> worthless, sets the parser string id </summary>
         public void SetName(String name)
         {
             using (zString str = zString.Create(name))
                 SetName(str);
         }
+        /// <summary> worthless, sets the parser string id </summary>
         public void SetName(zString name)
         {
             Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetName, name);
         }
-
-
-        public zString Name
-        {
-            get { return new zString(Address + VarOffsets.Name); }
-        }
-
+        
         public new static oCMob Create()
         {
             int address = Process.CDECLCALL<IntArg>(0x718590); //_CreateInstance()

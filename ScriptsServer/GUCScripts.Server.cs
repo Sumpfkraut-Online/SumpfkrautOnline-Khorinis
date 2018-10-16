@@ -12,8 +12,6 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
 using GUC.WorldObjects;
 using GUC.Scripts.Arena.Duel;
-using GUC.Scripts.Sumpfkraut.Mobs.Definitions;
-using GUC.Scripts.Sumpfkraut.Mobs.Instances;
 
 namespace GUC.Scripts
 {
@@ -197,7 +195,12 @@ namespace GUC.Scripts
             Logger.Log("Creating the Chair!");
             ModelDef m = new ModelDef("chair1", "CHAIR_1_OC.ASC");
             m.Create();
-            MobDef chair1 = new MobDef("Chair1", m, "EIN STUHL");
+
+            MobDef chair1 = new MobDef("Chair1")
+            {
+                Model = m,
+                FocusName = "EIN STUHL",
+            };
             chair1.Create();
 
             MobInst theChair = new MobInst(chair1);

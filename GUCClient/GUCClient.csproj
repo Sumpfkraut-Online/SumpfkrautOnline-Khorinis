@@ -317,6 +317,7 @@
     <Compile Include="GUI\GUCVisualText.cs" />
     <Compile Include="GUI\GUCVobVisual.cs" />
     <Compile Include="Hooks\hFileSystem.cs" />
+    <Compile Include="Hooks\hMob.cs" />
     <Compile Include="Hooks\hModel.cs" />
     <Compile Include="Hooks\hNpc.cs" />
     <Compile Include="Hooks\VDFS\FileHandle.cs" />

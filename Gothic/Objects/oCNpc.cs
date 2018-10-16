@@ -220,6 +220,7 @@ namespace Gothic.Objects
             UnShrink = 0x0072CBA0,
             CloseSpellBook = 0x0073E9E0,
             AvoidShrink = 0x0072D250,
+            SetFocusVob = 0x00732B60,
 
             EV_Strafe = 0x683DE0;
         }
@@ -332,6 +333,11 @@ namespace Gothic.Objects
         public static oCNpc GetPlayer()
         {
             return new oCNpc(Process.ReadInt(player));
+        }
+
+        public void SetFocusVob(zCVob vob)
+        {
+            Process.THISCALL<NullReturnCall>(Address, FuncAddresses.SetFocusVob, vob);
         }
 
         public override void SetVisual(zCVisual visual)

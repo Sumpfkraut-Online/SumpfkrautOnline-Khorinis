@@ -22,6 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.Controls
                 currentPlayer.OnDespawn -= DeactivateHandler;
                 currentPlayer.OnSpawn -= ActivateHandler;
                 currentPlayer.OnUnconChange -= UnconHandler;
+                currentPlayer.BaseInst.gVob.SetFocusVob(new zCVob(0));
             }
 
             currentPlayer = npc;
@@ -162,8 +163,11 @@ namespace GUC.Scripts.Sumpfkraut.Controls
 
         static void SetFocus(BaseVobInst target)
         {
+            if (focusVob == target)
+                return;
+
             focusVob = target;
-            NPCInst.Hero.BaseInst.gVob.FocusVob = target == null ? new zCVob(0) : target.BaseInst.gVob;
+            NPCInst.Hero.BaseInst.gVob.SetFocusVob(target == null ? new zCVob(0) : target.BaseInst.gVob);
         }
 
         static bool CanSee(Vec3f start, Vec3f end, BaseVobInst target)

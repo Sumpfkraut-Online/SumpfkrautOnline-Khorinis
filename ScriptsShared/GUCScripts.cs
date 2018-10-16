@@ -13,8 +13,6 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
 using GUC.WorldObjects;
-using GUC.Scripts.Sumpfkraut.Mobs.Instances;
-using GUC.Scripts.Sumpfkraut.Mobs.Definitions;
 
 namespace GUC.Scripts
 {
