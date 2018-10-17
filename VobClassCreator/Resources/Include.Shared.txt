@@ -1,0 +1,2 @@
+﻿	<Compile Include="Sumpfkraut\VobSystem\Definitions\#subfolder\name#Def.cs" />
+	<Compile Include="Sumpfkraut\VobSystem\Instances\#subfolder\name#Inst.cs" />

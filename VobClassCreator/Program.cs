@@ -14,7 +14,6 @@ namespace VobClassCreator
         {
             basePath = AppDomain.CurrentDomain.BaseDirectory;
             basePath = basePath.Remove(basePath.Length - @"\VobClassCreator\bin\Debug\".Length);
-            basePath = "D:\\test";
             Console.WriteLine("Base path: '" + basePath + "' please check if this correct.\n");
 
             Console.WriteLine("Name of the new vob type (without inst/def):");
@@ -28,12 +27,12 @@ namespace VobClassCreator
             if (parentName.IndexOfAny(Path.GetInvalidPathChars()) != -1)
                 throw new Exception("Invalid path chars!");
 
+            Console.WriteLine("Subfolder (leave empty for none):");
+            subfolder = Console.ReadLine();
+
             Console.WriteLine("Shall the new vob type be abstract? (y/n)");
             string answer = Console.ReadLine();
             abstr = (answer.Length > 0 && answer[0] == 'y');
-
-            Console.WriteLine("Subfolder (leave empty for none):");
-            subfolder = Console.ReadLine();
 
             CreateVobFiles(VobKind.Def, Side.Server);
             CreateVobFiles(VobKind.Def, Side.Shared);
@@ -43,7 +42,11 @@ namespace VobClassCreator
             CreateVobFiles(VobKind.Inst, Side.Shared);
             CreateVobFiles(VobKind.Inst, Side.Client);
 
-            //UpdateVobTypes();
+            UpdateProject(Side.Server);
+            UpdateProject(Side.Shared);
+            UpdateProject(Side.Client);
+
+            UpdateVobTypes();
         }
 
         static void UpdateProject(Side side)
@@ -58,7 +61,7 @@ namespace VobClassCreator
 
             lines.Insert(index + 1, text);
 
-            File.WriteAllLines(filePath + ".edit", lines);
+            File.WriteAllLines(filePath, lines);
         }
 
         static void UpdateVobTypes()
@@ -115,7 +118,7 @@ namespace VobClassCreator
                 int c;
                 while ((c = sr.Read()) != -1)
                 {
-                    if (c == '/')
+                    if (c == wordChar)
                     {
                         while ((c = sr.Read()) != wordChar)
                         {
@@ -136,7 +139,7 @@ namespace VobClassCreator
 
         static string GetWord(string ident)
         {
-            switch(ident)
+            switch (ident)
             {
                 case "name":
                     return name;
@@ -157,6 +160,15 @@ namespace VobClassCreator
                     else
                     {
                         return string.Empty;
+                    }
+                case @"subfolder\name":
+                    if (!string.IsNullOrWhiteSpace(subfolder))
+                    {
+                        return subfolder + '\\' + name;
+                    }
+                    else
+                    {
+                        return name;
                     }
                 case "parent":
                     return parentName;

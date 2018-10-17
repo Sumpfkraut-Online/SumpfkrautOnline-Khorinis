@@ -4,5 +4,5 @@
 	<Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\#subfolder\name#Inst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\#subfolder\name#Inst.cs</Link>
     </Compile>
-	<Compile Include="Sumpfkraut\VobSystem\Definitions\#subfolder\name#Def.Server.cs" />
-	<Compile Include="Sumpfkraut\VobSystem\Instances\#subfolder\name#Inst.Server.cs" />
+	<Compile Include="Sumpfkraut\VobSystem\Definitions\#subfolder\name#Def.Client.cs" />
+	<Compile Include="Sumpfkraut\VobSystem\Instances\#subfolder\name#Inst.Client.cs" />

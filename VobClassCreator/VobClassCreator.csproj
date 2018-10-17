@@ -59,7 +59,11 @@
     <EmbeddedResource Include="Resources\Def.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\Includes.txt" />
+    <EmbeddedResource Include="Resources\Include.Server.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Include.Client.txt" />
+    <EmbeddedResource Include="Resources\Include.Shared.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
