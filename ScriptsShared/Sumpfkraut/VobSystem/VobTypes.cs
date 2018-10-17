@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem
 {
@@ -24,6 +23,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         Projectile,
 
         Mob,
-        MobInter
+        MobInter,
     }
 }

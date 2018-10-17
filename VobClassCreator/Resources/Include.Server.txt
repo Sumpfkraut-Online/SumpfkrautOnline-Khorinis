@@ -1,0 +1,8 @@
+﻿    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\#name#Def.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\#name#Def.cs</Link>
+    </Compile>
+	<Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\#name#Inst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\#name#Inst.cs</Link>
+    </Compile>
+	<Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\#name#Def.Server.cs" />
+	<Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\#name#Inst.Server.cs" />

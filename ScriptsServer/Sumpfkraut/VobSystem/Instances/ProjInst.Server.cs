@@ -10,8 +10,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class ProjInst
     {
-        public const int MaxProjectileItems = 500;
-
         public ItemInst Item { get { return (ItemInst)this.BaseInst.Item?.ScriptObject; } set { this.BaseInst.Item = value?.BaseInst; } }
 
         public NPCInst Shooter;
@@ -105,10 +103,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (item != null)
             {
                 item.Spawn(this.World, this.Destination, this.GetAngles());
-                projDespawnList.AddVob(item);
+                this.World.DespawnList_PItems.AddVob(item);
             }
         }
-
-        static DespawnList<ItemInst> projDespawnList = new DespawnList<ItemInst>(MaxProjectileItems);
     }
 }

@@ -91,10 +91,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             this.BaseInst.Spawn(world.BaseWorld, pos, ang);
         }
 
+        public delegate void DespawnHandler(BaseVobInst vob, WorldInst oldWorld);
+        public event DespawnHandler OnDespawn;
         public virtual void Despawn()
         {
+            if (!this.IsSpawned)
+                return;
+
+            WorldInst oldWorld = this.World;
             BaseInst.Despawn();
+            OnDespawn?.Invoke(this, oldWorld);
         }
+
 
         #endregion
 

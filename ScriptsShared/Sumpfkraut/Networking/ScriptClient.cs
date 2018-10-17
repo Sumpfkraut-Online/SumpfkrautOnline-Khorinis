@@ -60,11 +60,13 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             this.SetControl((NPCInst)npc.ScriptObject);
         }
 
-        partial void pSetControl(NPCInst npc);
+        partial void pBeforeSetControl(NPCInst npc);
+        partial void pAfterSetControl(NPCInst npc);
         public virtual void SetControl(NPCInst npc)
         {
+            pBeforeSetControl(npc);
             this.baseClient.SetControl(npc.BaseInst);
-            pSetControl(npc);
+            pAfterSetControl(npc);
         }
 
         #endregion

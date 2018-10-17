@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;/usingdefs/
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions/subfolder/;
+
+namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances/subfolder/
+{
+    partial class /name/Inst
+    {
+        public /name/Inst(/name/Def def) : this()
+        {
+            this.Definition = def;
+        }
+    }
+}
