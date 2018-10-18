@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using GUC.WorldObjects.Instances;
-using GUC.WorldObjects.Mobs;
 using GUC.Network;
 using GUC.WorldObjects.ItemContainers;
 using GUC.Scripting;

@@ -15,13 +15,6 @@ namespace GUC.Types
 
         Mob,
         MobInter,
-        MobFire,
-        MobLadder,
-        MobSwitch,
-        MobWheel,
-        MobContainer,
-        MobDoor,
-        MobBed,
 
         Maximum
     }

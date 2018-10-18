@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using WinApiNew;
 using GUC.WorldObjects;
-using GUC.WorldObjects.Mobs;
 using GUC.Log;
 using Gothic.Types;
 

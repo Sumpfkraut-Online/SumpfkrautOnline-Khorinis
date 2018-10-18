@@ -23,5 +23,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
         Projectile,
 
         Mob,
+        MobInter,
     }
 }
