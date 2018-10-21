@@ -142,8 +142,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
 
             // fill the queue of commands / subsequent sql-database-requests
-            var commandQueue = new List<string>();
             var cgi = GetColGetTypeInfo();
+            var commandQueue = new List<string>(cgi.Count);
             for (int t = 0; t < cgi.Count; t++)
             {
                 StringBuilder commandSB = new StringBuilder();

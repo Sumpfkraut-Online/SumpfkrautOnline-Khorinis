@@ -266,3 +266,22 @@ CREATE TABLE IF NOT EXISTS ScriptAniJobModelDef
 --------------------------------------------------------------
 
 -- !!! TO DO !!!
+
+-- >> VIEWS << --
+--------------------------------------------------------------
+
+/* */
+CREATE VIEW VobDefChanges AS
+    SELECT VD.VobDefID, DE.DefEffectID, 
+        DC.DefChangeID, DC.ChangeType,
+        DC.Params
+        FROM VobDef AS VD, VobDefEffect AS VE, 
+            DefEffect AS DE, DefChange AS DC
+        WHERE 
+            VD.VobDefID = VE.VobDefID &&
+            DE.DefEffecID = DC.DefEffecID
+;
+        
+        
+        
+       

@@ -118,6 +118,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="useAsyncMode"></param>
+        /// <param name="handler"></param>
         public void Load (bool useAsyncMode, FinishedLoadingEffectsHandler handler)
         {
             lock (loadLock)
