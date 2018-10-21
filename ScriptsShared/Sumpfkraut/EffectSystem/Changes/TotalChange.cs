@@ -8,45 +8,89 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    // simple container to hold to total "sum" of a multitude of single changes / components
-    public partial class TotalChange : ExtendedObject
+    /// <summary>
+    /// Simple container to hold to total "sum" of a multitude of single changes / components.
+    /// </summary>
+    public class TotalChange : ExtendedObject
     {
 
+        /// <summary>
+        /// Dummy object used to prevent multi-threaded access to the object for data integrity.
+        /// </summary>
         protected object totalChangeLock;
 
+        /// <summary>
+        /// Used to calculate a total / final change after processing all single input changes.
+        /// </summary>
         protected BaseEffectHandler.CalculateTotalChange calcFunction;
+        /// <summary>
+        /// Get the function used to calculate a total / final change out of all single input changes.
+        /// </summary>
         public BaseEffectHandler.CalculateTotalChange GetCalcFunction ()
         {
             lock (totalChangeLock) { return calcFunction; }
         }
+        /// <summary>
+        /// Set the function used to calculate a total / final change out of all single input changes.
+        /// </summary>
         public void SetCalcFunction (BaseEffectHandler.CalculateTotalChange val)
         {
             lock (totalChangeLock) { calcFunction = val; }
         }
 
+        /// <summary>
+        /// Used to apply the TotalChange to the running program (likly vobs).
+        /// </summary>
         protected BaseEffectHandler.ApplyTotalChange applyFunction;
+        /// <summary>
+        /// Get the function used to apply the TotalChange to the running program (likly vobs).
+        /// </summary>
         public BaseEffectHandler.ApplyTotalChange GetApplyFunction ()
         {
             lock (totalChangeLock) { return applyFunction; }
         }
+        /// <summary>
+        /// Set the function used to apply the TotalChange to the running program (likly vobs).
+        /// </summary>
         public void SetApplyFunction (BaseEffectHandler.ApplyTotalChange val)
         {
             lock (totalChangeLock) { applyFunction = val; }
         }
 
+        /// <summary>
+        /// All changes which are evaluated when calculating a final, total value out of them.
+        /// </summary>
         protected List<Change> components;
+        /// <summary>
+        /// All changes which are evaluated when calculating a final, total value out of them.
+        /// </summary>
         public List<Change> Components { get { return components; } }
 
+        /// <summary>
+        /// Subscription dates of effects to evaluate their chronological order.
+        /// </summary>
         protected List<DateTime> effectSubDates;
+        /// <summary>
+        /// Subscription dates of changes to evaluate their chronological order.
+        /// </summary>
         protected List<DateTime> changeSubDates;
 
 
+        /// <summary>
+        /// The final, toal Change after evaluating all single input Changes.
+        /// </summary>
         protected Change total;
+        /// <summary>
+        /// Get the final, toal Change after evaluating all single input Changes.
+        /// </summary>
         public Change GetTotal ()
         {
             lock (totalChangeLock) { return total; }
         }
-        // always set the value with this method to also create a timestamp
+        /// <summary>
+        /// Set the final, toal Change after evaluating all single input Changes.
+        /// This will also set a timestamp of the last update process.
+        /// </summary>
         public void SetTotal (Change total)
         {
             lock (totalChangeLock)
@@ -56,15 +100,31 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             }
         }
 
-        // time of last recalculation / setting of the total change 
+        /// <summary>
+        /// Time of last recalculation / setting of the total change.
+        /// </summary>
         protected DateTime lastTotalUpdate;
+        /// <summary>
+        /// Time of last recalculation / setting of the total change.
+        /// </summary>
         public DateTime LastTotalUpdate { get { return this.lastTotalUpdate; } }
 
-        // time of last update (addition or removal of a Change / component)
+        /// <summary>
+        /// Time of last update (addition or removal of a Change / component).
+        /// </summary>
         protected DateTime lastComponentUpdate;
+        /// <summary>
+        /// Time of last recalculation / setting of the total change.
+        /// </summary>
         public DateTime LastComponentUpdate { get { return this.lastComponentUpdate; } }
 
 
+        /// <summary>
+        /// Creates a convenient container to store multiple Changes as well as their
+        /// summarized, total Change.
+        /// </summary>
+        /// <param name="calcFunction"></param>
+        /// <param name="applyFunction"></param>
         public TotalChange (BaseEffectHandler.CalculateTotalChange calcFunction, 
             BaseEffectHandler.ApplyTotalChange applyFunction)
             : this()
@@ -73,6 +133,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             this.applyFunction = applyFunction;
         }
 
+        /// <summary>
+        /// Creates a convenient container to store multiple Changes as well as their
+        /// summarized, total Change.
+        /// </summary>
         public TotalChange ()
         {
             totalChangeLock = new object();
@@ -85,6 +149,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 
 
 
+        /// <summary>
+        /// Add a Change to the collection, also storing timestamps to allow evaluating order.
+        /// </summary>
+        /// <param name="change"></param>
+        /// <param name="effectSubDate"></param>
+        /// <param name="changeSubDate"></param>
         public void AddChange (Change change, DateTime effectSubDate, DateTime changeSubDate)
         {
             lock (totalChangeLock)
@@ -109,6 +179,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             }
         }
 
+        /// <summary>
+        /// Remove a Change from the collection.
+        /// </summary>
+        /// <param name="change"></param>
         public void RemoveChange (Change change)
         {
             lock (totalChangeLock)

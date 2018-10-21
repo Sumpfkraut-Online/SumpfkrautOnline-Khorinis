@@ -7,7 +7,7 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public partial class ChangeInitializer : ExtendedObject
+    public class ChangeInitializer : ExtendedObject
     {
 
         protected ChangeInitializer () { }

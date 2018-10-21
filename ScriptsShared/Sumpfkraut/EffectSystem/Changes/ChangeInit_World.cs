@@ -8,7 +8,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public partial class ChangeInit_World : BaseChangeInit
+    public class ChangeInit_World : BaseChangeInit
     {
 
         new public static ChangeInit_World representative;

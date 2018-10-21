@@ -9,7 +9,7 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public partial class BaseChangeInit : ExtendedObject
+    public class BaseChangeInit : ExtendedObject
     {
 
         protected static Dictionary<ChangeType, ChangeInitInfo> changeTypeToInfo;

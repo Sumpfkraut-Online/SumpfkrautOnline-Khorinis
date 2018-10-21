@@ -8,7 +8,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public partial class ChangeInit_Effect : BaseChangeInit
+    public class ChangeInit_Effect : BaseChangeInit
     {
 
         new public static ChangeInit_Effect representative;

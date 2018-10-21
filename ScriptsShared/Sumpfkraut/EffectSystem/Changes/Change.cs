@@ -9,12 +9,20 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
-    public partial class Change : ExtendedObject
+    public class Change : ExtendedObject
     {
 
-        // effect to which this change belongs
+        /// <summary>
+        /// Effect to which this change belongs.
+        /// </summary>
         protected Effect effect;
+        /// <summary>
+        /// Get Effect to which this change belongs.
+        /// </summary>
         public Effect GetEffect () { return effect; }
+        /// <summary>
+        ///  Set Effect to which this change belongs.
+        /// </summary>
         public void SetEffect (Effect value) { effect = value; }
 
         protected ChangeInitInfo changeInitInfo;
