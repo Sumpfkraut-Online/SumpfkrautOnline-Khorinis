@@ -14,13 +14,15 @@ How to start and connect to a local server:
 6. Press "Start" to start the GUC-Gothic-Client.
 
 
-FilePacker - Zum Verpacken von Dateien die der Launcher laden kann
-Gothic - Objekte & Infos speziell aus dem Gothic-Prozess
-GUCClient - GUC-Basis für den Client/Spieler
-GUCLauncher - Launcher für den Client/Spieler
-GUCServer - GUC-Basis für den Server
-GUCShared - Objekte & Infos die sich die GUC-Basis von Client & Server teilen
-ScriptsClient - Skripte für den Client/Spieler
-ScriptsServer - Skripte für den Server
-ScriptsShared - Objekte & Infos die sich die Skripte von Client & Server teilen
-WinApi - Genereller Prozesszugriff / hacking
+DBPatterns - example Sqlite database patterns to be used in the server scripts
+FilePacker - To compile data for the launcher to load
+Gothic - Objects and information directly related to the Gothic-process
+GUCClient - Basic GUC client process
+GUCLauncher - Program to search and store servers and join with the GUC client
+GUCServer - Basic GUC server process
+GUCShared - Basic GUC functionality shared between client and server
+ScriptsClient - Server-specific scripts loaded by GUCClient
+ScriptsServer - Scripts that define the actual game server of basis of GUCServer
+ScriptsShared - Shared functionality between client and server scripts
+WinApi - Process injection, hooks and manipulation (often, falsely identified as malware)
+WebInterface - A basic web-interface to i.e. send control commands to runnign server scripts
