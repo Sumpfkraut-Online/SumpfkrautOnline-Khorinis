@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
+
+    /// <summary>
+    /// ChangeDestination registration and functionality for npc vobs.
+    /// </summary>
     public class SDestInit_NPC : BaseDestInit, DestInit_NPC
     {
 

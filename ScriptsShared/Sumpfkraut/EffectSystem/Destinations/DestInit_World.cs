@@ -1,15 +1,12 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
-using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Basic behavior methods of worlds when managed by the EffectSystem.
+    /// </summary>
     public interface DestInit_World
     {
 

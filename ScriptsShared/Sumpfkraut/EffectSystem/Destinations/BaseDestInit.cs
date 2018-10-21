@@ -2,15 +2,16 @@
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using GUC.Utilities;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using static GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers.BaseEffectHandler;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Manages the ChangeDestination registration process.
+    /// All subclasses prepare and register their DestInitInfo-objects,
+    /// so they can be kept here in a centralized manner.
+    /// </summary>
     public class BaseDestInit : ExtendedObject
     {
 

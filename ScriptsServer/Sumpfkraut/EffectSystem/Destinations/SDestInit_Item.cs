@@ -5,12 +5,13 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// ChangeDestination registration and functionality for item vobs.
+    /// </summary>
     public class SDestInit_Item : BaseDestInit, DestInit_Item
     {
 
@@ -19,6 +20,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         /// </summary>
         new public static readonly SDestInit_Item representative;
 
+        /// <summary>
+        /// Default item material.
+        /// </summary>
         public readonly ItemMaterials Default_Material = ItemMaterials.Wood;
 
         /// <summary>

@@ -1,29 +1,39 @@
 ﻿using GUC.Utilities;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
+
+    /// <summary>
+    /// Class with the sole purpose to initialize registration
+    /// of ChangeDestinations by triggering static constructors
+    /// of destination classes.
+    /// </summary>
     public class SDestInitializer : ExtendedObject
     {
 
-            protected SDestInitializer () { }
+        /// <summary>
+        /// Dummy.
+        /// </summary>
+        protected SDestInitializer () { }
 
-            public static void Init ()
-            {
-                Type t = typeof(DestInitializer);
+        /// <summary>
+        /// Initialize registration process for ChangeDestinations.
+        /// This triggers static constructors of DestInit-classes.
+        /// </summary>
+        public static void Init ()
+        {
+            Type t = typeof(SDestInitializer);
 
-                MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Effect).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Effect).Name);
 
-                MakeLogStatic(t, "Initializing... " + typeof(SDestInit_World).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_World).Name);
 
-                MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Vob).Name);
-                MakeLogStatic(t, "Initializing... " + typeof(SDestInit_NamedVob).Name);
-                MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Item).Name);
-                MakeLogStatic(t, "Initializing... " + typeof(SDestInit_NPC).Name);
-            }
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Vob).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_NamedVob).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Item).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_NPC).Name);
+        }
 
     }
 }

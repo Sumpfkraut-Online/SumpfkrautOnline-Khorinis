@@ -3,13 +3,14 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class SDestInit_Effect : BaseDestInit, DestInit_Effect
+    /// <summary>
+    /// ChangeDestination registration and functionality for Effect-objects.
+    /// </summary>
+    public class SDestInit_Effect : BaseDestInit, DestInit_Effect
     {
 
         /// <summary>

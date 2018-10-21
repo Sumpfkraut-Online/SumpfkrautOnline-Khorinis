@@ -1,16 +1,13 @@
 ﻿using GUC.Scripts.Sumpfkraut.EffectSystem.Changes;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
-using GUC.Scripts.Sumpfkraut.EffectSystem.Enumeration;
-using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// ChangeDestination registration and functionality for worlds.
+    /// </summary>
     public class SDestInit_World : BaseDestInit, DestInit_World
     {
 

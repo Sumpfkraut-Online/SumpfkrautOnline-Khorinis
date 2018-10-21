@@ -5,12 +5,13 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// ChangeDestination registration and functionality for named vobs.
+    /// </summary>
     public class SDestInit_NamedVob : SDestInit_Vob, DestInit_NamedVob
     {
 
@@ -19,6 +20,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         /// </summary>
         new public static readonly SDestInit_NamedVob representative;
 
+        /// <summary>
+        /// Default display name.
+        /// </summary>
         public readonly string Default_Name = "";
 
         /// <summary>

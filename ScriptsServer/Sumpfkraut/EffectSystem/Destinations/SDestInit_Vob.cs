@@ -6,11 +6,13 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// ChangeDestination registration and functionality for vobs in general.
+    /// </summary>
     public class SDestInit_Vob : BaseDestInit, DestInit_Vob
     {
 
@@ -19,7 +21,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         /// </summary>
         new public static readonly SDestInit_Vob representative;
 
+        /// <summary>
+        /// Default value for whether collision with dynamic / moving world objects like many vobs
+        /// is activated or not.
+        /// </summary>
         public readonly bool Default_CDDyn = false;
+        /// <summary>
+        /// Default value for whether collision with static world objects like the world mesh
+        /// is activated or not.
+        /// </summary>
         public readonly bool Default_CDStatic = false;
 
         /// <summary>

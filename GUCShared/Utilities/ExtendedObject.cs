@@ -6,6 +6,9 @@ using System.Text;
 namespace GUC.Utilities
 {
 
+    /// <summary>
+    /// Basic printing and logging functionality for inheriting classes.
+    /// </summary>
     public abstract partial class ExtendedObject
     { 
         #region Properties
