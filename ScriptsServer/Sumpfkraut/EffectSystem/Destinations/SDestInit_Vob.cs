@@ -11,10 +11,51 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class DestInit_Vob : BaseDestInit
+    public class SDestInit_Vob : BaseDestInit, DestInit_Vob
     {
 
-        partial void pCTC_CDDyn (BaseEffectHandler eh, TotalChange tc)
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
+        new public static readonly SDestInit_Vob representative;
+
+        public readonly bool Default_CDDyn = false;
+        public readonly bool Default_CDStatic = false;
+
+        /// <summary>
+        /// Ensures coupling of ChangeDestinations to >= 1 ChangeTypes
+        /// which are relevant for all vobs.
+        /// </summary>
+        static SDestInit_Vob ()
+        {
+            representative = new SDestInit_Vob();
+        }
+
+        /// <summary>
+        /// Called on static constructor to initialize singleton object.
+        /// </summary>
+        protected SDestInit_Vob ()
+        {
+            SetObjName(typeof(SDestInit_Vob).Name);
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDDyn,
+                new List<ChangeType>() { ChangeType.Vob_CDDyn_Set },
+                CalculateCDDyn, ApplyCDDyn));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDStatic,
+                new List<ChangeType>() { ChangeType.Vob_CDStatic_Set },
+                CalculateCDStatic, ApplyCDStatic));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_CodeName,
+                new List<ChangeType>() { ChangeType.Vob_CodeName_Set },
+                CalculateCodeName, ApplyCodeName));
+
+            AddOrChange(new DestInitInfo(ChangeDestination.Vob_VobType,
+                new List<ChangeType>() { ChangeType.Vob_VobType_Set },
+                CalculateVobType, ApplyVobType));
+        }
+
+        public void CalculateCDDyn (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -31,10 +72,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 var finalChange = Change.Create(info, new List<object>() { val });
                 tc.SetTotal(finalChange);
             }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCTC_CDDyn: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCalculateCDDyn: " + ex); }
         }
 
-        partial void pATC_CDDyn (BaseEffectHandler eh, TotalChange tc)
+        public void ApplyCDDyn (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -49,10 +90,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     // TO DO: add similar code as for VobDef when VobSystem supports it
                 }
             }
-            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pATC_CDDyn: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pApplyCDDyn: " + ex); }
         }
 
-        partial void pCTC_CDStatic (BaseEffectHandler eh, TotalChange tc)
+        public void CalculateCDStatic (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -69,10 +110,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 var finalChange = Change.Create(info, new List<object>() { val });
                 tc.SetTotal(finalChange);
             }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCTC_CDStatic: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCalculateCDStatic: " + ex); }
         }
 
-        partial void pATC_CDStatic (BaseEffectHandler eh, TotalChange tc)
+        public void ApplyCDStatic (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -87,10 +128,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     // TO DO: add similar code as for VobDef when VobSystem supports it
                 }
             }
-            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pATC_CDStatic: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via pApplyCDStatic: " + ex); }
         }
 
-        partial void pCTC_CodeName (BaseEffectHandler eh, TotalChange tc)
+        public void CalculateCodeName (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -105,10 +146,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     new List<object>() { tc.Components[tc.Components.Count - 1] });
                 tc.SetTotal(finalChange);
             }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CTC_CodeName: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via CalculateCodeName: " + ex); }
         }
 
-        partial void pATC_CodeName (BaseEffectHandler eh, TotalChange tc)
+        public void ApplyCodeName (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -124,10 +165,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     // ??? TO DO if codeName should be changable for a VobInst
                 }
             }
-            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ATC_CodeName: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while applying TotalChange via ApplyCodeName: " + ex); }
         }
 
-        partial void pCTC_VobType (BaseEffectHandler eh, TotalChange tc)
+        public void CalculateVobType (BaseEffectHandler eh, TotalChange tc)
         {
             try
             {
@@ -143,10 +184,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                     new List<object>() { tc.Components[tc.Components.Count - 1] });
                 tc.SetTotal(finalChange);
             }
-            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCTC_VobType: " + ex); }
+            catch (Exception ex) { MakeLogError("Error while caclulating TotalChange via pCalculateVobType: " + ex); }
         }
 
-        partial void pATC_VobType (BaseEffectHandler eh, TotalChange tc)
+        public void ApplyVobType (BaseEffectHandler eh, TotalChange tc)
         {
             // TO DO: switch VobType of linekd object if possible 
             //        (or simply refrain from changes after creation completely)

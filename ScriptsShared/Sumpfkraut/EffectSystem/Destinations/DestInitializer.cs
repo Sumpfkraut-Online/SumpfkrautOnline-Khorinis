@@ -16,14 +16,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         {
             Type t = typeof(DestInitializer);
 
-            MakeLogStatic(t, "Initializing... " + typeof(DestInit_Effect).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Effect).Name);
 
-            MakeLogStatic(t, "Initializing... " + typeof(DestInit_World).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_World).Name);
 
-            MakeLogStatic(t, "Initializing... " + typeof(DestInit_Vob).Name);
-            MakeLogStatic(t, "Initializing... " + typeof(DestInit_NamedVob).Name);
-            MakeLogStatic(t, "Initializing... " + typeof(DestInit_Item).Name);
-            MakeLogStatic(t, "Initializing... " + typeof(DestInit_NPC).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Vob).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_NamedVob).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_Item).Name);
+            MakeLogStatic(t, "Initializing... " + typeof(SDestInit_NPC).Name);
             // ...
         }
 

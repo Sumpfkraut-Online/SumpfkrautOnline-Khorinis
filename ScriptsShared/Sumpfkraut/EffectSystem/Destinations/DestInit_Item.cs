@@ -10,34 +10,22 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class DestInit_Item : BaseDestInit
+    public interface DestInit_Item
     {
 
-        new public static DestInit_Item representative;
+        /// <summary>
+        /// Calculate the final material value.
+        /// </summary>
+        /// <param name="eh"></param>
+        /// <param name="tc"></param>
+        void CalculateMaterial (BaseEffectHandler eh, TotalChange tc);
 
-        public static readonly ItemMaterials Default_Material = ItemMaterials.Wood;
-
-
-
-        // make sure, the destination makes itself known to its related changes
-        static DestInit_Item ()
-        {
-            representative = new DestInit_Item();
-        }
-
-        protected DestInit_Item ()
-        {
-            AddOrChange(new DestInitInfo(ChangeDestination.Item_Material, 
-                new List<ChangeType>() { ChangeType.Item_Material_Set }, 
-                CTC_Material, ATC_Material));
-        }
-
-
-        
-        partial void pCTC_Material (BaseEffectHandler eh, TotalChange tc);
-        public void CTC_Material (BaseEffectHandler eh, TotalChange tc) { pCTC_Material(eh, tc); }
-        partial void pATC_Material (BaseEffectHandler eh, TotalChange tc);
-        public void ATC_Material (BaseEffectHandler eh, TotalChange tc) { pATC_Material(eh, tc); }
+        /// <summary>
+        /// Apply the final material value.
+        /// </summary>
+        /// <param name="eh"></param>
+        /// <param name="tc"></param>
+        void ApplyMaterial (BaseEffectHandler eh, TotalChange tc);
 
     }
 

@@ -11,15 +11,25 @@ using static GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers.BaseEffectHandle
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class BaseDestInit : ExtendedObject
+    public class BaseDestInit : ExtendedObject
     {
 
-        protected static Dictionary<ChangeDestination, DestInitInfo> changeDestinationToInfo;
-        // static representative of the class (do not change it in any way after instantiation!)
-        public static BaseDestInit representative;
+        /// <summary>
+        /// Hold all registered ChangeDestinations with their related ChangeTypes
+        /// as well as functions to possibly calculate and apply final values
+        /// to host objects.
+        /// </summary>
+        protected static readonly Dictionary<ChangeDestination, DestInitInfo> changeDestinationToInfo;
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
+        public static readonly BaseDestInit representative;
 
 
 
+        /// <summary>
+        /// Ensures initialization of important collections.
+        /// </summary>
         static BaseDestInit ()
         {
             // init changeDestinationToInfo which is used by all children
@@ -28,11 +38,19 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             representative = new BaseDestInit();
         }
 
+        /// <summary>
+        /// Dummy.
+        /// </summary>
         protected BaseDestInit ()
         { }
 
 
 
+        /// <summary>
+        /// Register a new ChangeDestination with related initialization 
+        /// information or override the current one.
+        /// </summary>
+        /// <param name="inputInfo"></param>
         protected void AddOrChange (DestInitInfo inputInfo)
         {
             DestInitInfo info;
@@ -48,19 +66,34 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 changeDestinationToInfo.Add(inputInfo.ChangeDestination, inputInfo);
             }
 
-            // trigger static initialization of the necessary BaseChangeInit-classes
-            int i;
-            for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
-            {
+            //// trigger static initialization of the necessary BaseChangeInit-classes
+            //int i;
+            //for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
+            //{
                 
-            }
+            //}
         }
 
+        /// <summary>
+        /// Retrieves DestInitInfo-object for a registered ChangeDestination.
+        /// Indicates success through the return value.
+        /// </summary>
+        /// <param name="changeDest"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public static bool TryGetDestInitInfo (ChangeDestination changeDest, out DestInitInfo info)
         {
             return changeDestinationToInfo.TryGetValue(changeDest, out info);
         }
 
+        /// <summary>
+        /// Retrieves DestInitInfo-object for a registered ChangeDestination.
+        /// Indicates success through the return value.
+        /// </summary>
+        /// <param name="effectHandler"></param>
+        /// <param name="changeDest"></param>
+        /// <param name="totalChange"></param>
+        /// <returns></returns>
         public static bool TryGetTotalChange (BaseEffectHandler effectHandler, ChangeDestination changeDest,
             out TotalChange totalChange)
         {
@@ -72,8 +105,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        // make sure, that ChangeType was properly registered or show an error message if not
-        // while retrieving the ChangeInitInfo for the parameter types
+        /// <summary>
+        /// Make sure that ChangeType was properly registered or show an error message if not
+        /// while retrieving the ChangeInitInfo for the parameter types.
+        /// </summary>
+        /// <param name="changeType"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public bool ValidateChangeInit (ChangeType changeType, out ChangeInitInfo info)
         {
             if (BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_CodeName_Set, out info))

@@ -86,15 +86,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 return destToTotalChange.TryGetValue(cd, out tc);
             }
         }
-        public bool TryGetTotal (ChangeDestination cd, out Change fc)
+        public bool TryGetTotal (ChangeDestination cd, out Change finalChange)
         {
-            fc = null;
+            finalChange = null;
             lock (effectLock)
             {
                 TotalChange tc;
                 if (!TryGetTotalChange(cd, out tc)) { return false; }
-                fc = tc.GetTotal();
-                if (fc == null) { return false; }
+                finalChange = tc.GetTotal();
+                if (finalChange == null) { return false; }
                 return true;
             }
         }
@@ -124,7 +124,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
         
         // base constructor that must be called for clean initialization
-        public BaseEffectHandler (string objName, List<Effect> effects, object host, Type hostType = null)
+        public BaseEffectHandler (string objName, List<Effect> effects, 
+            object host, Type hostType = null)
         {
             SetObjName(objName);
 
@@ -180,7 +181,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                     + cd + " : " + ex);
 
                 // clear already reigstered values after unfinished registration
-                // TO DO
+                // TODO
 
                 return false;
             }

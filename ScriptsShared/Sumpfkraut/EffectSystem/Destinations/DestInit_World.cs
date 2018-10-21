@@ -10,50 +10,17 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class DestInit_World : BaseDestInit
+    public interface DestInit_World
     {
 
-        new public static DestInit_World representative;
+        void CalculateClock_IsRunning (BaseEffectHandler eh, TotalChange tc);
+        void ApplyClock_IsRunning (BaseEffectHandler eh, TotalChange tc);
 
+        void CalculateClock_Rate (BaseEffectHandler eh, TotalChange tc);
+        void ApplyClock_Rate (BaseEffectHandler eh, TotalChange tc);
 
-
-        // make sure, the destination makes itself known to its related changes
-        static DestInit_World ()
-        {
-            representative = new DestInit_World();
-        }
-
-        protected DestInit_World ()
-        {
-            AddOrChange(new DestInitInfo(ChangeDestination.World_Clock_IsRunning,
-                new List<ChangeType>() { ChangeType.World_Clock_IsRunning_Set },
-                CTC_Clock_IsRunning, ATC_Clock_IsRunning));
-
-            AddOrChange(new DestInitInfo(ChangeDestination.World_Clock_Rate,
-                new List<ChangeType>() { ChangeType.World_Clock_Rate_Set },
-                CTC_Clock_Rate, ATC_Clock_Rate));
-
-            AddOrChange(new DestInitInfo(ChangeDestination.World_Clock_Time,
-                new List<ChangeType>() { ChangeType.World_Clock_Time_Set },
-                CTC_Clock_Time, ATC_Clock_Time));
-        }
-
-
-
-        partial void pCTC_Clock_IsRunning (BaseEffectHandler eh, TotalChange tc);
-        public void CTC_Clock_IsRunning (BaseEffectHandler eh, TotalChange tc) { pCTC_Clock_IsRunning(eh, tc); }
-        partial void pATC_Clock_IsRunning (BaseEffectHandler eh, TotalChange tc);
-        public void ATC_Clock_IsRunning (BaseEffectHandler eh, TotalChange tc) { pATC_Clock_IsRunning(eh, tc); }
-
-        partial void pCTC_Clock_Rate (BaseEffectHandler eh, TotalChange tc);
-        public void CTC_Clock_Rate (BaseEffectHandler eh, TotalChange tc) { pCTC_Clock_Rate(eh, tc); }
-        partial void pATC_Clock_Rate (BaseEffectHandler eh, TotalChange tc);
-        public void ATC_Clock_Rate (BaseEffectHandler eh, TotalChange tc) { pATC_Clock_Rate(eh, tc); }
-
-        partial void pCTC_Clock_Time (BaseEffectHandler eh, TotalChange tc);
-        public void CTC_Clock_Time (BaseEffectHandler eh, TotalChange tc) { pCTC_Clock_Time(eh, tc); }
-        partial void pATC_Clock_Time (BaseEffectHandler eh, TotalChange tc);
-        public void ATC_Clock_Time (BaseEffectHandler eh, TotalChange tc) { pATC_Clock_Time(eh, tc); }
+        void CalculateClock_Time (BaseEffectHandler eh, TotalChange tc);
+        void ApplyClock_Time (BaseEffectHandler eh, TotalChange tc);
 
     }
 

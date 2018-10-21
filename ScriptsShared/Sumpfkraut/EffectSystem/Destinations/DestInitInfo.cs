@@ -9,7 +9,7 @@ using static GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers.BaseEffectHandle
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
-    public partial class DestInitInfo
+    public class DestInitInfo
     {
 
         public ChangeDestination ChangeDestination;
