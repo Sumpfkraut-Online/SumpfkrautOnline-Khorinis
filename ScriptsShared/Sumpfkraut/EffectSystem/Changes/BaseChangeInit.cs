@@ -9,11 +9,22 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
+    /// <summary>
+    /// Quasi-static base singleton to initialize/register ChangeTypes and their
+    /// typed parameter list. Use static constructor to initialize the representative
+    /// singleton instance.
+    /// </summary>
     public class BaseChangeInit : ExtendedObject
     {
 
+        /// <summary>
+        /// Mapping from relevant ChangeTypes to ChangeInitInfo-objects which make the
+        /// connection between Changes and ChangeDestinations.
+        /// </summary>
         protected static Dictionary<ChangeType, ChangeInitInfo> changeTypeToInfo;
-        // static representative of the class (do not change it in any way after instantiation!)
+        /// <summary>
+        /// A static representative of the class (do not change it in any way after instantiation!).
+        /// </summary>
         public static BaseChangeInit representative;
 
 
@@ -36,8 +47,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         {
             return changeTypeToInfo.TryGetValue(changeType, out info);
         }
-        
-        // add or change existing included type of change and its respective parametertypes
+
+        /// <summary>
+        /// Add or change existing included type of Change and its respective parameter types.
+        /// </summary>
+        /// <param name="inputInfo"></param>
         protected void AddOrChange (ChangeInitInfo inputInfo)
         {
             //MakeLog("Initializing ChangeType " + inputInfo.ChangeType);

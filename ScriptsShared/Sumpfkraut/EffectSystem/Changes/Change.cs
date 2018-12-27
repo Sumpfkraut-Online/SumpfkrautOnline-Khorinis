@@ -9,6 +9,13 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
+    /// <summary>
+    /// As most basic unit of the effect system it stores information
+    /// about the type of change and possible additional parameters to be
+    /// used properly when influencing its host instance. Each Change belongs
+    /// to exactly one Effect which in turn in used by an EffectHandler to
+    /// apply the respective changes to the host instance.
+    /// </summary>
     public class Change : ExtendedObject
     {
 
@@ -30,6 +37,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
         public ChangeType GetChangeType () { return changeInitInfo.ChangeType; }
         public List<Type> GetParameterTypes () { return changeInitInfo.ParameterTypes; }
 
+        /// <summary>
+        /// Mutable parameters further specifying how the Change operates.
+        /// </summary>
         protected List<object> parameters;
         public List<object> GetParameters () { return parameters; }
         public bool SetParameters(List<object> parameters)
@@ -67,6 +77,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }
 
+        /// <summary>
+        /// Preferred way to instantiate new Changes.
+        /// </summary>
+        /// <param name="changeType"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public static Change Create (ChangeType changeType, List<object> parameters)
         {
             ChangeInitInfo changeInitInfo;
@@ -79,6 +95,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             return Create(changeInitInfo, parameters);
         }
 
+        /// <summary>
+        /// Preferred way to instantiate new Changes.
+        /// </summary>
+        /// <param name="changeInitInfo"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public static Change Create (ChangeInitInfo changeInitInfo, List<object> parameters)
         {
             if (changeInitInfo == null)
