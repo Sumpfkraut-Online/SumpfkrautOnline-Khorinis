@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class NamedVobDefEffectHandler : VobDefEffectHandler
+    public class NamedVobDefEffectHandler : VobDefEffectHandler
     {
 
         new public NamedVobDef Host { get { return (NamedVobDef) host; } }

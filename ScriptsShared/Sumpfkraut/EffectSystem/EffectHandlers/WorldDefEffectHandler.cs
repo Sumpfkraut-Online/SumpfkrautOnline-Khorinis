@@ -8,7 +8,7 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class WorldDefEffectHandler : BaseEffectHandler
+    public class WorldDefEffectHandler : BaseEffectHandler
     {
 
         new public WorldDef Host { get { return (WorldDef) host; } }

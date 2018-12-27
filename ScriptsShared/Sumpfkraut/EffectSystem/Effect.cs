@@ -9,17 +9,34 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem
 {
 
+    /// <summary>
+    /// Effects, as central building blocks of the effect system, serve as amanaged container
+    /// objects for Changes. Also global effects are collected here statically.
+    /// </summary>
     public partial class Effect : ExtendedObject
     {
 
+        /// <summary>
+        /// Lock used for synchronized access to global Effects.
+        /// </summary>
         protected static object globalLock;
 
+        /// <summary>
+        /// Globally / Statically reusable Effects, accessed by unique ids.
+        /// </summary>
         protected static Dictionary<string, Effect> globalEffects = new Dictionary<string, Effect>();
 
 
 
+        /// <summary>
+        /// Lock to synchronize access to Change objects managed by this Effect instance.
+        /// </summary>
         protected object changeLock;
 
+        /// <summary>
+        /// EffectHandler-instance used to link the Effect with an influenced arbitrary instance
+        /// which will be affected by this Effects Change objects.
+        /// </summary>
         protected EffectHandlers.BaseEffectHandler effectHandler;
         public EffectHandlers.BaseEffectHandler GetEffectHandler () { return effectHandler; }
         public void SetEffectHandler (EffectHandlers.BaseEffectHandler value)
@@ -36,6 +53,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             }
         }
 
+        /// <summary>
+        /// Change objects which determine the actual nature of having this
+        /// Effect be applied to an arbitrary instance through an EffectHandler.
+        /// </summary>
         protected List<Change> changes;
         public List<Change> GetChanges () { lock (changeLock) { return changes; } }
 
@@ -48,6 +69,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
         protected static string defaultEffectName = "";
         public static string DefaultEffectName { get { return defaultEffectName; } }
 
+        /// <summary>
+        /// Globally/Statically unique id of the Effect object.
+        /// </summary>
         protected string globalID;
         public string GetGlobalID () { return globalID; }
         public void SetGlobalID (string globalID)
@@ -57,6 +81,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             AddGlobalEffect(globalID, this, true);
         }
 
+        /// <summary>
+        /// Effects can be part of other Effects which are referred to as parents.
+        /// </summary>
         protected List<Effect> parents;
         public List<Effect> GetParents () { return parents; }
         public bool AddParent (Effect parent)
@@ -77,6 +104,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return parents.Contains(parent);
         }
 
+        /// <summary>
+        /// Effects can be composed of other Effects, namely children.
+        /// </summary>
         protected List<Effect> children;
         public List<Effect> GetChildren () { return children; }
         public bool AddChild (Effect child)
@@ -94,6 +124,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return children.Contains(child);
         }
 
+        /// <summary>
+        /// Humanly readable name of the rather abstract Effect object.
+        /// </summary>
         protected string effectName;
         public string GetEffectName () { return effectName; }
         public void SetEffectName (string effectName) { this.effectName = effectName; }
@@ -113,6 +146,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
+        /// <summary>
+        /// Add a global, unique Effect which can be reused.
+        /// </summary>
+        /// <param name="globalID"></param>
+        /// <param name="effect"></param>
+        /// <param name="replace"></param>
+        /// <returns></returns>
         public static bool AddGlobalEffect (string globalID, Effect effect, bool replace = true)
         {
             lock (globalLock)
@@ -128,6 +168,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return true;
         }
 
+        /// <summary>
+        /// Checks if there already is a global Effect with that uid.
+        /// </summary>
+        /// <param name="globalID"></param>
+        /// <returns></returns>
         public static bool GlobalEffectExists (string globalID)
         {
             lock (globalLock)
@@ -152,8 +197,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             }
         }
 
-        // remove 1 or all siblings of the provided effect from the global effects
-        // and return the number of successfully removed entries
+        /// <summary>
+        /// Remove 1 or all siblings of the provided effect from the global effects.
+        /// Return the number of successfully removed entries.
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <param name="all"></param>
+        /// <returns></returns>
         public static int RemoveGlobalEffect (Effect effect, bool all = true)
         {
             var remKeys = new List<string>();
@@ -178,6 +228,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return remKeys.Count - failedRemovals;
         }
 
+        /// <summary>
+        /// Search for a possibly existing global Effect.
+        /// </summary>
+        /// <param name="globalID"></param>
+        /// <param name="effect"></param>
+        /// <returns></returns>
         public static bool TryGetGlobalEffect (string globalID, out Effect effect)
         {
             return globalEffects.TryGetValue(globalID, out effect);
@@ -185,6 +241,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
+        /// <summary>
+        /// Add multiple Changes to this Effect and inform a possible linked EffectHandler.
+        /// </summary>
+        /// <param name="cl"></param>
         public void AddChanges (List<Change> cl)
         {
             lock (changeLock)
@@ -219,6 +279,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             }
         }
 
+        /// <summary>
+        /// Add a Change to this Effect and inform a possible linked EffectHandler.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
         public int AddChange (Change c)
         {
             int index = -1;
@@ -243,8 +308,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return index;
         }
 
-        // remove all Changes vom this Effect
-        // (can be used to reset the Changes, rearrange them, etc.)
+        /// <summary>
+        /// Remove all Changes vom this Effect and inform a possible linked EffectHandler.
+        /// This can be used to reset the Changes, rearrange them, et cetera.
+        /// </summary>
+        /// <returns></returns>
         public int ClearChanges ()
         {
             int amount;
@@ -260,6 +328,11 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
             return amount;
         }
 
+        /// <summary>
+        /// Remove a Change from this Effect and inform a possible linked EffectHandler.
+        /// </summary>
+        /// <param name="changeType"></param>
+        /// <returns></returns>
         public int RemoveChange (Enumeration.ChangeType changeType)
         {
             int index = 0;
@@ -282,7 +355,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem
 
 
 
-        // destroy all upward references to let the garbage collection take care of the rest
+        /// <summary>
+        /// Destroy all upward references to let the garbage collection take care of the rest.
+        /// </summary>
         public void Dispose ()
         {
             if (effectHandler == null) { return; }

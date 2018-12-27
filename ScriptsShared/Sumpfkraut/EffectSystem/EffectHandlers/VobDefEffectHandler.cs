@@ -9,7 +9,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class VobDefEffectHandler : BaseEffectHandler
+    public class VobDefEffectHandler : BaseEffectHandler
     {
 
         new public VobDef Host { get { return (VobDef) host; } }

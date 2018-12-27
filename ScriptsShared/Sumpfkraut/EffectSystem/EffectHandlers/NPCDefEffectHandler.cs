@@ -9,7 +9,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class NPCDefEffectHandler : NamedVobDefEffectHandler
+    public class NPCDefEffectHandler : NamedVobDefEffectHandler
     {
 
         new public NPCDef Host { get { return (NPCDef) host; } }

@@ -9,7 +9,7 @@ using System.Linq;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class BaseEffectHandler : ExtendedObject
+    public class BaseEffectHandler : ExtendedObject
     {
 
         // map ChangeType to influenced ChangeDestinations

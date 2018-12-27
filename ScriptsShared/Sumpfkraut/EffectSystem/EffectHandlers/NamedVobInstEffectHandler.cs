@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class NamedVobInstEffectHandler : VobInstEffectHandler
+    public class NamedVobInstEffectHandler : VobInstEffectHandler
     {
 
         new public NamedVobInst Host { get { return (NamedVobInst) host; } }

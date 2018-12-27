@@ -9,7 +9,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {
 
-    public partial class ItemInstEffectHandler : NamedVobInstEffectHandler
+    public class ItemInstEffectHandler : NamedVobInstEffectHandler
     {
 
         new public ItemInst Host { get { return (ItemInst) host; } }
