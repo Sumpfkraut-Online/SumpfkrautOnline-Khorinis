@@ -39,9 +39,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             representative = new BaseDestInit();
         }
 
-        /// <summary>
-        /// Dummy.
-        /// </summary>
+
+
         protected BaseDestInit ()
         { }
 
@@ -66,13 +65,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             {
                 changeDestinationToInfo.Add(inputInfo.ChangeDestination, inputInfo);
             }
-
-            //// trigger static initialization of the necessary BaseChangeInit-classes
-            //int i;
-            //for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
-            //{
-                
-            //}
         }
 
         /// <summary>
