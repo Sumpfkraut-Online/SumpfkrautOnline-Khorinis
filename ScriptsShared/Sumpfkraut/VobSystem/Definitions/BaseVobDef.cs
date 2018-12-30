@@ -16,14 +16,14 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         #region Constructors
         
-        partial void pConstruct();
+        //partial void pConstruct();
         public BaseVobDef()
         {
             this.baseDef = CreateVobInstance();
             if (baseDef == null)
                 throw new ArgumentNullException("BaseDef is null!");
 
-            pConstruct();
+            //pConstruct();
         }
 
         #endregion
@@ -58,18 +58,18 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        partial void pCreate();
+        //partial void pCreate();
         public void Create()
         {
             this.BaseDef.Create();
-            pCreate();
+            //pCreate();
         }
 
-        partial void pDelete();
+        //partial void pDelete();
         public void Delete()
         {
             this.baseDef.Delete();
-            pDelete();
+            //pDelete();
         }
 
         public virtual void OnWriteProperties(PacketWriter stream) { }
