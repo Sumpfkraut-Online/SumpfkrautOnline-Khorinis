@@ -16,21 +16,21 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     {
         #region Constructors
         
-        //partial void pConstruct();
-        public BaseVobDef()
+        public BaseVobDef ()
         {
-            this.baseDef = CreateVobInstance();
+            baseDef = CreateVobInstance();
             if (baseDef == null)
+            {
                 throw new ArgumentNullException("BaseDef is null!");
-
-            //pConstruct();
+            }
         }
 
         #endregion
 
         #region Properties
 
-        public byte GetVobType() { return (byte)this.VobType; } // for base vob interface
+        // for base vob interface
+        public byte GetVobType () { return (byte)VobType; } 
         public abstract VobType VobType { get; }
 
         // Effect Handler
@@ -49,7 +49,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         // Definition
         BaseVobInstance baseDef;
-        public BaseVobInstance BaseDef { get { return this.baseDef; } }
+        public BaseVobInstance BaseDef { get { return baseDef; } }
         protected abstract BaseVobInstance CreateVobInstance();
 
         public int ID { get { return BaseDef.ID; } }
@@ -58,24 +58,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         #endregion
 
-        //partial void pCreate();
-        public void Create()
-        {
-            this.BaseDef.Create();
-            //pCreate();
-        }
 
-        //partial void pDelete();
-        public void Delete()
-        {
-            this.baseDef.Delete();
-            //pDelete();
-        }
 
-        public virtual void OnWriteProperties(PacketWriter stream) { }
-        public virtual void OnReadProperties(PacketReader stream) { }
-
-        public static bool TryGetDef<T>(int id, out T def) where T : BaseVobDef
+        public static bool TryGetDef<T> (int id, out T def)
+            where T : BaseVobDef
         {
             BaseVobInstance instance;
             if (BaseVobInstance.TryGet(id, out instance) && instance.ScriptObject is T)
@@ -87,9 +73,24 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             return false;
         }
 
-        public static void ForEachOfType(GUCVobTypes type, Action<BaseVobDef> action)
+        public static void ForEachOfType (GUCVobTypes type, Action<BaseVobDef> action)
         {
             BaseVobInstance.ForEachOfType(type, v => action((BaseVobDef)v.ScriptObject));
         }
+
+        public void Create()
+        {
+            BaseDef.Create();
+        }
+
+        public void Delete()
+        {
+            baseDef.Delete();
+        }
+
+        public virtual void OnWriteProperties(PacketWriter stream) { }
+
+        public virtual void OnReadProperties(PacketReader stream) { }
+
     }
 }

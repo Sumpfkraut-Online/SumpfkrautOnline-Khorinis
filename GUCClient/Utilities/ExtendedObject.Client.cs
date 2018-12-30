@@ -9,9 +9,9 @@ namespace GUC.Utilities
     public partial class ExtendedObject
     {
 
-        public static readonly String gothicErrLocation = "ExtendedObject.Client.cs";
+        public static readonly string gothicErrLocation = "ExtendedObject.Client.cs";
 
-        static partial void BuildMessage (ref String msg, object[] options, params object[] args)
+        static partial void BuildMessage (ref string msg, object[] options, params object[] args)
         {
             msg = "";
             try

@@ -11,7 +11,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
     public abstract class CBaseVobDef : ExtendedObject, BaseVobInstance.IScriptBaseVobInstance
     {
 
+        /// <summary>
+        /// Shared vob definition object which is wrapped by this class.
+        /// </summary>
         protected BaseVobDef shared;
+
+
 
         public void Create ()
         {

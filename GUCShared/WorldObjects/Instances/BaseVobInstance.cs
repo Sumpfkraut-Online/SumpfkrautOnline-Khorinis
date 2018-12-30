@@ -18,11 +18,11 @@ namespace GUC.WorldObjects.Instances
 
         #region ScriptObject
 
-        public partial interface IScriptBaseVobInstance : IScriptGameObject
+        public interface IScriptBaseVobInstance : IScriptGameObject
         {
             void Create();
             void Delete();
-            byte GetVobType();
+            byte GetVobType ();
         }
         
         /// <summary> The ScriptObject of this object. </summary>
