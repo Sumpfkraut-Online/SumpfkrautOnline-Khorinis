@@ -12,6 +12,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Vob : BaseDestInit
     {
 
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         new public static DestInit_Vob representative;
 
         public static readonly bool Default_CDDyn = false;
@@ -19,12 +22,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        // make sure, the destination makes itself known to its related changes
         static DestInit_Vob ()
         {
             representative = new DestInit_Vob();
         }
 
+        /// <summary>
+        /// Ensures coupling of ChangeDestinations to >= 1 ChangeTypes
+        /// which are relevant for vobs.
+        /// </summary>
         protected DestInit_Vob ()
         {
             AddOrChange(new DestInitInfo(ChangeDestination.Vob_CDDyn, 

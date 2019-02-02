@@ -13,6 +13,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_World : BaseDestInit
     {
 
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         new public static DestInit_World representative;
 
 
@@ -23,6 +26,10 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             representative = new DestInit_World();
         }
 
+        /// <summary>
+        /// Ensures coupling of ChangeDestinations to >= 1 ChangeTypes
+        /// which are relevant for worlds.
+        /// </summary>
         protected DestInit_World ()
         {
             AddOrChange(new DestInitInfo(ChangeDestination.World_Clock_IsRunning,

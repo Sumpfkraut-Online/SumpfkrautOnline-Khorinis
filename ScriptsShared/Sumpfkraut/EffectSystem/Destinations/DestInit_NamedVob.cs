@@ -12,6 +12,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_NamedVob : BaseDestInit
     {
 
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         new public static DestInit_NamedVob representative;
 
         public static readonly string Default_Name = "";

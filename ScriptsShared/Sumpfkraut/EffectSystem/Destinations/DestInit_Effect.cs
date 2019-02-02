@@ -12,16 +12,23 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Effect : BaseDestInit
     {
 
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         new public static DestInit_Effect representative;
 
 
 
-        // make sure, the destination makes itself known to its related changes
         static DestInit_Effect ()
         {
             representative = new DestInit_Effect();
         }
 
+
+        /// <summary>
+        /// Ensures coupling of ChangeDestinations to >= 1 ChangeTypes
+        /// which are relevant for Effect objects.
+        /// </summary>
         protected DestInit_Effect ()
         {
             AddOrChange(new DestInitInfo(ChangeDestination.Effect_GlobalID, 

@@ -13,6 +13,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_Item : BaseDestInit
     {
 
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         new public static DestInit_Item representative;
 
         public static readonly ItemMaterials Default_Material = ItemMaterials.Wood;

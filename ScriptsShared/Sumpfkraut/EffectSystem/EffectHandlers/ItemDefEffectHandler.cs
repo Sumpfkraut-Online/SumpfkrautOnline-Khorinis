@@ -19,7 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         static ItemDefEffectHandler ()
         {
             PrintStatic(typeof(ItemDefEffectHandler), "Start subscribing listeners to events...");
-
+            
             PrintStatic(typeof(ItemDefEffectHandler), "Finished subscribing listeners to events...");
         }
 

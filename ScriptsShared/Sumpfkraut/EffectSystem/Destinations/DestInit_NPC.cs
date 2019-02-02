@@ -12,16 +12,23 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
     public partial class DestInit_NPC : BaseDestInit
     {
 
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         new public static DestInit_NPC representative;
 
 
 
-        // make sure, the destination makes itself known to its related changes
         static DestInit_NPC ()
         {
+            // make sure, the destination makes itself known to its related changes
             representative = new DestInit_NPC();
         }
 
+        /// <summary>
+        /// Ensures coupling of ChangeDestinations to >= 1 ChangeTypes
+        /// which are relevant for npc vobs.
+        /// </summary>
         protected DestInit_NPC ()
         {
             AddOrChange(new DestInitInfo(ChangeDestination.NPC_TestPoison,

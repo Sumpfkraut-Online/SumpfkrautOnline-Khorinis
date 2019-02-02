@@ -11,11 +11,23 @@ using static GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers.BaseEffectHandle
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Most basic class destination initialization objects. It is not marked abstract
+    /// but can be seen as such, thus, allowing to create the first static 
+    /// representative-member.
+    /// </summary>
     public partial class BaseDestInit : ExtendedObject
     {
 
+        /// <summary>
+        /// Hold all registered ChangeDestinations with their related ChangeTypes
+        /// as well as functions to possibly calculate and apply final values
+        /// to host objects.
+        /// </summary>
         protected static Dictionary<ChangeDestination, DestInitInfo> changeDestinationToInfo;
-        // static representative of the class (do not change it in any way after instantiation!)
+        /// <summary>
+        /// Singleton which serves as cache for quasi-static data.
+        /// </summary>
         public static BaseDestInit representative;
 
 
@@ -28,11 +40,20 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             representative = new BaseDestInit();
         }
 
+        /// <summary>
+        /// This constructure exists solely to allow the instantiation of a representative
+        /// of this base class. Without the representative, this whole class could be abstract.
+        /// </summary>
         protected BaseDestInit ()
         { }
 
 
 
+        /// <summary>
+        /// Add or replace DestInitInfo-objects, thus changing how other objects
+        /// are influenced by the EffectSystem.
+        /// </summary>
+        /// <param name="inputInfo"></param>
         protected void AddOrChange (DestInitInfo inputInfo)
         {
             DestInitInfo info;
@@ -48,32 +69,48 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
                 changeDestinationToInfo.Add(inputInfo.ChangeDestination, inputInfo);
             }
 
-            // trigger static initialization of the necessary BaseChangeInit-classes
-            int i;
-            for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
-            {
+            //// trigger static initialization of the necessary BaseChangeInit-classes
+            //int i;
+            //for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
+            //{
                 
-            }
+            //}
         }
 
+        /// <summary>
+        /// Try to retrieve currently active DestInitInfo for a ChangeDestination.
+        /// </summary>
+        /// <param name="changeDest"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public static bool TryGetDestInitInfo (ChangeDestination changeDest, out DestInitInfo info)
         {
             return changeDestinationToInfo.TryGetValue(changeDest, out info);
         }
 
+        /// <summary>
+        /// Static helper method to get the calculated total change applied by an EffectHandler
+        /// on its host object for a ChangeDestination.
+        /// </summary>
+        /// <param name="effectHandler"></param>
+        /// <param name="changeDest"></param>
+        /// <param name="totalChange"></param>
+        /// <returns></returns>
         public static bool TryGetTotalChange (BaseEffectHandler effectHandler, ChangeDestination changeDest,
             out TotalChange totalChange)
         {
-            totalChange = null;
-            if (effectHandler.TryGetTotalChange(changeDest, out totalChange)) { return true; }
-            return false;
+            return effectHandler.TryGetTotalChange(changeDest, out totalChange);
         }
 
 
 
-
-        // make sure, that ChangeType was properly registered or show an error message if not
-        // while retrieving the ChangeInitInfo for the parameter types
+        /// <summary>
+        /// Make sure, that ChangeType was properly registered or show an error message if not
+        /// while retrieving the ChangeInitInfo for the parameter types
+        /// </summary>
+        /// <param name="changeType"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
         public bool ValidateChangeInit (ChangeType changeType, out ChangeInitInfo info)
         {
             if (BaseChangeInit.TryGetChangeInitInfo(ChangeType.Vob_CodeName_Set, out info))
