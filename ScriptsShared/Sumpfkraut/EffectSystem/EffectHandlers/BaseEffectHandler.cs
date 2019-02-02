@@ -26,14 +26,32 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             return changeTypeToDestinations;
         }
 
+        /// <summary>
+        /// A function used to calculate the TotalChange, thereby transforming its state.
+        /// </summary>
+        /// <param name="effectHandler"></param>
+        /// <param name="totalChange"></param>
         public delegate void CalculateTotalChange (BaseEffectHandler effectHandler, TotalChange totalChange);
+        /// <summary>
+        /// Maps the ChangeDestination to functions which are used to calculate TotalChanges.
+        /// </summary>
         protected static Dictionary<ChangeDestination, CalculateTotalChange> destToCalcTotal =
             new Dictionary<ChangeDestination, CalculateTotalChange>() { };
+        /// <summary>
+        /// Get Dictionary that maps the ChangeDestination to functions 
+        /// which are used to calculate TotalChanges.
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<ChangeDestination, CalculateTotalChange> GetDestToCalcTotal ()
         {
             return destToCalcTotal;
         }
 
+        /// <summary>
+        /// Function used to apply a TotalChange to the host-object.
+        /// </summary>
+        /// <param name="effectHandler"></param>
+        /// <param name="totalChange"></param>
         public delegate void ApplyTotalChange (BaseEffectHandler effectHandler, TotalChange totalChange);
         protected static Dictionary<ChangeDestination, ApplyTotalChange> destToApplyTotal =
             new Dictionary<ChangeDestination, ApplyTotalChange>() { };
@@ -102,7 +120,16 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
+        /// <summary>
+        /// Dictonary used to easily find the subscription date of an Effect.
+        /// </summary>
         protected Dictionary<Effect, DateTime> effectToSubDate;
+        /// <summary>
+        /// Try to find out if and when an Effect was registered on this EffectHandler.
+        /// </summary>
+        /// <param name="effect"></param>
+        /// <param name="sd"></param>
+        /// <returns></returns>
         public bool TryGetEffectSubDate (Effect effect, out DateTime sd)
         {
             lock (effectLock)
@@ -111,7 +138,14 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
+        /// <summary>
+        /// Dictionary that allows to easily find the TotalChange for its respective ChangeDestination.
+        /// </summary>
         protected Dictionary<ChangeDestination, TotalChange> destToTotalChange;
+        /// <summary>
+        /// Get Dictionary that allows to easily find the TotalChange for its respective ChangeDestination.
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<ChangeDestination, TotalChange> GetDestToTotalChange () { return destToTotalChange; }
         public bool TryGetTotalChange (ChangeDestination cd, out TotalChange tc)
         {
@@ -120,6 +154,13 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
                 return destToTotalChange.TryGetValue(cd, out tc);
             }
         }
+        /// <summary>
+        /// Try to retrieve the Change-object which represents the integral of all Changes
+        /// related to a ChangeDestination (is part of TotalChange).
+        /// </summary>
+        /// <param name="cd"></param>
+        /// <param name="totalledChange"></param>
+        /// <returns></returns>
         public bool TryGetTotal (ChangeDestination cd, out Change totalledChange)
         {
             totalledChange = null;
@@ -132,7 +173,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             }
         }
 
+        /// <summary>
+        /// Dictionary to easily access all Effects that are related to 
+        /// the provided ChangeDestination.
+        /// </summary>
         protected Dictionary<ChangeDestination, List<Effect>> destToEffects;
+        /// <summary>
+        /// Get Dictionary to easily access all Effects that are related to 
+        /// the provided ChangeDestination.
+        /// </summary>
         public Dictionary<ChangeDestination, List<Effect>> GetDestToEffects () { return destToEffects; }
         public bool TryGetEffects (ChangeDestination changeDestination, out List<Effect> effects)
         {
