@@ -9,21 +9,61 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {
 
+    /// <summary>
+    /// As most basic unit of the effect system it stores information
+    /// about the type of change and possible additional parameters to be
+    /// used properly when influencing its host instance. Each Change belongs
+    /// to exactly one Effect which in turn in used by an EffectHandler to
+    /// apply the respective changes to the host instance.
+    /// </summary>
     public partial class Change : ExtendedObject
     {
 
-        // effect to which this change belongs
+        /// <summary>
+        /// Effect to which this change belongs.
+        /// </summary>
         protected Effect effect;
+        /// <summary>
+        /// Get Effect to which this change belongs.
+        /// </summary>
         public Effect GetEffect () { return effect; }
+        /// <summary>
+        ///  Set Effect to which this change belongs.
+        /// </summary>
         public void SetEffect (Effect value) { effect = value; }
 
+        /// <summary>
+        /// ChangeInitInfo-object containing all type information for the change
+        /// and its used parameters.
+        /// </summary>
         protected ChangeInitInfo changeInitInfo;
+        /// <summary>
+        /// Get ChangeInitInfo-object containing all type information for the change
+        /// and its used parameters.
+        /// </summary>
         public ChangeInitInfo GetChangeInitInfo () { return changeInitInfo; }
+        /// <summary>
+        /// Determine which type of Change this is.
+        /// </summary>
+        /// <returns></returns>
         public ChangeType GetChangeType () { return changeInitInfo.ChangeType; }
+        /// <summary>
+        /// Get the datatypes of all Parameters this type if Change uses.
+        /// </summary>
+        /// <returns></returns>
         public List<Type> GetParameterTypes () { return changeInitInfo.ParameterTypes; }
 
+        /// <summary>
+        /// Mutable parameters further specifying how the Change operates.
+        /// </summary>
         protected List<object> parameters;
+        /// <summary>
+        /// Get all nutable parameters further specifying how the Change operates.
+        /// </summary>
         public List<object> GetParameters () { return parameters; }
+        /// <summary>
+        /// Set all nutable parameters further specifying how the Change operates.
+        /// </summary>
         public bool SetParameters(List<object> parameters)
         {
             List<Type> pTypes = GetParameterTypes();
@@ -59,6 +99,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             this.parameters = new List<object>(changeInitInfo.ParameterTypes.Count);
         }
 
+        /// <summary>
+        /// Instantiate new Changes, only providing the type of Change and a parameter list.
+        /// </summary>
+        /// <param name="changeType"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public static Change Create (ChangeType changeType, List<object> parameters)
         {
             ChangeInitInfo changeInitInfo;
@@ -71,6 +117,12 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
             return Create(changeInitInfo, parameters);
         }
 
+        /// <summary>
+        /// Instantiate new Changes, providing detailed info about the type of Change and a parameter list.
+        /// </summary>
+        /// <param name="changeInitInfo"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
         public static Change Create (ChangeInitInfo changeInitInfo, List<object> parameters)
         {
             if (changeInitInfo == null)

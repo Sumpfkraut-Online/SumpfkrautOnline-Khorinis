@@ -9,6 +9,9 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Initialize Basic behavior of vobs in general when managed by the EffectSystem.
+    /// </summary>
     public partial class DestInit_Vob : BaseDestInit
     {
 
@@ -17,7 +20,15 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
         /// </summary>
         new public static DestInit_Vob representative;
 
+        /// <summary>
+        /// Default value for whether collision with dynamic / moving world objects like many vobs
+        /// is activated or not.
+        /// </summary>
         public static readonly bool Default_CDDyn = false;
+        /// <summary>
+        /// Default value for whether collision with static world objects like the world mesh
+        /// is activated or not.
+        /// </summary>
         public static readonly bool Default_CDStatic = false;
 
 

@@ -10,6 +10,9 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Initialize basic behavior of item vobs when managed by the EffectSystem.
+    /// </summary>
     public partial class DestInit_Item : BaseDestInit
     {
 
@@ -22,7 +25,9 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 
 
 
-        // make sure, the destination makes itself known to its related changes
+        /// <summary>
+        /// Make sure, the destination makes itself known to its related changes.
+        /// </summary>
         static DestInit_Item ()
         {
             representative = new DestInit_Item();

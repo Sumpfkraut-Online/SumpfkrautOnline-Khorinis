@@ -10,11 +10,12 @@ using static GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers.BaseEffectHandle
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
-
     /// <summary>
-    /// Most basic class destination initialization objects. It is not marked abstract
-    /// but can be seen as such, thus, allowing to create the first static 
-    /// representative-member.
+    /// Manages the ChangeDestination registration process.
+    /// All subclasses prepare and register their DestInitInfo-objects,
+    /// so they can be kept here in a centralized manner.
+    /// It is not marked abstract but can be seen as such, thus, 
+    /// allowing to create the first static representative-member.
     /// </summary>
     public partial class BaseDestInit : ExtendedObject
     {
@@ -68,13 +69,6 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
             {
                 changeDestinationToInfo.Add(inputInfo.ChangeDestination, inputInfo);
             }
-
-            //// trigger static initialization of the necessary BaseChangeInit-classes
-            //int i;
-            //for (i = 0; i < inputInfo.SupportedChangeTypes.Count; i++)
-            //{
-                
-            //}
         }
 
         /// <summary>

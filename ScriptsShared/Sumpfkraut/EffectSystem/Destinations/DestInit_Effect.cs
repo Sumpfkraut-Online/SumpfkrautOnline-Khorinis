@@ -9,6 +9,9 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Initialize basic behavior of Effect objects when managed by the EffectSystem.
+    /// </summary>
     public partial class DestInit_Effect : BaseDestInit
     {
 

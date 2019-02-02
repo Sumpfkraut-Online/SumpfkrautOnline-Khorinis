@@ -7,11 +7,20 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Class with the sole purpose to initialize registration
+    /// of ChangeDestinations by triggering static constructors
+    /// of destination classes.
+    /// </summary>
     public partial class DestInitializer : ExtendedObject
     {
 
         protected DestInitializer () { }
 
+        /// <summary>
+        /// Initialize registration process for ChangeDestinations.
+        /// This triggers static constructors of DestInit-classes.
+        /// </summary>
         public static void Init ()
         {
             Type t = typeof(DestInitializer);

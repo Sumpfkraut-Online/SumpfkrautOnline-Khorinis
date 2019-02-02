@@ -9,6 +9,13 @@ using static GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers.BaseEffectHandle
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Container object of the EffectSystem that holds necessary data
+    /// to couple ChangeTypes and ChangeDestination they influence as 
+    /// well functions which describe the calculation of a final value
+    /// as well as its application in the system (often changing a specific
+    /// type of object).
+    /// </summary>
     public partial class DestInitInfo
     {
 

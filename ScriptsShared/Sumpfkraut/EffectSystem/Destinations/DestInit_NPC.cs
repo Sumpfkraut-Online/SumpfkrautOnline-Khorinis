@@ -9,6 +9,9 @@ using System.Text;
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Destinations
 {
 
+    /// <summary>
+    /// Initialize basic behavior of npc vobs when managed by the EffectSystem.
+    /// </summary>
     public partial class DestInit_NPC : BaseDestInit
     {
 
