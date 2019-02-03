@@ -488,7 +488,8 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 
                 if (!TryGetDestinations(effect, out destinations))
                 {
-                    MakeLogWarning(string.Format("Couldn't find ChangeDestinations for Effect: {1}", effect));
+                    MakeLogWarning(string.Format("Couldn't find ChangeDestinations for Effect: {1}", 
+                        effect));
                     return index;
                 }
 

@@ -247,8 +247,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             }
         }
 
-        protected bool TryGenerateVobDefs (List<IDAndEffectIDs> idAndEffectIDList, Dictionary<int, Effect> effectByID, 
-            out Dictionary<int, VobDef> vobDefByID, out List<int> failedIndices)
+        /// <summary>
+        /// Create VobDef-objects from Effect definitions aas well as assigning them ids.
+        /// </summary>
+        /// <param name="idAndEffectIDList"></param>
+        /// <param name="effectByID"></param>
+        /// <param name="vobDefByID"></param>
+        /// <param name="failedIndices"></param>
+        /// <returns></returns>
+        protected bool TryGenerateVobDefs (
+            List<IDAndEffectIDs> idAndEffectIDList, 
+            Dictionary<int, Effect> effectByID, 
+            out Dictionary<int, VobDef> vobDefByID, 
+            out List<int> failedIndices)
         {
             // find out type of VobDef, dependencies and maybe create it and add all the Effects or postpone
             vobDefByID = new Dictionary<int, VobDef>(idAndEffectIDList.Count);
@@ -273,11 +284,19 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
             return true;
         }
 
+        /// <summary>
+        /// Create a VobDef-object from its Effect definitions.
+        /// </summary>
+        /// <param name="vobDefByID"></param>
+        /// <param name="idAndEffectIDList"></param>
+        /// <param name="effectByID"></param>
+        /// <param name="targetIndices"></param>
+        /// <returns></returns>
         protected List<int> GenerateVobDef (Dictionary<int, VobDef> vobDefByID,
             List<IDAndEffectIDs> idAndEffectIDList, Dictionary<int, Effect> effectByID,
             List<int> targetIndices)
         {
-            List<int> failedIndices = null;
+            List<int> failedIndices = new List<int>();
 
             if (targetIndices != null)
             {
@@ -302,13 +321,23 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 for (int i = 0; i < idAndEffectIDList.Count; i++)
                 {
                     if (!TryGenerateVobDef(vobDefByID, idAndEffectIDList[i], 
-                        effectByID)) { failedIndices.Add(i); }
+                        effectByID))
+                    {
+                        failedIndices.Add(i);
+                    }
                 }
             }
 
             return failedIndices;
         }
 
+        /// <summary>
+        /// Try to create a VobDef-object from its Effect definitions.
+        /// </summary>
+        /// <param name="vobDefByID"></param>
+        /// <param name="idAndEffectIDs"></param>
+        /// <param name="effectByID"></param>
+        /// <returns></returns>
         protected bool TryGenerateVobDef (Dictionary<int, VobDef> vobDefByID,
             IDAndEffectIDs idAndEffectIDs, Dictionary<int, Effect> effectByID)
         {
