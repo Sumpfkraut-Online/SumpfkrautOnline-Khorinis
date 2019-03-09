@@ -32,12 +32,12 @@ namespace GUC.Log
 
         public static void LogWarning(object message, params object[] args)
         {
-            Logger.LogMessage(LogLevels.Warning, message, args);
+            Logger.LogMessage(LogLevels.Warning, "[WARNING] " + message, args);
         }
 
         public static void LogError(object message, params object[] args)
         {
-            Logger.LogMessage(LogLevels.Error, message, args);
+            Logger.LogMessage(LogLevels.Error, "[ERROR] " + message, args);
         }
 
         public static void Log(int level, object message, params object[] args)
@@ -47,7 +47,7 @@ namespace GUC.Log
 
         public static void LogWarning(LogLevels level, object message, params object[] args)
         {
-            Logger.LogMessage(level, message, args);
+            Logger.LogMessage(level, "[WARNING] " + message, args);
         }
 
         static partial void LogMessage(LogLevels level, object message, params object[] args);

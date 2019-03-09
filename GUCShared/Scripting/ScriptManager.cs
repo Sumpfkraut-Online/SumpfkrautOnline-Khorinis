@@ -63,6 +63,10 @@ namespace GUC.Scripting
                 //Display or log the error based on your application.
                 Log.Logger.LogError(Environment.CurrentDirectory + "\n" + errorMessage);
             }
+            catch(System.IO.FileNotFoundException e)
+            {
+                Log.Logger.LogError("Server coudln't find file: " + Path.GetFileName(path));
+            }
             catch (Exception e)
             {
                 Log.Logger.LogError(Environment.CurrentDirectory + "\n" + e);
