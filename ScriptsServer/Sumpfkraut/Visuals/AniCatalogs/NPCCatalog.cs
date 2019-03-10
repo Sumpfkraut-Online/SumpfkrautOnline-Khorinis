@@ -69,6 +69,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             // mobs
             { "mob_chair_standToSit", "Mob.Chair.Sit" },
             { "mob_chair_sitToStand", "Mob.Chair.StandUp" },
+            { "mob_bed_standToSleep", "Mob.Bed.Sleep" },
+            { "mob_bed_sleepToStand", "Mob.Bed.StandUp" },
 
             // climbing
             { "climb_high", "Climbs.High" },
@@ -161,12 +163,23 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
         #region Mobs
         public class MobAnis : AniCatalog
         {
+            #region Chair
             public class ChairAnis : AniCatalog
             {
                 public ScriptAniJob Sit { get; private set; }
                 public ScriptAniJob StandUp { get; private set; }
             }
             public ChairAnis Chair { get; private set; }
+            #endregion
+
+            #region Bed
+            public class BedAnis : AniCatalog
+            {
+                public ScriptAniJob Sleep { get; private set; }
+                public ScriptAniJob StandUp { get; private set; }
+            }
+            public BedAnis Bed { get; private set; }
+            #endregion
         }
         public MobAnis Mob { get; private set; }
         #endregion

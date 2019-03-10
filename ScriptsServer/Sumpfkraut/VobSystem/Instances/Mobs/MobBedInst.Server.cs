@@ -9,7 +9,7 @@ using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.Mobs
 {
-    public partial class MobChair : MobInst
+    public partial class MobBedInst : MobInst
     {
         /// <summary>
         /// Called when NPC starts interacting with the mob.
@@ -17,7 +17,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs
         public override void StartUsing(NPCInst npcInst)
         {
             NPCCatalog AniCatalog = (NPCCatalog)npcInst.ModelDef?.Catalog;
-            npcInst.ModelInst.StartAniJob(AniCatalog.Mob.Chair.Sit);
+            npcInst.ModelInst.StartAniJob(AniCatalog.Mob.Bed.Sleep);
             npcInst.SetPosAng(this.GetPosition() + new Vec3f(53.0f, 0, -58), this.GetAngles());
         }
 
@@ -27,7 +27,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs
         public override void StopUsing(NPCInst npcInst)
         {
             NPCCatalog AniCatalog = (NPCCatalog)npcInst.ModelDef?.Catalog;
-            npcInst.ModelInst.StartAniJob(AniCatalog.Mob.Chair.StandUp);
+            npcInst.ModelInst.StartAniJob(AniCatalog.Mob.Bed.StandUp);
         }
         /// <summary>
         /// Check whether the npc has the requirements to use this vob. Display Feedback if not.

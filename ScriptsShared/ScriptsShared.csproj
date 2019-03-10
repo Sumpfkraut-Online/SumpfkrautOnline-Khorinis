@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -123,7 +123,8 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectNetworking.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
-    <Compile Include="Sumpfkraut\Mobs\MobChair.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobBedInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobChairInst.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\Utilities\ExceptionCheck.cs" />
@@ -179,8 +180,8 @@
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.cs" />
-	<Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs" />
-	<Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCShared\GUCShared.csproj">

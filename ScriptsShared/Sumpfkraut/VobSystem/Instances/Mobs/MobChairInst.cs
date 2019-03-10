@@ -8,13 +8,13 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts.Sumpfkraut.Mobs
 {
-    public partial class MobChair : MobInst
+    public partial class MobChairInst : MobInst
     {
 
         #region properties
         #endregion
 
-        public MobChair(MobDef def)
+        public MobChairInst(MobDef def)
         {
             Definition = def;
         }
