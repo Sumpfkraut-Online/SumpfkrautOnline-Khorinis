@@ -71,6 +71,21 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
             NPC.SendScriptCommand(stream, NetPriority.Low);
         }
 
+        public void StartUseMob(NPCInst npc, MobInst mobInst)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.StartUseMob);
+            stream.Write((ushort)mobInst.ID);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
+        }
+
+        public void StopUseMob(NPCInst npc)
+        {
+            var stream = npc.BaseInst.GetScriptCommandStream();
+            stream.Write((byte)RequestMessageIDs.StopUseMob);
+            NPC.SendScriptCommand(stream, NetPriority.Low);
+        }
+
         public void Attack(NPCInst npc, FightMoves move)
         {
             var stream = npc.BaseInst.GetScriptCommandStream();

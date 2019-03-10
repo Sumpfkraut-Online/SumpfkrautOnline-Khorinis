@@ -318,12 +318,25 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
         }
 
 
-        public void TryUse(ItemInst item)
+        public void TryUseItem(ItemInst item)
         {
             if (item == null || this.Host.IsObstructed())
                 return;
 
             this.Host.UseItem(item);
+        }
+
+        public void TryStartUseMob(MobInst mobInst)
+        {
+            if (mobInst == null || this.Host.IsObstructed())
+                return;
+
+            this.Host.StartUseMob(mobInst);
+        }
+
+        public void TryStopUseMob()
+        {
+            this.Host.StopUseMob();
         }
 
         public void TryDropItem(ItemInst item, int amount)

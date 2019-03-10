@@ -41,6 +41,30 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #endregion
 
+        #region Methods
+        /// <summary>
+        /// Called when NPC starts interacting with the mob.
+        /// </summary>
+        public virtual void StartUsing(NPCInst npcInst)
+        {
+            // overwritten by actual mobs
+        }
+
+        /// <summary>
+        /// Called when NPC stops interacting with the mob.
+        /// </summary>
+        public virtual void StopUsing(NPCInst npcInst)
+        {
+        }
+        /// <summary>
+        /// Check whether the npc has the requirements to use this vob. Display Feedback if not.
+        /// </summary>
+        public virtual bool HasRequirements(NPCInst npcInst)
+        {
+            return true;
+        }
+        #endregion
+
         #region Read & Write
 
         public override void OnReadProperties(PacketReader stream)

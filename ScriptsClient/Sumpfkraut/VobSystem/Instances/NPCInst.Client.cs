@@ -216,8 +216,40 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case ScriptVobMessageIDs.VoiceShout:
                     DoVoice((VoiceCmd)stream.ReadByte(), 6000, 0.8f);
                     break;
+                case ScriptVobMessageIDs.StartUsingMob:
+                    if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out MobInst mobInst))
+                    {
+                        MobStartUsing(mobInst);
+                    }
+                    break;
+                case ScriptVobMessageIDs.StopUsingMob:
+                    if (Hero.IsUsingMob)
+                    {
+                        MobStopUsing();
+                    }
+                    break;
                 default:
                     break;
+            }
+        }
+
+        private void MobStartUsing(MobInst mobInst)
+        {
+            if (!IsUsingMob)
+            {
+                mobInst.StartUsing(Hero);
+                IsUsingMob = true;
+                UsedMob = mobInst;
+            }
+        }
+
+        private void MobStopUsing()
+        {
+            if(IsUsingMob && UsedMob != null)
+            {
+                UsedMob.StopUsing(Hero);
+                IsUsingMob = false;
+                UsedMob = null;
             }
         }
 

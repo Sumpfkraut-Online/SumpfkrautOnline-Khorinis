@@ -66,6 +66,10 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "jump_run", "Jumps.Run" },
             { "jump_up", "Jumps.Up" },
 
+            // mobs
+            { "mob_chair_standToSit", "Mob.Chair.Sit" },
+            { "mob_chair_sitToStand", "Mob.Chair.StandUp" },
+
             // climbing
             { "climb_high", "Climbs.High" },
             { "climb_mid", "Climbs.Mid" },
@@ -152,6 +156,19 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             public ScriptAniJob Up { get; private set; }
         }
         public JumpAnis Jumps { get; private set; }
+        #endregion
+
+        #region Mobs
+        public class MobAnis : AniCatalog
+        {
+            public class ChairAnis : AniCatalog
+            {
+                public ScriptAniJob Sit { get; private set; }
+                public ScriptAniJob StandUp { get; private set; }
+            }
+            public ChairAnis Chair { get; private set; }
+        }
+        public MobAnis Mob { get; private set; }
         #endregion
 
         #region Weapondrawing

@@ -125,6 +125,7 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectNetworking.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeDestination.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\Enumeration\ChangeType.cs" />
+    <Compile Include="Sumpfkraut\Mobs\MobChair.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\Enumeration\InvocationType.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Types;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
@@ -12,5 +13,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.Definition = def;
         }
+
+        public void SetPosAng(Vec3f position, Angles angles) { this.BaseInst.SetPosAng(position, angles); }
     }
 }

@@ -12,5 +12,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         {
             this.Definition = def;
         }
+
     }
 }

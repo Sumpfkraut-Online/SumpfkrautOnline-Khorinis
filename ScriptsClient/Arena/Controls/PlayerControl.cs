@@ -246,6 +246,26 @@ namespace GUC.Scripts.Arena.Controls
                     DuelMode.SendRequest(npc);
                 }
             }
+
+            // use mobs
+            if(down)
+            {
+                if(PlayerFocus.FocusVob is MobInst mobinst && !hero.IsUsingMob)
+                {
+                    if (mobinst.GetDistance(hero) < 230)
+                    {
+                        NPCInst.Requests.StartUseMob(hero, mobinst);
+                    }
+                    else
+                    {
+                        Sumpfkraut.Menus.ScreenScrollText.AddText("Das ist zu weit entfernt!");
+                    }
+                }
+                else if(hero.IsUsingMob)
+                {
+                    NPCInst.Requests.StopUseMob(hero);
+                }
+            }
         }
 
         static LockTimer toWarmupTimer = new LockTimer(1000);
@@ -421,6 +441,9 @@ namespace GUC.Scripts.Arena.Controls
         static void DoTurning(NPCInst hero)
         {
             if (hero.BaseInst.gAI.GetFoundLedge())
+                return;
+
+            if (hero.IsUsingMob)
                 return;
 
             const float maxTurnFightSpeed = 0.07f;

@@ -1062,6 +1062,33 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             ChugPotion(item);
         }
 
+        #region Mob using
+        public void StartUseMob(MobInst mobInst)
+        {
+            // todo: any further checks?
+            // currently distance to mob is checked clientside only
+            if (mobInst.HasRequirements(this))
+            {
+                mobInst.StartUsing(this);
+                IsUsingMob = true;
+                UsedMob = mobInst;
+                var strm = this.BaseInst.GetScriptVobStream();
+                strm.Write((byte)ScriptVobMessageIDs.StartUsingMob);
+                strm.Write((ushort)mobInst.ID);
+                this.BaseInst.SendScriptVobStream(strm);
+            }
+        }
+
+        public void StopUseMob()
+        {
+            UsedMob.StopUsing(this);
+            IsUsingMob = true;
+            var strm = this.BaseInst.GetScriptVobStream();
+            strm.Write((byte)ScriptVobMessageIDs.StopUsingMob);
+            this.BaseInst.SendScriptVobStream(strm);
+        }
+        #endregion
+
         void ChugPotion(ItemInst item)
         {
             if (item == null) return;

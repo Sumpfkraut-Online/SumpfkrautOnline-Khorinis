@@ -45,6 +45,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         EquipItem,
         UnequipItem,
         UseItem,
+        StartUseMob,
+        StopUseMob,
 
         Voice,
         HelpUp,
@@ -61,5 +63,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         Uncon,
         Voice,
         VoiceShout,
+        StartUsingMob,
+        StopUsingMob,
     }
 }

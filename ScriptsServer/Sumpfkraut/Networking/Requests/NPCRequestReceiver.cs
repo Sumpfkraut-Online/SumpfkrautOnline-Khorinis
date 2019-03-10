@@ -23,6 +23,8 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
         public event Action<NPCInst, ItemInst> OnEquipItem;
         public event Action<NPCInst, ItemInst> OnUnequipItem;
         public event Action<NPCInst, ItemInst> OnUseItem;
+        public event Action<NPCInst, MobInst> OnStartUseMob;
+        public event Action<NPCInst> OnStopUseMob;
         public event Action<NPCInst> OnAim;
         public event Action<NPCInst> OnUnaim;
         public event Action<NPCInst, Vec3f, Vec3f> OnShoot;
@@ -98,6 +100,13 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                 case RequestMessageIDs.UseItem:
                     OnUseItem?.Invoke(npc, npc.Inventory.GetItem(stream.ReadByte()));
                     break;
+                case RequestMessageIDs.StartUseMob:
+                    if (npc.World.TryGetVob(stream.ReadUShort(), out MobInst mobInst))
+                        OnStartUseMob?.Invoke(npc, mobInst);
+                    break;
+                case RequestMessageIDs.StopUseMob:
+                        OnStopUseMob?.Invoke(npc);
+                    break;
 
                 case RequestMessageIDs.Aim:
                     OnAim?.Invoke(npc);
@@ -118,7 +127,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                     break;
 
                 default:
-                    Log.Logger.Log("Received Script RequestMessage with invalid ID: " + id.ToString());
+                    Log.Logger.LogWarning("Received Script RequestMessage with invalid ID: " + id.ToString());
                     break;
             }
         }
