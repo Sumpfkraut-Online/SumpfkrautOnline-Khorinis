@@ -11,6 +11,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.WorldObjects;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {

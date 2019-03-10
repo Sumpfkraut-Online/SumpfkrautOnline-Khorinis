@@ -12,6 +12,7 @@ using GUC.Types;
 using GUC.WorldObjects.ItemContainers;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {

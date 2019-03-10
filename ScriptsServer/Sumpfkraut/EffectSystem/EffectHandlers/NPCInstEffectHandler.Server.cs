@@ -7,6 +7,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Utilities;
 using GUC.Types;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
 {

@@ -1,5 +1,6 @@
 ﻿using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 using GUC.Types;
 using System;
 using System.Collections.Generic;

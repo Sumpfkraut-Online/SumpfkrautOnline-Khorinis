@@ -9,6 +9,7 @@ using GUC.Types;
 using System;
 using GUC.Utilities;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {

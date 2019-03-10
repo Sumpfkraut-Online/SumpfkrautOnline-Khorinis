@@ -11,6 +11,7 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Arena.GameModes;
 using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Arena.GameModes.Horde;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts.Arena.Controls
 {

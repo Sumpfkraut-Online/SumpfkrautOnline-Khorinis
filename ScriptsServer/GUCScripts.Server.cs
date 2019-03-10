@@ -14,6 +14,7 @@ using GUC.WorldObjects;
 using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
+using GUC.Scripts.Sumpfkraut.Mobs;
 
 namespace GUC.Scripts
 {
