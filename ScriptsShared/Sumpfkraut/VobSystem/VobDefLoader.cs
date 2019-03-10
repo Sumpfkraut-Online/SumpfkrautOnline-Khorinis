@@ -335,9 +335,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem
                 case VobType.Vob:
                     vobDef = new VobDef();
                     break;
-                case VobType.NamedVob:
-                    vobDef = new NamedVobDef();
-                    break;
                 case VobType.Item:
                     vobDef = new ItemDef();
                     break;

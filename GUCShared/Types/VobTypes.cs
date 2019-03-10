@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.Types
 {
-    public enum VobTypes : byte
+    public enum GUCVobTypes : byte
     {
         Vob,
         NPC,
@@ -15,13 +15,6 @@ namespace GUC.Types
 
         Mob,
         MobInter,
-        MobFire,
-        MobLadder,
-        MobSwitch,
-        MobWheel,
-        MobContainer,
-        MobDoor,
-        MobBed,
 
         Maximum
     }

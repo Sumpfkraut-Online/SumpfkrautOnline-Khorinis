@@ -14,8 +14,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
     public partial class NPCInst
     {
-        const int MaxNPCCorpses = 100;
-
         public static readonly Networking.Requests.NPCRequestReceiver Requests = new Networking.Requests.NPCRequestReceiver();
 
         public delegate void NPCInstMoveHandler(NPCInst npc, Vec3f oldPos, Angles oldAng, NPCMovement oldMovement);
@@ -705,14 +703,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             }
         }
         #endregion
-
-        static DespawnList<NPCInst> npcDespawnList = new DespawnList<NPCInst>(MaxNPCCorpses);
-
+        
         partial void pSetHealth(int hp, int hpmax)
         {
             if (hp <= 0)
             {
-                npcDespawnList.AddVob(this);
+                if (this.IsSpawned && !this.IsPlayer)
+                    this.World.DespawnList_NPC.AddVob(this);
 
                 if (unconTimer != null && unconTimer.Started)
                     unconTimer.Stop();

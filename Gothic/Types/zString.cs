@@ -110,38 +110,36 @@ namespace Gothic.Types
 
         public static zString Create(String value)
         {
-            int self = Process.Alloc(ByteSize).ToInt32();
-            if (value != null && value.Length > 0)
+            IntPtr stringArr = Process.Alloc(ByteSize);
+
+            byte[] arr = value == null ? new byte[0] : Encoding.Default.GetBytes(value);
+            IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
+
+            if (arr.Length > 0)
             {
-                byte[] bytes = Encoding.Default.GetBytes(value);
-                int charArr = Process.Alloc((uint)bytes.Length + 1).ToInt32();
-
-                Process.Write(charArr, bytes);
-                Process.Write(charArr + bytes.Length, (byte)0);
-
-                Process.THISCALL<NullReturnCall>(self, FuncAddresses.ConstructorConstChar, (IntArg)charArr);
-                Process.Free(charArr, (uint)bytes.Length + 1);
+                Process.Write(charArr.ToInt32(), arr);
             }
-            return new zString(self);
+
+            Process.Write(charArr.ToInt32() + arr.Length, (byte)0);
+            Process.THISCALL<NullReturnCall>(stringArr.ToInt32(), FuncAddresses.ConstructorConstChar, (IntArg)charArr.ToInt32());
+            Process.Free(charArr, (uint)arr.Length + 1);
+
+            return new zString(stringArr.ToInt32());
         }
 
         public void Set(String str)
         {
-            if (str != null && str.Length > 0)
-            {
-                byte[] bytes = Encoding.Default.GetBytes(str);
-                int charArr = Process.Alloc((uint)bytes.Length + 1).ToInt32();
+            byte[] arr = str == null ? new byte[0] : Encoding.Default.GetBytes(str);
+            IntPtr charArr = Process.Alloc((uint)arr.Length + 1);
 
-                Process.Write(charArr, bytes);
-                Process.Write(charArr + bytes.Length, (byte)0);
-
-                Process.THISCALL<zString>(Address, FuncAddresses.OperatorAssignConstChar, (IntArg)charArr);
-                Process.Free(charArr, (uint)str.Length + 1);
-            }
-            else
+            if (arr.Length > 0)
             {
-                Process.THISCALL<zString>(Address, FuncAddresses.OperatorAssignConstChar, (IntArg)0);
+                Process.Write(charArr.ToInt32(), arr);
             }
+
+            Process.Write(charArr.ToInt32() + arr.Length, (byte)0);
+            Process.THISCALL<zString>(Address, FuncAddresses.OperatorAssignConstChar, (IntArg)charArr.ToInt32());
+            Process.Free(charArr, (uint)str.Length + 1);
         }
 
         public override string ToString()

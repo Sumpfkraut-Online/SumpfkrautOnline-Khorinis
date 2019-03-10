@@ -35,7 +35,7 @@ namespace GUC.WorldObjects
         #region Properties
         
         /// <summary> The VobType of this Vob. </summary>
-        public override VobTypes VobType { get { return VobTypes.Vob; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.Vob; } }
 
         public override Type InstanceType { get { return typeof(VobInstance); } }
         /// <summary> The Instance of this object. </summary>

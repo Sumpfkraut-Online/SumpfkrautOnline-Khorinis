@@ -241,7 +241,7 @@ namespace GUC.WorldObjects
                             if (stream == null)
                             {
                                 stream = GameServer.SetupStream(ServerMessages.VobSpawnMessage);
-                                stream.Write((byte)this.VobType);
+                                stream.Write((byte)this.ScriptObject.GetVobType());
                                 this.WriteStream(stream);
                             }
                             client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');
@@ -261,7 +261,7 @@ namespace GUC.WorldObjects
                         if (stream == null)
                         {
                             stream = GameServer.SetupStream(ServerMessages.VobSpawnMessage);
-                            stream.Write((byte)this.VobType);
+                            stream.Write((byte)this.ScriptObject.GetVobType());
                             this.WriteStream(stream);
                         }
                         client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W');

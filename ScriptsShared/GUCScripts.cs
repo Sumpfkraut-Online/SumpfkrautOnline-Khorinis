@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GUC.Scripting;
-using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.Scripts.Sumpfkraut.VobSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
-using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
@@ -54,55 +55,55 @@ namespace GUC.Scripts
             return new WorldInst().BaseWorld;
         }
 
-        public BaseVob CreateVob(VobTypes type)
+        public BaseVob CreateVob(byte type)
         {
             BaseVobInst vob;
-            switch (type)
+            switch ((VobType)type)
             {
-                case VobTypes.Vob:
+                case VobType.Vob:
                     vob = new VobInst();
                     break;
-                case VobTypes.Mob:
+                case VobType.Mob:
                     vob = new MobInst();
                     break;
-                case VobTypes.Item:
+                case VobType.Item:
                     vob = new ItemInst();
                     break;
-                case VobTypes.NPC:
+                case VobType.NPC:
                     vob = new NPCInst();
                     break;
-                case VobTypes.Projectile:
+                case VobType.Projectile:
                     vob = new ProjInst();
                     break;
                 default:
-                    throw new Exception("Unsupported VobType: " + type);
+                    throw new Exception("Unsupported VobType: " + (VobType)type);
             }
             return vob.BaseInst;
         }
 
 
-        public WorldObjects.Instances.BaseVobInstance CreateInstance(VobTypes type)
+        public WorldObjects.Instances.BaseVobInstance CreateInstance(byte type)
         {
             BaseVobDef def;
-            switch (type)
+            switch ((VobType)type)
             {
-                case VobTypes.Vob:
+                case VobType.Vob:
                     def = new VobDef();
                     break;
-                case VobTypes.Mob:
+                case VobType.Mob:
                     def = new MobDef();
                     break;
-                case VobTypes.NPC:
+                case VobType.NPC:
                     def = new NPCDef();
                     break;
-                case VobTypes.Item:
+                case VobType.Item:
                     def = new ItemDef();
                     break;
-                case VobTypes.Projectile:
+                case VobType.Projectile:
                     def = new ProjDef();
                     break;
                 default:
-                    throw new Exception("Unsupported VobType: " + type);
+                    throw new Exception("Unsupported VobType: " + (VobType)type);
             }
 
             return def.BaseDef;

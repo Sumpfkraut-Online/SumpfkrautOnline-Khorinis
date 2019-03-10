@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using WinApi;
+using WinApiNew;
 using GUC.Log;
 using GUC.WorldObjects;
 
@@ -18,14 +18,14 @@ namespace GUC.Hooks
             if (inited) return;
             inited = true;
 
-            var h = Process.AddHook(hook_ParticleMaximum, 0x005E2049, 8);
-            Process.Write(h.OldInNewAddress + 4, BitConverter.GetBytes(0x005E23EC - (h.OldInNewAddress + 8))); // re-adjust JLE
+            var h = Process.AddFastHook(hook_ParticleMaximum, 0x005E2049, 8);
+            Process.WriteBytes(h.OriCodeInMethodCode + 4, BitConverter.GetBytes(0x005E23EC - (h.OriCodeInMethodCode + 8))); // re-adjust JLE
 
-            Process.Write(0x005EAF54, 0xE9, 0x8D, 0x00, 0x00, 0x00); // jmp over rain weight calculation
+            Process.WriteBytes(0x005EAF54, 0xE9, 0x8D, 0x00, 0x00, 0x00); // jmp over rain weight calculation
         }
 
         static long lastTime = 0;
-        static void hook_ParticleMaximum(Hook hook, RegisterMemory rmem)
+        static void hook_ParticleMaximum(RegisterMemory mem)
         {
             try
             {
@@ -49,7 +49,7 @@ namespace GUC.Hooks
                 if (num > MaxDropsPerFrame)
                     num = MaxDropsPerFrame;
 
-                rmem[Registers.EDI] = num;
+                mem.EDI = num;
             }
             catch (Exception e)
             {

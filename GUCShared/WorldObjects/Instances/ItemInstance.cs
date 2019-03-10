@@ -8,7 +8,7 @@ namespace GUC.WorldObjects.Instances
 {
     public partial class ItemInstance : VobInstance
     {
-        public override VobTypes VobType { get { return VobTypes.Item; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.Item; } }
 
         #region ScriptObject
 

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 
 using GUC.WorldObjects.Instances;
-using GUC.WorldObjects.Mobs;
 using GUC.Network;
 using GUC.WorldObjects.ItemContainers;
 using GUC.Scripting;
@@ -41,7 +40,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        public override VobTypes VobType { get { return VobTypes.NPC; } }
+        public override GUCVobTypes VobType { get { return GUCVobTypes.NPC; } }
 
         #region ScriptObject
 
@@ -282,6 +281,7 @@ namespace GUC.WorldObjects
             this.inventory.ForEach(item =>
             {
                 stream.Write((byte)item.ID);
+                stream.Write((byte)item.ScriptObject.GetVobType());
                 item.WriteInventoryProperties(stream);
             });
 
@@ -294,10 +294,10 @@ namespace GUC.WorldObjects
             for (int i = 0; i < count; i++)
             {
                 int itemID = stream.ReadByte();
-                Item item;
-                if (!inventory.TryGetItem(itemID, out item))
+                byte type = stream.ReadByte();
+                if (!inventory.TryGetItem(itemID, out Item item))
                 {
-                    item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                    item = (Item)ScriptManager.Interface.CreateVob(type);
                     item.ID = itemID;
                     item.ReadInventoryProperties(stream);
                     this.inventory.ScriptObject.AddItem(item);
@@ -327,6 +327,7 @@ namespace GUC.WorldObjects
             ForEachEquippedItem(item =>
             {
                 stream.Write((byte)item.slot);
+                stream.Write((byte)item.ScriptObject.GetVobType());
                 item.WriteEquipProperties(stream);
             });
 
@@ -346,7 +347,8 @@ namespace GUC.WorldObjects
             for (int i = 0; i < count; i++)
             {
                 int slot = stream.ReadByte();
-                Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                byte type = stream.ReadByte();
+                Item item = (Item)ScriptManager.Interface.CreateVob(type);
                 item.ReadEquipProperties(stream);
                 this.inventory.ScriptObject.AddItem(item);
                 this.ScriptObject.EquipItem(slot, item);

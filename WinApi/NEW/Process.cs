@@ -79,6 +79,12 @@ namespace WinApiNew
             ExceptionHelper.AddressZero(address);
             return *(int*)address;
         }
+        
+        public static bool ReadBool(int address)
+        {
+            ExceptionHelper.AddressZero(address);
+            return *(bool*)address;
+        }
 
         public static float ReadFloat(int address)
         {

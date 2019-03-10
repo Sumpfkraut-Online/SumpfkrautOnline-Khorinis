@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
+using GUC.Scripts.Sumpfkraut.VobSystem;
 
 namespace GUC.Scripts.Sumpfkraut.EffectSystem.Changes
 {

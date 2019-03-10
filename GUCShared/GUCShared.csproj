@@ -92,35 +92,19 @@
     <Compile Include="WorldObjects\ItemContainers\ItemInventory.cs" />
     <Compile Include="GameObjects\Collections\StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
+    <Compile Include="WorldObjects\Mob.cs" />
+    <Compile Include="WorldObjects\MobInter.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuideCmd.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuidedVob.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobBedInstance.cs" />
     <Compile Include="WorldObjects\Instances\ProjectileInstance.cs" />
-    <Compile Include="WorldObjects\Mobs\MobBed.cs" />
     <Compile Include="WorldObjects\BaseVob.cs" />
     <Compile Include="WorldObjects\Instances\BaseVobInstance.cs" />
     <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobContainerInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobDoorInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobFireInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobInterInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobLadderInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobLockableInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobSwitchInstance.cs" />
-    <Compile Include="WorldObjects\Instances\Mobs\MobWheelInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobInstance.cs" />
+    <Compile Include="WorldObjects\Instances\MobInterInstance.cs" />
     <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
     <Compile Include="WorldObjects\Instances\VobInstance.cs" />
     <Compile Include="WorldObjects\Item.cs" />
-    <Compile Include="WorldObjects\Mobs\Mob.cs" />
-    <Compile Include="WorldObjects\Mobs\MobContainer.cs" />
-    <Compile Include="WorldObjects\Mobs\MobDoor.cs" />
-    <Compile Include="WorldObjects\Mobs\MobFire.cs" />
-    <Compile Include="WorldObjects\Mobs\MobInter.cs" />
-    <Compile Include="WorldObjects\Mobs\MobLadder.cs" />
-    <Compile Include="WorldObjects\Mobs\MobLockable.cs" />
-    <Compile Include="WorldObjects\Mobs\MobSwitch.cs" />
-    <Compile Include="WorldObjects\Mobs\MobWheel.cs" />
     <Compile Include="WorldObjects\NPC.cs" />
     <Compile Include="WorldObjects\Projectile.cs" />
     <Compile Include="WorldObjects\Vob.cs" />
@@ -134,6 +118,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+    <Folder Include="WorldObjects\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

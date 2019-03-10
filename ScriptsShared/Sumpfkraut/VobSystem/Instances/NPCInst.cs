@@ -87,6 +87,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         #region Properties
 
+        public override VobType VobType { get { return VobType.NPC; } }
+
         new public NPCInstEffectHandler EffectHandler { get { return (NPCInstEffectHandler)base.EffectHandler; } }
 
         new public NPC BaseInst { get { return (NPC)base.BaseInst; } }

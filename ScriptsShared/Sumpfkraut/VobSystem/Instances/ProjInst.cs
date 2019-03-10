@@ -15,6 +15,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         #region Properties
 
+        public override VobType VobType { get { return VobType.Projectile; } }
+
         new public Projectile BaseInst { get { return (Projectile)base.BaseInst; } }
         new public ProjDef Definition { get { return (ProjDef)base.Definition; } set { base.Definition = value; } }
 

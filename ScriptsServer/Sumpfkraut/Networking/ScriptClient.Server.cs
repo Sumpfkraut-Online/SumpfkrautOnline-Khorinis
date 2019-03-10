@@ -29,6 +29,20 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             return GameClient.Count;
         }
 
+        partial void pBeforeSetControl(NPCInst npc)
+        {
+            // old npc
+            if (npc.IsSpawned && npc.IsDead)
+                npc.World.DespawnList_NPC.AddVob(npc);
+        }
+
+        partial void pAfterSetControl(NPCInst npc)
+        {
+            // new npc
+            if (npc.IsSpawned && npc.IsDead)
+                npc.World.DespawnList_NPC.RemoveVob(npc);
+        }
+
         public virtual void ReadScriptMessage(PacketReader stream)
         {
         }

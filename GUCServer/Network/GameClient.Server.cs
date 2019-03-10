@@ -53,36 +53,24 @@ namespace GUC.Network
                         PacketWriter strm = new PacketWriter();
 
                         // MODELS
-                        if (ModelInstance.CountDynamics > 0)
+                        if (strm.Write(ModelInstance.CountDynamics > 0))
                         {
-                            strm.Write(true);
                             strm.Write((ushort)ModelInstance.CountDynamics);
                             ModelInstance.ForEachDynamic(model =>
                             {
                                 model.WriteStream(strm);
                             });
                         }
-                        else
-                        {
-                            strm.Write(false);
-                        }
 
                         // INSTANCES
-                        if (BaseVobInstance.GetCountDynamics() > 0)
+                        if (strm.Write(BaseVobInstance.GetCountDynamics() > 0))
                         {
-                            strm.Write(true);
-                            for (int i = 0; i < (int)VobTypes.Maximum; i++)
+                            strm.Write((ushort)BaseVobInstance.GetCountDynamics());
+                            BaseVobInstance.ForEachDynamic(v =>
                             {
-                                strm.Write((ushort)BaseVobInstance.GetCountDynamicsOfType((VobTypes)i));
-                                BaseVobInstance.ForEachDynamicOfType((VobTypes)i, inst =>
-                                {
-                                    inst.WriteStream(strm);
-                                });
-                            }
-                        }
-                        else
-                        {
-                            strm.Write(false);
+                                strm.Write((byte)v.ScriptObject.GetVobType());
+                                v.WriteStream(strm);
+                            });
                         }
 
                         byte[] arr = strm.CopyData();
@@ -426,7 +414,7 @@ namespace GUC.Network
                             AddVisibleVob(vob);
                             vob.AddVisibleClient(this);
 
-                            stream.Write((byte)vob.VobType);
+                            stream.Write((byte)vob.ScriptObject.GetVobType());
                             vob.WriteStream(stream);
                             addCount++;
                         }
@@ -442,7 +430,7 @@ namespace GUC.Network
                         AddVisibleVob(vob);
                         vob.AddVisibleClient(this);
 
-                        stream.Write((byte)vob.VobType);
+                        stream.Write((byte)vob.ScriptObject.GetVobType());
                         vob.WriteStream(stream);
                         addCount++;
                     }
@@ -481,7 +469,7 @@ namespace GUC.Network
                     AddVisibleVob(vob);
                     vob.AddVisibleClient(this);
 
-                    stream.Write((byte)vob.VobType);
+                    stream.Write((byte)vob.ScriptObject.GetVobType());
                     vob.WriteStream(stream);
                 }
             });

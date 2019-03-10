@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Scripting;
 using GUC.Log;
 using GUC.Network;
-using WinApi;
+using WinApiNew;
 using Gothic.Types;
 using Gothic.System;
 using Gothic.View;
@@ -26,24 +26,23 @@ namespace GUC.Hooks
             inited = true;
 
             // should never be called anyway, but just to be sure
-            Process.AddHook((k, m) => GothicGlobals.UpdateGameAddress(), 0x426F5E, 0xB); // GameSessionInit
-            Process.AddHook((k, m) => GothicGlobals.UpdateGameAddress(), 0x0042705B, 0xB); // GameSessionDone
+            Process.AddFastHook(r => GothicGlobals.UpdateGameAddress(), 0x426F5E, 0xB); // GameSessionInit
+            Process.AddFastHook(r => GothicGlobals.UpdateGameAddress(), 0x0042705B, 0xB); // GameSessionDone
 
             // hook outgame loop and kick out the original menus
-            var h = Process.AddHook(RunOutgame, 0x004292D0, 7);
-            Process.Write(h.OldInNewAddress, 0xC2, 0x04, 0x00);
+            Process.AddFastHook(RunOutgame, 0x004292D0, 7).SetOriCodeReturn(1);
 
             // hook ingame loop
-            Process.AddHook(RunIngame, 0x6C86A0, 7); // before gothic's precache
+            Process.AddFastHook(RunIngame, 0x6C86A0, 7); // before gothic's precache
 
             // first render
-            Process.AddHook(FirstRender, 0x6C876B, 6);
+            Process.AddFastHook(FirstRender, 0x6C876B, 6);
 
             Logger.Log("Added game loop hooks.");
         }
 
         public static bool FirstRenderDone = false;
-        static void FirstRender(Hook hook, RegisterMemory rmem)
+        static void FirstRender(RegisterMemory rmem)
         {
             if (FirstRenderDone) // improveme: remove & add hook
                 return;
@@ -90,7 +89,7 @@ namespace GUC.Hooks
         }
 
         static System.Diagnostics.Stopwatch fpsWatch = new System.Diagnostics.Stopwatch();
-        static void RunOutgame(Hook hook, RegisterMemory rmem)
+        static void RunOutgame(RegisterMemory rmem)
         {
             try
             {
@@ -118,7 +117,7 @@ namespace GUC.Hooks
 
                 #region Gothic 
 
-                Process.CDECLCALL<NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
+                WinApi.Process.CDECLCALL<WinApi.NullReturnCall>(0x5053E0); // void __cdecl sysEvent(void)
 
                 using (zColor color = zColor.Create(0, 0, 0, 0))
                     zCRenderer.Vid_Clear(color, 3);
@@ -148,7 +147,7 @@ namespace GUC.Hooks
         }
 
         static bool ingameStarted = false;
-        static void RunIngame(Hook hook, RegisterMemory rmem)
+        static void RunIngame(RegisterMemory rmem)
         {
             try
             {

@@ -9,7 +9,7 @@ namespace GUC.WorldObjects.Collections
 {
     interface VobTypeObject
     {
-        VobTypes VobType { get; }
+        GUCVobTypes VobType { get; }
     }
 
     class VobTypeCollection<T> where T : class, VobTypeObject
@@ -20,7 +20,7 @@ namespace GUC.WorldObjects.Collections
         internal VobTypeCollection()
         {
             vobs = new DynamicCollection<T>();
-            typeDict = new DynamicCollection<T>[(int)VobTypes.Maximum];
+            typeDict = new DynamicCollection<T>[(int)GUCVobTypes.Maximum];
             for (int i = 0; i < typeDict.Length; i++)
             {
                 typeDict[i] = new DynamicCollection<T>();
@@ -44,13 +44,13 @@ namespace GUC.WorldObjects.Collections
             vobs.ForEach(action);
         }
 
-        public void ForEachOfType(VobTypes type, Action<T> action)
+        public void ForEachOfType(GUCVobTypes type, Action<T> action)
         {
             typeDict[(int)type].ForEach(action);
         }
 
         public int GetCount() { return this.vobs.Count; }
-        public int GetCountOfType(VobTypes type) { return this.typeDict[(int)type].Count; }
+        public int GetCountOfType(GUCVobTypes type) { return this.typeDict[(int)type].Count; }
         
     }
 }

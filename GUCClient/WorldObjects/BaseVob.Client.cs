@@ -169,7 +169,7 @@ namespace GUC.WorldObjects
             this.gvob = this.instance.CreateVob();
         }
 
-        internal void DeleteGVob()
+        internal virtual void DeleteGVob()
         {
             // we are finished with this gothic object, decrease the reference counter
             int refCtr = gvob.refCtr - 1;

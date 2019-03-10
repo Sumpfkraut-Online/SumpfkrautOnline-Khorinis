@@ -14,7 +14,7 @@ namespace GUC.WorldObjects.Instances
     /// </summary>
     public abstract partial class BaseVobInstance : IDObject, VobTypeObject
     {
-        public abstract VobTypes VobType { get; }
+        public abstract GUCVobTypes VobType { get; }
 
         #region ScriptObject
 
@@ -22,6 +22,7 @@ namespace GUC.WorldObjects.Instances
         {
             void Create();
             void Delete();
+            byte GetVobType();
         }
         
         /// <summary> The ScriptObject of this object. </summary>
@@ -126,13 +127,13 @@ namespace GUC.WorldObjects.Instances
         }
 
         /// <summary> Loops through all Instances of the given type in the static Instance collection. </summary>
-        public static void ForEachOfType(VobTypes type, Action<BaseVobInstance> action)
+        public static void ForEachOfType(GUCVobTypes type, Action<BaseVobInstance> action)
         {
             instances.ForEachOfType(type, action);
         }
 
         /// <summary> Gets the count of all Instances of the given type in the static Instance collection. </summary>
-        public static int GetCountOfType(VobTypes type)
+        public static int GetCountOfType(GUCVobTypes type)
         {
             return instances.GetCountOfType(type);
         }
@@ -142,7 +143,7 @@ namespace GUC.WorldObjects.Instances
             dynInstances.ForEach(action);
         }
 
-        public static void ForEachDynamicOfType(VobTypes type, Action<BaseVobInstance> action)
+        public static void ForEachDynamicOfType(GUCVobTypes type, Action<BaseVobInstance> action)
         {
             dynInstances.ForEachOfType(type, action);
         }
@@ -152,7 +153,7 @@ namespace GUC.WorldObjects.Instances
             return dynInstances.GetCount();
         }
 
-        public static int GetCountDynamicsOfType(VobTypes type)
+        public static int GetCountDynamicsOfType(GUCVobTypes type)
         {
             return dynInstances.GetCountOfType(type);
         }

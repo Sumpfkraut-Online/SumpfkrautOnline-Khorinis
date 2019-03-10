@@ -34,7 +34,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
             ((BaseVobInst)vob.ScriptObject).OnReadScriptVobMsg(stream);
         }
 
-        partial void pSetControl(NPCInst npc)
+        partial void pAfterSetControl(NPCInst npc)
         {
             Menus.PlayerInventory.Menu.Close();
             PlayerFocus.Activate(npc);

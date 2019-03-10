@@ -21,8 +21,9 @@ namespace WinApiNew.Hooks
         int methodAddress;
         int methodCodeLen { get { return Length + 14; } }
         int oriCodeAddress { get { return methodAddress + 9; } }
+        public int OriCodeInMethodCode { get { return this.oriCodeAddress; } }
 
-        IntPtr ptr;
+        IntPtr ptr; // pointer to marshalled c# method
 
         protected override byte[] CreateCode(Delegate method)
         {

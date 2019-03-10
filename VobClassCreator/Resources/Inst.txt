@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using GUC.Network;
+using GUC.Scripts.Sumpfkraut.VobSystem;/usingdefs//usinginsts/
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions/subfolder/;
+
+namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances/subfolder/
+{
+    public /abstract/ partial class /name/Inst : /parent/Inst
+    {
+        #region Constructors
+
+        public /name/Inst()
+        {
+        }
+
+        #endregion
+
+        #region Properties
+
+        /vobtypeoverride/
+
+        new public /name/Def Definition { get { return (/name/Def)base.Definition; } set { base.Definition = value; } }
+
+        #endregion
+
+        #region Read & Write
+
+        public override void OnReadProperties(PacketReader stream)
+        {
+            base.OnReadProperties(stream);
+        }
+
+        public override void OnWriteProperties(PacketWriter stream)
+        {
+            base.OnWriteProperties(stream);
+        }
+
+        #endregion
+    }
+}

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -111,8 +111,6 @@
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\BaseEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemDefEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NamedVobInstEffectHandler.cs" />
     <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\NPCDefEffectHandler.cs" />
@@ -128,6 +126,7 @@
     <Compile Include="Sumpfkraut\Mobs\MobChair.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptMessageIDs.cs" />
     <Compile Include="Sumpfkraut\Networking\ScriptClient.cs" />
+    <Compile Include="Sumpfkraut\Utilities\ExceptionCheck.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\Enumeration\InvocationType.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_AddRange.cs" />
     <Compile Include="Sumpfkraut\Utilities\Functions\ManagerInteraction\MI_RemoveRange.cs" />
@@ -157,29 +156,31 @@
     <Compile Include="Sumpfkraut\VobSystem\Definitions\BaseVobDef.cs" />
     <Compile Include="Sumpfkraut\Visuals\HumanVisuals.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ItemDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\NPCDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\ProjDef.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\VobDef.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Enumeration\VobType.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NamedVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobDefLoader.cs" />
     <Compile Include="Sumpfkraut\VobSystem\VobInstLoader.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\VobTypes.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptClock.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\ScriptWeatherCtrl.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldDef.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldLoader.cs" />
+	<Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs" />
+	<Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCShared\GUCShared.csproj">

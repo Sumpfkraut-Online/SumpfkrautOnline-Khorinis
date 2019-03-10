@@ -91,7 +91,8 @@ namespace GUC.WorldObjects
 
             public static void ReadVobSpawn(PacketReader stream)
             {
-                BaseVob vob = ScriptManager.Interface.CreateVob((VobTypes)stream.ReadByte());
+                byte type = stream.ReadByte();
+                BaseVob vob = ScriptManager.Interface.CreateVob(type);
                 vob.ReadStream(stream);
                 vob.ScriptObject.Spawn(current);
             }

@@ -16,7 +16,8 @@ namespace GUC.WorldObjects.ItemContainers
         {
             public static void ReadAddItem(PacketReader stream)
             {
-                Item item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                byte type = stream.ReadByte();
+                Item item = (Item)ScriptManager.Interface.CreateVob(type);
                 item.ID = stream.ReadByte();
                 item.ReadInventoryProperties(stream);
                 PlayerInventory.ScriptObject.AddItem(item);
@@ -24,8 +25,7 @@ namespace GUC.WorldObjects.ItemContainers
 
             public static void ReadRemoveItem(PacketReader stream)
             {
-                Item item;
-                if (PlayerInventory.TryGetItem(stream.ReadByte(), out item))
+                if (PlayerInventory.TryGetItem(stream.ReadByte(), out Item item))
                 {
                     PlayerInventory.ScriptObject.RemoveItem(item);
                 }

@@ -28,11 +28,12 @@ namespace GUC.WorldObjects
                 if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc))
                 {
                     int slot = stream.ReadByte();
+                    byte type = stream.ReadByte();
 
                     Item item;
                     if (npc != Hero)
                     {
-                        item = (Item)ScriptManager.Interface.CreateVob(VobTypes.Item);
+                        item = (Item)ScriptManager.Interface.CreateVob(type);
                         item.ReadEquipProperties(stream);
                         npc.Inventory.ScriptObject.AddItem(item);
                     }
@@ -379,6 +380,12 @@ namespace GUC.WorldObjects
 
             this.humanAI = null;
             this.gmodel = null;
+        }
+
+        internal override void DeleteGVob()
+        {
+            this.gVob.SetFocusVob(new zCVob(0));
+            base.DeleteGVob();
         }
 
         #endregion

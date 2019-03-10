@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -220,12 +220,6 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs">
       <Link>Sumpfkraut\EffectSystem\EffectHandlers\ItemInstEffectHandler.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.cs</Link>
-    </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.cs">
-      <Link>Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.cs</Link>
-    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs">
       <Link>Sumpfkraut\EffectSystem\EffectHandlers\NamedVobDefEffectHandler.cs</Link>
     </Compile>
@@ -343,8 +337,8 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\ItemDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\ItemDef.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\MobDef.cs">
-      <Link>Sumpfkraut\VobSystem\Definitions\MobDef.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\Mobs\MobDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\Mobs\MobDef.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\NamedVobDef.cs</Link>
@@ -358,9 +352,6 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\VobDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\VobDef.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VobType.cs">
-      <Link>Sumpfkraut\VobSystem\Enumeration\VobType.cs</Link>
-    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs">
       <Link>Sumpfkraut\VobSystem\Enumeration\VoiceCmd.cs</Link>
     </Compile>
@@ -373,8 +364,8 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
     </Compile>
-    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\MobInst.cs">
-      <Link>Sumpfkraut\VobSystem\Instances\MobInst.cs</Link>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NamedVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\NamedVobInst.cs</Link>
@@ -387,6 +378,9 @@
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\VobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\VobInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\VobTypes.cs">
+      <Link>Sumpfkraut\VobSystem\VobTypes.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs">
       <Link>Sumpfkraut\WorldSystem\ScriptBarrierCtrl.cs</Link>
@@ -443,8 +437,6 @@
     <Compile Include="Sumpfkraut\Controls\KeyDictionary.cs" />
     <Compile Include="Sumpfkraut\Controls\KeyHoldHelper.cs" />
     <Compile Include="Sumpfkraut\Controls\PlayerFocus.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobDefEffectHandler.Client.cs" />
-    <Compile Include="Sumpfkraut\EffectSystem\EffectHandlers\MobInstEffectHandler.Client.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCInventory.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCTextLines.cs" />
     <Compile Include="Sumpfkraut\GUI\GUCWorldSprite.cs" />
@@ -464,8 +456,8 @@
     <Compile Include="Sumpfkraut\Menus\MainMenus\CharSelMenu.cs" />
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestSender.cs" />
     <Compile Include="Sumpfkraut\Options\ClientOptions.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Definitions\MobDef.Server.cs" />
-    <Compile Include="Sumpfkraut\VobSystem\Instances\MobInst.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobDef.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Client.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\GUCMainMenu.cs" />
@@ -490,6 +482,14 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\VobInst.Client.cs" />
     <Compile Include="Sumpfkraut\WorldSystem\WorldInst.Client.cs" />
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs">
+      <Link>Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs</Link>
+    </Compile>
+	<Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs</Link>
+    </Compile>
+	<Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.Client.cs" />
+	<Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.Client.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCClient\GUCClient.csproj">

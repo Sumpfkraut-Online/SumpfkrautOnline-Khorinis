@@ -12,7 +12,8 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
 using GUC.WorldObjects;
 using GUC.Scripts.Arena.Duel;
-using GUC.Scripts.Sumpfkraut.Mobs;
+using GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs;
+using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
 namespace GUC.Scripts
 {
@@ -193,7 +194,7 @@ namespace GUC.Scripts
 
             // { new Vec3f(-618.7121f, -320.7968f, -1885.178f), new Angles(-0.101229f, -0.6841688f, 0f) },
             
-            //Arena.GameModes.BattleRoyale.BRWorldLoader.Load(world);
+            Arena.GameModes.BattleRoyale.BRWorldLoader.Load(world);
 
             Logger.Log("Creating the Chair!");
             ModelDef m = new ModelDef("chair1", "CHAIR_1_OC.ASC");

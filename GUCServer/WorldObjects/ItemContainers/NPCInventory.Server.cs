@@ -15,6 +15,7 @@ namespace GUC.WorldObjects.ItemContainers
             public static void WritePlayerAddItem(GameClient client, Item item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerInvAddItemMessage);
+                stream.Write((byte)item.ScriptObject.GetVobType());
                 stream.Write((byte)item.ID);
                 item.WriteInventoryProperties(stream);
                 client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Log;
-using WinApi;
+using WinApiNew;
 using GUC.WorldObjects;
 using GUC.Types;
 
@@ -18,17 +18,17 @@ namespace GUC.Hooks
             inited = true;
         
             
-            Process.AddHook(RbtForwardHook, 0x687B71, 6);
-            Process.AddHook(RbtStandHook, 0x683BEA, 6);
-            Process.AddHook(RbtStandHook, 0x686AF8, 6);
-            Process.AddHook(RbtStandHook, 0x686B62, 6);
+            Process.AddFastHook(RbtForwardHook, 0x687B71, 6);
+            Process.AddFastHook(RbtStandHook, 0x683BEA, 6);
+            Process.AddFastHook(RbtStandHook, 0x686AF8, 6);
+            Process.AddFastHook(RbtStandHook, 0x686B62, 6);
 
             Logger.Log("Added npc hooks.");
         }
 
-        static void RbtForwardHook(Hook hook, RegisterMemory rmem)
+        static void RbtForwardHook(RegisterMemory rmem)
         {
-            int npcAddr = rmem[Registers.ESI];
+            int npcAddr = rmem.ESI;
             
             if (World.Current.TryGetVobByAddress(npcAddr, out NPC npc) && npc.Guide == Network.GameClient.Client)
             {
@@ -36,9 +36,9 @@ namespace GUC.Hooks
             }
         }
 
-        static void RbtStandHook(Hook hook, RegisterMemory rmem)
+        static void RbtStandHook(RegisterMemory rmem)
         {
-            int npcAddr = rmem[Registers.ESI];
+            int npcAddr = rmem.ESI;
             
             if (World.Current.TryGetVobByAddress(npcAddr, out NPC npc) && npc.Guide == Network.GameClient.Client)
             {
