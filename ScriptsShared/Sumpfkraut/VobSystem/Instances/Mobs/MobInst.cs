@@ -41,7 +41,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
         /// </summary>
         public virtual void StartUsing(NPCInst npcInst)
         {
-            // overwritten by actual mobs
+            // implemented in inheriting class
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -49,6 +50,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
         /// </summary>
         public virtual void StopUsing(NPCInst npcInst)
         {
+            // implemented in inheriting class
+            throw new NotImplementedException();
         }
         /// <summary>
         /// Check whether the npc has the requirements to use this vob. Display Feedback if not.
