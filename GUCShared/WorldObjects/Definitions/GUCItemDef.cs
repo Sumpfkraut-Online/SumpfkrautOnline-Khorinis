@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Definitions
 {
     public partial class GUCItemDef : GUCVobDef
     {

@@ -11,7 +11,7 @@ using GUC.WorldObjects;
 using Gothic.Objects;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Models;
-using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Definitions;
 using GUC.Utilities;
 using GUC.GameObjects;
 

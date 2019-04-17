@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Gothic.Objects;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Definitions
 {
     public partial class GUCMobDef
     {

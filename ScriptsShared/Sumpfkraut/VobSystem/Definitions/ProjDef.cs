@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Definitions;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 

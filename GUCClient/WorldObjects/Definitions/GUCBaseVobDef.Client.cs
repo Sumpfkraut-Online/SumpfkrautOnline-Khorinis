@@ -9,7 +9,7 @@ using GUC.Network;
 using GUC.Scripting;
 using GUC.Types;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Definitions
 {
     public abstract partial class GUCBaseVobDef : IDObject, VobTypeObject
     {

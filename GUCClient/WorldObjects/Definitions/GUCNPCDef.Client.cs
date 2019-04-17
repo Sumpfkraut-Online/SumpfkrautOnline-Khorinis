@@ -5,7 +5,7 @@ using System.Text;
 using Gothic.Objects;
 using Gothic.Types;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Definitions
 {
     public partial class GUCNPCDef
     {

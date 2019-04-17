@@ -7,7 +7,7 @@ using GUC.WorldObjects.Collections;
 using GUC.GameObjects.Collections;
 using GUC.Types;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Definitions
 {
     /// <summary>
     /// A VobInstance is used to define a Vob's default settings. 

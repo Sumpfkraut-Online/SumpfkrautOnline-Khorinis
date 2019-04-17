@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Network;
 using GUC.Types;
 
-namespace GUC.WorldObjects.Instances
+namespace GUC.WorldObjects.Definitions
 {
     public partial class GUCMobInterDef : GUCMobDef
     {

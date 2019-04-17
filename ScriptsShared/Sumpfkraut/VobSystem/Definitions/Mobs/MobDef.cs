@@ -6,14 +6,14 @@ using GUC.Network;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs
 {
-    public partial class MobDef : NamedVobDef, WorldObjects.Instances.GUCMobDef.IScriptMobInstance
+    public partial class MobDef : NamedVobDef, WorldObjects.Definitions.GUCMobDef.IScriptMobInstance
     {
         #region Properties 
 
         public override VobType VobType { get { return VobType.Mob; } }
 
         // Zugriff auf BasisKlasse (MobInstance = MobDef)
-        new public WorldObjects.Instances.GUCMobDef BaseDef { get { return (WorldObjects.Instances.GUCMobDef)base.BaseDef; } }
+        new public WorldObjects.Definitions.GUCMobDef BaseDef { get { return (WorldObjects.Definitions.GUCMobDef)base.BaseDef; } }
         
         public string FocusName { get { return this.BaseDef.FocusName; } set { this.BaseDef.FocusName = value; } }
 
@@ -25,9 +25,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs
         {
         }
         
-        protected override WorldObjects.Instances.GUCBaseVobDef CreateVobInstance()
+        protected override WorldObjects.Definitions.GUCBaseVobDef CreateVobInstance()
         {
-            return new WorldObjects.Instances.GUCMobDef(this);
+            return new WorldObjects.Definitions.GUCMobDef(this);
         }
 
         #endregion

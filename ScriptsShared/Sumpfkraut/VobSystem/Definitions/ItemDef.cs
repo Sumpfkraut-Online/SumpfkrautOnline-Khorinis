@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using GUC.Network;
-using GUC.WorldObjects.Instances;
+using GUC.WorldObjects.Definitions;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
