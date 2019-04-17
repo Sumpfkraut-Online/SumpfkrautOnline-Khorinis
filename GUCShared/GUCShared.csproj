@@ -92,22 +92,22 @@
     <Compile Include="WorldObjects\ItemContainers\ItemInventory.cs" />
     <Compile Include="GameObjects\Collections\StaticCollection.cs" />
     <Compile Include="WorldObjects\Collections\VobTypeObjectCollection.cs" />
-    <Compile Include="WorldObjects\Mob.cs" />
-    <Compile Include="WorldObjects\MobInter.cs" />
+    <Compile Include="WorldObjects\Instances\GUCMobInst.cs" />
+    <Compile Include="WorldObjects\Instances\GUCMobInterInst.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuideCmd.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuidedVob.cs" />
-    <Compile Include="WorldObjects\Instances\ProjectileInstance.cs" />
-    <Compile Include="WorldObjects\BaseVob.cs" />
-    <Compile Include="WorldObjects\Instances\BaseVobInstance.cs" />
-    <Compile Include="WorldObjects\Instances\ItemInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobInstance.cs" />
-    <Compile Include="WorldObjects\Instances\MobInterInstance.cs" />
-    <Compile Include="WorldObjects\Instances\NPCInstance.cs" />
-    <Compile Include="WorldObjects\Instances\VobInstance.cs" />
-    <Compile Include="WorldObjects\Item.cs" />
-    <Compile Include="WorldObjects\NPC.cs" />
-    <Compile Include="WorldObjects\Projectile.cs" />
-    <Compile Include="WorldObjects\Vob.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCProjectileDef.cs" />
+    <Compile Include="WorldObjects\Instances\GUCBaseVobInst.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCBaseVobDef.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCItemDef.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCMobDef.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCMobInterDef.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCNPCDef.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCVobDef.cs" />
+    <Compile Include="WorldObjects\Instances\GUCItemInst.cs" />
+    <Compile Include="WorldObjects\Instances\GUCNPCInst.cs" />
+    <Compile Include="WorldObjects\Instances\GUCProjectileInst.cs" />
+    <Compile Include="WorldObjects\Instances\GUCVobInst.cs" />
     <Compile Include="WorldObjects\WorldGlobals\BarrierController.cs" />
     <Compile Include="WorldObjects\WorldGlobals\SkyController.cs" />
     <Compile Include="WorldObjects\World.cs" />
@@ -118,7 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="WorldObjects\Instances\Mobs\" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

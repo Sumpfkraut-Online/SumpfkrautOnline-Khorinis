@@ -207,35 +207,50 @@
     <Compile Include="..\GUCShared\Utilities\XMLHelper.cs">
       <Link>Utilities\XMLHelper.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\BaseVob.cs">
-      <Link>WorldObjects\BaseVob.cs</Link>
-    </Compile>
     <Compile Include="..\GUCShared\WorldObjects\Collections\VobTypeObjectCollection.cs">
       <Link>WorldObjects\Collections\VobTypeObjectCollection.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\BaseVobInstance.cs">
-      <Link>WorldObjects\Instances\BaseVobInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCBaseVobDef.cs">
+      <Link>WorldObjects\Definitions\GUCBaseVobDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\ItemInstance.cs">
-      <Link>WorldObjects\Instances\ItemInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCItemDef.cs">
+      <Link>WorldObjects\Definitions\GUCItemDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\MobInstance.cs">
-      <Link>WorldObjects\Instances\MobInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCMobDef.cs">
+      <Link>WorldObjects\Definitions\GUCMobDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\MobInterInstance.cs">
-      <Link>WorldObjects\Instances\MobInterInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCMobInterDef.cs">
+      <Link>WorldObjects\Definitions\GUCMobInterDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\NPCInstance.cs">
-      <Link>WorldObjects\Instances\NPCInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCNPCDef.cs">
+      <Link>WorldObjects\Definitions\GUCNPCDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\ProjectileInstance.cs">
-      <Link>WorldObjects\Instances\ProjectileInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCProjectileDef.cs">
+      <Link>WorldObjects\Definitions\GUCProjectileDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Instances\VobInstance.cs">
-      <Link>WorldObjects\Instances\VobInstance.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Definitions\GUCVobDef.cs">
+      <Link>WorldObjects\Definitions\GUCVobDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Item.cs">
-      <Link>WorldObjects\Item.cs</Link>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCBaseVobInst.cs">
+      <Link>WorldObjects\Instances\GUCBaseVobInst.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCItemInst.cs">
+      <Link>WorldObjects\Instances\GUCItemInst.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCMobInst.cs">
+      <Link>WorldObjects\Instances\GUCMobInst.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCMobInterInst.cs">
+      <Link>WorldObjects\Instances\GUCMobInterInst.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCNPCInst.cs">
+      <Link>WorldObjects\Instances\GUCNPCInst.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCProjectileInst.cs">
+      <Link>WorldObjects\Instances\GUCProjectileInst.cs</Link>
+    </Compile>
+    <Compile Include="..\GUCShared\WorldObjects\Instances\GUCVobInst.cs">
+      <Link>WorldObjects\Instances\GUCVobInst.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\ItemContainers\ItemContainer.cs">
       <Link>WorldObjects\ItemContainers\ItemContainer.cs</Link>
@@ -245,21 +260,6 @@
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\ItemContainers\NPCInventory.cs">
       <Link>WorldObjects\ItemContainers\NPCInventory.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Mob.cs">
-      <Link>WorldObjects\Mob.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\MobInter.cs">
-      <Link>WorldObjects\MobInter.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\NPC.cs">
-      <Link>WorldObjects\NPC.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Projectile.cs">
-      <Link>WorldObjects\Projectile.cs</Link>
-    </Compile>
-    <Compile Include="..\GUCShared\WorldObjects\Vob.cs">
-      <Link>WorldObjects\Vob.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\WorldObjects\VobGuiding\GuideCmd.cs">
       <Link>WorldObjects\VobGuiding\GuideCmd.cs</Link>
@@ -292,23 +292,23 @@
     <Compile Include="TCPListener.cs" />
     <Compile Include="Utilities\ExtendedObject.Server.cs" />
     <Compile Include="Utilities\Threading\TestRun.cs" />
-    <Compile Include="WorldObjects\BaseVob.Server.cs" />
+    <Compile Include="WorldObjects\Instances\GUCBaseVobInst.Server.cs" />
     <Compile Include="WorldObjects\Cells\BigCell.cs" />
     <Compile Include="WorldObjects\Cells\NPCCell.cs" />
     <Compile Include="WorldObjects\Cells\WorldCell.cs" />
     <Compile Include="WorldObjects\ItemContainers\NPCInventory.Server.cs" />
     <Compile Include="GameObjects\Collections\StaticCollection.Server.cs" />
     <Compile Include="WorldObjects\VobGuiding\GuidedVob.Server.cs" />
-    <Compile Include="WorldObjects\Instances\BaseVobInstance.Server.cs" />
-    <Compile Include="WorldObjects\Projectile.Server.cs" />
-    <Compile Include="WorldObjects\Vob.Server.cs" />
-    <Compile Include="WorldObjects\Item.Server.cs" />
-    <Compile Include="WorldObjects\Instances\ItemInstance.Server.cs" />
-    <Compile Include="WorldObjects\Instances\MobInstance.Server.cs" />
-    <Compile Include="WorldObjects\MobInter.Server.cs" />
-    <Compile Include="WorldObjects\Instances\MobInterInstance.Server.cs" />
-    <Compile Include="WorldObjects\NPC.Server.cs" />
-    <Compile Include="WorldObjects\Instances\NPCInstance.Server.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCBaseVobDef.Server.cs" />
+    <Compile Include="WorldObjects\Instances\GUCProjectileInst.Server.cs" />
+    <Compile Include="WorldObjects\Instances\GUCVobInst.Server.cs" />
+    <Compile Include="WorldObjects\Instances\GUCItemInst.Server.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCItemDef.Server.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCMobDef.Server.cs" />
+    <Compile Include="WorldObjects\Instances\GUCMobInterInst.Server.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCMobInterDef.Server.cs" />
+    <Compile Include="WorldObjects\Instances\GUCNPCInst.Server.cs" />
+    <Compile Include="WorldObjects\Definitions\GUCNPCDef.Server.cs" />
     <Compile Include="WorldObjects\WorldGlobals\BarrierController.Server.cs" />
     <Compile Include="WorldObjects\WorldGlobals\WeatherController.Server.cs" />
     <Compile Include="WorldObjects\World.Server.cs" />
