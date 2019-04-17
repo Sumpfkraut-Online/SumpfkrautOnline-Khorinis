@@ -7,7 +7,7 @@ using Gothic.Objects.Meshes;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class VobInstance
+    public partial class GUCVobDef
     {
         public override zCVob CreateVob(zCVob vob = null)
         {

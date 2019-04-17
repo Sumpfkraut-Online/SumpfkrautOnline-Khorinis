@@ -34,10 +34,10 @@ namespace GUC.WorldObjects
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(ProjectileInstance); } }
-        new public ProjectileInstance Instance
+        public override Type InstanceType { get { return typeof(GUCProjectileDef); } }
+        new public GUCProjectileDef Instance
         {
-            get { return (ProjectileInstance)base.Instance; }
+            get { return (GUCProjectileDef)base.Instance; }
             set { SetInstance(value); }
         }
         

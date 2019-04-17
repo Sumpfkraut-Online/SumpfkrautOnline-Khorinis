@@ -6,7 +6,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class ItemInstance : VobInstance
+    public partial class GUCItemDef : GUCVobDef
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.Item; } }
 
@@ -22,7 +22,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public ItemInstance(IScriptItemInstance scriptObject) : base(scriptObject)
+        public GUCItemDef(IScriptItemInstance scriptObject) : base(scriptObject)
         {
         }
 

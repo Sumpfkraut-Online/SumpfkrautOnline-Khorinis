@@ -7,7 +7,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public partial class NPCDef : NamedVobDef, NPCInstance.IScriptNPCInstance
+    public partial class NPCDef : NamedVobDef, GUCNPCDef.IScriptNPCInstance
     {
         #region Properties
 
@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         new public NPCDefEffectHandler EffectHandler { get { return (NPCDefEffectHandler)base.EffectHandler; } }
 
-        new public NPCInstance BaseDef { get { return (NPCInstance)base.BaseDef; } }
+        new public GUCNPCDef BaseDef { get { return (GUCNPCDef)base.BaseDef; } }
 
         new public string Name
         {
@@ -38,9 +38,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             pConstruct();
         }
 
-        protected override BaseVobInstance CreateVobInstance()
+        protected override GUCBaseVobDef CreateVobInstance()
         {
-            return new NPCInstance(this);
+            return new GUCNPCDef(this);
         }
 
         protected override BaseEffectHandler CreateHandler()

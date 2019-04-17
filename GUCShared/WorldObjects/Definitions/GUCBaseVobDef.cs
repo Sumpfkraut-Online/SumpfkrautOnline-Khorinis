@@ -12,7 +12,7 @@ namespace GUC.WorldObjects.Instances
     /// <summary>
     /// A VobInstance is used to define a Vob's default settings. 
     /// </summary>
-    public abstract partial class BaseVobInstance : IDObject, VobTypeObject
+    public abstract partial class GUCBaseVobDef : IDObject, VobTypeObject
     {
         public abstract GUCVobTypes VobType { get; }
 
@@ -32,7 +32,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public BaseVobInstance(IScriptBaseVobInstance scriptObject) : base(scriptObject)
+        public GUCBaseVobDef(IScriptBaseVobInstance scriptObject) : base(scriptObject)
         {
         }
 
@@ -50,10 +50,10 @@ namespace GUC.WorldObjects.Instances
         internal int collTypeID = -1;
         internal int dynTypeID = -1;
 
-        static StaticCollection<BaseVobInstance> idColl = new StaticCollection<BaseVobInstance>();
+        static StaticCollection<GUCBaseVobDef> idColl = new StaticCollection<GUCBaseVobDef>();
 
-        static VobTypeCollection<BaseVobInstance> instances = new VobTypeCollection<BaseVobInstance>();
-        static VobTypeCollection<BaseVobInstance> dynInstances = new VobTypeCollection<BaseVobInstance>();
+        static VobTypeCollection<GUCBaseVobDef> instances = new VobTypeCollection<GUCBaseVobDef>();
+        static VobTypeCollection<GUCBaseVobDef> dynInstances = new VobTypeCollection<GUCBaseVobDef>();
 
         #region Create & Delete
 
@@ -103,19 +103,19 @@ namespace GUC.WorldObjects.Instances
         #region Access
 
         /// <summary> Gets any Instance with the given ID or null from the static Instance collection. </summary>
-        public static bool TryGet(int id, out BaseVobInstance instance)
+        public static bool TryGet(int id, out GUCBaseVobDef instance)
         {
             return idColl.TryGet(id, out instance);
         }
 
         /// <summary> Gets an Instance of a specific type with the given ID or null from the static Instance collection. </summary>
-        public static bool TryGet<T>(int id, out T instance) where T : BaseVobInstance
+        public static bool TryGet<T>(int id, out T instance) where T : GUCBaseVobDef
         {
             return idColl.TryGet(id, out instance);
         }
 
         /// <summary> Loops through all Instances in the static Instance collection. </summary>
-        public static void ForEach(Action<BaseVobInstance> action)
+        public static void ForEach(Action<GUCBaseVobDef> action)
         {
             instances.ForEach(action);
         }
@@ -127,7 +127,7 @@ namespace GUC.WorldObjects.Instances
         }
 
         /// <summary> Loops through all Instances of the given type in the static Instance collection. </summary>
-        public static void ForEachOfType(GUCVobTypes type, Action<BaseVobInstance> action)
+        public static void ForEachOfType(GUCVobTypes type, Action<GUCBaseVobDef> action)
         {
             instances.ForEachOfType(type, action);
         }
@@ -138,12 +138,12 @@ namespace GUC.WorldObjects.Instances
             return instances.GetCountOfType(type);
         }
 
-        public static void ForEachDynamic(Action<BaseVobInstance> action)
+        public static void ForEachDynamic(Action<GUCBaseVobDef> action)
         {
             dynInstances.ForEach(action);
         }
 
-        public static void ForEachDynamicOfType(GUCVobTypes type, Action<BaseVobInstance> action)
+        public static void ForEachDynamicOfType(GUCVobTypes type, Action<GUCBaseVobDef> action)
         {
             dynInstances.ForEachOfType(type, action);
         }

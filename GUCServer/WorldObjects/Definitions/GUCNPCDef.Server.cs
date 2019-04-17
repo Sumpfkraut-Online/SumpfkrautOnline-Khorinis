@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class NPCInstance : VobInstance
+    public partial class GUCNPCDef : GUCVobDef
     {
     }
 }

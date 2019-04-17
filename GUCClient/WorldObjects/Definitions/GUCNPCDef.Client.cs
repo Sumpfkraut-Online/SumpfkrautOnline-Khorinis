@@ -7,7 +7,7 @@ using Gothic.Types;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class NPCInstance
+    public partial class GUCNPCDef
     {
         public override zCVob CreateVob(zCVob vob = null)
         {

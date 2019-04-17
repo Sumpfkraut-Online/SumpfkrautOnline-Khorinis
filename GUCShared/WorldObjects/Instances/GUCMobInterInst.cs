@@ -32,11 +32,11 @@ namespace GUC.WorldObjects
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(MobInterInstance); } }
+        public override Type InstanceType { get { return typeof(GUCMobInterDef); } }
         /// <summary> The Instance of this object. </summary>
-        new public MobInterInstance Instance
+        new public GUCMobInterDef Instance
         {
-            get { return (MobInterInstance)base.Instance; }
+            get { return (GUCMobInterDef)base.Instance; }
             set { SetInstance(value); }
         }
 

@@ -37,11 +37,11 @@ namespace GUC.WorldObjects
         /// <summary> The VobType of this Vob. </summary>
         public override GUCVobTypes VobType { get { return GUCVobTypes.Vob; } }
 
-        public override Type InstanceType { get { return typeof(VobInstance); } }
+        public override Type InstanceType { get { return typeof(GUCVobDef); } }
         /// <summary> The Instance of this object. </summary>
-        new public VobInstance Instance
+        new public GUCVobDef Instance
         {
-            get { return (VobInstance)base.Instance; }
+            get { return (GUCVobDef)base.Instance; }
             set { SetInstance(value); }
         }
 

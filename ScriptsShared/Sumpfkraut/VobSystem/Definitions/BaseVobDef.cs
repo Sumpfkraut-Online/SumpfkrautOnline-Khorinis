@@ -12,7 +12,7 @@ using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public abstract partial class BaseVobDef : ExtendedObject, BaseVobInstance.IScriptBaseVobInstance
+    public abstract partial class BaseVobDef : ExtendedObject, GUCBaseVobDef.IScriptBaseVobInstance
     {
         #region Constructors
         
@@ -48,9 +48,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         protected abstract BaseEffectHandler CreateHandler();
 
         // Definition
-        BaseVobInstance baseDef;
-        public BaseVobInstance BaseDef { get { return this.baseDef; } }
-        protected abstract BaseVobInstance CreateVobInstance();
+        GUCBaseVobDef baseDef;
+        public GUCBaseVobDef BaseDef { get { return this.baseDef; } }
+        protected abstract GUCBaseVobDef CreateVobInstance();
 
         public int ID { get { return BaseDef.ID; } }
         public bool IsStatic { get { return BaseDef.IsStatic; } }
@@ -77,8 +77,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static bool TryGetDef<T>(int id, out T def) where T : BaseVobDef
         {
-            BaseVobInstance instance;
-            if (BaseVobInstance.TryGet(id, out instance) && instance.ScriptObject is T)
+            GUCBaseVobDef instance;
+            if (GUCBaseVobDef.TryGet(id, out instance) && instance.ScriptObject is T)
             {
                 def = (T)instance.ScriptObject;
                 return true;
@@ -89,7 +89,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static void ForEachOfType(GUCVobTypes type, Action<BaseVobDef> action)
         {
-            BaseVobInstance.ForEachOfType(type, v => action((BaseVobDef)v.ScriptObject));
+            GUCBaseVobDef.ForEachOfType(type, v => action((BaseVobDef)v.ScriptObject));
         }
     }
 }

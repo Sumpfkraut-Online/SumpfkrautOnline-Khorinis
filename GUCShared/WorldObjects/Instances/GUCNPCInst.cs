@@ -72,10 +72,10 @@ namespace GUC.WorldObjects
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(NPCInstance); } }
-        new public NPCInstance Instance
+        public override Type InstanceType { get { return typeof(GUCNPCDef); } }
+        new public GUCNPCDef Instance
         {
-            get { return (NPCInstance)base.Instance; }
+            get { return (GUCNPCDef)base.Instance; }
             set { SetInstance(value); }
         }
 

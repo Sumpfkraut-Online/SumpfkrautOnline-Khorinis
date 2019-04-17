@@ -49,10 +49,10 @@ namespace GUC.WorldObjects
                 throw new NotSupportedException("Can't change value when the Item is in an ItemContainer!");
         }
 
-        public override Type InstanceType { get { return typeof(ItemInstance); } }
-        new public ItemInstance Instance
+        public override Type InstanceType { get { return typeof(GUCItemDef); } }
+        new public GUCItemDef Instance
         {
-            get { return (ItemInstance)base.Instance; }
+            get { return (GUCItemDef)base.Instance; }
             set { SetInstance(value); }
         }
 
@@ -115,8 +115,8 @@ namespace GUC.WorldObjects
             this.ID = stream.ReadByte();
 
             ushort instanceID = stream.ReadUShort();
-            ItemInstance inst;
-            if (!BaseVobInstance.TryGet(instanceID, out inst))
+            GUCItemDef inst;
+            if (!GUCBaseVobDef.TryGet(instanceID, out inst))
             {
                 throw new Exception("ItemInstance-ID not found! " + instanceID);
             }
@@ -136,8 +136,8 @@ namespace GUC.WorldObjects
         public void ReadInventoryProperties(PacketReader stream)
         {
             ushort instanceid = stream.ReadUShort();
-            ItemInstance inst;
-            if (!BaseVobInstance.TryGet(instanceid, out inst))
+            GUCItemDef inst;
+            if (!GUCBaseVobDef.TryGet(instanceid, out inst))
             {
                 throw new Exception("Instance-ID not found! " + instanceid);
             }

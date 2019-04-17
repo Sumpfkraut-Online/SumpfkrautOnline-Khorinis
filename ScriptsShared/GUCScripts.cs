@@ -82,7 +82,7 @@ namespace GUC.Scripts
         }
 
 
-        public WorldObjects.Instances.BaseVobInstance CreateInstance(byte type)
+        public WorldObjects.Instances.GUCBaseVobDef CreateInstance(byte type)
         {
             BaseVobDef def;
             switch ((VobType)type)

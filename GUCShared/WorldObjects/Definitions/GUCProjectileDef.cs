@@ -8,7 +8,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class ProjectileInstance : BaseVobInstance
+    public partial class GUCProjectileDef : GUCBaseVobDef
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.Projectile; } }
         
@@ -24,7 +24,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public ProjectileInstance(IScriptProjectileInstance scriptObject) : base(scriptObject)
+        public GUCProjectileDef(IScriptProjectileInstance scriptObject) : base(scriptObject)
         {
         }
 

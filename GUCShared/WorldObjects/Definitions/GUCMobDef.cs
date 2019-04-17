@@ -7,7 +7,7 @@ using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class MobInstance : VobInstance
+    public partial class GUCMobDef : GUCVobDef
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.Mob; } }
 
@@ -23,7 +23,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public MobInstance(IScriptMobInstance scriptObject) : base(scriptObject)
+        public GUCMobDef(IScriptMobInstance scriptObject) : base(scriptObject)
         {
         }
 

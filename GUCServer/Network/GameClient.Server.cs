@@ -48,7 +48,7 @@ namespace GUC.Network
             {
                 if (dynamics == null)
                 {
-                    if (BaseVobInstance.GetCountDynamics() > 0 && ModelInstance.CountDynamics > 0)
+                    if (GUCBaseVobDef.GetCountDynamics() > 0 && ModelInstance.CountDynamics > 0)
                     {
                         PacketWriter strm = new PacketWriter();
 
@@ -63,10 +63,10 @@ namespace GUC.Network
                         }
 
                         // INSTANCES
-                        if (strm.Write(BaseVobInstance.GetCountDynamics() > 0))
+                        if (strm.Write(GUCBaseVobDef.GetCountDynamics() > 0))
                         {
-                            strm.Write((ushort)BaseVobInstance.GetCountDynamics());
-                            BaseVobInstance.ForEachDynamic(v =>
+                            strm.Write((ushort)GUCBaseVobDef.GetCountDynamics());
+                            GUCBaseVobDef.ForEachDynamic(v =>
                             {
                                 strm.Write((byte)v.ScriptObject.GetVobType());
                                 v.WriteStream(strm);

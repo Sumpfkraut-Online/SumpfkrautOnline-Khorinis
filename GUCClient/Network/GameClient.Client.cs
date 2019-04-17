@@ -55,7 +55,7 @@ namespace GUC.Network
                     for (int i = 0; i < count; i++)
                     {
                         byte type = stream.ReadByte();
-                        BaseVobInstance inst = ScriptManager.Interface.CreateInstance(type);
+                        GUCBaseVobDef inst = ScriptManager.Interface.CreateInstance(type);
                         inst.ReadStream(stream);
                         inst.ScriptObject.Create();
                     }

@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class NPCInstance : VobInstance
+    public partial class GUCNPCDef : GUCVobDef
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.NPC; } }
 
@@ -23,7 +23,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public NPCInstance(IScriptNPCInstance scriptObject) : base(scriptObject)
+        public GUCNPCDef(IScriptNPCInstance scriptObject) : base(scriptObject)
         {
         }
 

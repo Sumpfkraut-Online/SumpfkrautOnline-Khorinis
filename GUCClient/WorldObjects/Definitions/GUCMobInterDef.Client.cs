@@ -6,7 +6,7 @@ using Gothic.Objects;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class MobInterInstance
+    public partial class GUCMobInterDef
     {
 
     }

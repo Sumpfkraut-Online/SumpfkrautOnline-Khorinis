@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class MobInterInstance : MobInstance
+    public partial class GUCMobInterDef : GUCMobDef
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.MobInter; } }
 
@@ -23,7 +23,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public MobInterInstance(IScriptMobInterInstance scriptObject) : base(scriptObject)
+        public GUCMobInterDef(IScriptMobInterInstance scriptObject) : base(scriptObject)
         {
         }
 

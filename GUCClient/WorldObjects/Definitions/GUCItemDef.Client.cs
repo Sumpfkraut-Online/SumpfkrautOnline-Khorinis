@@ -6,7 +6,7 @@ using Gothic.Objects;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class ItemInstance
+    public partial class GUCItemDef
     {
         public override zCVob CreateVob(zCVob vob = null)
         {

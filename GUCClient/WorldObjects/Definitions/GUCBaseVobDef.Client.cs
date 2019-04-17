@@ -11,7 +11,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.Instances
 {
-    public abstract partial class BaseVobInstance : IDObject, VobTypeObject
+    public abstract partial class GUCBaseVobDef : IDObject, VobTypeObject
     {
         #region Network Messages
 
@@ -22,14 +22,14 @@ namespace GUC.WorldObjects.Instances
             public static void ReadCreate(PacketReader stream)
             {
                 byte type = stream.ReadByte();
-                BaseVobInstance inst = ScriptManager.Interface.CreateInstance(type);
+                GUCBaseVobDef inst = ScriptManager.Interface.CreateInstance(type);
                 inst.ReadStream(stream);
                 inst.ScriptObject.Create();
             }
 
             public static void ReadDelete(PacketReader stream)
             {
-                if (BaseVobInstance.TryGet(stream.ReadUShort(), out BaseVobInstance inst))
+                if (GUCBaseVobDef.TryGet(stream.ReadUShort(), out GUCBaseVobDef inst))
                 {
                     inst.ScriptObject.Delete();
                 }

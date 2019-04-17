@@ -22,7 +22,7 @@ namespace GUC.Scripting
         Animation CreateAnimation();
         ModelInstance CreateModelInstance();
         BaseVob CreateVob(byte type);
-        BaseVobInstance CreateInstance(byte type);
+        GUCBaseVobDef CreateInstance(byte type);
         World CreateWorld();
         GuideCmd CreateGuideCommand(byte type);
     }

@@ -9,7 +9,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 {
-    public partial class ProjDef : BaseVobDef, ProjectileInstance.IScriptProjectileInstance
+    public partial class ProjDef : BaseVobDef, GUCProjectileDef.IScriptProjectileInstance
     {
         #region Constructors
 
@@ -19,9 +19,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             pConstruct();
         }
 
-        protected override BaseVobInstance CreateVobInstance()
+        protected override GUCBaseVobDef CreateVobInstance()
         {
-            return new ProjectileInstance(this);
+            return new GUCProjectileDef(this);
         }
 
         protected override BaseEffectHandler CreateHandler()
@@ -35,7 +35,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public override VobType VobType { get { return VobType.Projectile; } }
 
-        new public ProjectileInstance BaseDef { get { return (ProjectileInstance)base.BaseDef; } }
+        new public GUCProjectileDef BaseDef { get { return (GUCProjectileDef)base.BaseDef; } }
 
         #endregion
 

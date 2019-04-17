@@ -8,14 +8,14 @@ using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs
 {
-    public  partial class MobInterDef : MobDef, WorldObjects.Instances.MobInterInstance.IScriptMobInterInstance
+    public  partial class MobInterDef : MobDef, WorldObjects.Instances.GUCMobInterDef.IScriptMobInterInstance
     {
         #region Properties 
 
         public override VobType VobType { get { return VobType.MobInter; } }
 
         // Zugriff auf BasisKlasse (MobInstance = MobDef)
-        new public WorldObjects.Instances.MobInterInstance BaseDef { get { return (WorldObjects.Instances.MobInterInstance)base.BaseDef; } }
+        new public WorldObjects.Instances.GUCMobInterDef BaseDef { get { return (WorldObjects.Instances.GUCMobInterDef)base.BaseDef; } }
 
         #endregion
 
@@ -25,9 +25,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs
         {
         }
 
-        protected override WorldObjects.Instances.BaseVobInstance CreateVobInstance()
+        protected override WorldObjects.Instances.GUCBaseVobDef CreateVobInstance()
         {
-            return new WorldObjects.Instances.MobInterInstance(this);
+            return new WorldObjects.Instances.GUCMobInterDef(this);
         }
 
         #endregion

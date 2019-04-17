@@ -5,7 +5,7 @@ using System.Text;
 
 namespace GUC.WorldObjects.Instances
 {
-    public partial class MobInstance : VobInstance
+    public partial class GUCMobDef : GUCVobDef
     {
     }
 }

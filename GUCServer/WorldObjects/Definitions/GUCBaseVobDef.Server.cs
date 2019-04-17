@@ -6,13 +6,13 @@ using GUC.Network;
 
 namespace GUC.WorldObjects.Instances
 {
-    public abstract partial class BaseVobInstance
+    public abstract partial class GUCBaseVobDef
     {
         #region Network Messages
 
         internal static class Messages
         {
-            public static void WriteCreate(BaseVobInstance instance)
+            public static void WriteCreate(GUCBaseVobDef instance)
             {
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceCreateMessage);
                 stream.Write((byte)instance.ScriptObject.GetVobType());
@@ -20,7 +20,7 @@ namespace GUC.WorldObjects.Instances
                 GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0'));
             }
 
-            public static void WriteDelete(BaseVobInstance instance)
+            public static void WriteDelete(GUCBaseVobDef instance)
             {
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceDeleteMessage);
                 stream.Write((ushort)instance.ID);

@@ -94,13 +94,13 @@ namespace GUC.WorldObjects
 
         #region Vob Instance
 
-        BaseVobInstance instance;
+        GUCBaseVobDef instance;
         /// <summary> The Instance of this object. </summary>
-        public BaseVobInstance Instance { get { return this.instance; } set { SetInstance(value); } }
+        public GUCBaseVobDef Instance { get { return this.instance; } set { SetInstance(value); } }
 
-        public virtual Type InstanceType { get { return typeof(BaseVobInstance); } }
+        public virtual Type InstanceType { get { return typeof(GUCBaseVobDef); } }
 
-        protected void SetInstance(BaseVobInstance instance)
+        protected void SetInstance(GUCBaseVobDef instance)
         {
             CanChangeNow();
 
@@ -190,8 +190,8 @@ namespace GUC.WorldObjects
             base.ReadProperties(stream);
 
             int instanceID = stream.ReadUShort();
-            BaseVobInstance inst;
-            if (!BaseVobInstance.TryGet(instanceID, out inst))
+            GUCBaseVobDef inst;
+            if (!GUCBaseVobDef.TryGet(instanceID, out inst))
             {
                 throw new Exception("Instance ID not found! " + instanceID);
             }

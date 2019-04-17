@@ -53,7 +53,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
         Scroll,
     }
 
-    public partial class ItemDef : NamedVobDef, ItemInstance.IScriptItemInstance
+    public partial class ItemDef : NamedVobDef, GUCItemDef.IScriptItemInstance
     {
         #region Properties
 
@@ -61,7 +61,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         new public ItemDefEffectHandler EffectHandler { get { return (ItemDefEffectHandler)base.EffectHandler; } }
 
-        new public ItemInstance BaseDef { get { return (ItemInstance)base.BaseDef; } }
+        new public GUCItemDef BaseDef { get { return (GUCItemDef)base.BaseDef; } }
 
         /// <summary>The material of this item. Controls the dropping sound.</summary>
         public ItemMaterials Material = ItemMaterials.Wood;
@@ -111,9 +111,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
             return new ItemDefEffectHandler(null, null, this);
         }
 
-        protected override BaseVobInstance CreateVobInstance()
+        protected override GUCBaseVobDef CreateVobInstance()
         {
-            return new ItemInstance(this);
+            return new GUCItemDef(this);
         }
 
         #endregion
@@ -187,7 +187,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static void ForEach(Action<ItemDef> action)
         {
-            BaseVobInstance.ForEachOfType(GUCVobTypes.Item, i => action((ItemDef)i.ScriptObject));
+            GUCBaseVobDef.ForEachOfType(GUCVobTypes.Item, i => action((ItemDef)i.ScriptObject));
         }
     }
 }
