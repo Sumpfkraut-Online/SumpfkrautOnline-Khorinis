@@ -251,7 +251,7 @@ namespace GUC.Scripts.Arena.Controls
             // use mobs
             if(down)
             {
-                if(PlayerFocus.FocusVob is MobInst mobinst && !hero.IsUsingMob)
+                if(PlayerFocus.FocusVob is MobInst mobinst && hero.UsedMob == null)
                 {
                     if (mobinst.GetDistance(hero) < 230)
                     {
@@ -262,7 +262,7 @@ namespace GUC.Scripts.Arena.Controls
                         Sumpfkraut.Menus.ScreenScrollText.AddText("Das ist zu weit entfernt!");
                     }
                 }
-                else if(hero.IsUsingMob)
+                else if(hero.UsedMob != null)
                 {
                     NPCInst.Requests.StopUseMob(hero);
                 }
@@ -444,7 +444,7 @@ namespace GUC.Scripts.Arena.Controls
             if (hero.BaseInst.gAI.GetFoundLedge())
                 return;
 
-            if (hero.IsUsingMob)
+            if (hero.UsedMob != null)
                 return;
 
             const float maxTurnFightSpeed = 0.07f;

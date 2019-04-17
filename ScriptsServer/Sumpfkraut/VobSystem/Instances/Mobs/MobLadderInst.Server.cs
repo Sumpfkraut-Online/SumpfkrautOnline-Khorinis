@@ -10,7 +10,7 @@ using System.Text;
 
 namespace GUC.Scripts.Sumpfkraut.Mobs
 {
-    public partial class MobChairInst : MobInst
+    public partial class MobLadderInst : MobInst
     {
         /// <summary>
         /// Called when NPC starts interacting with the mob.
@@ -18,7 +18,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs
         public override void StartUsing(NPCInst npcInst)
         {
             NPCCatalog AniCatalog = (NPCCatalog)npcInst.ModelDef?.Catalog;
-            StartAnimation(npcInst, AniCatalog.Mob.Chair.Sit);
+            //StartAnimation(npcInst, AniCatalog.Mob.Ladder.ClimbUp);
             npcInst.SetPosAng(this.GetPosition() + new Vec3f(53.0f, 0, -58), this.GetAngles());
         }
 
@@ -28,7 +28,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs
         public override void StopUsing(NPCInst npcInst)
         {
             NPCCatalog AniCatalog = (NPCCatalog)npcInst.ModelDef?.Catalog;
-            StopAnimation(npcInst, AniCatalog.Mob.Chair.StandUp);
+            StopAnimation(npcInst, AniCatalog.Mob.Ladder.ClimbDown);
         }
         /// <summary>
         /// Check whether the npc has the requirements to use this vob. Display Feedback if not.

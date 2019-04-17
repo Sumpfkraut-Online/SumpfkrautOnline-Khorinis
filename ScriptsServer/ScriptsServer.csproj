@@ -408,6 +408,9 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NamedVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\NamedVobInst.cs</Link>
     </Compile>
@@ -542,6 +545,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\BaseVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInst.Server.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NamedVobInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.Server.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Server.cs" />

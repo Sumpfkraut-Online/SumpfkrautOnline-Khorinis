@@ -71,6 +71,8 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
             { "mob_chair_sitToStand", "Mob.Chair.StandUp" },
             { "mob_bed_standToSleep", "Mob.Bed.Sleep" },
             { "mob_bed_sleepToStand", "Mob.Bed.StandUp" },
+            { "mob_ladder_climbUp0", "Mob.Ladder.ClimbUp" },
+            { "mob_ladder_climbDown0", "Mob.Ladder.ClimbDown" },
 
             // climbing
             { "climb_high", "Climbs.High" },
@@ -179,6 +181,15 @@ namespace GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs
                 public ScriptAniJob StandUp { get; private set; }
             }
             public BedAnis Bed { get; private set; }
+            #endregion
+
+            #region Ladder
+            public class LadderAnis : AniCatalog
+            {
+                public ScriptAniJob ClimbUp { get; private set; }
+                public ScriptAniJob ClimbDown { get; private set; }
+            }
+            public LadderAnis Ladder { get; private set; }
             #endregion
         }
         public MobAnis Mob { get; private set; }

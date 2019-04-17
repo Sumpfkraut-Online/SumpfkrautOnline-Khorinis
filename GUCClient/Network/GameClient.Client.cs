@@ -538,6 +538,7 @@ namespace GUC.Network
                     GuidedVob.Messages.ReadGuideSetCmdMessage(stream);
                     break;
                 case ServerMessages.VobInstanceCreateMessage:
+                    Log.Logger.Log("Created Vob instance message >>");
                     // TODO: whatever has to be done
                     break;
 

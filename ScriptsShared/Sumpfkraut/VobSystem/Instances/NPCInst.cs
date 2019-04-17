@@ -70,7 +70,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         partial void pConstruct();
         public NPCInst()
         {
-            IsUsingMob = false;
             pConstruct();
         }
 
@@ -103,7 +102,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public bool IsDead { get { return this.BaseInst.IsDead; } }
         public bool IsInFightMode { get { return this.BaseInst.IsInFightMode; } }
-        public bool IsUsingMob { get; set; }
         public MobInst UsedMob { get; set; }
 
         public bool IsWading

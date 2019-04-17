@@ -16,7 +16,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs
         /// </summary>
         public override void StartUsing(NPCInst npcInst)
         {
-            Log.Logger.Log("StartUsing Mob on client");
+            Log.Logger.Log("StartUsing chair Mob on client");
             //NPCCatalog AniCatalog = (NPCCatalog)npcInst.ModelDef?.Catalog;
             //ScriptAniJob standToSit = new ScriptAniJob("mob_chair_standToSit", "t_Chair_S0_2_S1", new ScriptAni(0, 39));
             //model.AddAniJob(standToSit);
@@ -33,6 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.Mobs
             //NPCCatalog AniCatalog = (NPCCatalog)npcInst.ModelDef?.Catalog;
             //npcInst.ModelInst.StartAniJob(AniCatalog.Mob.Chair.StandUp);
         }
+
         /// <summary>
         /// 
         /// Check whether the npc has the requirements to use this vob. Display Feedback if not.

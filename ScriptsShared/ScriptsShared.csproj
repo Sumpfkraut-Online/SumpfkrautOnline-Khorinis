@@ -167,6 +167,7 @@
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemContainers\ScriptInventory.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ItemInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NamedVobInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\NPCInst.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.cs" />

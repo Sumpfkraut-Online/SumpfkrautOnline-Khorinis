@@ -6,17 +6,24 @@ using System.Threading.Tasks;
 using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs;
 using GUC.Scripts.Sumpfkraut.Visuals;
+using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 {
     public partial class MobInst : NamedVobInst, WorldObjects.Mob.IScriptMob
     {
+
+        #region Properties
+
+        public override VobType VobType { get { return VobType.Mob; } }
+
+        new public WorldObjects.Mob BaseInst { get { return (WorldObjects.Mob)base.BaseInst; } }
+
+        new public MobDef Definition { get { return (MobDef)base.Definition; } set { base.Definition = value; } }
+
+        #endregion
+
         #region Constructors
-
-        public MobInst()
-        {
-
-        }
 
         protected override WorldObjects.BaseVob CreateVob()
         {
@@ -25,24 +32,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 
         #endregion
 
-        #region Properties
-
-        public override VobType VobType { get { return VobType.Mob; } }
-
-        public new WorldObjects.Mob BaseInst { get { return (WorldObjects.Mob)base.BaseInst; } }
-        
-        new public MobDef Definition { get { return (MobDef)base.Definition; } set { base.Definition = value; } }
-
-        #endregion
-
         #region Methods
+
         /// <summary>
         /// Called when NPC starts interacting with the mob.
         /// </summary>
         public virtual void StartUsing(NPCInst npcInst)
         {
             // implemented in inheriting class
-            throw new NotImplementedException();
+            Log.Logger.Log("Start using mob for this mob not implemented.");
         }
 
         /// <summary>
@@ -51,15 +49,17 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
         public virtual void StopUsing(NPCInst npcInst)
         {
             // implemented in inheriting class
-            throw new NotImplementedException();
+            Log.Logger.Log("Stop using mob for this mob not implemented.");
         }
+
         /// <summary>
-        /// Check whether the npc has the requirements to use this vob. Display Feedback if not.
+        /// Check whether the npc has the requirements to use this vob. (Client: Otherwise display feedback).
         /// </summary>
         public virtual bool HasRequirements(NPCInst npcInst)
         {
             return true;
         }
+
         #endregion
 
         #region Read & Write
@@ -73,7 +73,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
         {
             base.OnWriteProperties(stream);
         }
-
         #endregion
     }
 }

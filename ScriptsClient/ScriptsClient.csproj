@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -364,8 +364,17 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\ItemInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\ItemInst.cs</Link>
     </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobBedInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobBedInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobChairInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobChairInst.cs</Link>
+    </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobInst.cs</Link>
+    </Compile>
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.cs">
+      <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.cs</Link>
     </Compile>
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\NamedVobInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\NamedVobInst.cs</Link>
@@ -457,7 +466,10 @@
     <Compile Include="Sumpfkraut\Networking\Requests\NPCRequestSender.cs" />
     <Compile Include="Sumpfkraut\Options\ClientOptions.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobDef.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobBedInst.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobChairInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInst.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobLadderInst.Client.cs" />
     <Compile Include="Sumpfkraut\VobSystem\Instances\ProjInst.Client.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\ExitMenu.cs" />
     <Compile Include="Sumpfkraut\Menus\MainMenus\GUCMainMenu.cs" />
@@ -485,11 +497,11 @@
     <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs">
       <Link>Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.cs</Link>
     </Compile>
-	<Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs">
+    <Compile Include="..\ScriptsShared\Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs">
       <Link>Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.cs</Link>
     </Compile>
-	<Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.Client.cs" />
-	<Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Definitions\Mobs\MobInterDef.Client.cs" />
+    <Compile Include="Sumpfkraut\VobSystem\Instances\Mobs\MobInterInst.Client.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GUCClient\GUCClient.csproj">

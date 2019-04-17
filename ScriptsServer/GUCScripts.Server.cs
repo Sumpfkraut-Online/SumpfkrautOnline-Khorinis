@@ -197,22 +197,46 @@ namespace GUC.Scripts
             
             Arena.GameModes.BattleRoyale.BRWorldLoader.Load(world);
 
-            Logger.Log("Creating the Chair!");
-            ModelDef m = new ModelDef("chair1", "BEDHIGH_1_OC.ASC");
+            ModelDef m = new ModelDef("chair1", "CHAIR_1_OC.ASC");
             m.Create();
 
             MobDef chair1 = new MobDef("Chair1")
             {
                 Model = m,
-                FocusName = "EIN STUHL",
+                FocusName = "Stuhl",
             };
             chair1.Create();
 
-           // MobInst theChair = new MobInst(chair1);
-            MobBedInst chair = new MobBedInst(chair1);
-            chair.Spawn(world, new Vec3f(-3907.42f, -680.4108f, 2961.229f), new Angles(0, 0.7539826f, 0f));
+            MobBedInst theChair = new MobBedInst(chair1);
+            MobChairInst chair2 = new MobChairInst(chair1);
+            chair2.Spawn(world, new Vec3f(-3907.42f, -680.4108f, 3061.229f), new Angles(0, 0.7539826f, 0f));
             //theChair.Spawn(world, new Vec3f(-3807.42f, -680.4108f, 2961.229f), new Angles(0, 0.7539826f, 0f));
 
+            m = new ModelDef("bedDef1", "BEDHIGH_1_OC.ASC");
+            m.Create();
+
+            MobDef bedDef1 = new MobDef("BedDef1")
+            {
+                Model = m,
+                FocusName = "Bett",
+            };
+            bedDef1.Create();
+
+            MobBedInst bed1 = new MobBedInst(bedDef1);
+            bed1.Spawn(world, new Vec3f(-3907.42f, -680.4108f, 3161.229f), new Angles(0, 0.7539826f, 0f));
+
+            m = new ModelDef("ladder", "LADDER_2.ASC");
+            m.Create();
+
+            MobDef ladderDef = new MobDef("ladderDef")
+            {
+                Model = m,
+                FocusName = "Leiter",
+            };
+            ladderDef.Create();
+
+            MobLadderInst ladder = new MobLadderInst(ladderDef);
+            ladder.Spawn(world, new Vec3f(-3907.42f, -680.4108f, 2961.229f), new Angles(0, 0.7539826f, 0f));
         }
 
         void AddSomeDefs()
@@ -1005,14 +1029,37 @@ namespace GUC.Scripts
             #endregion
 
             #region Bed
-            ScriptAniJob standToSleep = new ScriptAniJob("mob_bed_standToSleep", "t_BedHigh_Front_S0_2_S1", new ScriptAni(0, 39));
+            ScriptAniJob standToSleep = new ScriptAniJob("mob_bed_standToSleep", "t_BedHigh_Front_S0_2_S1", new ScriptAni(0, 51));
             model.AddAniJob(standToSleep);
             ScriptAniJob sleep = new ScriptAniJob("mob_bed_sleep", "s_BedHigh_Front_S1", new ScriptAni());
             model.AddAniJob(sleep);
             standToSleep.NextAni = sleep;
 
-            ScriptAniJob sleepToStand = new ScriptAniJob("mob_bed_sleepToStand", "t_BedHigh_Front_S1_2_S0", new ScriptAni(0, 39));
+            ScriptAniJob sleepToStand = new ScriptAniJob("mob_bed_sleepToStand", "t_BedHigh_Front_S1_2_S0", new ScriptAni(0, 51));
             model.AddAniJob(sleepToStand);
+            #endregion
+
+            #region Ladder
+
+            ScriptAniJob ladderClimbUp0 = new ScriptAniJob("mob_ladder_climbUp0", "s_Ladder_S0", new ScriptAni());
+            model.AddAniJob(ladderClimbUp0);
+
+            /*ScriptAniJob ladderClimbUp1 = new ScriptAniJob("mob_ladder_climbUp1", "t_Ladder_S1_2_Stand", new ScriptAni(0,30));
+            model.AddAniJob(ladderClimbUp1);
+            ladderClimbUp0.NextAni = ladderClimbUp1;
+
+            /*ScriptAniJob ladderClimbUp2 = new ScriptAniJob("mob_ladder_climbUp2", "t_Ladder_S0_2_S1", new ScriptAni());
+            model.AddAniJob(ladderClimbUp2);
+            ladderClimbUp1.NextAni = ladderClimbUp2;*/
+
+            ScriptAniJob ladderClimbDown0 = new ScriptAniJob("mob_ladder_climbDown0", "t_Ladder_S1_2_S0", new ScriptAni(0, 30));
+            model.AddAniJob(ladderClimbDown0);
+
+            ScriptAniJob ladderClimbDown1 = new ScriptAniJob("mob_ladder_climbDown1", "t_Ladder_S0_2_Stand", new ScriptAni(5, 41));
+            model.AddAniJob(ladderClimbDown1);
+            ladderClimbDown0.NextAni = ladderClimbDown1;
+
+
             #endregion
         }
 

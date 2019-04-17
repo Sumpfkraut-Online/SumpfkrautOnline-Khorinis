@@ -7,5 +7,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 {
     partial class MobInst
     {
+    
+        public MobInst()
+        {
+            Log.Logger.Log("Created MOB on CLIENT >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> ");
+        }
     }
 }

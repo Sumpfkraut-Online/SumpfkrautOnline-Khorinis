@@ -220,37 +220,20 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                 case ScriptVobMessageIDs.StartUsingMob:
                     if (WorldInst.Current.TryGetVob(stream.ReadUShort(), out MobInst mobInst))
                     {
-                        MobStartUsing(mobInst);
+                        mobInst.StartUsing(Hero);
+                        UsedMob = mobInst;
                     }
                     break;
                 case ScriptVobMessageIDs.StopUsingMob:
-                    if (Hero.IsUsingMob)
+                    if (Hero.UsedMob != null)
                     {
-                        MobStopUsing();
+                        UsedMob.StopUsing(Hero);
+                        Hero.UsedMob = null;
                     }
                     break;
+
                 default:
                     break;
-            }
-        }
-
-        private void MobStartUsing(MobInst mobInst)
-        {
-            if (!IsUsingMob)
-            {
-                mobInst.StartUsing(Hero);
-                IsUsingMob = true;
-                UsedMob = mobInst;
-            }
-        }
-
-        private void MobStopUsing()
-        {
-            if(IsUsingMob && UsedMob != null)
-            {
-                UsedMob.StopUsing(Hero);
-                IsUsingMob = false;
-                UsedMob = null;
             }
         }
 

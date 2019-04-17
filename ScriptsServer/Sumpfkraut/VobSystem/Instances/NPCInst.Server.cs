@@ -1068,7 +1068,6 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             if (mobInst.HasRequirements(this))
             {
                 mobInst.StartUsing(this);
-                IsUsingMob = true;
                 UsedMob = mobInst;
                 var strm = this.BaseInst.GetScriptVobStream();
                 strm.Write((byte)ScriptVobMessageIDs.StartUsingMob);
@@ -1079,11 +1078,15 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public void StopUseMob()
         {
-            UsedMob.StopUsing(this);
-            IsUsingMob = true;
-            var strm = this.BaseInst.GetScriptVobStream();
-            strm.Write((byte)ScriptVobMessageIDs.StopUsingMob);
-            this.BaseInst.SendScriptVobStream(strm);
+            if (UsedMob != null)
+            {
+                UsedMob.StopUsing(this);
+                UsedMob = null;
+            }
+            else
+            {
+                Log.Logger.LogWarning("Requested stop use mob on null");
+            }
         }
         #endregion
 
