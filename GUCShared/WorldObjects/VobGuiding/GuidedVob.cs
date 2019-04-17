@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.VobGuiding
 {
-    public abstract partial class GuidedVob : BaseVob
+    public abstract partial class GuidedVob : GUCBaseVobInst
     {
         #region Constructors
 

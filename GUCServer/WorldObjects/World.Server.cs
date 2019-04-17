@@ -138,7 +138,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        internal void UpdateVobCell(BaseVob vob, Vec3f pos)
+        internal void UpdateVobCell(GUCBaseVobInst vob, Vec3f pos)
         {
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
@@ -200,7 +200,7 @@ namespace GUC.WorldObjects
             client.SpecCell = null;
         }
 
-        partial void pAfterAddVob(BaseVob vob)
+        partial void pAfterAddVob(GUCBaseVobInst vob)
         {
             if (!vob.IsStatic)
             {
@@ -218,7 +218,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pBeforeRemoveVob(BaseVob vob)
+        partial void pBeforeRemoveVob(GUCBaseVobInst vob)
         {
             if (!vob.IsStatic)
             {
@@ -235,7 +235,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 5000 units accuracy
         /// </summary>
-        public void ForEachDynVobRougher(BaseVob vob, float radius, Action<BaseVob> action)
+        public void ForEachDynVobRougher(GUCBaseVobInst vob, float radius, Action<GUCBaseVobInst> action)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
             this.ForEachDynVobRougher(vob.Position, radius, action);
@@ -244,7 +244,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 5000 units accuracy
         /// </summary>
-        public void ForEachDynVobRougher(Vec3f pos, float radius, Action<BaseVob> action)
+        public void ForEachDynVobRougher(Vec3f pos, float radius, Action<GUCBaseVobInst> action)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
@@ -267,7 +267,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 5000 units accuracy
         /// </summary>
-        public void ForEachDynVobRougherPredicate(BaseVob vob, float radius, Predicate<BaseVob> predicate)
+        public void ForEachDynVobRougherPredicate(GUCBaseVobInst vob, float radius, Predicate<GUCBaseVobInst> predicate)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
             this.ForEachDynVobRougherPredicate(vob.Position, radius, predicate);
@@ -276,7 +276,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 5000 units accuracy
         /// </summary>
-        public void ForEachDynVobRougherPredicate(Vec3f pos, float radius, Predicate<BaseVob> predicate)
+        public void ForEachDynVobRougherPredicate(Vec3f pos, float radius, Predicate<GUCBaseVobInst> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException("Predicate is null!");
@@ -303,7 +303,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 5000 units accuracy
         /// </summary>
-        public void ForEachClientRougher(BaseVob vob, float radius, Action<GameClient> action)
+        public void ForEachClientRougher(GUCBaseVobInst vob, float radius, Action<GameClient> action)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
             this.ForEachClientRougher(vob.Position, radius, action);
@@ -335,7 +335,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 5000 units accuracy
         /// </summary>
-        public void ForEachClientRougherPredicate(BaseVob vob, float radius, Predicate<GameClient> predicate)
+        public void ForEachClientRougherPredicate(GUCBaseVobInst vob, float radius, Predicate<GameClient> predicate)
         {
             if (vob == null) throw new ArgumentNullException("Vob is null!");
             this.ForEachClientRougherPredicate(vob.Position, radius, predicate);
@@ -374,7 +374,7 @@ namespace GUC.WorldObjects
 
         Dictionary<int, NPCCell> npcCells = new Dictionary<int, NPCCell>();
 
-        internal void UpdateNPCCell(NPC npc, Vec3f pos)
+        internal void UpdateNPCCell(GUCNPCInst npc, Vec3f pos)
         {
             if (npc == null)
                 throw new ArgumentNullException("NPC is null!");
@@ -407,7 +407,7 @@ namespace GUC.WorldObjects
             }
         }
 
-        internal void AddToNPCCells(NPC npc)
+        internal void AddToNPCCells(GUCNPCInst npc)
         {
             // find the cell for this npc
             Vec2i coords = NPCCell.GetCoords(npc.Position);
@@ -422,7 +422,7 @@ namespace GUC.WorldObjects
             npc.NpcCell = cell;
         }
 
-        internal void RemoveFromNPCCells(NPC npc)
+        internal void RemoveFromNPCCells(GUCNPCInst npc)
         {
             npc.NpcCell.RemoveNPC(npc);
             CheckCellRemove(npc.NpcCell);
@@ -436,7 +436,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 1000 ingame units accuracy
         /// </summary>
-        public void ForEachNPCRough(BaseVob vob, float radius, Action<NPC> action)
+        public void ForEachNPCRough(GUCBaseVobInst vob, float radius, Action<GUCNPCInst> action)
         {
             if (vob == null)
                 throw new ArgumentException("Vob is null!");
@@ -446,7 +446,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 1000 ingame units accuracy
         /// </summary>
-        public void ForEachNPCRough(Vec3f pos, float radius, Action<NPC> action)
+        public void ForEachNPCRough(Vec3f pos, float radius, Action<GUCNPCInst> action)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
@@ -469,7 +469,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 1000 ingame units accuracy
         /// </summary>
-        public void ForEachNPCRoughPredicate(BaseVob vob, float radius, Predicate<NPC> predicate)
+        public void ForEachNPCRoughPredicate(GUCBaseVobInst vob, float radius, Predicate<GUCNPCInst> predicate)
         {
             if (vob == null)
                 throw new ArgumentException("Vob is null!");
@@ -479,7 +479,7 @@ namespace GUC.WorldObjects
         /// <summary>
         /// 1000 ingame units accuracy
         /// </summary>
-        public void ForEachNPCRoughPredicate(Vec3f pos, float radius, Predicate<NPC> predicate)
+        public void ForEachNPCRoughPredicate(Vec3f pos, float radius, Predicate<GUCNPCInst> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException("Predicate is null!");

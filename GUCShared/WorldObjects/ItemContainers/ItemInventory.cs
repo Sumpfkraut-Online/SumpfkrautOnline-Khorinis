@@ -14,8 +14,8 @@ namespace GUC.WorldObjects.ItemContainers
 
         public partial interface IScriptItemInventory : IScriptGameObject
         {
-            void AddItem(Item item);
-            void RemoveItem(Item item);
+            void AddItem(GUCItemInst item);
+            void RemoveItem(GUCItemInst item);
         }
 
         public new IScriptItemInventory ScriptObject { get { return (IScriptItemInventory)base.ScriptObject; } }
@@ -42,15 +42,15 @@ namespace GUC.WorldObjects.ItemContainers
         ItemContainer owner;
         public ItemContainer Owner { get { return this.owner; } }
 
-        StaticCollection<Item> idColl = new StaticCollection<Item>(MaxItems);
-        DynamicCollection<Item> items = new DynamicCollection<Item>(MaxItems);
+        StaticCollection<GUCItemInst> idColl = new StaticCollection<GUCItemInst>(MaxItems);
+        DynamicCollection<GUCItemInst> items = new DynamicCollection<GUCItemInst>(MaxItems);
 
         #endregion
 
         #region Add & Remove
 
-        partial void pAfterAdd(Item item);
-        public virtual void Add(Item item)
+        partial void pAfterAdd(GUCItemInst item);
+        public virtual void Add(GUCItemInst item)
         {
             if (item == null)
             {
@@ -72,8 +72,8 @@ namespace GUC.WorldObjects.ItemContainers
             pAfterAdd(item);
         }
 
-        partial void pAfterRemove(Item item);
-        public virtual void Remove(Item item)
+        partial void pAfterRemove(GUCItemInst item);
+        public virtual void Remove(GUCItemInst item)
         {
             if (item == null)
             {
@@ -99,13 +99,13 @@ namespace GUC.WorldObjects.ItemContainers
         public int Count { get { return items.Count; } }
 
         /// <summary> Gets an Item with the given ID or null. </summary>
-        public bool TryGetItem(int id, out Item item)
+        public bool TryGetItem(int id, out GUCItemInst item)
         {
             return idColl.TryGet(id, out item);
         }
 
         /// <summary> Loops through all Items in this ItemInventory. </summary>
-        public void ForEach(Action<Item> action)
+        public void ForEach(Action<GUCItemInst> action)
         {
             items.ForEach(action);
         }
@@ -114,7 +114,7 @@ namespace GUC.WorldObjects.ItemContainers
         /// Loops through all Items in this ItemInventory. 
         /// Let the predicate return FALSE to BREAK the loop.
         /// </summary>
-        public void ForEachPredicate(Predicate<Item> action)
+        public void ForEachPredicate(Predicate<GUCItemInst> action)
         {
             items.ForEachPredicate(action);
         }

@@ -60,7 +60,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             return aiClients.Contains(aiClient);
         }
 
-        public bool HasAIClient (WorldObjects.Vob baseVob)
+        public bool HasAIClient (WorldObjects.GUCVobInst baseVob)
         {
             bool hasAIClient = false;
             for (int i = 0; i < aiClients.Count; i++)

@@ -20,7 +20,7 @@ namespace GUC.Network
             void OnConnection();
             void OnDisconnection(int id);
 
-            void SetControl(NPC npc);
+            void SetControl(GUCNPCInst npc);
             void SetToSpectator(World world, Vec3f pos, Angles ang);
         }
 
@@ -41,8 +41,8 @@ namespace GUC.Network
 
         #region Properties
 
-        NPC character;
-        public NPC Character { get { return this.character; } }
+        GUCNPCInst character;
+        public GUCNPCInst Character { get { return this.character; } }
 
         new public int ID { get { return base.ID; } }
 
@@ -70,9 +70,9 @@ namespace GUC.Network
         bool loading;
         public bool Loading { get { return this.loading; } internal set { this.loading = value; } }
 
-        partial void pSetControl(NPC npc);
+        partial void pSetControl(GUCNPCInst npc);
         /// <summary> Lets this client take control of the given NPC. Can be null. </summary>
-        public void SetControl(NPC npc)
+        public void SetControl(GUCNPCInst npc)
         {
             if (this.character == npc)
                 return;

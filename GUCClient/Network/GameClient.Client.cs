@@ -80,7 +80,7 @@ namespace GUC.Network
             {
                 int id = stream.ReadUShort();
 
-                if (World.Current.TryGetVob(id, out BaseVob vob))
+                if (World.Current.TryGetVob(id, out GUCBaseVobInst vob))
                 {
                     Client.ScriptObject.ReadScriptVobMessage(stream, vob);
                 }
@@ -302,8 +302,8 @@ namespace GUC.Network
                 receivedBytes = 0;
                 sentBytes = 0;
 
-                if(NPC.Hero != null)
-                    devInfo.Texts[devIndex++].Text = ("Position: " + NPC.Hero.Position);
+                if(GUCNPCInst.Hero != null)
+                    devInfo.Texts[devIndex++].Text = ("Position: " + GUCNPCInst.Hero.Position);
 
                 if (World.Current != null)
                 {
@@ -446,10 +446,10 @@ namespace GUC.Network
                     World.Messages.ReadVobDespawnMessage(stream);
                     break;
                 case ServerMessages.VobPosDirMessage:
-                    BaseVob.Messages.ReadPosDirMessage(stream);
+                    GUCBaseVobInst.Messages.ReadPosDirMessage(stream);
                     break;
                 case ServerMessages.VobThrowMessage:
-                    Vob.Messages.ReadThrow(stream);
+                    GUCVobInst.Messages.ReadThrow(stream);
                     break;
 
                 case ServerMessages.ScriptMessage:
@@ -463,25 +463,25 @@ namespace GUC.Network
 
                 // NPC Messages
                 case ServerMessages.NPCPosAngMessage:
-                    NPC.Messages.ReadPosAngMessage(stream);
+                    GUCNPCInst.Messages.ReadPosAngMessage(stream);
                     break;
                 case ServerMessages.NPCEquipAddMessage:
-                    NPC.Messages.ReadEquipMessage(stream);
+                    GUCNPCInst.Messages.ReadEquipMessage(stream);
                     break;
                 case ServerMessages.NPCEquipRemoveMessage:
-                    NPC.Messages.ReadUnequipMessage(stream);
+                    GUCNPCInst.Messages.ReadUnequipMessage(stream);
                     break;
                 case ServerMessages.NPCEquipSwitchMessage:
-                    NPC.Messages.ReadEquipSwitchMessage(stream);
+                    GUCNPCInst.Messages.ReadEquipSwitchMessage(stream);
                     break;
                 case ServerMessages.NPCFightModeSetMessage:
-                    NPC.Messages.ReadFightMode(stream, true);
+                    GUCNPCInst.Messages.ReadFightMode(stream, true);
                     break;
                 case ServerMessages.NPCFightModeUnsetMessage:
-                    NPC.Messages.ReadFightMode(stream, false);
+                    GUCNPCInst.Messages.ReadFightMode(stream, false);
                     break;
                 case ServerMessages.NPCHealthMessage:
-                    NPC.Messages.ReadHealth(stream);
+                    GUCNPCInst.Messages.ReadHealth(stream);
                     break;
 
                 // Player Messages
@@ -492,7 +492,7 @@ namespace GUC.Network
                     WorldObjects.ItemContainers.NPCInventory.Messages.ReadRemoveItem(stream);
                     break;
                 case ServerMessages.PlayerItemAmountChangedMessage:
-                    WorldObjects.Item.Messages.ReadItemAmountChangedMessage(stream);
+                    WorldObjects.GUCItemInst.Messages.ReadItemAmountChangedMessage(stream);
                     break;
 
                 // Model Messages
@@ -567,7 +567,7 @@ namespace GUC.Network
         public partial interface IScriptClient : IScriptGameObject
         {
             void ReadScriptMessage(PacketReader stream);
-            void ReadScriptVobMessage(PacketReader stream, BaseVob vob);
+            void ReadScriptVobMessage(PacketReader stream, GUCBaseVobInst vob);
         }
 
         #endregion
@@ -641,7 +641,7 @@ namespace GUC.Network
         void ReadPlayerControlMessage(PacketReader stream)
         {
             int characterID = stream.ReadUShort();
-            if (!World.Current.TryGetVob(characterID, out NPC npc))
+            if (!World.Current.TryGetVob(characterID, out GUCNPCInst npc))
             {
                 throw new Exception("Hero not found!");
             }
@@ -651,7 +651,7 @@ namespace GUC.Network
             this.ScriptObject.SetControl(npc);
         }
 
-        partial void pSetControl(NPC npc)
+        partial void pSetControl(GUCNPCInst npc)
         {
             this.character = npc;
             Character.gVob.SetAsPlayer();

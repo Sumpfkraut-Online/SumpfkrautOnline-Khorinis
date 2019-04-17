@@ -92,7 +92,7 @@ namespace GUC.WorldObjects
             public static void ReadVobSpawn(PacketReader stream)
             {
                 byte type = stream.ReadByte();
-                BaseVob vob = ScriptManager.Interface.CreateVob(type);
+                GUCBaseVobInst vob = ScriptManager.Interface.CreateVob(type);
                 vob.ReadStream(stream);
                 vob.ScriptObject.Spawn(current);
             }
@@ -101,7 +101,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                if (current.TryGetVob(id, out BaseVob vob))
+                if (current.TryGetVob(id, out GUCBaseVobInst vob))
                 {
                     // despawn also removes guided id
                     vob.ScriptObject.Despawn();
@@ -139,16 +139,16 @@ namespace GUC.WorldObjects
         #region Gothic-Object Address Dictionary
 
         // Dictionary with all addresses of gothic-objects in this world.
-        Dictionary<int, BaseVob> vobAddr = new Dictionary<int, BaseVob>();
+        Dictionary<int, GUCBaseVobInst> vobAddr = new Dictionary<int, GUCBaseVobInst>();
 
-        public bool TryGetVobByAddress(int address, out BaseVob vob)
+        public bool TryGetVobByAddress(int address, out GUCBaseVobInst vob)
         {
             return vobAddr.TryGetValue(address, out vob);
         }
 
-        public bool TryGetVobByAddress<T>(int address, out T vob) where T : BaseVob
+        public bool TryGetVobByAddress<T>(int address, out T vob) where T : GUCBaseVobInst
         {
-            BaseVob v;
+            GUCBaseVobInst v;
             if (vobAddr.TryGetValue(address, out v))
             {
                 if (v is T)
@@ -165,7 +165,7 @@ namespace GUC.WorldObjects
 
         #region Add & Remove
 
-        partial void pAfterAddVob(BaseVob vob)
+        partial void pAfterAddVob(GUCBaseVobInst vob)
         {
             // add the vob to the gothic world
             gWorld.AddVob(vob.gVob);
@@ -174,7 +174,7 @@ namespace GUC.WorldObjects
             vobAddr.Add(vob.gVob.Address, vob);
         }
 
-        partial void pBeforeRemoveVob(BaseVob vob)
+        partial void pBeforeRemoveVob(GUCBaseVobInst vob)
         {
             var gVob = vob.gVob;
 

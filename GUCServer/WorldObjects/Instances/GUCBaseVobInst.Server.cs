@@ -9,7 +9,7 @@ using GUC.GameObjects.Collections;
 
 namespace GUC.WorldObjects
 {
-    public partial class BaseVob
+    public partial class GUCBaseVobInst
     {
         #region Network Messages
 
@@ -86,8 +86,8 @@ namespace GUC.WorldObjects
             if (this.isCreated && !this.IsStatic)
             {
                 this.world.UpdateVobCell(this, pos);
-                if (this is NPC)
-                    this.world.UpdateNPCCell((NPC)this, pos);
+                if (this is GUCNPCInst)
+                    this.world.UpdateNPCCell((GUCNPCInst)this, pos);
 
                 bool updateVis;
                 if (lastUpdatePos.GetDistancePlanar(this.pos) > 100)

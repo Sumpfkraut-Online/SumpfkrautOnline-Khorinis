@@ -55,7 +55,7 @@ namespace GUC.Scripts
             return new WorldInst().BaseWorld;
         }
 
-        public BaseVob CreateVob(byte type)
+        public GUCBaseVobInst CreateVob(byte type)
         {
             BaseVobInst vob;
             switch ((VobType)type)

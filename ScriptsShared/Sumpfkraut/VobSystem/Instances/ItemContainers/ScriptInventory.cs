@@ -55,12 +55,12 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
             BaseInst.ForEachPredicate(i => { return predicate((ItemInst)i.ScriptObject); });
         }
 
-        public void AddItem(Item item)
+        public void AddItem(GUCItemInst item)
         {
             AddItem((ItemInst)item.ScriptObject);
         }
 
-        public void RemoveItem(Item item)
+        public void RemoveItem(GUCItemInst item)
         {
             RemoveItem((ItemInst)item.ScriptObject);
         }
@@ -88,7 +88,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.ItemContainers
 
         public ItemInst GetItem(int id)
         {
-            if (BaseInst.TryGetItem(id, out Item item))
+            if (BaseInst.TryGetItem(id, out GUCItemInst item))
                 return (ItemInst)item.ScriptObject;
             return null;
         }

@@ -6,7 +6,7 @@ using Gothic.Objects;
 
 namespace GUC.WorldObjects
 {
-    public partial class Mob : Vob
+    public partial class GUCMobInst : GUCVobInst
     {
         new public oCMob gVob { get { return (oCMob)base.gVob; } }
     }

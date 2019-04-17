@@ -33,7 +33,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             Host.DoJump(move, new Vec3f(0, move == JumpMoves.Fwd ? 300 : 250, 0));
         }
 
-        internal void TryClimb(ClimbMoves move, WorldObjects.NPC.ClimbingLedge ledge)
+        internal void TryClimb(ClimbMoves move, WorldObjects.GUCNPCInst.ClimbingLedge ledge)
         {
             if (Host.IsDead || Host.Environment.InAir)
                 return;

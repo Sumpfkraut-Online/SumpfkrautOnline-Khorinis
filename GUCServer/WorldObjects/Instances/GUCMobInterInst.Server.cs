@@ -6,7 +6,7 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects
 {
-    public partial class MobInter : Mob
+    public partial class GUCMobInterInst : GUCMobInst
     {
 
     }

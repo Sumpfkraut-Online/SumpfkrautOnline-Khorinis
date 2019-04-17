@@ -15,7 +15,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
     public class NPCRequestReceiver
     {
         public event Action<NPCInst, JumpMoves> OnJump;
-        public event Action<NPCInst, ClimbMoves, NPC.ClimbingLedge> OnClimb;
+        public event Action<NPCInst, ClimbMoves, GUCNPCInst.ClimbingLedge> OnClimb;
         public event Action<NPCInst> OnDrawFists;
         public event Action<NPCInst, ItemInst> OnDrawWeapon;
         public event Action<NPCInst, FightMoves> OnFightMove;
@@ -48,13 +48,13 @@ namespace GUC.Scripts.Sumpfkraut.Networking.Requests
                     break;
 
                 case RequestMessageIDs.ClimbHigh:
-                    OnClimb?.Invoke(npc, ClimbMoves.High, new NPC.ClimbingLedge(stream));
+                    OnClimb?.Invoke(npc, ClimbMoves.High, new GUCNPCInst.ClimbingLedge(stream));
                     break;
                 case RequestMessageIDs.ClimbMid:
-                    OnClimb?.Invoke(npc, ClimbMoves.Mid, new NPC.ClimbingLedge(stream));
+                    OnClimb?.Invoke(npc, ClimbMoves.Mid, new GUCNPCInst.ClimbingLedge(stream));
                     break;
                 case RequestMessageIDs.ClimbLow:
-                    OnClimb?.Invoke(npc, ClimbMoves.Low, new NPC.ClimbingLedge(stream));
+                    OnClimb?.Invoke(npc, ClimbMoves.Low, new GUCNPCInst.ClimbingLedge(stream));
                     break;
 
                 case RequestMessageIDs.DrawFists:

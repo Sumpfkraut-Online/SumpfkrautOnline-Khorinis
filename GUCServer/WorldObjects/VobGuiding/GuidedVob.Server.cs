@@ -7,7 +7,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects.VobGuiding
 {
-    public abstract partial class GuidedVob : BaseVob
+    public abstract partial class GuidedVob : GUCBaseVobInst
     {
         public delegate void ChangePosAngHandler(GuidedVob vob, Vec3f oldPos, Angles oldAng);
         /// <summary>
@@ -174,14 +174,14 @@ namespace GUC.WorldObjects.VobGuiding
 
             if (this.currentCmd is TargetCmd)
             {
-                BaseVob target = ((TargetCmd)this.currentCmd).Target;
+                GUCBaseVobInst target = ((TargetCmd)this.currentCmd).Target;
                 target.OnDespawn -= OnTargetDespawn;
                 if (this.guide != null)
                     this.guide.RemoveGuideTarget(target);
             }
             if (cmd is TargetCmd)
             {
-                BaseVob target = ((TargetCmd)cmd).Target;
+                GUCBaseVobInst target = ((TargetCmd)cmd).Target;
                 target.OnDespawn += OnTargetDespawn;
                 if (this.guide != null)
                     this.guide.AddGuideTarget(target);
@@ -200,7 +200,7 @@ namespace GUC.WorldObjects.VobGuiding
             SetGuideCommand(null);
         }
 
-        void OnTargetDespawn(BaseVob vob)
+        void OnTargetDespawn(GUCBaseVobInst vob)
         {
             RemoveGuideCommand();
         }

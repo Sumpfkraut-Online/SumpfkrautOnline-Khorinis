@@ -8,7 +8,7 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public abstract partial class BaseVob
+    public abstract partial class GUCBaseVobInst
     {
         #region Network Messages
 
@@ -19,7 +19,7 @@ namespace GUC.WorldObjects
             public static void ReadPosDirMessage(PacketReader stream)
             {
                 int id = stream.ReadUShort();
-                if (World.Current.TryGetVob(id, out BaseVob vob))
+                if (World.Current.TryGetVob(id, out GUCBaseVobInst vob))
                 {
                     Vec3f newPos = stream.ReadCompressedPosition();
                     Angles newAng = stream.ReadCompressedAngles();

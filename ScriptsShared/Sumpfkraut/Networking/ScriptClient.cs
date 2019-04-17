@@ -55,7 +55,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
         #region NPC Control
 
-        public void SetControl(NPC npc)
+        public void SetControl(GUCNPCInst npc)
         {
             this.SetControl((NPCInst)npc.ScriptObject);
         }

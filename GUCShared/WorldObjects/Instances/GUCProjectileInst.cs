@@ -10,7 +10,7 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial class Projectile : BaseVob
+    public partial class GUCProjectileInst : GUCBaseVobInst
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.Projectile; } }
 
@@ -26,7 +26,7 @@ namespace GUC.WorldObjects
 
         #region Constructors
 
-        public Projectile(IScriptProjectile scriptObject) : base(scriptObject)
+        public GUCProjectileInst(IScriptProjectile scriptObject) : base(scriptObject)
         {
         }
 

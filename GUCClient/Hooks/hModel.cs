@@ -26,7 +26,7 @@ namespace GUC.Hooks
             var gActiveAni = new zCModelAniActive(mem.ESI);
             string aniName = gActiveAni.ModelAni.Name.ToString();
 
-            if (World.Current.TryGetVobByAddress(gModel.Owner.Address, out Vob vob))
+            if (World.Current.TryGetVobByAddress(gModel.Owner.Address, out GUCVobInst vob))
             {
                 vob.Model.ForEachActiveAniPredicate(aa =>
                 {

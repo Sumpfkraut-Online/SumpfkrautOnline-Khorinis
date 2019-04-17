@@ -29,7 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         {
         }
 
-        public virtual void ReadScriptVobMessage(PacketReader stream, WorldObjects.BaseVob vob)
+        public virtual void ReadScriptVobMessage(PacketReader stream, WorldObjects.GUCBaseVobInst vob)
         {
             ((BaseVobInst)vob.ScriptObject).OnReadScriptVobMsg(stream);
         }

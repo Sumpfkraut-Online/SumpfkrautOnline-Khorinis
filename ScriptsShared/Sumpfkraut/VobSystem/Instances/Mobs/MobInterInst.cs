@@ -11,7 +11,7 @@ using GUC.Scripts.Sumpfkraut.Visuals;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 {
-    public  partial class MobInterInst : MobInst, WorldObjects.MobInter.IScriptMobInter
+    public  partial class MobInterInst : MobInst, WorldObjects.GUCMobInterInst.IScriptMobInter
     {
         #region Constructors
 
@@ -19,9 +19,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
         {
         }
 
-        protected override WorldObjects.BaseVob CreateVob()
+        protected override WorldObjects.GUCBaseVobInst CreateVob()
         {
-            return new WorldObjects.MobInter(new ModelInst(this), this);
+            return new WorldObjects.GUCMobInterInst(new ModelInst(this), this);
         }
 
 
@@ -31,7 +31,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 
         public override VobType VobType { get { return VobType.MobInter; } }
 
-        new public WorldObjects.MobInter BaseInst { get { return (WorldObjects.MobInter)base.BaseInst; } }
+        new public WorldObjects.GUCMobInterInst BaseInst { get { return (WorldObjects.GUCMobInterInst)base.BaseInst; } }
         new public MobInterDef Definition { get { return (MobInterDef)base.Definition; } set { base.Definition = value; } }
 
         #endregion

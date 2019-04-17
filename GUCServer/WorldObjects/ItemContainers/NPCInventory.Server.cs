@@ -12,7 +12,7 @@ namespace GUC.WorldObjects.ItemContainers
 
         internal static class Messages
         {
-            public static void WritePlayerAddItem(GameClient client, Item item)
+            public static void WritePlayerAddItem(GameClient client, GUCItemInst item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerInvAddItemMessage);
                 stream.Write((byte)item.ScriptObject.GetVobType());
@@ -21,7 +21,7 @@ namespace GUC.WorldObjects.ItemContainers
                 client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'I');
             }
 
-            public static void WritePlayerRemoveItem(GameClient client, Item item)
+            public static void WritePlayerRemoveItem(GameClient client, GUCItemInst item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerInvRemoveItemMessage);
                 stream.Write((byte)item.ID);
@@ -33,13 +33,13 @@ namespace GUC.WorldObjects.ItemContainers
 
         #region Add & Remove
 
-        partial void pAdd(Item item)
+        partial void pAdd(GUCItemInst item)
         {
             if (this.Owner.IsPlayer && this.Owner.IsSpawned)
                 Messages.WritePlayerAddItem(this.Owner.client, item);
         }
         
-        partial void pRemoveBefore(Item item)
+        partial void pRemoveBefore(GUCItemInst item)
         {
             if (this.Owner.IsPlayer && this.Owner.IsSpawned)
                 Messages.WritePlayerRemoveItem(this.Owner.client, item);

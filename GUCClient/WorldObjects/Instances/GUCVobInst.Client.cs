@@ -9,7 +9,7 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob
+    public partial class GUCVobInst
     {
         #region Network Messages
 
@@ -19,7 +19,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                if (World.Current.TryGetVob(id, out Vob vob))
+                if (World.Current.TryGetVob(id, out GUCVobInst vob))
                 {
                     vob.ScriptObject.Throw(stream.ReadVec3f());
                 }

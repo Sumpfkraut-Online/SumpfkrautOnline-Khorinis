@@ -29,15 +29,15 @@ namespace GUC.WorldObjects.VobGuiding
         float distance;
         public float Distance { get { return distance; } }
 
-        BaseVob target;
-        public BaseVob Target { get { return this.target; } }
+        GUCBaseVobInst target;
+        public GUCBaseVobInst Target { get { return this.target; } }
 
         public TargetCmd()
         {
 
         }
 
-        public TargetCmd(BaseVob target, float distance)
+        public TargetCmd(GUCBaseVobInst target, float distance)
         {
             if (target == null)
                 throw new ArgumentNullException("Target is null!");
@@ -62,18 +62,18 @@ namespace GUC.WorldObjects.VobGuiding
 
         static TargetCmd()
         {
-            BaseVob.sOnSpawn += CheckSpawn;
-            BaseVob.sOnDespawn += CheckDespawn;
+            GUCBaseVobInst.sOnSpawn += CheckSpawn;
+            GUCBaseVobInst.sOnDespawn += CheckDespawn;
         }
 
-        static void CheckSpawn(BaseVob vob, World world, Vec3f pos, Angles ang)
+        static void CheckSpawn(GUCBaseVobInst vob, World world, Vec3f pos, Angles ang)
         {
             if (Commands.TryGetValue(vob.ID, out List<TargetCmd> cmdList))
                 for (int i = 0; i < cmdList.Count; i++)
                     cmdList[i].target = vob;
         }
 
-        static void CheckDespawn(BaseVob vob)
+        static void CheckDespawn(GUCBaseVobInst vob)
         {
             if (Commands.TryGetValue(vob.ID, out List<TargetCmd> cmdList))
                 for (int i = 0; i < cmdList.Count; i++)

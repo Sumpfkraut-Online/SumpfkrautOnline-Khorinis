@@ -57,16 +57,16 @@ namespace GUC.WorldObjects.Cells
 
         #region Dynamic vobs
 
-        DynamicCollection<BaseVob> dynVobs = new DynamicCollection<BaseVob>();
+        DynamicCollection<GUCBaseVobInst> dynVobs = new DynamicCollection<GUCBaseVobInst>();
 
         #region Add & Remove
 
-        public void AddDynVob(BaseVob vob)
+        public void AddDynVob(GUCBaseVobInst vob)
         {
             dynVobs.Add(vob, ref vob.CellID);
         }
 
-        public void RemoveDynVob(BaseVob vob)
+        public void RemoveDynVob(GUCBaseVobInst vob)
         {
             dynVobs.Remove(ref vob.CellID);
         }
@@ -75,12 +75,12 @@ namespace GUC.WorldObjects.Cells
 
         #region Access
 
-        public void ForEachDynVob(Action<BaseVob> action)
+        public void ForEachDynVob(Action<GUCBaseVobInst> action)
         {
             dynVobs.ForEach(action);
         }
 
-        public void ForEachDynVobPredicate(Predicate<BaseVob> predicate)
+        public void ForEachDynVobPredicate(Predicate<GUCBaseVobInst> predicate)
         {
             dynVobs.ForEachPredicate(predicate);
         }

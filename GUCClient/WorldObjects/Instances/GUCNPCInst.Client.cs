@@ -12,7 +12,7 @@ using GUC.Scripting;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC
+    public partial class GUCNPCInst
     {
         const long HeroPosUpdateInterval = 40 * TimeSpan.TicksPerMillisecond;
         const long NPCPosUpdateInterval = 80 * TimeSpan.TicksPerMillisecond;
@@ -25,15 +25,15 @@ namespace GUC.WorldObjects
 
             public static void ReadEquipMessage(PacketReader stream)
             {
-                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCNPCInst npc))
                 {
                     int slot = stream.ReadByte();
                     byte type = stream.ReadByte();
 
-                    Item item;
+                    GUCItemInst item;
                     if (npc != Hero)
                     {
-                        item = (Item)ScriptManager.Interface.CreateVob(type);
+                        item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
                         item.ReadEquipProperties(stream);
                         npc.Inventory.ScriptObject.AddItem(item);
                     }
@@ -46,8 +46,8 @@ namespace GUC.WorldObjects
 
             public static void ReadEquipSwitchMessage(PacketReader stream)
             {
-                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc)
-                    && npc.Inventory.TryGetItem(stream.ReadByte(), out Item item))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCNPCInst npc)
+                    && npc.Inventory.TryGetItem(stream.ReadByte(), out GUCItemInst item))
                 {
                     npc.ScriptObject.EquipItem(stream.ReadByte(), item);
                 }
@@ -55,8 +55,8 @@ namespace GUC.WorldObjects
 
             public static void ReadUnequipMessage(PacketReader stream)
             {
-                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc)
-                    && npc.Inventory.TryGetItem(stream.ReadByte(), out Item item))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCNPCInst npc)
+                    && npc.Inventory.TryGetItem(stream.ReadByte(), out GUCItemInst item))
                 {
                     npc.ScriptObject.UnequipItem(item);
                     if (npc != Hero)
@@ -69,7 +69,7 @@ namespace GUC.WorldObjects
 
             public static void ReadPlayerEquipMessage(PacketReader stream)
             {
-                if (Hero.Inventory.TryGetItem(stream.ReadByte(), out Item item))
+                if (Hero.Inventory.TryGetItem(stream.ReadByte(), out GUCItemInst item))
                 {
                     Hero.ScriptObject.EquipItem(stream.ReadByte(), item);
                 }
@@ -83,7 +83,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                if (World.Current.TryGetVob(id, out NPC npc))
+                if (World.Current.TryGetVob(id, out GUCNPCInst npc))
                 {
                     int hpmax = stream.ReadUShort();
                     int hp = stream.ReadUShort();
@@ -97,7 +97,7 @@ namespace GUC.WorldObjects
 
             public static void ReadFightMode(PacketReader stream, bool fightMode)
             {
-                if (World.Current.TryGetVob(stream.ReadUShort(), out NPC npc))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCNPCInst npc))
                 {
                     npc.ScriptObject.SetFightMode(fightMode);
                 }
@@ -111,7 +111,7 @@ namespace GUC.WorldObjects
             {
                 int id = stream.ReadUShort();
 
-                if (World.Current.TryGetVob(id, out NPC npc))
+                if (World.Current.TryGetVob(id, out GUCNPCInst npc))
                 {
                     Vec3f newPos = stream.ReadCompressedPosition();
                     Angles newAng = stream.ReadCompressedAngles();
@@ -127,7 +127,7 @@ namespace GUC.WorldObjects
                 }
             }
 
-            public static void WritePosAngMessage(NPC npc, Vec3f pos, Angles ang, VobEnvironment env)
+            public static void WritePosAngMessage(GUCNPCInst npc, Vec3f pos, Angles ang, VobEnvironment env)
             {
                 PacketWriter stream = GameClient.SetupStream(ClientMessages.GuidedNPCMessage);
                 stream.Write((ushort)npc.ID);
@@ -177,7 +177,7 @@ namespace GUC.WorldObjects
         #endregion
 
         /// <summary> The npc the client is controlling. </summary>
-        public static NPC Hero { get { return GameClient.Client.Character; } }
+        public static GUCNPCInst Hero { get { return GameClient.Client.Character; } }
 
         internal static void UpdateHero(long now)
         {
@@ -335,12 +335,12 @@ namespace GUC.WorldObjects
 
         #region Equipment
 
-        partial void pEquipItem(int slot, Item item)
+        partial void pEquipItem(int slot, GUCItemInst item)
         {
             item.CreateGVob();
         }
 
-        partial void pUnequipItem(Item item)
+        partial void pUnequipItem(GUCItemInst item)
         {
             item.DeleteGVob();
         }
@@ -617,9 +617,9 @@ namespace GUC.WorldObjects
             Process.THISCALL<NullReturnCall>(rb, 0x5B66D0, gVel);
         }
 
-        public BaseVob GetFocusVob()
+        public GUCBaseVobInst GetFocusVob()
         {
-            this.World.TryGetVobByAddress(this.gVob.FocusVob.Address, out BaseVob baseVob);
+            this.World.TryGetVobByAddress(this.gVob.FocusVob.Address, out GUCBaseVobInst baseVob);
             return baseVob;
         }
     }

@@ -131,7 +131,7 @@ namespace GUC
         internal static int VobSoundCount { get { return vobSounds.Count; } }
         internal static int PosSoundCount { get { return locSounds.Count; } }
 
-        public static void PlaySound3D(SoundDefinition sound, BaseVob vob, float range = 3000, float volume = 1.0f)
+        public static void PlaySound3D(SoundDefinition sound, GUCBaseVobInst vob, float range = 3000, float volume = 1.0f)
         {
             if (sound == null)
                 throw new ArgumentNullException("Sound is null!");

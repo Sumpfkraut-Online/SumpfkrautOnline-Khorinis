@@ -112,7 +112,7 @@ namespace GUC.Scripts
         public const float BiggestNPCRadius = 150; // improveme
         public const float SmallestNPCRadius = 40;
 
-        public WorldObjects.VobGuiding.TargetCmd GetTestCmd(BaseVob target)
+        public WorldObjects.VobGuiding.TargetCmd GetTestCmd(GUCBaseVobInst target)
         {
             return new Sumpfkraut.AI.GuideCommands.GoToVobCommand((BaseVobInst)target.ScriptObject);
         }

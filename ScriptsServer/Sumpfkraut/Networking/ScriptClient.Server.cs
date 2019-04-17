@@ -58,7 +58,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
             if (id < RequestMessageIDs.MaxNPCRequests)
             {
-                if (vob is WorldObjects.NPC)
+                if (vob is WorldObjects.GUCNPCInst)
                     NPCInst.Requests.ReadRequest(id, stream, ((NPCInst)vob.ScriptObject));
             }
         }

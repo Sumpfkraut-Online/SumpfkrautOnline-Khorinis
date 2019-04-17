@@ -28,7 +28,7 @@ namespace GUC.Hooks
             int arg = mem.GetArg(0);
 
             byte[] arr;
-            if (World.Current.TryGetVobByAddress(self, out Mob mob) && mob.FocusName != null && mob.FocusName.Length > 0)
+            if (World.Current.TryGetVobByAddress(self, out GUCMobInst mob) && mob.FocusName != null && mob.FocusName.Length > 0)
             {
                 arr = Encoding.Default.GetBytes(mob.FocusName);
             }

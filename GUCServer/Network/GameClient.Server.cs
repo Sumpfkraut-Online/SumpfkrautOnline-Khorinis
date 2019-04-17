@@ -121,7 +121,7 @@ namespace GUC.Network
 
             #region NPC Control
 
-            public static void WritePlayerControl(GameClient client, NPC npc)
+            public static void WritePlayerControl(GameClient client, GUCNPCInst npc)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerControlMessage);
                 stream.Write((ushort)npc.ID);
@@ -281,7 +281,7 @@ namespace GUC.Network
 
         class IntBox { public int Count = 1; }
         Dictionary<int, IntBox> guideTargets = new Dictionary<int, IntBox>(5);
-        internal void AddGuideTarget(BaseVob vob)
+        internal void AddGuideTarget(GUCBaseVobInst vob)
         {
             if (guideTargets.TryGetValue(vob.ID, out IntBox box))
             {
@@ -297,7 +297,7 @@ namespace GUC.Network
             }
         }
 
-        internal void RemoveGuideTarget(BaseVob vob)
+        internal void RemoveGuideTarget(GUCBaseVobInst vob)
         {
             if (guideTargets.TryGetValue(vob.ID, out IntBox box))
             {
@@ -343,15 +343,15 @@ namespace GUC.Network
 
         #region Vob visibility
 
-        GODictionary<BaseVob> visibleVobs = new GODictionary<BaseVob>();
+        GODictionary<GUCBaseVobInst> visibleVobs = new GODictionary<GUCBaseVobInst>();
 
-        internal void AddVisibleVob(BaseVob vob)
+        internal void AddVisibleVob(GUCBaseVobInst vob)
         {
             visibleVobs.Add(vob);
             vob.targetOf.Remove(this);
         }
 
-        internal void RemoveVisibleVob(BaseVob vob)
+        internal void RemoveVisibleVob(GUCBaseVobInst vob)
         {
             visibleVobs.Remove(vob.ID);
             if (guideTargets.ContainsKey(vob.ID))
@@ -593,7 +593,7 @@ namespace GUC.Network
 
         #region Player control
 
-        partial void pSetControl(NPC npc)
+        partial void pSetControl(GUCNPCInst npc)
         {
             if (npc == null) // take control of nothing
             {

@@ -12,7 +12,7 @@ using GUC.Models;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC : Vob, ItemContainer
+    public partial class GUCNPCInst : GUCVobInst, ItemContainer
     {
         public partial class ClimbingLedge
         {
@@ -49,8 +49,8 @@ namespace GUC.WorldObjects
             void OnWriteTakeControl(PacketWriter stream);
             void OnReadTakeControl(PacketReader stream);
 
-            void EquipItem(int slot, Item item);
-            void UnequipItem(Item item);
+            void EquipItem(int slot, GUCItemInst item);
+            void UnequipItem(GUCItemInst item);
 
             void SetHealth(int hp, int hpmax);
 
@@ -63,7 +63,7 @@ namespace GUC.WorldObjects
 
         #region Constructors
 
-        public NPC(ItemInventory.IScriptItemInventory scriptItemInventory, Model.IScriptModel scriptModel, IScriptNPC scriptObject) : base(scriptModel, scriptObject)
+        public GUCNPCInst(ItemInventory.IScriptItemInventory scriptItemInventory, Model.IScriptModel scriptModel, IScriptNPC scriptObject) : base(scriptModel, scriptObject)
         {
             this.inventory = new NPCInventory(this, scriptItemInventory);
         }
@@ -143,11 +143,11 @@ namespace GUC.WorldObjects
 
         #region Equipment
 
-        Dictionary<int, Item> equippedItems = new Dictionary<int, Item>();
+        Dictionary<int, GUCItemInst> equippedItems = new Dictionary<int, GUCItemInst>();
 
-        partial void pEquipSwitch(int slot, Item item);
-        partial void pEquipItem(int slot, Item item);
-        public void EquipItem(int slot, Item item)
+        partial void pEquipSwitch(int slot, GUCItemInst item);
+        partial void pEquipItem(int slot, GUCItemInst item);
+        public void EquipItem(int slot, GUCItemInst item)
         {
             if (item == null)
                 throw new ArgumentNullException("Item is null!");
@@ -155,8 +155,8 @@ namespace GUC.WorldObjects
             if (item.Container != this)
                 throw new ArgumentException("Item is not in this container!");
 
-            if (slot < 0 || slot >= Item.SlotNumUnused)
-                throw new ArgumentOutOfRangeException("Slotnum must be greater or equal than zero and smaller than " + Item.SlotNumUnused);
+            if (slot < 0 || slot >= GUCItemInst.SlotNumUnused)
+                throw new ArgumentOutOfRangeException("Slotnum must be greater or equal than zero and smaller than " + GUCItemInst.SlotNumUnused);
 
             if (equippedItems.ContainsKey(slot))
                 throw new ArgumentException("Slot is already in use!");
@@ -182,9 +182,9 @@ namespace GUC.WorldObjects
             }
         }
 
-        public Item UnequipSlot(int slot)
+        public GUCItemInst UnequipSlot(int slot)
         {
-            Item item;
+            GUCItemInst item;
             if (equippedItems.TryGetValue(slot, out item))
             {
                 UnequipItem(item);
@@ -196,8 +196,8 @@ namespace GUC.WorldObjects
             }
         }
 
-        partial void pUnequipItem(Item item);
-        public void UnequipItem(Item item)
+        partial void pUnequipItem(GUCItemInst item);
+        public void UnequipItem(GUCItemInst item)
         {
             if (item == null)
                 throw new ArgumentNullException("Item is null!");
@@ -211,22 +211,22 @@ namespace GUC.WorldObjects
             pUnequipItem(item);
 
             equippedItems.Remove(item.slot);
-            item.slot = Item.SlotNumUnused;
+            item.slot = GUCItemInst.SlotNumUnused;
         }
 
         #region Access
 
-        public bool TryGetEquippedItem(int slot, out Item item)
+        public bool TryGetEquippedItem(int slot, out GUCItemInst item)
         {
             return equippedItems.TryGetValue(slot, out item);
         }
 
-        public void ForEachEquippedItem(Action<Item> action)
+        public void ForEachEquippedItem(Action<GUCItemInst> action)
         {
             if (action == null)
                 throw new ArgumentNullException("Action is null!");
 
-            foreach (Item item in equippedItems.Values)
+            foreach (GUCItemInst item in equippedItems.Values)
             {
                 action(item);
             }
@@ -235,12 +235,12 @@ namespace GUC.WorldObjects
         /// <summary>
         /// Return FALSE to break the loop!
         /// </summary>
-        public void ForEachEquippedItem(Predicate<Item> predicate)
+        public void ForEachEquippedItem(Predicate<GUCItemInst> predicate)
         {
             if (predicate == null)
                 throw new ArgumentNullException("Predicate is null!");
 
-            foreach (Item item in equippedItems.Values)
+            foreach (GUCItemInst item in equippedItems.Values)
             {
                 if (!predicate(item))
                     break;
@@ -295,9 +295,9 @@ namespace GUC.WorldObjects
             {
                 int itemID = stream.ReadByte();
                 byte type = stream.ReadByte();
-                if (!inventory.TryGetItem(itemID, out Item item))
+                if (!inventory.TryGetItem(itemID, out GUCItemInst item))
                 {
-                    item = (Item)ScriptManager.Interface.CreateVob(type);
+                    item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
                     item.ID = itemID;
                     item.ReadInventoryProperties(stream);
                     this.inventory.ScriptObject.AddItem(item);
@@ -348,7 +348,7 @@ namespace GUC.WorldObjects
             {
                 int slot = stream.ReadByte();
                 byte type = stream.ReadByte();
-                Item item = (Item)ScriptManager.Interface.CreateVob(type);
+                GUCItemInst item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
                 item.ReadEquipProperties(stream);
                 this.inventory.ScriptObject.AddItem(item);
                 this.ScriptObject.EquipItem(slot, item);
@@ -361,10 +361,10 @@ namespace GUC.WorldObjects
 
         #region Mob using
 
-        MobInter usedMob = null;
-        public MobInter UsedMob { get { return this.usedMob; } }
+        GUCMobInterInst usedMob = null;
+        public GUCMobInterInst UsedMob { get { return this.usedMob; } }
 
-        public void UseMob(MobInter mob)
+        public void UseMob(GUCMobInterInst mob)
         {
 
         }

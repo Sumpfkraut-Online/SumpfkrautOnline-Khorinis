@@ -189,7 +189,7 @@ namespace GUC.Hooks
 
                     // check player hero
                     GameTime.Update();
-                    NPC.UpdateHero(GameTime.Ticks);
+                    GUCNPCInst.UpdateHero(GameTime.Ticks);
                 }
 
                 // update guc sounds

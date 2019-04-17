@@ -31,7 +31,7 @@ namespace GUC.Models
         #region Constructors
 
         partial void pConstruct();
-        internal Model(Vob vob, IScriptModel scriptObject) : base(scriptObject)
+        internal Model(GUCVobInst vob, IScriptModel scriptObject) : base(scriptObject)
         {
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
@@ -44,9 +44,9 @@ namespace GUC.Models
 
         #region Properties
 
-        Vob vob;
+        GUCVobInst vob;
         /// <summary> The Vob of this Model. </summary>
-        public Vob Vob { get { return this.vob; } }
+        public GUCVobInst Vob { get { return this.vob; } }
 
         public ModelInstance Instance { get { return this.vob.ModelInstance; } }
 

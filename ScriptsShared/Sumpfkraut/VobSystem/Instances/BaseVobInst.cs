@@ -13,7 +13,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public abstract partial class BaseVobInst : GUC.Utilities.ExtendedObject, BaseVob.IScriptBaseVob
+    public abstract partial class BaseVobInst : GUC.Utilities.ExtendedObject, GUCBaseVobInst.IScriptBaseVob
     {
         #region Properties
 
@@ -35,9 +35,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         protected abstract BaseEffectHandler CreateHandler();
 
         // GUC - Base - Object
-        BaseVob baseInst;
-        public BaseVob BaseInst { get { return this.baseInst; } }
-        protected abstract BaseVob CreateVob();
+        GUCBaseVobInst baseInst;
+        public GUCBaseVobInst BaseInst { get { return this.baseInst; } }
+        protected abstract GUCBaseVobInst CreateVob();
 
         // Definition 
         public BaseVobDef Definition

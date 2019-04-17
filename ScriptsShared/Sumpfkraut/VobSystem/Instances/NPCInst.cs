@@ -63,7 +63,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         Back
     }
 
-    public partial class NPCInst : VobInst, NPC.IScriptNPC, ScriptInventory.IContainer
+    public partial class NPCInst : VobInst, GUCNPCInst.IScriptNPC, ScriptInventory.IContainer
     {
         #region Constructors
 
@@ -73,9 +73,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pConstruct();
         }
 
-        protected override BaseVob CreateVob()
+        protected override GUCBaseVobInst CreateVob()
         {
-            return new NPC(new ScriptInventory(this), new ModelInst(this), this);
+            return new GUCNPCInst(new ScriptInventory(this), new ModelInst(this), this);
         }
 
         protected override BaseEffectHandler CreateHandler()
@@ -91,7 +91,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         new public NPCInstEffectHandler EffectHandler { get { return (NPCInstEffectHandler)base.EffectHandler; } }
 
-        new public NPC BaseInst { get { return (NPC)base.BaseInst; } }
+        new public GUCNPCInst BaseInst { get { return (GUCNPCInst)base.BaseInst; } }
         public ItemInventory BaseInventory { get { return BaseInst.Inventory; } }
         public ScriptInventory Inventory { get { return (ScriptInventory)BaseInventory.ScriptObject; } }
 
@@ -156,7 +156,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         public ItemInst GetEquipmentBySlot(NPCSlots slotNum)
         {
-            return this.BaseInst.TryGetEquippedItem((int)slotNum, out Item item) ? (ItemInst)item.ScriptObject : null;
+            return this.BaseInst.TryGetEquippedItem((int)slotNum, out GUCItemInst item) ? (ItemInst)item.ScriptObject : null;
         }
 
         public ItemInst GetArmor() { return GetEquipmentBySlot(NPCSlots.Armor); }
@@ -174,7 +174,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             return null;
         }
 
-        public void EquipItem(int slot, Item item)
+        public void EquipItem(int slot, GUCItemInst item)
         {
             this.EquipItem((NPCSlots)slot, (ItemInst)item.ScriptObject);
         }
@@ -196,7 +196,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             OnEquip?.Invoke(item);
         }
 
-        public void UnequipItem(Item item)
+        public void UnequipItem(GUCItemInst item)
         {
             this.UnequipItem((ItemInst)item.ScriptObject);
         }

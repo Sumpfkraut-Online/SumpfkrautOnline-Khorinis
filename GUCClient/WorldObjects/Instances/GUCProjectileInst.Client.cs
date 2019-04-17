@@ -6,7 +6,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Projectile
+    public partial class GUCProjectileInst
     {
         internal override void CreateGVob()
         {

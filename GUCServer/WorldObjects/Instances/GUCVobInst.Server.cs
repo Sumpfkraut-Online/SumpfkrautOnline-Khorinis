@@ -7,13 +7,13 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob
+    public partial class GUCVobInst
     {
         #region Network Messages
 
         new internal static class Messages
         {
-            public static void WriteThrow(Vob vob, Vec3f velocity)
+            public static void WriteThrow(GUCVobInst vob, Vec3f velocity)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.VobThrowMessage);
                 stream.Write((ushort)vob.ID);

@@ -10,14 +10,14 @@ using GUC.Scripts.Sumpfkraut.Networking;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 {
-    public partial class MobInst : NamedVobInst, WorldObjects.Mob.IScriptMob
+    public partial class MobInst : NamedVobInst, WorldObjects.GUCMobInst.IScriptMob
     {
 
         #region Properties
 
         public override VobType VobType { get { return VobType.Mob; } }
 
-        new public WorldObjects.Mob BaseInst { get { return (WorldObjects.Mob)base.BaseInst; } }
+        new public WorldObjects.GUCMobInst BaseInst { get { return (WorldObjects.GUCMobInst)base.BaseInst; } }
 
         new public MobDef Definition { get { return (MobDef)base.Definition; } set { base.Definition = value; } }
 
@@ -25,9 +25,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 
         #region Constructors
 
-        protected override WorldObjects.BaseVob CreateVob()
+        protected override WorldObjects.GUCBaseVobInst CreateVob()
         {
-            return new WorldObjects.Mob(new ModelInst(this), this);
+            return new WorldObjects.GUCMobInst(new ModelInst(this), this);
         }
 
         #endregion

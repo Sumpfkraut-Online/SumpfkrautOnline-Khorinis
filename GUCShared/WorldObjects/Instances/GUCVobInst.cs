@@ -10,7 +10,7 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial class Vob : GuidedVob
+    public partial class GUCVobInst : GuidedVob
     {
         #region ScriptObject
 
@@ -25,7 +25,7 @@ namespace GUC.WorldObjects
 
         #region Constructors
 
-        public Vob(Model.IScriptModel scriptModel, IScriptVob scriptObject) : base(scriptObject)
+        public GUCVobInst(Model.IScriptModel scriptModel, IScriptVob scriptObject) : base(scriptObject)
         {
             this.model = new Model(this, scriptModel);
         }

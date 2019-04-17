@@ -10,7 +10,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Item : Vob
+    public partial class GUCItemInst : GUCVobInst
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.Item; } }
 
@@ -33,7 +33,7 @@ namespace GUC.WorldObjects
 
         #region Constructors
         
-        public Item(Model.IScriptModel scriptModel, IScriptItem scriptObject) : base(scriptModel, scriptObject)
+        public GUCItemInst(Model.IScriptModel scriptModel, IScriptItem scriptObject) : base(scriptModel, scriptObject)
         {
         }
 

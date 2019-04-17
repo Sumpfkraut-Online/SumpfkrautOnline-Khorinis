@@ -17,16 +17,16 @@ namespace GUC.WorldObjects.Cells
 
         #region NPCs
 
-        DynamicCollection<NPC> npcs = new DynamicCollection<NPC>();
+        DynamicCollection<GUCNPCInst> npcs = new DynamicCollection<GUCNPCInst>();
 
         #region Add & Remove
 
-        public void AddNPC(NPC npc)
+        public void AddNPC(GUCNPCInst npc)
         {
             npcs.Add(npc, ref npc.npcCellID);
         }
 
-        public void RemoveNPC(NPC npc)
+        public void RemoveNPC(GUCNPCInst npc)
         {
             npcs.Remove(ref npc.npcCellID);
         }
@@ -35,12 +35,12 @@ namespace GUC.WorldObjects.Cells
 
         #region Access
 
-        public void ForEachNPC(Action<NPC> action)
+        public void ForEachNPC(Action<GUCNPCInst> action)
         {
             npcs.ForEach(action);
         }
 
-        public void ForEachNPCPredicate(Predicate<NPC> predicate)
+        public void ForEachNPCPredicate(Predicate<GUCNPCInst> predicate)
         {
             npcs.ForEachPredicate(predicate);
         }

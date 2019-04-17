@@ -22,7 +22,7 @@ namespace GUC.Models
             {
                 int id = stream.ReadUShort();
 
-                Vob vob;
+                GUCVobInst vob;
                 if (World.Current.TryGetVob(id, out vob))
                 {
                     Model model = vob.Model;
@@ -54,7 +54,7 @@ namespace GUC.Models
             public static void ReadAniStart(PacketReader stream, float fpsMult = 1.0f)
             {
                 float progress = stream.ReadFloat();
-                if (World.Current.TryGetVob(stream.ReadUShort(), out Vob vob))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCVobInst vob))
                 {
                     Model model = vob.Model;
 
@@ -67,7 +67,7 @@ namespace GUC.Models
 
             public static void ReadAniStop(PacketReader stream, bool fadeOut)
             {
-                if (World.Current.TryGetVob(stream.ReadUShort(), out Vob vob))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCVobInst vob))
                 {
                     Model model = vob.Model;
                     if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
@@ -83,7 +83,7 @@ namespace GUC.Models
 
             public static void ReadAniStartUncontrolled(PacketReader stream)
             {
-                if (World.Current.TryGetVob(stream.ReadUShort(), out Vob vob))
+                if (World.Current.TryGetVob(stream.ReadUShort(), out GUCVobInst vob))
                 {
                     Model model = vob.Model;
 
@@ -112,9 +112,9 @@ namespace GUC.Models
 
         partial void pAddOverlay(Overlay overlay)
         {
-            if (this.vob is NPC)
+            if (this.vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null)
                 {
                     gVob.ApplyOverlay(overlay.Name);
@@ -124,9 +124,9 @@ namespace GUC.Models
 
         partial void pRemoveOverlay(Overlay overlay)
         {
-            if (this.vob is NPC)
+            if (this.vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null)
                 {
                     gVob.RemoveOverlay(overlay.Name);
@@ -140,9 +140,9 @@ namespace GUC.Models
 
         partial void pStartUncontrolledAni(AniJob aniJob)
         {
-            if (this.vob is NPC)
+            if (this.vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null)
                 {
                     gVob.AniCtrl.StopTurnAnis();
@@ -153,9 +153,9 @@ namespace GUC.Models
 
         partial void pStartAnimation(ActiveAni aa, float fpsMult, float progress)
         {
-            if (this.vob is NPC)
+            if (this.vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null)
                 {
                     gVob.AniCtrl.StopTurnAnis();
@@ -190,9 +190,9 @@ namespace GUC.Models
 
         partial void pStopAnimation(ActiveAni aa, bool fadeOut)
         {
-            if (this.vob is NPC)
+            if (this.vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null)
                 {
                     var gModel = gVob.GetModel();
@@ -213,9 +213,9 @@ namespace GUC.Models
 
         partial void pEndAni(Animation ani)
         {
-            if (this.vob is NPC)
+            if (this.vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null)
                 {
                     var gModel = gVob.GetModel();
@@ -228,7 +228,7 @@ namespace GUC.Models
                     {
                         //if (((NPC)vob).EnvState != EnvironmentState.InAir) // gothic prob has already handled this anyway
                         {
-                            if (((NPC)vob).Movement == NPCMovement.Forward)
+                            if (((GUCNPCInst)vob).Movement == NPCMovement.Forward)
                                 gModel.StartAni(gVob.AniCtrl._s_walkl, 0);
                             else
                             {
@@ -248,11 +248,11 @@ namespace GUC.Models
 
         #region OnSpawn
 
-        void Vob_OnSpawn(BaseVob vob, World world, Vec3f pos, Angles ang)
+        void Vob_OnSpawn(GUCBaseVobInst vob, World world, Vec3f pos, Angles ang)
         {
-            if (vob is NPC)
+            if (vob is GUCNPCInst)
             {
-                var gVob = ((NPC)vob).gVob;
+                var gVob = ((GUCNPCInst)vob).gVob;
                 if (gVob != null && overlays != null)
                 {
                     for (int i = 0; i < overlays.Count; i++)
@@ -267,10 +267,10 @@ namespace GUC.Models
 
         partial void pOnTick(long now)
         {
-            if (!(this.vob is NPC))
+            if (!(this.vob is GUCNPCInst))
                 return;
 
-            var gModel = ((NPC)vob).gModel;
+            var gModel = ((GUCNPCInst)vob).gModel;
 
             for (int i = 0; i < activeAnis.Count; i++)
             {

@@ -30,7 +30,7 @@ namespace GUC.Hooks
         {
             int npcAddr = rmem.ESI;
             
-            if (World.Current.TryGetVobByAddress(npcAddr, out NPC npc) && npc.Guide == Network.GameClient.Client)
+            if (World.Current.TryGetVobByAddress(npcAddr, out GUCNPCInst npc) && npc.Guide == Network.GameClient.Client)
             {
                 npc.ScriptObject.SetMovement(NPCMovement.Forward);
             }
@@ -40,7 +40,7 @@ namespace GUC.Hooks
         {
             int npcAddr = rmem.ESI;
             
-            if (World.Current.TryGetVobByAddress(npcAddr, out NPC npc) && npc.Guide == Network.GameClient.Client)
+            if (World.Current.TryGetVobByAddress(npcAddr, out GUCNPCInst npc) && npc.Guide == Network.GameClient.Client)
             {
                 npc.ScriptObject.SetMovement(NPCMovement.Stand);
             }

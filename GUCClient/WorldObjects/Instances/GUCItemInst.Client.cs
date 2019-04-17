@@ -9,7 +9,7 @@ using GUC.WorldObjects.ItemContainers;
 
 namespace GUC.WorldObjects
 {
-    public partial class Item
+    public partial class GUCItemInst
     {
         #region Network Messages
 
@@ -17,7 +17,7 @@ namespace GUC.WorldObjects
         {
             public static void ReadItemAmountChangedMessage(PacketReader stream)
             {
-                Item item;
+                GUCItemInst item;
                 if (NPCInventory.PlayerInventory.TryGetItem(stream.ReadByte(), out item))
                 {
                     item.ScriptObject.SetAmount(stream.ReadUShort());
@@ -34,13 +34,13 @@ namespace GUC.WorldObjects
         {
             base.OnTick(now);
 
-            if (!dropped && NPC.Hero != null) // FIXME
+            if (!dropped && GUCNPCInst.Hero != null) // FIXME
             {
                 dropped = true;
                 Vec3f pos = this.Position;
                 Angles ang = this.Angles;
                 
-                NPC.Hero.gVob.DoDropVob(this.gVob);
+                GUCNPCInst.Hero.gVob.DoDropVob(this.gVob);
 
                 this.SetPosition(pos);
                 this.SetAngles(ang);

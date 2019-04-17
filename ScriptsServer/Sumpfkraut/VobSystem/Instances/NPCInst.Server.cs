@@ -21,7 +21,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public static event NPCInstMoveHandler sOnNPCInstMove;
         static NPCInst()
         {
-            WorldObjects.NPC.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
+            WorldObjects.GUCNPCInst.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
             sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
         }
 
@@ -192,7 +192,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         bool isClimbing = false;
         public bool IsClimbing { get { return this.isClimbing; } }
 
-        public void DoClimb(ClimbMoves move, WorldObjects.NPC.ClimbingLedge ledge)
+        public void DoClimb(ClimbMoves move, WorldObjects.GUCNPCInst.ClimbingLedge ledge)
         {
             ScriptAniJob job;
             switch (move)

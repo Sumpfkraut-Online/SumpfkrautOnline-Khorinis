@@ -19,7 +19,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
     {
         public static readonly Networking.Requests.NPCRequestSender Requests = new Networking.Requests.NPCRequestSender();
 
-        public static NPCInst Hero { get { return (NPCInst)NPC.Hero?.ScriptObject; } }
+        public static NPCInst Hero { get { return (NPCInst)GUCNPCInst.Hero?.ScriptObject; } }
 
         /*
         basis -> item = iteminstance <- scripts
@@ -171,7 +171,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             {
                 case ScriptVobMessageIDs.HitMessage:
                     var attackerID = stream.ReadUShort();
-                    if (WorldInst.Current.BaseWorld.TryGetVob(attackerID, out NPC attacker))
+                    if (WorldInst.Current.BaseWorld.TryGetVob(attackerID, out GUCNPCInst attacker))
                     {
                         int index = Randomizer.GetInt(hitSounds.Count);
                         SoundHandler.PlaySound3D(hitSounds[index], this.BaseInst);
@@ -199,13 +199,13 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
                     break;
                 case ScriptVobMessageIDs.ParryMessage:
                     attackerID = stream.ReadUShort();
-                    if (WorldInst.Current.BaseWorld.TryGetVob(attackerID, out NPC targetNPC))
+                    if (WorldInst.Current.BaseWorld.TryGetVob(attackerID, out GUCNPCInst targetNPC))
                     {
                         this.BaseInst.gAI.StartParadeEffects(targetNPC.gVob);
                     }
                     break;
                 case ScriptVobMessageIDs.Climb:
-                    var ledge = new NPC.ClimbingLedge(stream);
+                    var ledge = new GUCNPCInst.ClimbingLedge(stream);
                     this.BaseInst.SetGClimbingLedge(ledge);
                     break;
                 case ScriptVobMessageIDs.Uncon:

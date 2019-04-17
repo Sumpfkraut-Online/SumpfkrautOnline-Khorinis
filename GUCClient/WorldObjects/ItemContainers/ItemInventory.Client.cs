@@ -8,6 +8,6 @@ namespace GUC.WorldObjects.ItemContainers
 {
     public partial class ItemInventory : GameObject
     {
-        public static ItemInventory PlayerInventory { get { return NPC.Hero?.Inventory; } }
+        public static ItemInventory PlayerInventory { get { return GUCNPCInst.Hero?.Inventory; } }
     }
 }

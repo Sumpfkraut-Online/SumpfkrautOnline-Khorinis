@@ -6,7 +6,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class Projectile
+    public partial class GUCProjectileInst
     {
         #region ScriptObject
 
@@ -18,8 +18,8 @@ namespace GUC.WorldObjects
 
         #endregion
 
-        Item item;
-        public Item Item
+        GUCItemInst item;
+        public GUCItemInst Item
         {
             get { return this.item; }
             set

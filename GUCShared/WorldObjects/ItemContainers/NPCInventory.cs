@@ -9,7 +9,7 @@ namespace GUC.WorldObjects.ItemContainers
     {
         #region Constructors
 
-        internal NPCInventory(NPC owner, IScriptItemInventory scriptObject) : base(owner, scriptObject)
+        internal NPCInventory(GUCNPCInst owner, IScriptItemInventory scriptObject) : base(owner, scriptObject)
         {
         }
 
@@ -17,14 +17,14 @@ namespace GUC.WorldObjects.ItemContainers
 
         #region Properties
 
-        new public NPC Owner { get { return (NPC)base.Owner; } }
+        new public GUCNPCInst Owner { get { return (GUCNPCInst)base.Owner; } }
 
         #endregion
 
         #region Add & Remove
 
-        partial void pAdd(Item item);
-        public override void Add(Item item)
+        partial void pAdd(GUCItemInst item);
+        public override void Add(GUCItemInst item)
         {
             base.Add(item);
             pAdd(item);
@@ -37,8 +37,8 @@ namespace GUC.WorldObjects.ItemContainers
             pRemove(item);
         } */
 
-        partial void pRemoveBefore(Item item);
-        public override void Remove(Item item)
+        partial void pRemoveBefore(GUCItemInst item);
+        public override void Remove(GUCItemInst item)
         {
             if (item == null)
             {

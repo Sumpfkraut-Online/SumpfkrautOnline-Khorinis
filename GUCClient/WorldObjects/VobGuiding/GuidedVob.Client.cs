@@ -9,7 +9,7 @@ using GUC.Scripting;
 
 namespace GUC.WorldObjects.VobGuiding
 {
-    public partial class GuidedVob : BaseVob
+    public partial class GuidedVob : GUCBaseVobInst
     {
         const long PosUpdateInterval = 120 * TimeSpan.TicksPerMillisecond;
 

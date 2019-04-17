@@ -6,13 +6,13 @@ using GUC.Network;
 
 namespace GUC.WorldObjects
 {
-    public partial class Item : Vob
+    public partial class GUCItemInst : GUCVobInst
     {
         #region Network Messages
 
         new internal static class Messages
         {
-            public static void WriteChangeItemAmount(GameClient client, Item item)
+            public static void WriteChangeItemAmount(GameClient client, GUCItemInst item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.PlayerItemAmountChangedMessage);
                 stream.Write((byte)item.ID);
@@ -25,9 +25,9 @@ namespace GUC.WorldObjects
 
         partial void pSetAmount(int amount)
         {
-            if (this.Container != null && this.Container is NPC)
+            if (this.Container != null && this.Container is GUCNPCInst)
             {
-                NPC owner = (NPC)this.Container;
+                GUCNPCInst owner = (GUCNPCInst)this.Container;
                 if (owner.IsPlayer)
                 {
                     Messages.WriteChangeItemAmount(owner.client, this);

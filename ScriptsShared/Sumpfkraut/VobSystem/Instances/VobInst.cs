@@ -10,7 +10,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
-    public partial class VobInst : BaseVobInst, Vob.IScriptVob
+    public partial class VobInst : BaseVobInst, GUCVobInst.IScriptVob
     {
         #region Constructors
 
@@ -20,9 +20,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
             pConstruct();
         }
 
-        protected override BaseVob CreateVob()
+        protected override GUCBaseVobInst CreateVob()
         {
-            return new Vob(new ModelInst(this), this);
+            return new GUCVobInst(new ModelInst(this), this);
         }
 
         protected override BaseEffectHandler CreateHandler()
@@ -38,7 +38,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 
         new public VobInstEffectHandler EffectHandler { get { return (VobInstEffectHandler)base.EffectHandler; } }
 
-        public new Vob BaseInst { get { return (Vob)base.BaseInst; } }
+        public new GUCVobInst BaseInst { get { return (GUCVobInst)base.BaseInst; } }
 
         public ModelInst ModelInst { get { return (ModelInst)this.BaseInst.Model.ScriptObject; } }
 

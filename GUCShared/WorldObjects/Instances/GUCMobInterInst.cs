@@ -8,7 +8,7 @@ using GUC.Types;
 
 namespace GUC.WorldObjects
 {
-    public partial class MobInter : Mob
+    public partial class GUCMobInterInst : GUCMobInst
     {
         public override GUCVobTypes VobType { get { return GUCVobTypes.MobInter; } }
 
@@ -24,7 +24,7 @@ namespace GUC.WorldObjects
         
         #region Constructors
 
-        public MobInter(Model.IScriptModel scriptModel, IScriptMobInter scriptObject) : base(scriptModel, scriptObject)
+        public GUCMobInterInst(Model.IScriptModel scriptModel, IScriptMobInter scriptObject) : base(scriptModel, scriptObject)
         {
         }
 

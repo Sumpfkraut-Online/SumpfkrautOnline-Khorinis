@@ -68,7 +68,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         /// <summary> Gets a vob by ID from this world. </summary>
         public bool TryGetVob(int id, out BaseVobInst vob)
         {
-            WorldObjects.BaseVob baseVob;
+            WorldObjects.GUCBaseVobInst baseVob;
             if (this.baseWorld.TryGetVob(id, out baseVob))
             {
                 vob = (BaseVobInst)baseVob.ScriptObject;

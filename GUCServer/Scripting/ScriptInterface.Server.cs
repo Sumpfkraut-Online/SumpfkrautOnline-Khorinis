@@ -7,6 +7,6 @@ namespace GUC.Scripting
 {
     public partial interface ScriptInterface
     {
-        WorldObjects.VobGuiding.TargetCmd GetTestCmd(WorldObjects.BaseVob target);
+        WorldObjects.VobGuiding.TargetCmd GetTestCmd(WorldObjects.GUCBaseVobInst target);
     }
 }

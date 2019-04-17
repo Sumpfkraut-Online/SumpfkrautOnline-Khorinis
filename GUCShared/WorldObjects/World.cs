@@ -153,14 +153,14 @@ namespace GUC.WorldObjects
 
         #region Vob Collection
 
-        StaticCollection<BaseVob> vobsByID = new StaticCollection<BaseVob>(); // all the vobs accessible by ID
-        DynamicCollection<BaseVob> vobs = new DynamicCollection<BaseVob>(); // all vobs for fast foreach loops
+        StaticCollection<GUCBaseVobInst> vobsByID = new StaticCollection<GUCBaseVobInst>(); // all the vobs accessible by ID
+        DynamicCollection<GUCBaseVobInst> vobs = new DynamicCollection<GUCBaseVobInst>(); // all vobs for fast foreach loops
 
         #region Add & Remove
 
-        partial void pBeforeAddVob(BaseVob vob);
-        partial void pAfterAddVob(BaseVob vob);
-        internal void AddVob(BaseVob vob)
+        partial void pBeforeAddVob(GUCBaseVobInst vob);
+        partial void pAfterAddVob(GUCBaseVobInst vob);
+        internal void AddVob(GUCBaseVobInst vob)
         {
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
@@ -179,9 +179,9 @@ namespace GUC.WorldObjects
             pAfterAddVob(vob);
         }
 
-        partial void pBeforeRemoveVob(BaseVob vob);
-        partial void pAfterRemoveVob(BaseVob vob);
-        internal void RemoveVob(BaseVob vob)
+        partial void pBeforeRemoveVob(GUCBaseVobInst vob);
+        partial void pAfterRemoveVob(GUCBaseVobInst vob);
+        internal void RemoveVob(GUCBaseVobInst vob)
         {
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
@@ -202,25 +202,25 @@ namespace GUC.WorldObjects
         #region Access
 
         /// <summary> Gets a vob by ID from this world. </summary>
-        public bool TryGetVob(int id, out BaseVob vob)
+        public bool TryGetVob(int id, out GUCBaseVobInst vob)
         {
             return vobsByID.TryGet(id, out vob);
         }
 
         /// <summary> Gets a vob of the specific type by ID from this world. </summary>
-        public bool TryGetVob<T>(int id, out T vob) where T : BaseVob
+        public bool TryGetVob<T>(int id, out T vob) where T : GUCBaseVobInst
         {
             return vobsByID.TryGet<T>(id, out vob);
         }
 
         /// <summary> Loops through all vobs in this world. </summary>
-        public void ForEachVob(Action<BaseVob> action)
+        public void ForEachVob(Action<GUCBaseVobInst> action)
         {
             vobs.ForEach(action);
         }
 
         /// <summary> Loops through all vobs in this world. The predicate can return FALSE to BREAK the loop. Else return true. </summary>
-        public void ForEachVobPredicate(Predicate<BaseVob> predicate)
+        public void ForEachVobPredicate(Predicate<GUCBaseVobInst> predicate)
         {
             vobs.ForEachPredicate(predicate);
         }

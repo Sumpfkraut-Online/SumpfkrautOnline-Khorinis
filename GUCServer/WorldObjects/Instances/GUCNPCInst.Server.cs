@@ -9,18 +9,18 @@ using GUC.WorldObjects.ItemContainers;
 
 namespace GUC.WorldObjects
 {
-    public partial class NPC : Vob, ItemContainer
+    public partial class GUCNPCInst : GUCVobInst, ItemContainer
     {
         #region Network Messages
 
-        public delegate void NPCMoveHandler(NPC npc, Vec3f oldPos, Angles oldAng, NPCMovement oldMovement);
+        public delegate void NPCMoveHandler(GUCNPCInst npc, Vec3f oldPos, Angles oldAng, NPCMovement oldMovement);
         public static event NPCMoveHandler OnNPCMove;
 
         new internal static class Messages
         {
             #region Equipment
 
-            public static void WriteEquipAdd(NPC npc, Item item)
+            public static void WriteEquipAdd(GUCNPCInst npc, GUCItemInst item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipAddMessage);
                 stream.Write((ushort)npc.ID);
@@ -30,7 +30,7 @@ namespace GUC.WorldObjects
                 npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
             }
 
-            public static void WriteEquipSwitch(NPC npc, Item item)
+            public static void WriteEquipSwitch(GUCNPCInst npc, GUCItemInst item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipSwitchMessage);
                 stream.Write((ushort)npc.ID);
@@ -39,7 +39,7 @@ namespace GUC.WorldObjects
                 npc.ForEachVisibleClient(client => client.Send(stream, NetPriority.Low, NetReliability.ReliableOrdered, 'W'));
             }
 
-            public static void WriteEquipRemove(NPC npc, Item item)
+            public static void WriteEquipRemove(GUCNPCInst npc, GUCItemInst item)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.NPCEquipRemoveMessage);
                 stream.Write((ushort)npc.ID);
@@ -51,7 +51,7 @@ namespace GUC.WorldObjects
 
             #region Health
 
-            public static void WriteHealth(NPC npc)
+            public static void WriteHealth(GUCNPCInst npc)
             {
                 var stream = GameServer.SetupStream(ServerMessages.NPCHealthMessage);
                 stream.Write((ushort)npc.ID);
@@ -64,7 +64,7 @@ namespace GUC.WorldObjects
 
             #region Fight Mode
 
-            public static void WriteFightMode(NPC npc, bool fightMode)
+            public static void WriteFightMode(GUCNPCInst npc, bool fightMode)
             {
                 PacketWriter stream = GameServer.SetupStream(fightMode ? ServerMessages.NPCFightModeSetMessage : ServerMessages.NPCFightModeUnsetMessage);
                 stream.Write((ushort)npc.ID);
@@ -78,7 +78,7 @@ namespace GUC.WorldObjects
             public static void ReadPosAng(PacketReader stream, GameClient client, World world)
             {
                 int id = stream.ReadUShort();
-                if (world.TryGetVob(id, out NPC npc) && (npc.guide == client || npc.client == client))
+                if (world.TryGetVob(id, out GUCNPCInst npc) && (npc.guide == client || npc.client == client))
                 {
                     var oldPos = npc.Position;
                     var oldAng = npc.Angles;
@@ -261,19 +261,19 @@ namespace GUC.WorldObjects
 
         #region Equipment
 
-        partial void pEquipItem(int slot, Item item)
+        partial void pEquipItem(int slot, GUCItemInst item)
         {
             if (this.isCreated)
                 Messages.WriteEquipAdd(this, item);
         }
 
-        partial void pEquipSwitch(int slot, Item item)
+        partial void pEquipSwitch(int slot, GUCItemInst item)
         {
             if (this.isCreated)
                 Messages.WriteEquipSwitch(this, item);
         }
 
-        partial void pUnequipItem(Item item)
+        partial void pUnequipItem(GUCItemInst item)
         {
             if (this.isCreated)
                 Messages.WriteEquipRemove(this, item);

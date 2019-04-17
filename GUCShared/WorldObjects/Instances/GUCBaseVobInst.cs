@@ -62,7 +62,7 @@ namespace GUC.WorldObjects
     /// <summary>
     /// The lowermost Vob-Object.
     /// </summary>
-    public abstract partial class BaseVob : IDObject, VobTypeObject
+    public abstract partial class GUCBaseVobInst : IDObject, VobTypeObject
     {
         #region ScriptObject
 
@@ -81,7 +81,7 @@ namespace GUC.WorldObjects
 
         #region Constructors
 
-        public BaseVob(IScriptBaseVob scriptObject) : base(scriptObject)
+        public GUCBaseVobInst(IScriptBaseVob scriptObject) : base(scriptObject)
         {
         }
 
@@ -205,8 +205,8 @@ namespace GUC.WorldObjects
 
         #region Spawn
 
-        public delegate void OnSpawnHandler(BaseVob vob, World world, Vec3f pos, Angles ang);
-        public delegate void OnDespawnHandler(BaseVob vob);
+        public delegate void OnSpawnHandler(GUCBaseVobInst vob, World world, Vec3f pos, Angles ang);
+        public delegate void OnDespawnHandler(GUCBaseVobInst vob);
 
         public static event OnSpawnHandler sOnSpawn = null;
         public static event OnDespawnHandler sOnDespawn = null;

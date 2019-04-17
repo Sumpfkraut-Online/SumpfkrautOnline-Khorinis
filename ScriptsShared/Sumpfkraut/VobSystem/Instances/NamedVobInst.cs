@@ -11,7 +11,7 @@ using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {
 
-    public abstract partial class NamedVobInst : VobInst, Vob.IScriptVob
+    public abstract partial class NamedVobInst : VobInst, GUCVobInst.IScriptVob
     {
         #region Constructors
 
