@@ -12,6 +12,7 @@ using Gothic.Objects;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Models;
 using GUC.WorldObjects.Definitions;
+using GUC.WorldObjects.Instances;
 using GUC.Utilities;
 using GUC.GameObjects;
 
@@ -492,7 +493,7 @@ namespace GUC.Network
                     WorldObjects.ItemContainers.NPCInventory.Messages.ReadRemoveItem(stream);
                     break;
                 case ServerMessages.PlayerItemAmountChangedMessage:
-                    WorldObjects.GUCItemInst.Messages.ReadItemAmountChangedMessage(stream);
+                    WorldObjects.Instances.GUCItemInst.Messages.ReadItemAmountChangedMessage(stream);
                     break;
 
                 // Model Messages

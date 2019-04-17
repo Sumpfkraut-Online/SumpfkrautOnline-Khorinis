@@ -57,7 +57,7 @@ namespace GUC.Network
                     WorldObjects.VobGuiding.GuidedVob.Messages.ReadPosAng(stream, client, client.World);
                     break;
                 case ClientMessages.GuidedNPCMessage:
-                    WorldObjects.GUCNPCInst.Messages.ReadPosAng(stream, client, client.World);
+                    WorldObjects.Instances.GUCNPCInst.Messages.ReadPosAng(stream, client, client.World);
                     break;
                 case ClientMessages.ScriptCommandMessage:
                     GameClient.Messages.ReadScriptCommandMessage(stream, client, client.World, false);

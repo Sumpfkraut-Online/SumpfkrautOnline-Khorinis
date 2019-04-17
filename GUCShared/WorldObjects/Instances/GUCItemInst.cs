@@ -8,7 +8,7 @@ using GUC.Network;
 using GUC.Models;
 using GUC.Types;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCItemInst : GUCVobInst
     {

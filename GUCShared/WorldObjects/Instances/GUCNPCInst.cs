@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 
 using GUC.WorldObjects.Definitions;
+using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.WorldObjects.ItemContainers;
 using GUC.Scripting;
 using GUC.Types;
 using GUC.Models;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCNPCInst : GUCVobInst, ItemContainer
     {

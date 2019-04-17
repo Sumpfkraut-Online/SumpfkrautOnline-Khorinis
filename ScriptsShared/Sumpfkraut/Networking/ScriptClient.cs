@@ -9,6 +9,7 @@ using GUC.WorldObjects;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Utilities;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {

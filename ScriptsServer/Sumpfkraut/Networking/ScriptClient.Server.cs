@@ -7,6 +7,7 @@ using GUC.Types;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Utilities;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.Networking
 {
@@ -58,7 +59,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
 
             if (id < RequestMessageIDs.MaxNPCRequests)
             {
-                if (vob is WorldObjects.GUCNPCInst)
+                if (vob is GUCNPCInst)
                     NPCInst.Requests.ReadRequest(id, stream, ((NPCInst)vob.ScriptObject));
             }
         }

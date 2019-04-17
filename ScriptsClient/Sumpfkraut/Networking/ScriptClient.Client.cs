@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GUC.Network;
+using GUC.WorldObjects.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Types;
@@ -29,7 +30,7 @@ namespace GUC.Scripts.Sumpfkraut.Networking
         {
         }
 
-        public virtual void ReadScriptVobMessage(PacketReader stream, WorldObjects.GUCBaseVobInst vob)
+        public virtual void ReadScriptVobMessage(PacketReader stream, GUCBaseVobInst vob)
         {
             ((BaseVobInst)vob.ScriptObject).OnReadScriptVobMsg(stream);
         }

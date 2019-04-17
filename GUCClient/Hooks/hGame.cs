@@ -13,6 +13,7 @@ using Gothic.Sound;
 using System.Threading;
 using GUC.GUI;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.Utilities;
 
 namespace GUC.Hooks

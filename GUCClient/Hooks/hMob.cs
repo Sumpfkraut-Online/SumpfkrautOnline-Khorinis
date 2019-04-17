@@ -6,6 +6,7 @@ using WinApiNew;
 using GUC.WorldObjects;
 using GUC.Log;
 using Gothic.Types;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Hooks
 {

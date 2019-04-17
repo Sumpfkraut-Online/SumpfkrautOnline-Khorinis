@@ -7,7 +7,7 @@ using GUC.Network;
 using GUC.Types;
 using GUC.WorldObjects.ItemContainers;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCItemInst
     {

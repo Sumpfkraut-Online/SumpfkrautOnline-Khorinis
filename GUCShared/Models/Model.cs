@@ -7,6 +7,7 @@ using GUC.WorldObjects;
 using GUC.Animations;
 using GUC.GameObjects;
 using System.Collections;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Models
 {

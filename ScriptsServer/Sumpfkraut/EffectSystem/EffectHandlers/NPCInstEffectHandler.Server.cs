@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GUC.WorldObjects.Instances;
+
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
@@ -33,7 +35,7 @@ namespace GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers
             Host.DoJump(move, new Vec3f(0, move == JumpMoves.Fwd ? 300 : 250, 0));
         }
 
-        internal void TryClimb(ClimbMoves move, WorldObjects.GUCNPCInst.ClimbingLedge ledge)
+        internal void TryClimb(ClimbMoves move, GUCNPCInst.ClimbingLedge ledge)
         {
             if (Host.IsDead || Host.Environment.InAir)
                 return;

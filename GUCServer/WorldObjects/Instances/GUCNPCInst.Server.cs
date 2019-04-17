@@ -7,7 +7,7 @@ using GUC.Types;
 using GUC.WorldObjects.Cells;
 using GUC.WorldObjects.ItemContainers;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCNPCInst : GUCVobInst, ItemContainer
     {

@@ -5,6 +5,7 @@ using System.Text;
 using GUC.GameObjects.Collections;
 using GUC.Network;
 using GUC.Types;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.Cells
 {

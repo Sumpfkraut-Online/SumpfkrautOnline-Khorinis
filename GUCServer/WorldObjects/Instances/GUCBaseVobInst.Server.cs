@@ -7,7 +7,7 @@ using GUC.WorldObjects.Cells;
 using GUC.Network;
 using GUC.GameObjects.Collections;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCBaseVobInst
     {

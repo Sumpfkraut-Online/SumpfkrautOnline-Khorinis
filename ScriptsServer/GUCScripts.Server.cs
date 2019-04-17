@@ -11,6 +11,7 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Types;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.Scripts.Arena.Duel;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;

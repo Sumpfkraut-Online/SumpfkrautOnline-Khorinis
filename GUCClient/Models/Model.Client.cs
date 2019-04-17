@@ -5,6 +5,7 @@ using System.Text;
 using GUC.GameObjects;
 using GUC.Animations;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.Network;
 using GUC.Types;
 

@@ -8,7 +8,7 @@ using GUC.Types;
 using GUC.GameObjects;
 using GUC.WorldObjects.Collections;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public struct VobEnvironment
     {

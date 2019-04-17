@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Types;
 using GUC.GameObjects.Collections;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.Cells
 {

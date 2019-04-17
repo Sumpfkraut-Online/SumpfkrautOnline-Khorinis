@@ -8,6 +8,7 @@ using GUC.Network;
 using GUC.Scripting;
 using GUC.Types;
 using GUC.GUI;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects
 {

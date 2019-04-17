@@ -8,7 +8,7 @@ using GUC.Models;
 using GUC.Types;
 using GUC.Network;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCProjectileInst : GUCBaseVobInst
     {

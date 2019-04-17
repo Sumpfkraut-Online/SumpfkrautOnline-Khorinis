@@ -12,6 +12,7 @@ using GUC.Types;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Models;
 using GUC.WorldObjects.Definitions;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Network
 {

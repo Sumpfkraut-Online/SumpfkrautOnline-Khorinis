@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Types;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.VobGuiding
 {

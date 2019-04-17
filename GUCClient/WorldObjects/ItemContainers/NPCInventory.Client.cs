@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Network;
 using GUC.Scripting;
 using GUC.Types;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.ItemContainers
 {

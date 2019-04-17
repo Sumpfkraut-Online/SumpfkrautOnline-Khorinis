@@ -8,7 +8,7 @@ using GUC.Models;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Network;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCVobInst : GuidedVob
     {

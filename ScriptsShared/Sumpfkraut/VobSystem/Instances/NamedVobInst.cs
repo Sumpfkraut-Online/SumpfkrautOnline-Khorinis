@@ -7,6 +7,7 @@ using GUC.WorldObjects;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.EffectSystem.EffectHandlers;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
 {

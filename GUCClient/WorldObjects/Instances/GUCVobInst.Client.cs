@@ -7,7 +7,7 @@ using Gothic.Types;
 using Gothic.Objects;
 using GUC.Network;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCVobInst
     {

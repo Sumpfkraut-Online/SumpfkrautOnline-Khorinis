@@ -6,6 +6,7 @@ using System.Text;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
 {
@@ -60,7 +61,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI
             return aiClients.Contains(aiClient);
         }
 
-        public bool HasAIClient (WorldObjects.GUCVobInst baseVob)
+        public bool HasAIClient (WorldObjects.Instances.GUCVobInst baseVob)
         {
             bool hasAIClient = false;
             for (int i = 0; i < aiClients.Count; i++)

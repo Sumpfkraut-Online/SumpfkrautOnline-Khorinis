@@ -6,6 +6,7 @@ using GUC.Log;
 using WinApiNew;
 using GUC.WorldObjects;
 using GUC.Types;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Hooks
 {

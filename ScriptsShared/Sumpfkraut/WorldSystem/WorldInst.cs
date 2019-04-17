@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 using GUC.Utilities;
+using GUC.WorldObjects.Instances;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.WorldSystem
@@ -68,7 +69,7 @@ namespace GUC.Scripts.Sumpfkraut.WorldSystem
         /// <summary> Gets a vob by ID from this world. </summary>
         public bool TryGetVob(int id, out BaseVobInst vob)
         {
-            WorldObjects.GUCBaseVobInst baseVob;
+            GUCBaseVobInst baseVob;
             if (this.baseWorld.TryGetVob(id, out baseVob))
             {
                 vob = (BaseVobInst)baseVob.ScriptObject;

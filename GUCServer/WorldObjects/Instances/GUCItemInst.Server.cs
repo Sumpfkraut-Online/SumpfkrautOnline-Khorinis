@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GUC.Network;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCItemInst : GUCVobInst
     {

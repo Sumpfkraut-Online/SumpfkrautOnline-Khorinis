@@ -5,6 +5,7 @@ using System.Text;
 using WinApiNew;
 using Gothic.Objects.Meshes;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Hooks
 {

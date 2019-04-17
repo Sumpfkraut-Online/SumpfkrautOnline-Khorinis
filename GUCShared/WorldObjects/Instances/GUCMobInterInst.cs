@@ -6,7 +6,7 @@ using GUC.WorldObjects.Definitions;
 using GUC.Models;
 using GUC.Types;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCMobInterInst : GUCMobInst
     {

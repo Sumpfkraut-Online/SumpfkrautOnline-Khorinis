@@ -5,7 +5,7 @@ using System.Text;
 using GUC.Types;
 using GUC.Network;
 using GUC.Scripting;
-
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects.VobGuiding
 {

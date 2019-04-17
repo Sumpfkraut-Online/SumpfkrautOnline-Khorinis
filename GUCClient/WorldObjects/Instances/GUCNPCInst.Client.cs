@@ -10,7 +10,7 @@ using WinApi;
 using GUC.Network;
 using GUC.Scripting;
 
-namespace GUC.WorldObjects
+namespace GUC.WorldObjects.Instances
 {
     public partial class GUCNPCInst
     {

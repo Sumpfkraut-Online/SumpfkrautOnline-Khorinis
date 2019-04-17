@@ -14,6 +14,7 @@ using GUC.Scripts.Sumpfkraut.WorldSystem;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts
 {

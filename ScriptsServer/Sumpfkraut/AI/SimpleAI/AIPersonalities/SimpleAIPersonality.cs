@@ -1,14 +1,15 @@
-﻿using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using GUC.Types;
+using GUC.WorldObjects.Instances;
+using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
+
+using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIActions;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIObservations;
 using GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIRoutines;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
-using GUC.Types;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using GUC.Scripts.Sumpfkraut.AI.GuideCommands;
-using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 {
@@ -228,7 +229,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
             throw new NotImplementedException();
         }
 
-        public void ClimbLedge(AIAgent aiAgent, WorldObjects.GUCNPCInst.ClimbingLedge ledge)
+        public void ClimbLedge(AIAgent aiAgent, GUCNPCInst.ClimbingLedge ledge)
         {
             throw new NotImplementedException();
         }
@@ -418,7 +419,7 @@ namespace GUC.Scripts.Sumpfkraut.AI.SimpleAI.AIPersonalities
 
                     // find all enemies in the radius of aggression
                     npc.World.BaseWorld.ForEachNPCRough(npc.BaseInst, aggressionRadius,
-                        delegate (WorldObjects.GUCNPCInst nearNPC)
+                        delegate (GUCNPCInst nearNPC)
                     {
                         var otherNpc = (NPCInst)nearNPC.ScriptObject;
                         /*if (!aiAgent.HasAIClient(nearNPC))

@@ -7,17 +7,18 @@ using GUC.Network;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions.Mobs;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.Networking;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 {
-    public partial class MobInst : NamedVobInst, WorldObjects.GUCMobInst.IScriptMob
+    public partial class MobInst : NamedVobInst, GUCMobInst.IScriptMob
     {
 
         #region Properties
 
         public override VobType VobType { get { return VobType.Mob; } }
 
-        new public WorldObjects.GUCMobInst BaseInst { get { return (WorldObjects.GUCMobInst)base.BaseInst; } }
+        new public GUCMobInst BaseInst { get { return (GUCMobInst)base.BaseInst; } }
 
         new public MobDef Definition { get { return (MobDef)base.Definition; } set { base.Definition = value; } }
 
@@ -25,9 +26,9 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs
 
         #region Constructors
 
-        protected override WorldObjects.GUCBaseVobInst CreateVob()
+        protected override GUCBaseVobInst CreateVob()
         {
-            return new WorldObjects.GUCMobInst(new ModelInst(this), this);
+            return new GUCMobInst(new ModelInst(this), this);
         }
 
         #endregion

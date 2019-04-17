@@ -6,6 +6,7 @@ using GUC.Network;
 using GUC.Types;
 using GUC.WorldObjects.Cells;
 using GUC.GameObjects.Collections;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects
 {

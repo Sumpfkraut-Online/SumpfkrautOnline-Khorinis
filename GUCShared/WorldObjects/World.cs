@@ -7,6 +7,7 @@ using GUC.WorldObjects.WorldGlobals;
 using GUC.GameObjects;
 using GUC.GameObjects.Collections;
 using GUC.Types;
+using GUC.WorldObjects.Instances;
 
 namespace GUC.WorldObjects
 {

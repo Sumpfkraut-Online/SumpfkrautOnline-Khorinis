@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using GUC.Network;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.WorldObjects.ItemContainers;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
 

@@ -1,13 +1,14 @@
-﻿using GUC.Log;
-using System.Collections.Generic;
+﻿using System;
+using GUC.Log;
+using GUC.WorldObjects.Instances;
+using GUC.Types;
+using GUC.Utilities;
+
 using GUC.Scripting;
 using GUC.Scripts.Sumpfkraut.Networking;
 using GUC.Scripts.Sumpfkraut.Visuals;
 using GUC.Scripts.Sumpfkraut.Visuals.AniCatalogs;
 using GUC.Scripts.Sumpfkraut.VobSystem.Definitions;
-using GUC.Types;
-using System;
-using GUC.Utilities;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;
 
@@ -21,7 +22,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         public static event NPCInstMoveHandler sOnNPCInstMove;
         static NPCInst()
         {
-            WorldObjects.GUCNPCInst.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
+            GUCNPCInst.OnNPCMove += (npc, p, d, m) => sOnNPCInstMove((NPCInst)npc.ScriptObject, p, d, m);
             sOnNPCInstMove += (npc, p, d, m) => npc.ChangePosDir(p, d, m);
         }
 
@@ -192,7 +193,7 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         bool isClimbing = false;
         public bool IsClimbing { get { return this.isClimbing; } }
 
-        public void DoClimb(ClimbMoves move, WorldObjects.GUCNPCInst.ClimbingLedge ledge)
+        public void DoClimb(ClimbMoves move, GUCNPCInst.ClimbingLedge ledge)
         {
             ScriptAniJob job;
             switch (move)

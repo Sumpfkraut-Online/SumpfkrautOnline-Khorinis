@@ -9,6 +9,7 @@ using GUC.WorldObjects;
 using GUC.Animations;
 using GUC.Models;
 using GUC.WorldObjects.Definitions;
+using GUC.WorldObjects.Instances;
 using GUC.WorldObjects.VobGuiding;
 using GUC.Types;
 

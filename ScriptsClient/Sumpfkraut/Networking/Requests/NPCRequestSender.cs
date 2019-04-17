@@ -5,6 +5,7 @@ using System.Text;
 using GUC.Scripts.Sumpfkraut.VobSystem.Enumeration;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances;
 using GUC.WorldObjects;
+using GUC.WorldObjects.Instances;
 using GUC.Utilities;
 using GUC.Types;
 using GUC.Scripts.Sumpfkraut.VobSystem.Instances.Mobs;

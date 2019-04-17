@@ -8,6 +8,7 @@ using Gothic.Sound;
 using GUC.WorldObjects;
 using GUC.Types;
 using Gothic.Objects;
+using GUC.WorldObjects.Instances;
 
 namespace GUC
 {
