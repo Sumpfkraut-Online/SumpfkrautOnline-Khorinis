@@ -166,7 +166,7 @@ namespace GUC.WorldObjects.Instances
 
         internal virtual void CreateGVob()
         {
-            this.gvob = this.instance.CreateVob();
+            this.gvob = this.definition.CreateVob();
         }
 
         internal virtual void DeleteGVob()

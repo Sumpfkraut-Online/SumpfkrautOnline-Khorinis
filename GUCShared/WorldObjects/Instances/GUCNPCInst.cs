@@ -73,26 +73,26 @@ namespace GUC.WorldObjects.Instances
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(GUCNPCDef); } }
-        new public GUCNPCDef Instance
+        public override Type DefinitionType { get { return typeof(GUCNPCDef); } }
+        new public GUCNPCDef Definition
         {
-            get { return (GUCNPCDef)base.Instance; }
-            set { SetInstance(value); }
+            get { return (GUCNPCDef)base.Definition; }
+            set { SetDefinition(value); }
         }
 
         NPCInventory inventory;
         public ItemInventory Inventory { get { return inventory; } }
 
         /// <summary> The NPC's name set by its Instance. </summary>
-        public string Name { get { return Instance.Name; } }
+        public string Name { get { return Definition.Name; } }
         /// <summary> The NPC's body mesh set by its Instance. </summary>
-        public string BodyMesh { get { return Instance.BodyMesh; } }
+        public string BodyMesh { get { return Definition.BodyMesh; } }
         /// <summary> The NPC's body texture set by its Instance. </summary>
-        public int BodyTex { get { return Instance.BodyTex; } }
+        public int BodyTex { get { return Definition.BodyTex; } }
         /// <summary> The NPC's head mesh set by its Instance. </summary>
-        public string HeadMesh { get { return Instance.HeadMesh; } }
+        public string HeadMesh { get { return Definition.HeadMesh; } }
         /// <summary> The NPC's head texture set by its Instance. </summary>
-        public int HeadTex { get { return Instance.HeadTex; } }
+        public int HeadTex { get { return Definition.HeadTex; } }
 
         #endregion
 

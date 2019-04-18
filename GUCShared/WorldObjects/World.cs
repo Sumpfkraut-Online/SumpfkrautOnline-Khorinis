@@ -169,7 +169,7 @@ namespace GUC.WorldObjects
             if (vob.IsSpawned)
                 throw new ArgumentException("Vob is already in a world!");
 
-            if (vob.Instance == null)
+            if (vob.Definition == null)
                 throw new ArgumentException("Vob has no instance!");
 
             pBeforeAddVob(vob);

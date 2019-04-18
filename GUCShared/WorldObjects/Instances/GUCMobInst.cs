@@ -33,16 +33,16 @@ namespace GUC.WorldObjects.Instances
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(GUCMobDef); } }
-        /// <summary> The Instance of this object. </summary>
-        new public GUCMobDef Instance
+        public override Type DefinitionType { get { return typeof(GUCMobDef); } }
+        /// <summary> The Definition of this object. </summary>
+        new public GUCMobDef Definition
         {
-            get { return (GUCMobDef)base.Instance; }
-            set { SetInstance(value); }
+            get { return (GUCMobDef)base.Definition; }
+            set { SetDefinition(value); }
         }
 
         /// <summary> The name set by its Instance players will see when the focus this object. </summary>
-        public string FocusName { get { return Instance.FocusName; } }
+        public string FocusName { get { return Definition.FocusName; } }
 
         #endregion
 

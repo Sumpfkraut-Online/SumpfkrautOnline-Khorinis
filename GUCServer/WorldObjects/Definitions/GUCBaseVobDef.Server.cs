@@ -12,18 +12,18 @@ namespace GUC.WorldObjects.Definitions
 
         internal static class Messages
         {
-            public static void WriteCreate(GUCBaseVobDef instance)
+            public static void WriteCreate(GUCBaseVobDef definition)
             {
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceCreateMessage);
-                stream.Write((byte)instance.ScriptObject.GetVobType());
-                instance.WriteStream(stream);
+                stream.Write((byte)definition.ScriptObject.GetVobType());
+                definition.WriteStream(stream);
                 GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0'));
             }
 
-            public static void WriteDelete(GUCBaseVobDef instance)
+            public static void WriteDelete(GUCBaseVobDef definition)
             {
                 var stream = GameServer.SetupStream(ServerMessages.VobInstanceDeleteMessage);
-                stream.Write((ushort)instance.ID);
+                stream.Write((ushort)definition.ID);
                 GameClient.ForEach(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, '\0'));
             }
         }

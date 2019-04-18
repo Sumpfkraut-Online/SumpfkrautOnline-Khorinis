@@ -37,25 +37,25 @@ namespace GUC.WorldObjects.Instances
         /// <summary> The VobType of this Vob. </summary>
         public override GUCVobTypes VobType { get { return GUCVobTypes.Vob; } }
 
-        public override Type InstanceType { get { return typeof(GUCVobDef); } }
-        /// <summary> The Instance of this object. </summary>
-        new public GUCVobDef Instance
+        public override Type DefinitionType { get { return typeof(GUCVobDef); } }
+        /// <summary> The Definition of this object. </summary>
+        new public GUCVobDef Definition
         {
-            get { return (GUCVobDef)base.Instance; }
-            set { SetInstance(value); }
+            get { return (GUCVobDef)base.Definition; }
+            set { SetDefinition(value); }
         }
 
         /// <summary> The ModelInstance of this vob's instance. </summary>
-        public ModelInstance ModelInstance { get { return Instance.ModelInstance; } }
+        public ModelInstance ModelInstance { get { return Definition.ModelInstance; } }
 
         Model model;
         /// <summary> The Model of this vob. </summary>
         public Model Model { get { return this.model; } }
         
         /// <summary> The dynamic collision detection setting of this vob's instance. </summary>
-        public bool CDDyn { get { return Instance.CDDyn; } }
+        public bool CDDyn { get { return Definition.CDDyn; } }
         /// <summary> The static collision detection setting of this vob's instance. </summary>
-        public bool CDStatic { get { return Instance.CDStatic; } }
+        public bool CDStatic { get { return Definition.CDStatic; } }
 
         #endregion
 

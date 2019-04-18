@@ -94,26 +94,26 @@ namespace GUC.WorldObjects.Instances
 
         #region Vob Instance
 
-        GUCBaseVobDef instance;
-        /// <summary> The Instance of this object. </summary>
-        public GUCBaseVobDef Instance { get { return this.instance; } set { SetInstance(value); } }
+        GUCBaseVobDef definition;
+        /// <summary> The Definition of this object. </summary>
+        public GUCBaseVobDef Definition { get { return this.definition; } set { SetDefinition(value); } }
 
-        public virtual Type InstanceType { get { return typeof(GUCBaseVobDef); } }
+        public virtual Type DefinitionType { get { return typeof(GUCBaseVobDef); } }
 
-        protected void SetInstance(GUCBaseVobDef instance)
+        protected void SetDefinition(GUCBaseVobDef definition)
         {
             CanChangeNow();
 
-            if (instance == null)
+            if (definition == null)
                 throw new ArgumentNullException("Instance is null!");
 
-            if (instance.GetType() != InstanceType)
-                throw new ArgumentException(string.Format("Instance must be of type {0}! Is {1}.", InstanceType, instance.GetType()));
+            if (definition.GetType() != DefinitionType)
+                throw new ArgumentException(string.Format("Instance must be of type {0}! Is {1}.", DefinitionType, definition.GetType()));
 
-            if (!instance.IsCreated)
+            if (!definition.IsCreated)
                 throw new ArgumentException("Instance is not created!");
 
-            this.instance = instance;
+            this.definition = definition;
         }
 
         #endregion
@@ -180,7 +180,7 @@ namespace GUC.WorldObjects.Instances
         protected override void WriteProperties(PacketWriter stream)
         {
             base.WriteProperties(stream);
-            stream.Write((ushort)this.instance.ID);
+            stream.Write((ushort)this.definition.ID);
             stream.Write(this.pos);
             stream.Write(this.ang);
         }
@@ -190,12 +190,12 @@ namespace GUC.WorldObjects.Instances
             base.ReadProperties(stream);
 
             int instanceID = stream.ReadUShort();
-            GUCBaseVobDef inst;
-            if (!GUCBaseVobDef.TryGet(instanceID, out inst))
+            GUCBaseVobDef def;
+            if (!GUCBaseVobDef.TryGet(instanceID, out def))
             {
                 throw new Exception("Instance ID not found! " + instanceID);
             }
-            SetInstance(inst);
+            SetDefinition(def);
 
             this.pos = stream.ReadVec3f();
             this.ang = stream.ReadAngles();
@@ -238,7 +238,7 @@ namespace GUC.WorldObjects.Instances
             if (world == null)
                 throw new ArgumentNullException("World is null!");
 
-            if (this.instance == null)
+            if (this.definition == null)
                 throw new Exception("Vob has no Instance!");
 
             if (this.ScriptObject == null)

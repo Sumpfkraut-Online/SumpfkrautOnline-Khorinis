@@ -77,10 +77,10 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Definitions
 
         public static bool TryGetDef<T>(int id, out T def) where T : BaseVobDef
         {
-            GUCBaseVobDef instance;
-            if (GUCBaseVobDef.TryGet(id, out instance) && instance.ScriptObject is T)
+            GUCBaseVobDef definition;
+            if (GUCBaseVobDef.TryGet(id, out definition) && definition.ScriptObject is T)
             {
-                def = (T)instance.ScriptObject;
+                def = (T)definition.ScriptObject;
                 return true;
             }
             def = default(T);

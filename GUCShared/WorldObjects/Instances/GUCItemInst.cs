@@ -49,11 +49,11 @@ namespace GUC.WorldObjects.Instances
                 throw new NotSupportedException("Can't change value when the Item is in an ItemContainer!");
         }
 
-        public override Type InstanceType { get { return typeof(GUCItemDef); } }
-        new public GUCItemDef Instance
+        public override Type DefinitionType { get { return typeof(GUCItemDef); } }
+        new public GUCItemDef Definition
         {
-            get { return (GUCItemDef)base.Instance; }
-            set { SetInstance(value); }
+            get { return (GUCItemDef)base.Definition; }
+            set { SetDefinition(value); }
         }
 
         /// <summary>
@@ -106,7 +106,7 @@ namespace GUC.WorldObjects.Instances
         public void WriteEquipProperties(PacketWriter stream)
         {
             stream.Write((byte)this.ID); 
-            stream.Write((ushort)Instance.ID);
+            stream.Write((ushort)Definition.ID);
             this.ScriptObject.WriteEquipProperties(stream);
         }
 
@@ -115,19 +115,19 @@ namespace GUC.WorldObjects.Instances
             this.ID = stream.ReadByte();
 
             ushort instanceID = stream.ReadUShort();
-            GUCItemDef inst;
-            if (!GUCBaseVobDef.TryGet(instanceID, out inst))
+            GUCItemDef def;
+            if (!GUCBaseVobDef.TryGet(instanceID, out def))
             {
                 throw new Exception("ItemInstance-ID not found! " + instanceID);
             }
-            SetInstance(inst);
+            SetDefinition(def);
 
             this.ScriptObject.ReadEquipProperties(stream);
         }
 
         public void WriteInventoryProperties(PacketWriter stream)
         {
-            stream.Write((ushort)Instance.ID);
+            stream.Write((ushort)Definition.ID);
             stream.Write((ushort)this.amount);
 
             this.ScriptObject.WriteInventoryProperties(stream);
@@ -136,12 +136,12 @@ namespace GUC.WorldObjects.Instances
         public void ReadInventoryProperties(PacketReader stream)
         {
             ushort instanceid = stream.ReadUShort();
-            GUCItemDef inst;
-            if (!GUCBaseVobDef.TryGet(instanceid, out inst))
+            GUCItemDef def;
+            if (!GUCBaseVobDef.TryGet(instanceid, out def))
             {
                 throw new Exception("Instance-ID not found! " + instanceid);
             }
-            SetInstance(inst);
+            SetDefinition(def);
 
             this.amount = stream.ReadUShort();
 

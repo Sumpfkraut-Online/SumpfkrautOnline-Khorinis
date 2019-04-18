@@ -22,16 +22,16 @@ namespace GUC.WorldObjects.Definitions
             public static void ReadCreate(PacketReader stream)
             {
                 byte type = stream.ReadByte();
-                GUCBaseVobDef inst = ScriptManager.Interface.CreateInstance(type);
-                inst.ReadStream(stream);
-                inst.ScriptObject.Create();
+                GUCBaseVobDef def = ScriptManager.Interface.CreateInstance(type);
+                def.ReadStream(stream);
+                def.ScriptObject.Create();
             }
 
             public static void ReadDelete(PacketReader stream)
             {
-                if (GUCBaseVobDef.TryGet(stream.ReadUShort(), out GUCBaseVobDef inst))
+                if (GUCBaseVobDef.TryGet(stream.ReadUShort(), out GUCBaseVobDef def))
                 {
-                    inst.ScriptObject.Delete();
+                    def.ScriptObject.Delete();
                 }
             }
 

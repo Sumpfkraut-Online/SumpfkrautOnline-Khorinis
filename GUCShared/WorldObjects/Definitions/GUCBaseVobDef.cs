@@ -52,8 +52,8 @@ namespace GUC.WorldObjects.Definitions
 
         static StaticCollection<GUCBaseVobDef> idColl = new StaticCollection<GUCBaseVobDef>();
 
-        static VobTypeCollection<GUCBaseVobDef> instances = new VobTypeCollection<GUCBaseVobDef>();
-        static VobTypeCollection<GUCBaseVobDef> dynInstances = new VobTypeCollection<GUCBaseVobDef>();
+        static VobTypeCollection<GUCBaseVobDef> definitions = new VobTypeCollection<GUCBaseVobDef>();
+        static VobTypeCollection<GUCBaseVobDef> dynDefinitions = new VobTypeCollection<GUCBaseVobDef>();
 
         #region Create & Delete
 
@@ -66,11 +66,11 @@ namespace GUC.WorldObjects.Definitions
             
             idColl.Add(this);
             
-            instances.Add(this, ref this.collID, ref this.collTypeID);
+            definitions.Add(this, ref this.collID, ref this.collTypeID);
 
             if (!this.IsStatic)
             {
-                dynInstances.Add(this, ref this.dynID, ref this.dynTypeID);
+                dynDefinitions.Add(this, ref this.dynID, ref this.dynTypeID);
             }
 
             this.isCreated = true;
@@ -90,11 +90,11 @@ namespace GUC.WorldObjects.Definitions
             this.isCreated = false;
 
             idColl.Remove(this);
-            instances.Remove(this, ref this.collID, ref this.collTypeID);
+            definitions.Remove(this, ref this.collID, ref this.collTypeID);
 
             if (!this.IsStatic)
             {
-                dynInstances.Remove(this, ref this.dynID, ref this.dynTypeID);
+                dynDefinitions.Remove(this, ref this.dynID, ref this.dynTypeID);
             }
         }
 
@@ -103,9 +103,9 @@ namespace GUC.WorldObjects.Definitions
         #region Access
 
         /// <summary> Gets any Instance with the given ID or null from the static Instance collection. </summary>
-        public static bool TryGet(int id, out GUCBaseVobDef instance)
+        public static bool TryGet(int id, out GUCBaseVobDef definition)
         {
-            return idColl.TryGet(id, out instance);
+            return idColl.TryGet(id, out definition);
         }
 
         /// <summary> Gets an Instance of a specific type with the given ID or null from the static Instance collection. </summary>
@@ -117,45 +117,45 @@ namespace GUC.WorldObjects.Definitions
         /// <summary> Loops through all Instances in the static Instance collection. </summary>
         public static void ForEach(Action<GUCBaseVobDef> action)
         {
-            instances.ForEach(action);
+            definitions.ForEach(action);
         }
 
         /// <summary> Gets the count of all Instances in the static Instance collection. </summary>
         public static int GetCount()
         {
-            return instances.GetCount();
+            return definitions.GetCount();
         }
 
         /// <summary> Loops through all Instances of the given type in the static Instance collection. </summary>
         public static void ForEachOfType(GUCVobTypes type, Action<GUCBaseVobDef> action)
         {
-            instances.ForEachOfType(type, action);
+            definitions.ForEachOfType(type, action);
         }
 
         /// <summary> Gets the count of all Instances of the given type in the static Instance collection. </summary>
         public static int GetCountOfType(GUCVobTypes type)
         {
-            return instances.GetCountOfType(type);
+            return definitions.GetCountOfType(type);
         }
 
         public static void ForEachDynamic(Action<GUCBaseVobDef> action)
         {
-            dynInstances.ForEach(action);
+            dynDefinitions.ForEach(action);
         }
 
         public static void ForEachDynamicOfType(GUCVobTypes type, Action<GUCBaseVobDef> action)
         {
-            dynInstances.ForEachOfType(type, action);
+            dynDefinitions.ForEachOfType(type, action);
         }
 
         public static int GetCountDynamics()
         {
-            return dynInstances.GetCount();
+            return dynDefinitions.GetCount();
         }
 
         public static int GetCountDynamicsOfType(GUCVobTypes type)
         {
-            return dynInstances.GetCountOfType(type);
+            return dynDefinitions.GetCountOfType(type);
         }
 
         #endregion

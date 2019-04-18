@@ -207,7 +207,7 @@ namespace GUC.WorldObjects.Instances
                 if (world == null)
                     throw new ArgumentNullException("World is null!");
 
-                if (this.Instance == null)
+                if (this.Definition == null)
                     throw new Exception("Vob has no Instance!");
 
                 if (this.ScriptObject == null)

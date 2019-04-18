@@ -34,11 +34,11 @@ namespace GUC.WorldObjects.Instances
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(GUCProjectileDef); } }
-        new public GUCProjectileDef Instance
+        public override Type DefinitionType { get { return typeof(GUCProjectileDef); } }
+        new public GUCProjectileDef Definition
         {
-            get { return (GUCProjectileDef)base.Instance; }
-            set { SetInstance(value); }
+            get { return (GUCProjectileDef)base.Definition; }
+            set { SetDefinition(value); }
         }
         
         float velocity;

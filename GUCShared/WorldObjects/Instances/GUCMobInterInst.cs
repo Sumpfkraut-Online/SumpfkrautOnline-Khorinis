@@ -32,15 +32,15 @@ namespace GUC.WorldObjects.Instances
 
         #region Properties
 
-        public override Type InstanceType { get { return typeof(GUCMobInterDef); } }
-        /// <summary> The Instance of this object. </summary>
-        new public GUCMobInterDef Instance
+        public override Type DefinitionType { get { return typeof(GUCMobInterDef); } }
+        /// <summary> The Definition of this object. </summary>
+        new public GUCMobInterDef Definition
         {
-            get { return (GUCMobInterDef)base.Instance; }
-            set { SetInstance(value); }
+            get { return (GUCMobInterDef)base.Definition; }
+            set { SetDefinition(value); }
         }
 
-        public string OnTriggerClientFunc { get { return Instance.OnTriggerClientFunc; } }
+        public string OnTriggerClientFunc { get { return Definition.OnTriggerClientFunc; } }
 
         //NPC user;
         //public NPC User { get { return this.user; } }

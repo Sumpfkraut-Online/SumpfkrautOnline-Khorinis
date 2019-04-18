@@ -43,8 +43,8 @@ namespace GUC.Scripts.Sumpfkraut.VobSystem.Instances
         // Definition 
         public BaseVobDef Definition
         {
-            get { return (BaseVobDef)BaseInst.Instance?.ScriptObject; }
-            set { BaseInst.Instance = value?.BaseDef; }
+            get { return (BaseVobDef)BaseInst.Definition?.ScriptObject; }
+            set { BaseInst.Definition = value?.BaseDef; }
         }
 
         public int ID { get { return BaseInst.ID; } }
