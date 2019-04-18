@@ -25,7 +25,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public GUCMobInst(Model.IScriptModel scriptModel, IScriptMob scriptObject) : base(scriptModel, scriptObject)
+        public GUCMobInst(GUCModelInst.IScriptModelInst scriptModel, IScriptMob scriptObject) : base(scriptModel, scriptObject)
         {
         }
 

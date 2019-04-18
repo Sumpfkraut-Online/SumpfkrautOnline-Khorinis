@@ -64,7 +64,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public GUCNPCInst(ItemInventory.IScriptItemInventory scriptItemInventory, Model.IScriptModel scriptModel, IScriptNPC scriptObject) : base(scriptModel, scriptObject)
+        public GUCNPCInst(ItemInventory.IScriptItemInventory scriptItemInventory, GUCModelInst.IScriptModelInst scriptModel, IScriptNPC scriptObject) : base(scriptModel, scriptObject)
         {
             this.inventory = new NPCInventory(this, scriptItemInventory);
         }
@@ -298,7 +298,7 @@ namespace GUC.WorldObjects.Instances
                 byte type = stream.ReadByte();
                 if (!inventory.TryGetItem(itemID, out GUCItemInst item))
                 {
-                    item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
+                    item = (GUCItemInst)ScriptManager.Interface.CreateVobInstance(type);
                     item.ID = itemID;
                     item.ReadInventoryProperties(stream);
                     this.inventory.ScriptObject.AddItem(item);
@@ -349,7 +349,7 @@ namespace GUC.WorldObjects.Instances
             {
                 int slot = stream.ReadByte();
                 byte type = stream.ReadByte();
-                GUCItemInst item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
+                GUCItemInst item = (GUCItemInst)ScriptManager.Interface.CreateVobInstance(type);
                 item.ReadEquipProperties(stream);
                 this.inventory.ScriptObject.AddItem(item);
                 this.ScriptObject.EquipItem(slot, item);

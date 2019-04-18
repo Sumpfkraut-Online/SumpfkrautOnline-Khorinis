@@ -21,9 +21,9 @@ namespace GUC.Scripting
         Overlay CreateOverlay();
         AniJob CreateAniJob();
         Animation CreateAnimation();
-        ModelInstance CreateModelInstance();
-        GUCBaseVobInst CreateVob(byte type);
-        GUCBaseVobDef CreateInstance(byte type);
+        GUCModelDef CreateModelDefinition();
+        GUCBaseVobInst CreateVobInstance(byte type);
+        GUCBaseVobDef CreateVobDefinition(byte type);
         World CreateWorld();
         GuideCmd CreateGuideCommand(byte type);
     }

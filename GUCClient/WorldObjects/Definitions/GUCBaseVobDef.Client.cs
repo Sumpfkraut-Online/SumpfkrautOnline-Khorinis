@@ -22,7 +22,7 @@ namespace GUC.WorldObjects.Definitions
             public static void ReadCreate(PacketReader stream)
             {
                 byte type = stream.ReadByte();
-                GUCBaseVobDef def = ScriptManager.Interface.CreateInstance(type);
+                GUCBaseVobDef def = ScriptManager.Interface.CreateVobDefinition(type);
                 def.ReadStream(stream);
                 def.ScriptObject.Create();
             }

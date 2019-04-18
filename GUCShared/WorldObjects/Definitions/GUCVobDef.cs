@@ -33,8 +33,8 @@ namespace GUC.WorldObjects.Definitions
 
         #region Properties
 
-        ModelInstance modelInstance;
-        public ModelInstance ModelInstance
+        GUCModelDef modelInstance;
+        public GUCModelDef ModelInstance
         {
             get { return this.modelInstance; }
             set
@@ -98,7 +98,7 @@ namespace GUC.WorldObjects.Definitions
             base.ReadProperties(stream);
 
             int modelID = stream.ReadUShort();
-            if (!ModelInstance.TryGet(modelID, out this.modelInstance))
+            if (!GUCModelDef.TryGet(modelID, out this.modelInstance))
             {
                 throw new Exception("Model not found! " + modelID);
             }

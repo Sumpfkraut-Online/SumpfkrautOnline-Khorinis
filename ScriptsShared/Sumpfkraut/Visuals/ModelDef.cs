@@ -10,12 +10,12 @@ using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelDef : ExtendedObject, ModelInstance.IScriptModelInstance
+    public partial class ModelDef : ExtendedObject, GUCModelDef.IScriptModelDef
     {
         #region Properties
 
-        ModelInstance baseDef;
-        public ModelInstance BaseDef { get { return baseDef; } }
+        GUCModelDef baseDef;
+        public GUCModelDef BaseDef { get { return baseDef; } }
 
         public int ID { get { return baseDef.ID; } }
         public bool IsStatic { get { return baseDef.IsStatic; } }
@@ -31,13 +31,13 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public static bool Contains(int id)
         {
-            return ModelInstance.Contains(id);
+            return GUCModelDef.Contains(id);
         }
 
         public static bool TryGetModel(int id, out ModelDef model)
         {
-            ModelInstance m;
-            if (ModelInstance.TryGet(id, out m))
+            GUCModelDef m;
+            if (GUCModelDef.TryGet(id, out m))
             {
                 model = (ModelDef)m.ScriptObject;
                 return true;
@@ -50,17 +50,17 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public static void ForEachModel(Action<ModelDef> action)
         {
-            ModelInstance.ForEach(m => action((ModelDef)m.ScriptObject));
+            GUCModelDef.ForEach(m => action((ModelDef)m.ScriptObject));
         }
 
         public static void ForEachModelPredicate(Predicate<ModelDef> predicate)
         {
-            ModelInstance.ForEachPredicate(m => predicate((ModelDef)m.ScriptObject));
+            GUCModelDef.ForEachPredicate(m => predicate((ModelDef)m.ScriptObject));
         }
 
         public int GetCount()
         {
-            return ModelInstance.Count;
+            return GUCModelDef.Count;
         }
 
         #endregion
@@ -69,7 +69,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         public ModelDef()
         {
-            this.baseDef = new ModelInstance(this);
+            this.baseDef = new GUCModelDef(this);
         }
 
         #endregion

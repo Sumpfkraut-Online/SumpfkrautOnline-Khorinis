@@ -33,7 +33,7 @@ namespace GUC.WorldObjects.Instances
                     GUCItemInst item;
                     if (npc != Hero)
                     {
-                        item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
+                        item = (GUCItemInst)ScriptManager.Interface.CreateVobInstance(type);
                         item.ReadEquipProperties(stream);
                         npc.Inventory.ScriptObject.AddItem(item);
                     }

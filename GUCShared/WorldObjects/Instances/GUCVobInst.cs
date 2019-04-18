@@ -25,9 +25,9 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
 
-        public GUCVobInst(Model.IScriptModel scriptModel, IScriptVob scriptObject) : base(scriptObject)
+        public GUCVobInst(GUCModelInst.IScriptModelInst scriptModel, IScriptVob scriptObject) : base(scriptObject)
         {
-            this.model = new Model(this, scriptModel);
+            this.model = new GUCModelInst(this, scriptModel);
         }
 
         #endregion
@@ -46,11 +46,11 @@ namespace GUC.WorldObjects.Instances
         }
 
         /// <summary> The ModelInstance of this vob's instance. </summary>
-        public ModelInstance ModelInstance { get { return Definition.ModelInstance; } }
+        public GUCModelDef ModelInstance { get { return Definition.ModelInstance; } }
 
-        Model model;
+        GUCModelInst model;
         /// <summary> The Model of this vob. </summary>
-        public Model Model { get { return this.model; } }
+        public GUCModelInst Model { get { return this.model; } }
         
         /// <summary> The dynamic collision detection setting of this vob's instance. </summary>
         public bool CDDyn { get { return Definition.CDDyn; } }

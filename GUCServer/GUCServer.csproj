@@ -105,11 +105,11 @@
     <Compile Include="..\GUCShared\Log\Logger.cs">
       <Link>Log\Logger.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Models\Model.cs">
-      <Link>Models\Model.cs</Link>
+    <Compile Include="..\GUCShared\Models\GUCModelDef.cs">
+      <Link>Models\GUCModelDef.cs</Link>
     </Compile>
-    <Compile Include="..\GUCShared\Models\ModelInstance.cs">
-      <Link>Models\ModelInstance.cs</Link>
+    <Compile Include="..\GUCShared\Models\GUCModelInst.cs">
+      <Link>Models\GUCModelInst.cs</Link>
     </Compile>
     <Compile Include="..\GUCShared\Network\ClientMessages.cs">
       <Link>Network\ClientMessages.cs</Link>
@@ -283,8 +283,8 @@
       <Link>WorldObjects\WorldGlobals\WorldClock.cs</Link>
     </Compile>
     <Compile Include="Log\Logger.Server.cs" />
-    <Compile Include="Models\Model.Server.cs" />
-    <Compile Include="Models\ModelInstance.Server.cs" />
+    <Compile Include="Models\GUCModelInst.Server.cs" />
+    <Compile Include="Models\GUCModelDef.Server.cs" />
     <Compile Include="Network\GameClient.Server.cs" />
     <Compile Include="Network\Messages\TradeMessage.cs" />
     <Compile Include="Options\ServerOptions.cs" />

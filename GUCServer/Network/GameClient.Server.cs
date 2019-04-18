@@ -49,15 +49,15 @@ namespace GUC.Network
             {
                 if (dynamics == null)
                 {
-                    if (GUCBaseVobDef.GetCountDynamics() > 0 && ModelInstance.CountDynamics > 0)
+                    if (GUCBaseVobDef.GetCountDynamics() > 0 && GUCModelDef.CountDynamics > 0)
                     {
                         PacketWriter strm = new PacketWriter();
 
                         // MODELS
-                        if (strm.Write(ModelInstance.CountDynamics > 0))
+                        if (strm.Write(GUCModelDef.CountDynamics > 0))
                         {
-                            strm.Write((ushort)ModelInstance.CountDynamics);
-                            ModelInstance.ForEachDynamic(model =>
+                            strm.Write((ushort)GUCModelDef.CountDynamics);
+                            GUCModelDef.ForEachDynamic(model =>
                             {
                                 model.WriteStream(strm);
                             });

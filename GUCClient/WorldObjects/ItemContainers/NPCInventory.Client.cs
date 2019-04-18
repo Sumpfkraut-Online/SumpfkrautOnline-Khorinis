@@ -18,7 +18,7 @@ namespace GUC.WorldObjects.ItemContainers
             public static void ReadAddItem(PacketReader stream)
             {
                 byte type = stream.ReadByte();
-                GUCItemInst item = (GUCItemInst)ScriptManager.Interface.CreateVob(type);
+                GUCItemInst item = (GUCItemInst)ScriptManager.Interface.CreateVobInstance(type);
                 item.ID = stream.ReadByte();
                 item.ReadInventoryProperties(stream);
                 PlayerInventory.ScriptObject.AddItem(item);

@@ -13,11 +13,11 @@ namespace GUC.Models
     /// <summary>
     /// A GUC Model consists of a Gothic-Visual-String, a collection of Animation-Overlays and a collection of Animation-Jobs.
     /// </summary>
-    public partial class ModelInstance : IDObject
+    public partial class GUCModelDef : IDObject
     {
         #region ScriptObject
 
-        public interface IScriptModelInstance : IScriptGameObject
+        public interface IScriptModelDef : IScriptGameObject
         {
             void Create();
             void Delete();
@@ -30,13 +30,13 @@ namespace GUC.Models
         }
         
         /// <summary> The ScriptObject of this object. </summary>
-        public new IScriptModelInstance ScriptObject { get { return (IScriptModelInstance)base.ScriptObject; } }
+        public new IScriptModelDef ScriptObject { get { return (IScriptModelDef)base.ScriptObject; } }
 
         #endregion
 
         #region Constructors
 
-        public ModelInstance(IScriptModelInstance scriptObject) : base(scriptObject)
+        public GUCModelDef(IScriptModelDef scriptObject) : base(scriptObject)
         {
         }
 
@@ -44,9 +44,9 @@ namespace GUC.Models
 
         #region Static Collection
 
-        static StaticCollection<ModelInstance> idColl = new StaticCollection<ModelInstance>();
-        static DynamicCollection<ModelInstance> models = new DynamicCollection<ModelInstance>();
-        static DynamicCollection<ModelInstance> dynModels = new DynamicCollection<ModelInstance>();
+        static StaticCollection<GUCModelDef> idColl = new StaticCollection<GUCModelDef>();
+        static DynamicCollection<GUCModelDef> models = new DynamicCollection<GUCModelDef>();
+        static DynamicCollection<GUCModelDef> dynModels = new DynamicCollection<GUCModelDef>();
 
         #region Create & Delete
 
@@ -105,7 +105,7 @@ namespace GUC.Models
         }
 
         /// <summary> Gets a Model by ID from the static Model collection. </summary>
-        public static bool TryGet(int id, out ModelInstance model)
+        public static bool TryGet(int id, out GUCModelDef model)
         {
             return idColl.TryGet(id, out model);
         }
@@ -114,7 +114,7 @@ namespace GUC.Models
 
 
         /// <summary> Loops through all Models in the static Model collection. </summary>
-        public static void ForEach(Action<ModelInstance> action)
+        public static void ForEach(Action<GUCModelDef> action)
         {
             models.ForEach(action);
         }
@@ -123,7 +123,7 @@ namespace GUC.Models
         /// Loops through all Models in the static Model collection. 
         /// Let the predicate return FALSE to BREAK the loop.
         /// </summary>
-        public static void ForEachPredicate(Predicate<ModelInstance> predicate)
+        public static void ForEachPredicate(Predicate<GUCModelDef> predicate)
         {
             models.ForEachPredicate(predicate);
         }
@@ -134,7 +134,7 @@ namespace GUC.Models
 
 
         /// <summary> Loops through all dynamic Models in the static Model collection. </summary>
-        public static void ForEachDynamic(Action<ModelInstance> action)
+        public static void ForEachDynamic(Action<GUCModelDef> action)
         {
             dynModels.ForEach(action);
         }
@@ -143,7 +143,7 @@ namespace GUC.Models
         /// Loops through all dynamic Models in the static Model collection. 
         /// Let the predicate return FALSE to BREAK the loop.
         /// </summary>
-        public static void ForEachDynamicPredicate(Predicate<ModelInstance> predicate)
+        public static void ForEachDynamicPredicate(Predicate<GUCModelDef> predicate)
         {
             dynModels.ForEachPredicate(predicate);
         }

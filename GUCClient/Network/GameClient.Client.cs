@@ -43,7 +43,7 @@ namespace GUC.Network
                     int count = stream.ReadUShort();
                     for (int i = 0; i < count; i++)
                     {
-                        ModelInstance model = ScriptManager.Interface.CreateModelInstance();
+                        GUCModelDef model = ScriptManager.Interface.CreateModelDefinition();
                         model.ReadStream(stream);
                         model.ScriptObject.Create();
                     }
@@ -56,7 +56,7 @@ namespace GUC.Network
                     for (int i = 0; i < count; i++)
                     {
                         byte type = stream.ReadByte();
-                        GUCBaseVobDef def = ScriptManager.Interface.CreateInstance(type);
+                        GUCBaseVobDef def = ScriptManager.Interface.CreateVobDefinition(type);
                         def.ReadStream(stream);
                         def.ScriptObject.Create();
                     }
@@ -498,25 +498,25 @@ namespace GUC.Network
 
                 // Model Messages
                 case ServerMessages.ModelAniUncontrolledMessage:
-                    Model.Messages.ReadAniStartUncontrolled(stream);
+                    GUCModelInst.Messages.ReadAniStartUncontrolled(stream);
                     break;
                 case ServerMessages.ModelAniStartMessage:
-                    Model.Messages.ReadAniStart(stream);
+                    GUCModelInst.Messages.ReadAniStart(stream);
                     break;
                 case ServerMessages.ModelAniStartFPSMessage:
-                    Model.Messages.ReadAniStartFPS(stream);
+                    GUCModelInst.Messages.ReadAniStartFPS(stream);
                     break;
                 case ServerMessages.ModelAniStopMessage:
-                    Model.Messages.ReadAniStop(stream, false);
+                    GUCModelInst.Messages.ReadAniStop(stream, false);
                     break;
                 case ServerMessages.ModelAniFadeMessage:
-                    Model.Messages.ReadAniStop(stream, true);
+                    GUCModelInst.Messages.ReadAniStop(stream, true);
                     break;
                 case ServerMessages.ModelOverlayAddMessage:
-                    Model.Messages.ReadOverlay(stream, true);
+                    GUCModelInst.Messages.ReadOverlay(stream, true);
                     break;
                 case ServerMessages.ModelOverlayRemoveMessage:
-                    Model.Messages.ReadOverlay(stream, false);
+                    GUCModelInst.Messages.ReadOverlay(stream, false);
                     break;
                 case ServerMessages.ModelInstanceCreateMessage:
                     // TODO: whatever has to be done

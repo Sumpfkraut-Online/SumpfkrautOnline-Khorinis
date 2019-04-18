@@ -33,7 +33,7 @@ namespace GUC.WorldObjects.Instances
 
         #region Constructors
         
-        public GUCItemInst(Model.IScriptModel scriptModel, IScriptItem scriptObject) : base(scriptModel, scriptObject)
+        public GUCItemInst(GUCModelInst.IScriptModelInst scriptModel, IScriptItem scriptObject) : base(scriptModel, scriptObject)
         {
         }
 

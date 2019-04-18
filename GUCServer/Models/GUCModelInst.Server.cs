@@ -8,7 +8,7 @@ using GUC.Network;
 
 namespace GUC.Models
 {
-    public partial class Model : GameObject
+    public partial class GUCModelInst : GameObject
     {
         #region Network Messages
 
@@ -16,7 +16,7 @@ namespace GUC.Models
         {
             #region Overlays
 
-            public static void WriteOverlayAdd(Model model, Overlay overlay)
+            public static void WriteOverlayAdd(GUCModelInst model, Overlay overlay)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.ModelOverlayAddMessage);
                 stream.Write((ushort)model.vob.ID);
@@ -24,7 +24,7 @@ namespace GUC.Models
                 model.vob.ForEachVisibleClient(c => c.Send(stream, NetPriority.Low, NetReliability.Reliable, 'W'));
             }
 
-            public static void WriteOverlayRemove(Model model, Overlay overlay)
+            public static void WriteOverlayRemove(GUCModelInst model, Overlay overlay)
             {
                 PacketWriter stream = GameServer.SetupStream(ServerMessages.ModelOverlayRemoveMessage);
                 stream.Write((ushort)model.vob.ID);
@@ -36,7 +36,7 @@ namespace GUC.Models
 
             #region Animations
 
-            public static void WriteAniStartUncontrolled(Model model, AniJob job)
+            public static void WriteAniStartUncontrolled(GUCModelInst model, AniJob job)
             {
                 PacketWriter stream = stream = GameServer.SetupStream(ServerMessages.ModelAniUncontrolledMessage);
                 stream.Write((ushort)model.vob.ID);
@@ -44,7 +44,7 @@ namespace GUC.Models
                 model.vob.ForEachVisibleClient(c => c.Send(stream, NetPriority.High, NetReliability.ReliableOrdered, 'W'));
             }
 
-            public static void WriteAniStart(Model model, AniJob job, float fpsMult, float progress)
+            public static void WriteAniStart(GUCModelInst model, AniJob job, float fpsMult, float progress)
             {
                 PacketWriter stream;
                 if (fpsMult == 1.0f)
@@ -62,7 +62,7 @@ namespace GUC.Models
                 model.vob.ForEachVisibleClient(c => c.Send(stream, NetPriority.High, NetReliability.ReliableOrdered, 'W'));
             }
 
-            public static void WriteAniStop(Model model, AniJob job, bool fadeout)
+            public static void WriteAniStop(GUCModelInst model, AniJob job, bool fadeout)
             {
                 PacketWriter stream = GameServer.SetupStream(fadeout ? ServerMessages.ModelAniFadeMessage : ServerMessages.ModelAniStopMessage);
                 stream.Write((ushort)model.vob.ID);

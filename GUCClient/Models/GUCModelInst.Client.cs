@@ -11,7 +11,7 @@ using GUC.Types;
 
 namespace GUC.Models
 {
-    public partial class Model : GameObject
+    public partial class GUCModelInst : GameObject
     {
         #region Network Messages
 
@@ -26,7 +26,7 @@ namespace GUC.Models
                 GUCVobInst vob;
                 if (World.Current.TryGetVob(id, out vob))
                 {
-                    Model model = vob.Model;
+                    GUCModelInst model = vob.Model;
 
                     Overlay ov;
                     if (model.Instance.TryGetOverlay(stream.ReadByte(), out ov))
@@ -57,7 +57,7 @@ namespace GUC.Models
                 float progress = stream.ReadFloat();
                 if (World.Current.TryGetVob(stream.ReadUShort(), out GUCVobInst vob))
                 {
-                    Model model = vob.Model;
+                    GUCModelInst model = vob.Model;
 
                     if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
                     {
@@ -70,7 +70,7 @@ namespace GUC.Models
             {
                 if (World.Current.TryGetVob(stream.ReadUShort(), out GUCVobInst vob))
                 {
-                    Model model = vob.Model;
+                    GUCModelInst model = vob.Model;
                     if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
                     {
                         ActiveAni aa = model.GetActiveAniFromAniJob(job);
@@ -86,7 +86,7 @@ namespace GUC.Models
             {
                 if (World.Current.TryGetVob(stream.ReadUShort(), out GUCVobInst vob))
                 {
-                    Model model = vob.Model;
+                    GUCModelInst model = vob.Model;
 
                     if (model.Instance.TryGetAniJob(stream.ReadUShort(), out AniJob job))
                     {

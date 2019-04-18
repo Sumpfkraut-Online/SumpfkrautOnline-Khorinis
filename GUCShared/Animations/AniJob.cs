@@ -71,18 +71,18 @@ namespace GUC.Animations
         /// </summary>
         public Animation DefaultAni { get { return this.defaultAni; } }
 
-        ModelInstance modelInstance;
+        GUCModelDef modelInstance;
         /// <summary>
         /// The associated model of this animation.
         /// </summary>
-        public ModelInstance ModelInstance { get { return this.modelInstance; } }
+        public GUCModelDef ModelInstance { get { return this.modelInstance; } }
 
         /// <summary>
         /// Is true when this is added to a model.
         /// </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
-        internal void SetModel(ModelInstance modelInstance)
+        internal void SetModel(GUCModelDef modelInstance)
         {
             this.modelInstance = modelInstance;
             this.isCreated = modelInstance != null;

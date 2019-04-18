@@ -46,7 +46,7 @@ namespace GUC.Scripts
             return new ScriptOverlay().BaseOverlay;
         }
 
-        public Models.ModelInstance CreateModelInstance()
+        public Models.GUCModelDef CreateModelDefinition()
         {
             return new ModelDef().BaseDef;
         }
@@ -56,7 +56,7 @@ namespace GUC.Scripts
             return new WorldInst().BaseWorld;
         }
 
-        public GUCBaseVobInst CreateVob(byte type)
+        public GUCBaseVobInst CreateVobInstance(byte type)
         {
             BaseVobInst vob;
             switch ((VobType)type)
@@ -83,7 +83,7 @@ namespace GUC.Scripts
         }
 
 
-        public WorldObjects.Definitions.GUCBaseVobDef CreateInstance(byte type)
+        public WorldObjects.Definitions.GUCBaseVobDef CreateVobDefinition(byte type)
         {
             BaseVobDef def;
             switch ((VobType)type)

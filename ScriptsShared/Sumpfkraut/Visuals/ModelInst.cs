@@ -11,7 +11,7 @@ using GUC.Utilities;
 
 namespace GUC.Scripts.Sumpfkraut.Visuals
 {
-    public partial class ModelInst : ExtendedObject, Model.IScriptModel
+    public partial class ModelInst : ExtendedObject, GUCModelInst.IScriptModelInst
     {
         #region Constructors
 
@@ -29,7 +29,7 @@ namespace GUC.Scripts.Sumpfkraut.Visuals
 
         VobInst vob;
         public VobInst Vob { get { return this.vob; } }
-        public Model BaseInst { get { return this.vob.BaseInst.Model; } }
+        public GUCModelInst BaseInst { get { return this.vob.BaseInst.Model; } }
 
         #endregion
 

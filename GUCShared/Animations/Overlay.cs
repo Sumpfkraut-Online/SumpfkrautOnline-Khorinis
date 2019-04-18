@@ -48,18 +48,18 @@ namespace GUC.Animations
             }
         }
 
-        ModelInstance model;
+        GUCModelDef model;
         /// <summary>
         /// The associated model of this overlay.
         /// </summary>
-        public ModelInstance Model { get { return this.model; } }
+        public GUCModelDef Model { get { return this.model; } }
 
         /// <summary>
         /// Is true when this is added to a model.
         /// </summary>
         public bool IsCreated { get { return this.isCreated; } }
 
-        internal void SetModel(ModelInstance model)
+        internal void SetModel(GUCModelDef model)
         {
             this.model = model;
             this.isCreated = model != null;

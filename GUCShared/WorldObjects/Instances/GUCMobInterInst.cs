@@ -24,7 +24,7 @@ namespace GUC.WorldObjects.Instances
         
         #region Constructors
 
-        public GUCMobInterInst(Model.IScriptModel scriptModel, IScriptMobInter scriptObject) : base(scriptModel, scriptObject)
+        public GUCMobInterInst(GUCModelInst.IScriptModelInst scriptModel, IScriptMobInter scriptObject) : base(scriptModel, scriptObject)
         {
         }
 

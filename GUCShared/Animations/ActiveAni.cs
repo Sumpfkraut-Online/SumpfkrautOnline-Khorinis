@@ -20,9 +20,9 @@ namespace GUC.Animations
             public Action Callback;
         }
 
-        Model model;
+        GUCModelInst model;
         /// <summary> The animated model which is playing this animation. </summary>
-        public Model Model { get { return this.model; } }
+        public GUCModelInst Model { get { return this.model; } }
 
         float fpsMult;
         /// <summary> The value with which the frame speed is multiplied. </summary>
@@ -42,7 +42,7 @@ namespace GUC.Animations
 
         public bool IsIdleAni { get { return this.endTime < 0; } }
 
-        internal ActiveAni(Model model)
+        internal ActiveAni(GUCModelInst model)
         {
             this.model = model ?? throw new ArgumentNullException("Model is null!");
         }

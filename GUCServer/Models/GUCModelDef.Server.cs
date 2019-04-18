@@ -7,7 +7,7 @@ using GUC.Network;
 
 namespace GUC.Models
 {
-    public partial class ModelInstance : IDObject
+    public partial class GUCModelDef : IDObject
     {
         partial void pAfterCreate()
         {

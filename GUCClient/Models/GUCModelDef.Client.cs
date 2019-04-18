@@ -8,7 +8,7 @@ using GUC.Scripting;
 
 namespace GUC.Models
 {
-    public partial class ModelInstance : IDObject
+    public partial class GUCModelDef : IDObject
     {
         #region Messages
 
@@ -16,17 +16,16 @@ namespace GUC.Models
         {
             public static void ReadCreate(PacketReader stream)
             {
-                ModelInstance instance = ScriptManager.Interface.CreateModelInstance();
-                instance.ReadStream(stream);
-                instance.ScriptObject.Create();
+                GUCModelDef def = ScriptManager.Interface.CreateModelDefinition();
+                def.ReadStream(stream);
+                def.ScriptObject.Create();
             }
 
             public static void ReadDelete(PacketReader stream)
             {
-                ModelInstance instance;
-                if (ModelInstance.TryGet(stream.ReadUShort(), out instance))
+                if (GUCModelDef.TryGet(stream.ReadUShort(), out GUCModelDef def))
                 {
-                    instance.ScriptObject.Delete();
+                    def.ScriptObject.Delete();
                 }
             }
         }

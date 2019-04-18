@@ -11,11 +11,11 @@ using GUC.WorldObjects.Instances;
 
 namespace GUC.Models
 {
-    public partial class Model : GameObject
+    public partial class GUCModelInst : GameObject
     {
         #region ScriptObject
 
-        public partial interface IScriptModel : IScriptGameObject
+        public partial interface IScriptModelInst : IScriptGameObject
         {
             void ApplyOverlay(Overlay overlay);
             void RemoveOverlay(Overlay overlay);
@@ -25,14 +25,14 @@ namespace GUC.Models
             void StartAniJobUncontrolled(AniJob job);
         }
 
-        public new IScriptModel ScriptObject { get { return (IScriptModel)base.ScriptObject; } }
+        public new IScriptModelInst ScriptObject { get { return (IScriptModelInst)base.ScriptObject; } }
 
         #endregion
 
         #region Constructors
 
         partial void pConstruct();
-        internal Model(GUCVobInst vob, IScriptModel scriptObject) : base(scriptObject)
+        internal GUCModelInst(GUCVobInst vob, IScriptModelInst scriptObject) : base(scriptObject)
         {
             if (vob == null)
                 throw new ArgumentNullException("Vob is null!");
@@ -49,7 +49,7 @@ namespace GUC.Models
         /// <summary> The Vob of this Model. </summary>
         public GUCVobInst Vob { get { return this.vob; } }
 
-        public ModelInstance Instance { get { return this.vob.ModelInstance; } }
+        public GUCModelDef Instance { get { return this.vob.ModelInstance; } }
 
         #endregion
 

@@ -53,8 +53,8 @@ namespace GUC.WorldObjects.Instances
             }
         }
 
-        ModelInstance model;
-        public ModelInstance Model
+        GUCModelDef model;
+        public GUCModelDef Model
         {
             get { return this.model; }
             set
@@ -139,7 +139,7 @@ namespace GUC.WorldObjects.Instances
 
             this.velocity = stream.ReadFloat();
             int modelID = stream.ReadUShort();
-            if (!ModelInstance.TryGet(modelID, out model))
+            if (!GUCModelDef.TryGet(modelID, out model))
                 throw new Exception("Model not found! " + modelID);
             this.destination = stream.ReadCompressedPosition();
         }
