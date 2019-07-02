@@ -121,6 +121,7 @@ namespace GUCLauncher
             if (!string.IsNullOrWhiteSpace(address))
             {
                 Configuration.AddServer(address);
+                bRefresh_Click(sender, e); // Reload server list
             }
         }
 
